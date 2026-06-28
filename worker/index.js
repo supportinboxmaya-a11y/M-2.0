@@ -254,6 +254,6 @@ async function cleanOldTasks(env) {
 function jsonResponse(data, headers = {}, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
     status,
-    headers: { "Content-Type": "application/json", ...headers }
+    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, Authorization"ype": "application/json", ...headers }
   });
 }
