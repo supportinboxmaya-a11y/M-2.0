@@ -11,7 +11,7 @@ APP_NAME = "Maya 2.0 ULTRA"
 [[d1_databases]]
 binding = "DB"
 database_name = "maya-db"
-database_id = "your-d1-database-id"
+database_id = "be7b286b-3d55-4d03-a7a6-c64782434650"
 
 # R2 Storage (Files & Backups)
 [[r2_buckets]]
@@ -21,11 +21,11 @@ bucket_name = "maya-storage"
 # KV Store (Short-term memory & Cache)
 [[kv_namespaces]]
 binding = "CACHE"
-id = "your-kv-namespace-id"
+id = "4ea5e4d4d4e54ef3a91983c8cee6fc92"
 
 [[kv_namespaces]]
 binding = "MEMORY"
-id = "your-memory-kv-id"
+id = "4ea5e4d4d4e54ef3a91983c8cee6fc92"
 
 # AI Gateway (optional)
 [ai]
