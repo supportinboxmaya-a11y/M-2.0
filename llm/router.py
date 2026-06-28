@@ -1,0 +1,188 @@
+"""
+Maya 2.0 - Ultra LLM Router
+-----------------------------
+সব LLM provider manage করে। Smart routing, fallback, load balancing।
+"""
+
+import time
+from typing import List, Dict, Optional
+from .providers.groq import GroqProvider
+from .providers.gemini import GeminiProvider
+from .providers.openai import OpenAIProvider
+from .providers.claude import ClaudeProvider
+from .providers.deepseek import DeepSeekProvider
+from .providers.local_llm import LocalLLMProvider
+
+
+class LLMRouter:
+    """
+    Maya-র LLM routing engine.
+    - Available providers detect করে
+    - Best provider choose করে
+    - Automatic fallback করে
+    - Rate limit handle করে
+    - Response time track করে
+    - Provider health monitor করে
+    """
+
+    # Provider priority (fast → powerful)
+    DEFAULT_PRIORITY = ["groq", "gemini", "deepseek", "openai", "claude", "local"]
+
+    def __init__(self):
+        self.providers = {
+            "groq": GroqProvider(),
+            "gemini": GeminiProvider(),
+            "openai": OpenAIProvider(),
+            "claude": ClaudeProvider(),
+            "deepseek": DeepSeekProvider(),
+            "local": LocalLLMProvider(),
+        }
+
+        # Provider health tracking
+        self.health: Dict[str, Dict] = {
+            p: {"available": False, "error_count": 0, "last_error": None, "avg_response_time": 0}
+            for p in self.providers
+        }
+
+        # Check availability on startup
+        self._check_all_providers()
+
+        # Stats
+        self.total_requests = 0
+        self.successful_requests = 0
+        self.request_log: List[Dict] = []
+
+    def chat(self, messages: List[Dict], provider: Optional[str] = None,
+             model: Optional[str] = None, max_tokens: int = 4000,
+             task_type: str = "general") -> str:
+        """
+        Messages পাঠায় এবং response নেয়।
+        Auto-selects best provider if not specified.
+        """
+        self.total_requests += 1
+
+        # Provider select করি
+        selected_provider = provider if provider and self._is_healthy(provider) else self._select_best_provider(task_type)
+
+        if not selected_provider:
+            raise Exception("❌ No LLM provider available! Please set at least one API key in .env")
+
+        # Try selected provider first, then fallback
+        providers_to_try = [selected_provider] + [
+            p for p in self.DEFAULT_PRIORITY
+            if p != selected_provider and self._is_healthy(p)
+        ]
+
+        last_error = None
+        for p in providers_to_try:
+            try:
+                start = time.time()
+                response = self.providers[p].chat(messages, model=model, max_tokens=max_tokens)
+                elapsed = time.time() - start
+
+                # Update health stats
+                self._update_health(p, success=True, response_time=elapsed)
+                self.successful_requests += 1
+
+                self._log_request(p, model, len(str(messages)), len(response), elapsed, True)
+                return response
+
+            except Exception as e:
+                last_error = str(e)
+                self._update_health(p, success=False, error=last_error)
+                print(f"   ⚠️ [{p}] failed: {last_error[:80]}, trying next...")
+                continue
+
+        raise Exception(f"All providers failed. Last error: {last_error}")
+
+    def available_providers(self) -> List[str]:
+        """সব available provider এর list।"""
+        return [p for p in self.DEFAULT_PRIORITY if self._is_healthy(p)]
+
+    def best_provider(self, task_type: str = "general") -> Optional[str]:
+        """Best provider return করে।"""
+        return self._select_best_provider(task_type)
+
+    def get_stats(self) -> Dict:
+        """Router statistics।"""
+        return {
+            "total_requests": self.total_requests,
+            "successful_requests": self.successful_requests,
+            "success_rate": f"{(self.successful_requests/self.total_requests*100):.1f}%" if self.total_requests > 0 else "0%",
+            "available_providers": self.available_providers(),
+            "provider_health": self.health
+        }
+
+    def health_check(self) -> Dict:
+        """সব provider এর health check করে।"""
+        self._check_all_providers()
+        return {p: h["available"] for p, h in self.health.items()}
+
+    def _select_best_provider(self, task_type: str = "general") -> Optional[str]:
+        """Task type অনুযায়ী best provider select করে।"""
+        # Task type based preferences
+        preferences = {
+            "coding": ["deepseek", "groq", "openai", "claude"],
+            "research": ["gemini", "claude", "openai", "groq"],
+            "fast": ["groq", "gemini", "deepseek"],
+            "analysis": ["claude", "openai", "gemini"],
+            "creative": ["claude", "openai", "gemini"],
+            "general": self.DEFAULT_PRIORITY
+        }
+
+        priority = preferences.get(task_type, self.DEFAULT_PRIORITY)
+
+        for p in priority:
+            if self._is_healthy(p):
+                return p
+
+        # Fallback to any available
+        for p in self.DEFAULT_PRIORITY:
+            if self._is_healthy(p):
+                return p
+
+        return None
+
+    def _is_healthy(self, provider: str) -> bool:
+        """Provider available এবং healthy কিনা।"""
+        if provider not in self.health:
+            return False
+        h = self.health[provider]
+        return h["available"] and h["error_count"] < 5
+
+    def _check_all_providers(self):
+        """সব provider এর availability check করে।"""
+        for name, provider in self.providers.items():
+            try:
+                self.health[name]["available"] = provider.is_available()
+            except:
+                self.health[name]["available"] = False
+
+    def _update_health(self, provider: str, success: bool, response_time: float = 0, error: str = None):
+        """Provider health update করে।"""
+        if provider not in self.health:
+            return
+        h = self.health[provider]
+        if success:
+            h["error_count"] = max(0, h["error_count"] - 1)
+            if response_time:
+                h["avg_response_time"] = (h["avg_response_time"] + response_time) / 2
+        else:
+            h["error_count"] += 1
+            h["last_error"] = error
+            if h["error_count"] >= 5:
+                h["available"] = False
+
+    def _log_request(self, provider: str, model: Optional[str], input_len: int, output_len: int, elapsed: float, success: bool):
+        """Request log করে।"""
+        self.request_log.append({
+            "provider": provider,
+            "model": model,
+            "input_chars": input_len,
+            "output_chars": output_len,
+            "response_time": round(elapsed, 2),
+            "success": success
+        })
+        # Last 100 only রাখি
+        if len(self.request_log) > 100:
+            self.request_log = self.request_log[-100:]

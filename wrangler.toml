@@ -1,0 +1,47 @@
+name = "maya-ai"
+main = "worker/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+APP_NAME = "Maya 2.0 ULTRA"
+
+# D1 Database (SQLite)
+[[d1_databases]]
+binding = "DB"
+database_name = "maya-db"
+database_id = "your-d1-database-id"
+
+# R2 Storage (Files & Backups)
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "maya-storage"
+
+# KV Store (Short-term memory & Cache)
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-namespace-id"
+
+[[kv_namespaces]]
+binding = "MEMORY"
+id = "your-memory-kv-id"
+
+# AI Gateway (optional)
+[ai]
+binding = "AI"
+
+# Routes
+[[routes]]
+pattern = "maya.your-domain.com/*"
+zone_name = "your-domain.com"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[build]
+command = "npm install"
+
+[dev]
+port = 8787
+local_protocol = "http"

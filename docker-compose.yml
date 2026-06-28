@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  maya:
+    build: .
+    container_name: maya-agent
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
+      - ./workspace:/app/workspace
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+
+  # Optional: ChromaDB for vector memory
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: maya-chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
+volumes:
+  chroma_data:
