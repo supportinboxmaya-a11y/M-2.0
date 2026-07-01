@@ -24,9 +24,9 @@ class GoogleSearch:
             return f"No results for: {query}"
         out = []
         for i, r in enumerate(results, 1):
-            out.append(f"{i}. {r.get("title", "")}")
-            if r.get("url"): out.append(f"   URL: {r["url"]}")
-            if r.get("snippet"): out.append(f"   {r["snippet"][:200]}")
+            out.append(f"{i}. {r.get('title', '')}")
+            if r.get("url"): out.append(f"   URL: {r['url']}")
+            if r.get("snippet"): out.append(f"   {r['snippet'][:200]}")
             out.append("")
         return "\n".join(out).strip()
 
