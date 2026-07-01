@@ -5,7 +5,13 @@ from groq import Groq
 
 class GroqProvider:
     def __init__(self):
-        self.client = Groq(api_key=os.environ.get("GROQ_KEY", ""))
+        self.client = None
+        key = os.environ.get("GROQ_KEY", "")
+        if key:
+            try:
+                self.client = Groq(api_key=key)
+            except Exception:
+                self.client = None
         self.default_model = os.environ.get("PRIMARY_MODEL", "llama-3.3-70b-versatile")
         self.available_models = [
             "llama-3.3-70b-versatile",
@@ -14,6 +20,8 @@ class GroqProvider:
         ]
 
     def chat(self, messages, model=None, max_tokens=8000):
+        if not self.client:
+            raise Exception("Groq error: GROQ_KEY not configured")
         use_model = model or self.default_model
         old_models = {
             "llama3-8b-8192": "llama-3.1-8b-instant",
@@ -34,4 +42,4 @@ class GroqProvider:
             raise Exception(f"Groq error: {e}")
 
     def is_available(self):
-        return bool(os.environ.get("GROQ_KEY", ""))
+        return self.client is not None

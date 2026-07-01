@@ -4,13 +4,18 @@ from openai import OpenAI
 
 class DeepSeekProvider:
     def __init__(self):
-        self.client = OpenAI(
-            api_key=os.environ.get("DEEPSEEK_KEY", ""),
-            base_url="https://api.deepseek.com"
-        )
+        self.client = None
+        key = os.environ.get("DEEPSEEK_KEY", "")
+        if key:
+            try:
+                self.client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
+            except Exception:
+                self.client = None
         self.default_model = "deepseek-chat"
 
     def chat(self, messages: List[Dict], model: Optional[str] = None, max_tokens: int = 8000) -> str:
+        if not self.client:
+            raise Exception("DeepSeek error: DEEPSEEK_KEY not configured")
         try:
             response = self.client.chat.completions.create(
                 model=model or self.default_model,
@@ -22,4 +27,4 @@ class DeepSeekProvider:
             raise Exception(f"DeepSeek error: {e}")
 
     def is_available(self) -> bool:
-        return bool(os.environ.get("DEEPSEEK_KEY", ""))
+        return self.client is not None
