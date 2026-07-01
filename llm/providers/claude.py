@@ -5,7 +5,7 @@ import anthropic
 class ClaudeProvider:
     def __init__(self):
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_KEY", ""))
-        self.default_model = "claude-3-haiku-20240307"
+        self.default_model = "claude-sonnet-5"
 
     def chat(self, messages: List[Dict], model: Optional[str] = None, max_tokens: int = 8000) -> str:
         try:

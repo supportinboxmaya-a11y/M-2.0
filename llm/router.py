@@ -4,6 +4,8 @@ Maya 2.0 - Ultra LLM Router
 সব LLM provider manage করে। Smart routing, fallback, load balancing।
 """
 
+import json
+import os
 import time
 from typing import List, Dict, Optional
 from .providers.groq import GroqProvider
@@ -12,6 +14,18 @@ from .providers.openai import OpenAIProvider
 from .providers.claude import ClaudeProvider
 from .providers.deepseek import DeepSeekProvider
 from .providers.local_llm import LocalLLMProvider
+from config.settings import STORAGE_DIR
+
+PROVIDER_STATE_FILE = str(STORAGE_DIR / "provider_state.json")
+
+PROVIDER_INFO = {
+    "groq": {"label": "Groq", "env_key": "GROQ_KEY"},
+    "gemini": {"label": "Gemini", "env_key": "GEMINI_KEY"},
+    "openai": {"label": "GPT (OpenAI)", "env_key": "OPENAI_KEY"},
+    "claude": {"label": "Sonnet (Claude)", "env_key": "ANTHROPIC_KEY"},
+    "deepseek": {"label": "DeepSeek", "env_key": "DEEPSEEK_KEY"},
+    "local": {"label": "Local LLM", "env_key": ""},
+}
 
 
 class LLMRouter:
@@ -46,6 +60,9 @@ class LLMRouter:
 
         # Check availability on startup
         self._check_all_providers()
+
+        # User on/off toggles (persisted across restarts)
+        self._enabled_state = self._load_enabled_state()
 
         # Stats
         self.total_requests = 0
@@ -118,6 +135,49 @@ class LLMRouter:
         self._check_all_providers()
         return {p: h["available"] for p, h in self.health.items()}
 
+    def list_providers(self) -> List[Dict]:
+        """Control panel এর জন্য সব provider এর status।"""
+        out = []
+        for name in self.DEFAULT_PRIORITY:
+            info = PROVIDER_INFO.get(name, {"label": name, "env_key": ""})
+            env_key = info["env_key"]
+            configured = bool(os.environ.get(env_key, "")) if env_key else True
+            enabled = self._enabled_state.get(name, True)
+            h = self.health.get(name, {})
+            out.append({
+                "id": name,
+                "label": info["label"],
+                "configured": configured,
+                "enabled": enabled,
+                "active": configured and enabled and h.get("available", False),
+                "error_count": h.get("error_count", 0),
+            })
+        return out
+
+    def set_enabled(self, provider: str, enabled: bool) -> bool:
+        """Provider চালু/বন্ধ করে, state persist করে।"""
+        if provider not in self.providers:
+            return False
+        self._enabled_state[provider] = bool(enabled)
+        self._save_enabled_state()
+        return True
+
+    def _load_enabled_state(self) -> Dict[str, bool]:
+        try:
+            if os.path.exists(PROVIDER_STATE_FILE):
+                with open(PROVIDER_STATE_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception:
+            pass
+        return {name: True for name in self.providers}
+
+    def _save_enabled_state(self):
+        try:
+            with open(PROVIDER_STATE_FILE, "w", encoding="utf-8") as f:
+                json.dump(self._enabled_state, f)
+        except Exception:
+            pass
+
     def _select_best_provider(self, task_type: str = "general") -> Optional[str]:
         """Task type অনুযায়ী best provider select করে।"""
         # Task type based preferences
@@ -144,8 +204,10 @@ class LLMRouter:
         return None
 
     def _is_healthy(self, provider: str) -> bool:
-        """Provider available এবং healthy কিনা।"""
+        """Provider available, healthy, এবং user দ্বারা enabled কিনা।"""
         if provider not in self.health:
+            return False
+        if not self._enabled_state.get(provider, True):
             return False
         h = self.health[provider]
         return h["available"] and h["error_count"] < 5
