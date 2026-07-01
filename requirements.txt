@@ -10,6 +10,7 @@ SQLAlchemy>=2.0.0
 # Web Tools
 requests>=2.31.0
 beautifulsoup4>=4.12.0
+playwright>=1.42.0
 
 # File handling
 PyPDF2>=3.0.0
