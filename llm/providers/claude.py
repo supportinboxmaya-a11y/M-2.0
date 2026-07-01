@@ -4,10 +4,18 @@ import anthropic
 
 class ClaudeProvider:
     def __init__(self):
-        self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_KEY", ""))
+        self.client = None
+        key = os.environ.get("ANTHROPIC_KEY", "")
+        if key:
+            try:
+                self.client = anthropic.Anthropic(api_key=key)
+            except Exception:
+                self.client = None
         self.default_model = "claude-sonnet-5"
 
     def chat(self, messages: List[Dict], model: Optional[str] = None, max_tokens: int = 8000) -> str:
+        if not self.client:
+            raise Exception("Claude error: ANTHROPIC_KEY not configured")
         try:
             system = ""
             filtered = []
@@ -27,4 +35,4 @@ class ClaudeProvider:
             raise Exception(f"Claude error: {e}")
 
     def is_available(self) -> bool:
-        return bool(os.environ.get("ANTHROPIC_KEY", ""))
+        return self.client is not None
