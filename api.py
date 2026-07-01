@@ -97,6 +97,9 @@ class MemorySearchRequest(BaseModel):
 class ToolUpdateRequest(BaseModel):
     enabled: bool
 
+class ProviderUpdateRequest(BaseModel):
+    enabled: bool
+
 class WorkflowCreateRequest(BaseModel):
     name: str
     description: Optional[str] = ""
@@ -278,6 +281,21 @@ async def tool_logs(limit: int = 50, user=Depends(get_current_user)):
         logs = getattr(maya_instance.tool_manager, "logs", [])
         return logs[-limit:]
     return []
+
+@app.get("/api/v1/providers")
+async def list_providers(user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    return maya_instance.router.list_providers()
+
+@app.put("/api/v1/providers/{provider_id}")
+async def update_provider(provider_id: str, req: ProviderUpdateRequest, user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    ok = maya_instance.router.set_enabled(provider_id, req.enabled)
+    if not ok:
+        raise HTTPException(status_code=404, detail=f"Unknown provider: {provider_id}")
+    return {"id": provider_id, "enabled": req.enabled}
 
 # ══════════════════════════════════════════════
 # ANALYTICS ROUTES
