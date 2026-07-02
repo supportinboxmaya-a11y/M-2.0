@@ -682,3 +682,27 @@ try:
 except Exception as _p2_err:
     print(f"WARNING: Phase 2 memory system not loaded: {_p2_err}")
 # ══════════════ End Phase 2 integration ══════════════
+
+
+# ══════════════ Phase 3: Brain Engine integration ══════════════
+try:
+    from brain import BrainEngine as _P3Brain
+
+    _p3_brain = _P3Brain()
+
+    @app.get("/api/v1/brain/analyze")
+    async def _p3_analyze(goal: str, user=Depends(get_current_user)):
+        """Goal understanding: complexity, sub-goals, suggested tools."""
+        return _p3_brain.analyze(goal)
+
+    @app.post("/api/v1/brain/graph")
+    async def _p3_graph(payload: dict, user=Depends(get_current_user)):
+        """Build a dependency task graph from planner-style steps."""
+        steps = payload.get("steps", [])
+        g = _p3_brain.build_graph(steps)
+        return g.to_dict()
+
+    print("Phase 3 brain engine active: analyze, graph")
+except Exception as _p3_err:
+    print(f"WARNING: Phase 3 brain engine not loaded: {_p3_err}")
+# ══════════════ End Phase 3 integration ══════════════
