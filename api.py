@@ -787,3 +787,43 @@ try:
 except Exception as _p5_err:
     print(f"WARNING: Phase 5 tool framework not loaded: {_p5_err}")
 # ══════════════ End Phase 5 integration ══════════════
+
+
+# ══════════════ Phase 6: Workflow Engine integration ══════════════
+try:
+    from workflows import WorkflowEngine as _P6WE, FileCheckpoint as _P6FC
+
+    _p6_engine = _P6WE(checkpoint=_P6FC("storage/checkpoints"))
+
+    @app.post("/api/v1/workflows/plan")
+    async def _p6_plan(payload: dict, user=Depends(get_current_user)):
+        """Create a resumable workflow (plan only; no execution)."""
+        goal = payload.get("goal", "")
+        if not goal:
+            raise HTTPException(status_code=400, detail="goal is required")
+        run = _p6_engine.create(goal)
+        return {"run_id": run.id, "state": run.to_state()}
+
+    @app.get("/api/v1/workflows/runs")
+    async def _p6_runs(user=Depends(get_current_user)):
+        return {"checkpoints": _p6_engine.checkpoint.list()}
+
+    @app.get("/api/v1/workflows/runs/{run_id}")
+    async def _p6_run_state(run_id: str, user=Depends(get_current_user)):
+        state = _p6_engine.checkpoint.load(run_id)
+        if state is None:
+            raise HTTPException(status_code=404, detail="run not found")
+        return state
+
+    @app.post("/api/v1/workflows/runs/{run_id}/cancel")
+    async def _p6_cancel(run_id: str, user=Depends(get_current_user)):
+        run = _p6_engine.runs.get(run_id)
+        if run is None:
+            raise HTTPException(status_code=404, detail="run not active in this process")
+        run.cancel()
+        return {"run_id": run_id, "cancelling": True}
+
+    print("Phase 6 workflow engine active: plan, runs, cancel, checkpoints")
+except Exception as _p6_err:
+    print(f"WARNING: Phase 6 workflow engine not loaded: {_p6_err}")
+# ══════════════ End Phase 6 integration ══════════════
