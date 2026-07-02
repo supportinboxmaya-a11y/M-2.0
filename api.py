@@ -589,3 +589,56 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "healthy", "maya": maya_instance is not None}
+
+
+# ══════════════ Phase 1: Infrastructure integration ══════════════
+# Appended block — soft-fails so the API always boots even if the
+# infrastructure package is missing or partially broken.
+try:
+    import time as _p1_time
+    from infrastructure import metrics as _p1_metrics
+    from infrastructure import flags as _p1_flags
+    from infrastructure import TaskQueue as _P1TaskQueue
+    from infrastructure import RateLimiter as _P1RateLimiter
+    from infrastructure import install_exception_handler as _p1_install_exc
+
+    _p1_install_exc(app, _p1_metrics)
+    _p1_queue = _P1TaskQueue(workers=int(os.getenv("TASK_WORKERS", "2")))
+    _p1_rl = _P1RateLimiter(rate=float(os.getenv("RATE_LIMIT_PER_MIN", "120")), per_seconds=60)
+
+    @app.on_event("startup")
+    async def _p1_start_queue():
+        await _p1_queue.start()
+        print("Phase 1 infrastructure active: metrics, task queue, rate limiter, flags")
+
+    @app.middleware("http")
+    async def _p1_observe(request, call_next):
+        if request.url.path.startswith("/api/v1/"):
+            ip = request.client.host if request.client else "unknown"
+            if not _p1_rl.allow(ip):
+                from fastapi.responses import JSONResponse
+                _p1_metrics.incr("http.rate_limited")
+                return JSONResponse(status_code=429, content={"error": "Rate limit exceeded"})
+        t0 = _p1_time.time()
+        response = await call_next(request)
+        _p1_metrics.incr("http.requests")
+        _p1_metrics.observe("http.latency", _p1_time.time() - t0)
+        if response.status_code >= 500:
+            _p1_metrics.incr("http.5xx")
+        return response
+
+    @app.get("/api/v1/metrics")
+    async def _p1_get_metrics(user=Depends(get_current_user)):
+        return _p1_metrics.snapshot()
+
+    @app.get("/api/v1/flags")
+    async def _p1_get_flags(user=Depends(get_current_user)):
+        return _p1_flags.all()
+
+    @app.get("/api/v1/queue/status")
+    async def _p1_queue_status(user=Depends(get_current_user)):
+        return _p1_queue.all_status()
+
+except Exception as _p1_err:
+    print(f"WARNING: Phase 1 infrastructure not loaded: {_p1_err}")
+# ══════════════ End Phase 1 integration ══════════════
