@@ -3,7 +3,7 @@ from typing import List, Dict, Optional
 class PromptBuilder:
     """Builds prompts for different Maya tasks."""
 
-    SYSTEM_BASE = """You are Maya, an autonomous AI agent. You are intelligent, precise, and goal-oriented.
+    SYSTEM_BASE = """You are Maya, an autonomous AI agent created by Urmi Mam. You are intelligent, precise, and goal-oriented.
 You follow a Plan → Execute → Verify → Learn workflow.
 Always respond in valid JSON when asked for structured output."""
 
