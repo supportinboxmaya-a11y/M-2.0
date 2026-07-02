@@ -1,12 +1,13 @@
 
 import os
+from config.settings import env_first
 from typing import List, Dict, Optional
 from groq import Groq
 
 class GroqProvider:
     def __init__(self):
         self.client = None
-        key = os.environ.get("GROQ_KEY", "")
+        key = env_first("GROQ_KEY", "GROQ_API_KEY")
         if key:
             try:
                 self.client = Groq(api_key=key)

@@ -34,7 +34,7 @@ app = FastAPI(title="Maya 2.0 ULTRA API", version="2.0.0", lifespan=lifespan)
 # ── CORS ───────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,6 +45,51 @@ SECRET_KEY = os.getenv("SECRET_KEY", "maya-secret-key-2024")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@maya.ai")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "maya2024")
 security = HTTPBearer(auto_error=False)
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+
+if SECRET_KEY == "maya-secret-key-2024":
+    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
+if ADMIN_PASSWORD == "maya2024":
+    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
 
 def create_token(email: str) -> str:
     payload = {"sub": email, "exp": datetime.utcnow() + timedelta(days=7)}
@@ -115,6 +160,42 @@ async def login(req: LoginRequest):
         token = create_token(req.email)
         return {"access_token": token, "token_type": "bearer", "email": req.email}
     raise HTTPException(status_code=401, detail="Invalid credentials")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+
+@app.post("/api/v1/auth/register")
+async def register():
+    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
 
 @app.post("/api/v1/auth/logout")
 async def logout(user=Depends(get_current_user)):

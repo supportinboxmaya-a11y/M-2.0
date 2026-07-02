@@ -1,11 +1,12 @@
 import os
+from config.settings import env_first
 from typing import List, Dict, Optional
 from openai import OpenAI
 
 class OpenAIProvider:
     def __init__(self):
         self.client = None
-        key = os.environ.get("OPENAI_KEY", "")
+        key = env_first("OPENAI_KEY", "OPENAI_API_KEY")
         if key:
             try:
                 self.client = OpenAI(api_key=key)

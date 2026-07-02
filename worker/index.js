@@ -23,6 +23,30 @@ export default {
       return jsonResponse({ status: "ok", timestamp: new Date().toISOString() }, corsHeaders);
     }
 
+    // Gateway: proxy /api/v1/* to the Maya brain on Render (per-IP rate limited)
+    if (path.startsWith("/api/v1/")) {
+      if (!env.BACKEND_URL) {
+        return jsonResponse({ error: "BACKEND_URL not configured" }, corsHeaders, 503);
+      }
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      const rl = await checkRateLimit(request, env, `ip:${ip}`);
+      if (!rl.allowed) {
+        return jsonResponse({ error: "Rate limit exceeded", retry_after: rl.retryAfter }, corsHeaders, 429);
+      }
+      const target = env.BACKEND_URL.replace(/\/$/, "") + url.pathname + url.search;
+      const init = { method: request.method, headers: new Headers(request.headers), redirect: "follow" };
+      if (!["GET", "HEAD"].includes(request.method)) init.body = await request.arrayBuffer();
+      init.headers.delete("Host");
+      try {
+        const r = await fetch(target, init);
+        const h = new Headers(r.headers);
+        for (const [k, v] of Object.entries(corsHeaders)) h.set(k, v);
+        return new Response(r.body, { status: r.status, headers: h });
+      } catch (e) {
+        return jsonResponse({ error: "Backend unreachable", detail: String(e) }, corsHeaders, 502);
+      }
+    }
+
     // Auth check for all other routes
     const authResult = await authenticate(request, env);
     if (!authResult.valid) {

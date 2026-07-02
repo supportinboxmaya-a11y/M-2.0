@@ -1,11 +1,12 @@
 import os
+from config.settings import env_first
 from typing import List, Dict, Optional
 from openai import OpenAI
 
 class DeepSeekProvider:
     def __init__(self):
         self.client = None
-        key = os.environ.get("DEEPSEEK_KEY", "")
+        key = env_first("DEEPSEEK_KEY", "DEEPSEEK_API_KEY")
         if key:
             try:
                 self.client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
