@@ -741,3 +741,49 @@ try:
 except Exception as _p4_err:
     print(f"WARNING: Phase 4 multi-agent system not loaded: {_p4_err}")
 # ══════════════ End Phase 4 integration ══════════════
+
+
+# ══════════════ Phase 5: Tool Framework integration ══════════════
+try:
+    from tools.framework import ToolFramework as _P5FW
+
+    try:
+        from infrastructure import metrics as _p5_metrics
+    except Exception:
+        _p5_metrics = None
+    _p5_fw = _P5FW(metrics=_p5_metrics)
+    try:
+        from tools.registry import ToolRegistry as _P5Reg
+        import tools as _p5_tools_pkg
+        _p5_existing = getattr(_p5_tools_pkg, "registry", None) or getattr(_p5_tools_pkg, "tool_registry", None)
+        if _p5_existing is not None:
+            _p5_adopted = _p5_fw.adopt_existing(_p5_existing)
+            print(f"Phase 5: adopted {_p5_adopted} existing tools into the framework")
+    except Exception as _e:
+        print(f"Phase 5: existing registry not adopted ({_e}); framework empty but active")
+
+    @app.get("/api/v1/tools/framework")
+    async def _p5_list(user=Depends(get_current_user)):
+        """Managed tools with policies (permission/timeout/retry/dangerous)."""
+        return {"tools": _p5_fw.list()}
+
+    @app.post("/api/v1/tools/execute")
+    async def _p5_execute(payload: dict, user=Depends(get_current_user)):
+        """Execute a managed tool. Disabled unless FLAG_TOOL_EXECUTE=true."""
+        try:
+            from infrastructure import flags as _p5_flags
+            enabled = _p5_flags.enabled("tool_execute")
+        except Exception:
+            enabled = False
+        if not enabled:
+            raise HTTPException(status_code=403,
+                                detail="Set FLAG_TOOL_EXECUTE=true to enable remote tool execution")
+        return _p5_fw.execute(payload.get("name", ""),
+                              payload.get("inputs", {}),
+                              caller_permissions=("*",),
+                              approved=bool(payload.get("approved", False)))
+
+    print("Phase 5 tool framework active")
+except Exception as _p5_err:
+    print(f"WARNING: Phase 5 tool framework not loaded: {_p5_err}")
+# ══════════════ End Phase 5 integration ══════════════
