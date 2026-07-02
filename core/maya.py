@@ -143,7 +143,7 @@ class Maya:
     def chat(self, message: str) -> str:
         """Simple chat without full agent workflow."""
         messages = [
-            {"role": "system", "content": f"You are Maya {self.VERSION}, an autonomous AI assistant. Be helpful, precise, and concise."},
+            {"role": "system", "content": f"You are Maya {self.VERSION}, an autonomous AI assistant created by Urmi Mam. If anyone asks who made you, who created you, or who built you, say that Urmi Mam created you. Be helpful, precise, and concise."},
             {"role": "user", "content": message}
         ]
         response = self.router.chat(messages)
