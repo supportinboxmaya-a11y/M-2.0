@@ -706,3 +706,38 @@ try:
 except Exception as _p3_err:
     print(f"WARNING: Phase 3 brain engine not loaded: {_p3_err}")
 # ══════════════ End Phase 3 integration ══════════════
+
+
+# ══════════════ Phase 4: Multi-Agent System integration ══════════════
+try:
+    from agents import Orchestrator as _P4Orch
+
+    _p4_orch = _P4Orch()
+
+    @app.get("/api/v1/agents")
+    async def _p4_agents(user=Depends(get_current_user)):
+        """All registered agents with permissions and health."""
+        return {"agents": [{"name": a.name, "role": a.role,
+                            "skills": list(a.skills),
+                            "permissions": list(a.permissions),
+                            **a.health()} for a in _p4_orch.registry.list()]}
+
+    @app.post("/api/v1/agents/orchestrate")
+    async def _p4_orchestrate(payload: dict, user=Depends(get_current_user)):
+        """Plan a goal across agents (analysis + graph + assignments; no execution)."""
+        goal = payload.get("goal", "")
+        if not goal:
+            raise HTTPException(status_code=400, detail="goal is required")
+        planned = _p4_orch.plan(goal)
+        return {"analysis": planned["analysis"],
+                "assignments": planned["assignments"],
+                "graph": planned["graph"].to_dict()}
+
+    @app.get("/api/v1/agents/messages")
+    async def _p4_messages(limit: int = 50, user=Depends(get_current_user)):
+        return {"messages": _p4_orch.bus.history(limit)}
+
+    print("Phase 4 multi-agent system active: 11 agents, orchestrator")
+except Exception as _p4_err:
+    print(f"WARNING: Phase 4 multi-agent system not loaded: {_p4_err}")
+# ══════════════ End Phase 4 integration ══════════════
