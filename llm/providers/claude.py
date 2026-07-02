@@ -1,11 +1,12 @@
 import os
+from config.settings import env_first
 from typing import List, Dict, Optional
 import anthropic
 
 class ClaudeProvider:
     def __init__(self):
         self.client = None
-        key = os.environ.get("ANTHROPIC_KEY", "")
+        key = env_first("ANTHROPIC_KEY", "ANTHROPIC_API_KEY")
         if key:
             try:
                 self.client = anthropic.Anthropic(api_key=key)

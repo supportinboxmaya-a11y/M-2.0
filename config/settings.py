@@ -13,12 +13,22 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
 
-# API Keys
-GROQ_KEY = os.environ.get("GROQ_KEY", "")
-GEMINI_KEY = os.environ.get("GEMINI_KEY", "")
-OPENAI_KEY = os.environ.get("OPENAI_KEY", "")
-ANTHROPIC_KEY = os.environ.get("ANTHROPIC_KEY", "")
-DEEPSEEK_KEY = os.environ.get("DEEPSEEK_KEY", "")
+
+def env_first(*names: str, default: str = "") -> str:
+    """First non-empty env var among names (supports *_KEY and *_API_KEY)."""
+    for name in names:
+        value = os.environ.get(name, "")
+        if value:
+            return value
+    return default
+
+
+# API Keys (dual-read)
+GROQ_KEY = env_first("GROQ_KEY", "GROQ_API_KEY")
+GEMINI_KEY = env_first("GEMINI_KEY", "GEMINI_API_KEY")
+OPENAI_KEY = env_first("OPENAI_KEY", "OPENAI_API_KEY")
+ANTHROPIC_KEY = env_first("ANTHROPIC_KEY", "ANTHROPIC_API_KEY")
+DEEPSEEK_KEY = env_first("DEEPSEEK_KEY", "DEEPSEEK_API_KEY")
 
 # Models
 PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "llama-3.3-70b-versatile")

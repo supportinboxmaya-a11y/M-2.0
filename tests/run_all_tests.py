@@ -24,6 +24,15 @@ if __name__ == "__main__":
         "test_security.py",
         "test_planner.py",
         "test_router.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
+        "test_env_keys.py",
     ]
 
     passed = 0

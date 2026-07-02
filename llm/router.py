@@ -14,7 +14,7 @@ from .providers.openai import OpenAIProvider
 from .providers.claude import ClaudeProvider
 from .providers.deepseek import DeepSeekProvider
 from .providers.local_llm import LocalLLMProvider
-from config.settings import STORAGE_DIR
+from config.settings import STORAGE_DIR, env_first, env_first, env_first, env_first, env_first, env_first, env_first, env_first, env_first
 
 PROVIDER_STATE_FILE = str(STORAGE_DIR / "provider_state.json")
 
@@ -141,7 +141,7 @@ class LLMRouter:
         for name in self.DEFAULT_PRIORITY:
             info = PROVIDER_INFO.get(name, {"label": name, "env_key": ""})
             env_key = info["env_key"]
-            configured = bool(os.environ.get(env_key, "")) if env_key else True
+            configured = bool(env_first(env_key, env_key.replace("_KEY", "_API_KEY"))) if env_key else True
             enabled = self._enabled_state.get(name, True)
             h = self.health.get(name, {})
             out.append({

@@ -1,10 +1,11 @@
 import os
+from config.settings import env_first
 from typing import List, Dict, Optional
 import google.generativeai as genai
 
 class GeminiProvider:
     def __init__(self):
-        genai.configure(api_key=os.environ.get("GEMINI_KEY", ""))
+        genai.configure(api_key=env_first("GEMINI_KEY", "GEMINI_API_KEY"))
         self.default_model = "gemini-1.5-flash"
         self.available_models = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"]
 
@@ -27,4 +28,4 @@ class GeminiProvider:
             raise Exception(f"Gemini error: {e}")
 
     def is_available(self) -> bool:
-        return bool(os.environ.get("GEMINI_KEY", ""))
+        return bool(env_first("GEMINI_KEY", "GEMINI_API_KEY"))
