@@ -642,3 +642,43 @@ try:
 except Exception as _p1_err:
     print(f"WARNING: Phase 1 infrastructure not loaded: {_p1_err}")
 # ══════════════ End Phase 1 integration ══════════════
+
+
+# ══════════════ Phase 2: Memory System integration ══════════════
+try:
+    from memory.long_term import LongTermMemory as _P2LT
+    from memory.ranker import MemoryRanker as _P2Ranker
+    from memory.lifecycle import MemoryLifecycle as _P2Lifecycle
+    from memory.summarizer import MemorySummarizer as _P2Summarizer
+
+    _p2_lt = _P2LT()
+    _p2_ranker = _P2Ranker()
+    _p2_lc = _P2Lifecycle(_p2_lt)
+    _p2_sum = _P2Summarizer()
+
+    @app.get("/api/v1/memory/rank")
+    async def _p2_rank(q: str, limit: int = 5, user=Depends(get_current_user)):
+        """Ranked memory retrieval: keyword overlap + importance + recency."""
+        rows = _p2_lt.get_all(limit=2000)
+        return {"query": q, "results": _p2_ranker.rank(q, rows, limit=limit)}
+
+    @app.post("/api/v1/memory/cleanup")
+    async def _p2_cleanup(dry_run: bool = True, user=Depends(get_current_user)):
+        """Expire old memories per TTL policy. dry_run=true reports only."""
+        return _p2_lc.cleanup(dry_run=dry_run)
+
+    @app.get("/api/v1/memory/summary")
+    async def _p2_summary(q: str = "", limit: int = 20, user=Depends(get_current_user)):
+        """Digest of the most relevant (or most recent) memories."""
+        rows = _p2_lt.get_all(limit=2000)
+        if q:
+            rows = _p2_ranker.rank(q, rows, limit=limit)
+        else:
+            rows = rows[:limit]
+        return {"summary": _p2_sum.summarize([r.get("content", "") for r in rows]),
+                "memories_considered": len(rows)}
+
+    print("Phase 2 memory system active: rank, cleanup, summary")
+except Exception as _p2_err:
+    print(f"WARNING: Phase 2 memory system not loaded: {_p2_err}")
+# ══════════════ End Phase 2 integration ══════════════
