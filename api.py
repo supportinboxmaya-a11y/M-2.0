@@ -899,3 +899,90 @@ try:
 except Exception as _p8_err:
     print(f"WARNING: Phase 8 router+ not loaded: {_p8_err}")
 # ══════════════ End Phase 8 integration ══════════════
+
+
+# ══════════════ Phase 9: Enterprise Layer integration ══════════════
+try:
+    from enterprise import RBAC as _P9RBAC, OrgStore as _P9Orgs, \
+        APIKeyManager as _P9Keys, AuditLog as _P9Audit, Monitor as _P9Mon
+    from enterprise._db import DB as _P9DB
+
+    _p9_db = _P9DB("storage/enterprise.db")
+    _p9_rbac = _P9RBAC()
+    _p9_orgs = _P9Orgs(db=_p9_db)
+    _p9_keys = _P9Keys(db=_p9_db)
+    _p9_audit = _P9Audit(db=_p9_db)
+    try:
+        _p9_mon = _P9Mon(metrics=_p1_metrics, agent_registry=_p4_orch.registry,
+                         provider_stats=_p8_router.stats, audit=_p9_audit)
+    except NameError:
+        _p9_mon = _P9Mon(audit=_p9_audit)
+
+    def _p9_actor(user) -> str:
+        return (user or {}).get("email", "admin") if isinstance(user, dict) else "admin"
+
+    @app.get("/api/v1/admin/roles")
+    async def _p9_roles(user=Depends(get_current_user)):
+        return _p9_rbac.roles()
+
+    @app.get("/api/v1/admin/orgs")
+    async def _p9_list_orgs(user=Depends(get_current_user)):
+        return {"orgs": _p9_orgs.list_orgs()}
+
+    @app.post("/api/v1/admin/orgs")
+    async def _p9_create_org(payload: dict, user=Depends(get_current_user)):
+        org = _p9_orgs.create_org(payload.get("name", "org"))
+        _p9_audit.record(_p9_actor(user), "org_created", org["id"], org)
+        return org
+
+    @app.post("/api/v1/admin/orgs/{org_id}/teams")
+    async def _p9_create_team(org_id: str, payload: dict, user=Depends(get_current_user)):
+        team = _p9_orgs.create_team(org_id, payload.get("name", "team"))
+        _p9_audit.record(_p9_actor(user), "team_created", team["id"], team)
+        return team
+
+    @app.post("/api/v1/admin/orgs/{org_id}/members")
+    async def _p9_add_member(org_id: str, payload: dict, user=Depends(get_current_user)):
+        m = _p9_orgs.add_member(payload.get("email", ""), org_id,
+                                payload.get("role", "viewer"), payload.get("team_id"))
+        _p9_audit.record(_p9_actor(user), "member_added", org_id, m)
+        return m
+
+    @app.get("/api/v1/admin/orgs/{org_id}/members")
+    async def _p9_members(org_id: str, user=Depends(get_current_user)):
+        return {"members": _p9_orgs.members(org_id)}
+
+    @app.post("/api/v1/admin/apikeys")
+    async def _p9_create_key(payload: dict, user=Depends(get_current_user)):
+        created = _p9_keys.create(payload.get("name", "key"), _p9_actor(user))
+        _p9_audit.record(_p9_actor(user), "apikey_created", created["id"],
+                         {"name": created["name"]})     # raw key never logged
+        return created
+
+    @app.get("/api/v1/admin/apikeys")
+    async def _p9_list_keys(user=Depends(get_current_user)):
+        return {"keys": _p9_keys.list()}
+
+    @app.delete("/api/v1/admin/apikeys/{key_id}")
+    async def _p9_revoke_key(key_id: str, user=Depends(get_current_user)):
+        _p9_keys.revoke(key_id)
+        _p9_audit.record(_p9_actor(user), "apikey_revoked", key_id)
+        return {"revoked": key_id}
+
+    @app.get("/api/v1/admin/audit")
+    async def _p9_audit_q(actor: str = None, action: str = None, limit: int = 100,
+                          user=Depends(get_current_user)):
+        return {"events": _p9_audit.query(actor, action, limit)}
+
+    @app.get("/api/v1/admin/usage")
+    async def _p9_usage(since_ts: float = 0.0, user=Depends(get_current_user)):
+        return _p9_audit.usage_summary(since_ts)
+
+    @app.get("/api/v1/admin/dashboard")
+    async def _p9_dashboard(user=Depends(get_current_user)):
+        return _p9_mon.dashboard()
+
+    print("Phase 9 enterprise layer active: rbac, orgs, apikeys, audit, dashboard")
+except Exception as _p9_err:
+    print(f"WARNING: Phase 9 enterprise layer not loaded: {_p9_err}")
+# ══════════════ End Phase 9 integration ══════════════
