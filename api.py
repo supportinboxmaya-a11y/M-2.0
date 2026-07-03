@@ -986,3 +986,66 @@ try:
 except Exception as _p9_err:
     print(f"WARNING: Phase 9 enterprise layer not loaded: {_p9_err}")
 # ══════════════ End Phase 9 integration ══════════════
+
+
+# ══════════════ Phase 10: Learning Layer integration ══════════════
+try:
+    from learning import FeedbackStore as _P10FB, ExperienceReplay as _P10Exp, \
+        PromptOptimizer as _P10PO, MemoryCompressor as _P10MC
+    from enterprise._db import DB as _P10DB
+
+    _p10_db = _P10DB("storage/learning.db")
+    _p10_fb = _P10FB(db=_p10_db)
+    _p10_exp = _P10Exp(db=_p10_db)
+    _p10_po = _P10PO()
+
+    @app.post("/api/v1/learning/feedback")
+    async def _p10_feedback(payload: dict, user=Depends(get_current_user)):
+        _p10_fb.record(payload.get("goal", ""), payload.get("output", ""),
+                       int(payload.get("rating", 0)), payload.get("comment", ""))
+        return {"recorded": True, "stats": _p10_fb.stats()}
+
+    @app.get("/api/v1/learning/stats")
+    async def _p10_stats(user=Depends(get_current_user)):
+        return {"feedback": _p10_fb.stats(), "lessons": _p10_fb.lessons(),
+                "prompts": _p10_po.report()}
+
+    @app.get("/api/v1/learning/experience")
+    async def _p10_experience(goal: str = "", limit: int = 5,
+                              user=Depends(get_current_user)):
+        if goal:
+            return {"similar": _p10_exp.similar(goal, limit),
+                    "success": _p10_exp.success_rate(goal.split()[0] if goal else "")}
+        return {"history": _p10_exp.history(limit)}
+
+    @app.post("/api/v1/learning/compress")
+    async def _p10_compress(payload: dict, user=Depends(get_current_user)):
+        dry = bool(payload.get("dry_run", True))
+        mtype = payload.get("memory_type", "chat")
+        try:
+            _store = _p2_lt                       # Phase 2 long-term store
+        except NameError:
+            from memory.long_term import LongTermMemory
+            _store = LongTermMemory()
+        return _P10MC(_store).compress(mtype, dry_run=dry)
+
+    # auto-record autonomous runs into experience (workflow learning)
+    try:
+        _p7_orig_run = _P7Auto.run
+        async def _p10_learned_run(self, goal):
+            result = await _p7_orig_run(self, goal)
+            try:
+                _p10_exp.store(goal, [], result.get("status", "?"),
+                               float(result.get("plan_confidence", 0)))
+            except Exception:
+                pass
+            return result
+        _P7Auto.run = _p10_learned_run
+        print("Phase 10: autonomous runs now feed experience replay")
+    except NameError:
+        pass
+
+    print("Phase 10 learning layer active: feedback, experience, prompts, compression")
+except Exception as _p10_err:
+    print(f"WARNING: Phase 10 learning layer not loaded: {_p10_err}")
+# ══════════════ End Phase 10 integration ══════════════
