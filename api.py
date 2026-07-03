@@ -827,3 +827,46 @@ try:
 except Exception as _p6_err:
     print(f"WARNING: Phase 6 workflow engine not loaded: {_p6_err}")
 # ══════════════ End Phase 6 integration ══════════════
+
+
+# ══════════════ Phase 7: Autonomous Mode integration ══════════════
+try:
+    from autonomous import AutonomousMaya as _P7Auto
+
+    def _p7_llm(prompt: str) -> str:
+        """Route autonomous LLM calls through the existing router."""
+        try:
+            from llm.router import LLMRouter
+            if not hasattr(_p7_llm, "_router"):
+                _p7_llm._router = LLMRouter()
+            return _p7_llm._router.chat([{"role": "user", "content": prompt}])
+        except Exception as e:
+            return f"error: llm unavailable ({e})"
+
+    @app.post("/api/v1/autonomous/run")
+    async def _p7_run(payload: dict, user=Depends(get_current_user)):
+        """Full autonomous run. Disabled unless FLAG_AUTONOMOUS=true."""
+        try:
+            from infrastructure import flags as _p7_flags
+            enabled = _p7_flags.enabled("autonomous")
+        except Exception:
+            enabled = False
+        if not enabled:
+            raise HTTPException(status_code=403,
+                                detail="Set FLAG_AUTONOMOUS=true to enable autonomous runs")
+        goal = payload.get("goal", "")
+        if not goal:
+            raise HTTPException(status_code=400, detail="goal is required")
+        try:
+            _fw = _p5_fw            # Phase 5 framework with adopted tools
+        except NameError:
+            _fw = None
+        maya_auto = _P7Auto(framework=_fw, llm_fn=_p7_llm,
+                            approve_dangerous=bool(payload.get("approve_dangerous", False)))
+        result = await maya_auto.run(goal)
+        return result
+
+    print("Phase 7 autonomous mode active (flag-gated)")
+except Exception as _p7_err:
+    print(f"WARNING: Phase 7 autonomous mode not loaded: {_p7_err}")
+# ══════════════ End Phase 7 integration ══════════════
