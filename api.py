@@ -870,3 +870,32 @@ try:
 except Exception as _p7_err:
     print(f"WARNING: Phase 7 autonomous mode not loaded: {_p7_err}")
 # ══════════════ End Phase 7 integration ══════════════
+
+
+# ══════════════ Phase 8: Multi-Model Router+ integration ══════════════
+try:
+    from llm.router_plus import RouterPlus as _P8RP, SmartSelector as _P8Sel, PROVIDER_TABLE as _P8Table
+
+    _p8_router = _P8RP()
+
+    @app.get("/api/v1/llm/stats")
+    async def _p8_stats(user=Depends(get_current_user)):
+        """Live provider stats: latency EMA, error rates, cost table."""
+        return {"stats": _p8_router.stats.snapshot(), "table": _P8Table}
+
+    @app.get("/api/v1/llm/strategy")
+    async def _p8_strategy(strategy: str = "balanced", user=Depends(get_current_user)):
+        """Preview provider ordering for a strategy (cost/latency/quality/balanced)."""
+        try:
+            from llm.router import LLMRouter
+            available = [p for p, info in getattr(LLMRouter, "PROVIDER_INFO", {}).items()] or \
+                        list(_P8Table.keys())
+        except Exception:
+            available = list(_P8Table.keys())
+        return {"strategy": strategy,
+                "order": _p8_router.selector.order(available, strategy)}
+
+    print("Phase 8 router+ active: stats, strategy ordering, fallback chains")
+except Exception as _p8_err:
+    print(f"WARNING: Phase 8 router+ not loaded: {_p8_err}")
+# ══════════════ End Phase 8 integration ══════════════
