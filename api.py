@@ -309,15 +309,15 @@ async def memory_stats(user=Depends(get_current_user)):
 async def list_tools(user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
-    tools = maya_instance.tool_manager.list_tools() if hasattr(maya_instance, "tool_manager") else []
-    return tools
+    reg = maya_instance.tool_manager.get_registry()
+    return [{**t, "enabled": True} for t in reg.list_tools()]
 
 @app.post("/api/v1/tools/{tool_name}/run")
 async def run_tool(tool_name: str, body: dict, user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
     result = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.tool_manager.run(tool_name, body.get("input", {}))
+        None, lambda: maya_instance.tool_manager.get_registry().run(tool_name, body.get("input", {}))
     )
     return {"result": result}
 
@@ -330,8 +330,14 @@ async def update_tool(tool_name: str, req: ToolUpdateRequest, user=Depends(get_c
 @app.get("/api/v1/tools/logs")
 async def tool_logs(limit: int = 50, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance, "tool_manager"):
-        logs = getattr(maya_instance.tool_manager, "logs", [])
-        return logs[-limit:]
+        stats = maya_instance.tool_manager.get_registry()._usage_stats
+        entries = [
+            {"tool": name, "calls": st.get("calls", 0), "successes": st.get("successes", 0),
+             "failures": st.get("failures", 0), "avg_time": round(st.get("avg_time", 0), 3),
+             "last_error": st.get("last_error")}
+            for name, st in stats.items() if st.get("calls", 0) > 0
+        ]
+        return entries[-limit:]
     return []
 
 @app.get("/api/v1/providers")
