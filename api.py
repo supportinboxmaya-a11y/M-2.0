@@ -162,39 +162,7 @@ async def login(req: LoginRequest):
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
-
-@app.post("/api/v1/auth/register")
-async def register():
+async def register(payload: Optional[dict] = None):
     raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
 
 @app.post("/api/v1/auth/logout")
@@ -226,6 +194,7 @@ async def agent_run(req: AgentRunRequest, user=Depends(get_current_user)):
     }
     tasks_db[task_id] = task
     await broadcast({"type": "task_started", "task": task})
+    await fire_webhooks("task.started", task)
 
     async def run_task():
         try:
@@ -244,6 +213,8 @@ async def agent_run(req: AgentRunRequest, user=Depends(get_current_user)):
         except Exception as e:
             tasks_db[task_id].update({"status": "failed", "error": str(e)})
         await broadcast({"type": "task_done", "task": tasks_db[task_id]})
+        final = tasks_db[task_id]
+        await fire_webhooks("task.done" if final.get("status") == "done" else "task.failed", final)
 
     asyncio.create_task(run_task())
     return task
@@ -398,10 +369,13 @@ async def analytics_summary(user=Depends(get_current_user)):
 @app.get("/api/v1/analytics/daily")
 async def analytics_daily(days: int = 7, user=Depends(get_current_user)):
     from collections import defaultdict
+    from datetime import timedelta
+    cutoff = (datetime.utcnow() - timedelta(days=max(days, 1))).date().isoformat()
     daily = defaultdict(int)
     for task in tasks_db.values():
         date = task["created_at"][:10]
-        daily[date] += 1
+        if date >= cutoff:
+            daily[date] += 1
     return [{"date": k, "tasks": v} for k, v in sorted(daily.items())]
 
 @app.get("/api/v1/analytics/providers")
@@ -512,6 +486,8 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
     prompt = body.get("prompt", "Describe this image")
     if not image:
         raise HTTPException(status_code=400, detail="No image provided")
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
     response = await asyncio.get_event_loop().run_in_executor(
         None, lambda: maya_instance.chat(f"[IMAGE ATTACHED] {prompt}")
     )
@@ -522,8 +498,45 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
 # ══════════════════════════════════════════════
 @app.post("/api/v1/voice/transcribe")
 async def voice_transcribe(body: dict, user=Depends(get_current_user)):
-    # Placeholder — integrate Whisper or Groq audio if available
-    return {"transcript": "", "message": "Voice transcription requires Whisper integration"}
+    """Transcribe base64/data-URL audio using Groq Whisper (whisper-large-v3)."""
+    audio = body.get("audio", "")
+    if not audio:
+        raise HTTPException(status_code=400, detail="No audio provided")
+    api_key = os.getenv("GROQ_API_KEY") or os.getenv("GROQ_KEY")
+    if not api_key:
+        return {"transcript": "", "message": "Set GROQ_API_KEY on the server to enable voice transcription"}
+    try:
+        import base64, tempfile
+        # Accept both raw base64 and data URLs (data:audio/webm;base64,....)
+        if "," in audio and audio.strip().startswith("data:"):
+            audio = audio.split(",", 1)[1]
+        raw = base64.b64decode(audio)
+        if len(raw) > 25 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="Audio too large (25MB max)")
+        with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as f:
+            f.write(raw)
+            tmp_path = f.name
+
+        def _transcribe():
+            from groq import Groq
+            client = Groq(api_key=api_key)
+            with open(tmp_path, "rb") as af:
+                res = client.audio.transcriptions.create(
+                    file=("audio.webm", af.read()),
+                    model="whisper-large-v3",
+                )
+            return getattr(res, "text", "") or ""
+
+        text = await asyncio.get_event_loop().run_in_executor(None, _transcribe)
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        return {"transcript": text.strip()}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"transcript": "", "message": f"Transcription failed: {e}"}
 
 # ══════════════════════════════════════════════
 # BACKUP ROUTES
@@ -560,11 +573,96 @@ async def restore_backup(backup_id: str, user=Depends(get_current_user)):
 async def security_status(user=Depends(get_current_user)):
     return {"sandbox": True, "risk_level": "low", "blocked_tools": [], "audit_log": []}
 
+
+# ══════════════════════════════════════════════
+# WEBHOOKS (outbound event notifications)
+# ══════════════════════════════════════════════
+import json as _wh_json
+WEBHOOKS_PATH = "storage/webhooks.json"
+
+def _wh_load() -> dict:
+    try:
+        with open(WEBHOOKS_PATH) as f:
+            return _wh_json.load(f)
+    except Exception:
+        return {}
+
+def _wh_save(data: dict):
+    try:
+        os.makedirs("storage", exist_ok=True)
+        with open(WEBHOOKS_PATH, "w") as f:
+            _wh_json.dump(data, f)
+    except Exception:
+        pass
+
+webhooks_db: dict = _wh_load()
+
+class WebhookCreateRequest(BaseModel):
+    name: str
+    url: str
+    events: list = ["task.done"]
+    active: bool = True
+
+@app.get("/api/v1/webhooks")
+async def list_webhooks(user=Depends(get_current_user)):
+    return {"webhooks": list(webhooks_db.values())}
+
+@app.post("/api/v1/webhooks")
+async def create_webhook(req: WebhookCreateRequest, user=Depends(get_current_user)):
+    if not req.url.startswith(("http://", "https://")):
+        raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
+    wh_id = str(uuid.uuid4())
+    wh = {"id": wh_id, "name": req.name, "url": req.url, "events": req.events,
+          "active": req.active, "created_at": datetime.utcnow().isoformat()}
+    webhooks_db[wh_id] = wh
+    _wh_save(webhooks_db)
+    return wh
+
+@app.put("/api/v1/webhooks/{wh_id}")
+async def update_webhook(wh_id: str, body: dict, user=Depends(get_current_user)):
+    if wh_id not in webhooks_db:
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    for k in ("name", "url", "events", "active"):
+        if k in body:
+            webhooks_db[wh_id][k] = body[k]
+    _wh_save(webhooks_db)
+    return webhooks_db[wh_id]
+
+@app.delete("/api/v1/webhooks/{wh_id}")
+async def delete_webhook(wh_id: str, user=Depends(get_current_user)):
+    if wh_id not in webhooks_db:
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    del webhooks_db[wh_id]
+    _wh_save(webhooks_db)
+    return {"message": "Deleted"}
+
+def _fire_webhooks_sync(event: str, payload: dict):
+    """POST the event to every active webhook subscribed to it (best-effort)."""
+    import requests as _wh_requests
+    for wh in list(webhooks_db.values()):
+        if not wh.get("active") or event not in wh.get("events", []):
+            continue
+        try:
+            _wh_requests.post(wh["url"], json={"event": event, "data": payload},
+                              timeout=5)
+        except Exception:
+            pass
+
+async def fire_webhooks(event: str, payload: dict):
+    await asyncio.get_event_loop().run_in_executor(None, _fire_webhooks_sync, event, payload)
+
 # ══════════════════════════════════════════════
 # WEBSOCKET
 # ══════════════════════════════════════════════
 @app.websocket("/ws/agent")
 async def websocket_endpoint(ws: WebSocket):
+    token = ws.query_params.get("token")
+    if token:
+        try:
+            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        except Exception:
+            await ws.close(code=4401)
+            return
     await ws.accept()
     ws_clients.append(ws)
     try:
