@@ -580,6 +580,132 @@ async def security_status(user=Depends(get_current_user)):
     return {"sandbox": True, "risk_level": "low", "blocked_tools": [], "audit_log": []}
 
 
+
+# ══════════════════════════════════════════════
+# CONTROL PANEL ENDPOINTS
+# ══════════════════════════════════════════════
+
+class FlagUpdateRequest(BaseModel):
+    name: str
+    value: bool
+
+@app.put("/api/v1/flags")
+async def update_flag(req: FlagUpdateRequest, user=Depends(get_current_user)):
+    try:
+        from infrastructure import flags as _cf_flags
+        _cf_flags.set(req.name, req.value)
+        return {"name": req.name, "value": req.value, "flags": _cf_flags.all()}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Flags unavailable: {e}")
+
+@app.get("/api/v1/llm/providers")
+async def llm_providers(user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    return {"providers": maya_instance.router.list_providers()}
+
+class ProviderToggleRequest(BaseModel):
+    enabled: bool
+
+@app.post("/api/v1/llm/providers/{provider}/toggle")
+async def llm_provider_toggle(provider: str, req: ProviderToggleRequest, user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    try:
+        ok = maya_instance.router.set_enabled(provider, req.enabled)
+        return {"provider": provider, "enabled": req.enabled, "ok": bool(ok)}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+approvals_db: dict = {}
+
+@app.get("/api/v1/approval/mode")
+async def approval_mode(user=Depends(get_current_user)):
+    mode = maya_instance.approval.mode if maya_instance else os.getenv("APPROVAL_MODE", "auto")
+    return {"mode": mode}
+
+class ApprovalModeRequest(BaseModel):
+    mode: str
+
+@app.put("/api/v1/approval/mode")
+async def set_approval_mode(req: ApprovalModeRequest, user=Depends(get_current_user)):
+    if req.mode not in ("auto", "human", "skip"):
+        raise HTTPException(status_code=400, detail="mode must be auto, human, or skip")
+    if maya_instance:
+        maya_instance.approval.mode = req.mode
+    return {"mode": req.mode}
+
+class ApprovalRequest(BaseModel):
+    action: str
+    reason: str = ""
+    risk_level: str = "low"
+
+@app.post("/api/v1/approvals/request")
+async def create_approval(req: ApprovalRequest, user=Depends(get_current_user)):
+    aid = str(uuid.uuid4())
+    approvals_db[aid] = {"id": aid, "action": req.action, "reason": req.reason,
+                         "risk_level": req.risk_level, "status": "pending",
+                         "created_at": datetime.utcnow().isoformat()}
+    await broadcast({"type": "approval_requested", "approval": approvals_db[aid]})
+    return approvals_db[aid]
+
+@app.get("/api/v1/approvals")
+async def list_approvals(status: str = "", user=Depends(get_current_user)):
+    items = list(approvals_db.values())
+    if status:
+        items = [a for a in items if a["status"] == status]
+    return {"approvals": sorted(items, key=lambda a: a["created_at"], reverse=True)}
+
+@app.post("/api/v1/approvals/{aid}/{decision}")
+async def decide_approval(aid: str, decision: str, user=Depends(get_current_user)):
+    if aid not in approvals_db:
+        raise HTTPException(status_code=404, detail="Approval not found")
+    if decision not in ("approve", "reject"):
+        raise HTTPException(status_code=400, detail="decision must be approve or reject")
+    approvals_db[aid]["status"] = "approved" if decision == "approve" else "rejected"
+    approvals_db[aid]["decided_at"] = datetime.utcnow().isoformat()
+    return approvals_db[aid]
+
+@app.get("/api/v1/learning/prompts")
+async def learning_prompts(user=Depends(get_current_user)):
+    try:
+        report = _p10_po.report() if "_p10_po" in globals() else {}
+    except Exception:
+        report = {}
+    core = {}
+    if maya_instance and hasattr(maya_instance, "learning"):
+        try:
+            core = getattr(maya_instance.learning, "prompt_stats", lambda: {})()
+        except Exception:
+            core = {}
+    return {"optimizer": report, "core": core}
+
+@app.get("/api/v1/skills")
+async def list_skills(user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    try:
+        plugins = maya_instance.plugins.list_plugins()
+    except Exception:
+        plugins = []
+    return {"skills": plugins}
+
+@app.get("/api/v1/docs")
+async def docs_list(user=Depends(get_current_user)):
+    import glob
+    files = sorted(os.path.basename(f) for f in glob.glob("docs/*.md"))
+    return {"docs": files}
+
+@app.get("/api/v1/docs/{name}")
+async def docs_read(name: str, user=Depends(get_current_user)):
+    if "/" in name or ".." in name or not name.endswith(".md"):
+        raise HTTPException(status_code=400, detail="Invalid document name")
+    path = os.path.join("docs", name)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Document not found")
+    with open(path, encoding="utf-8") as f:
+        return {"name": name, "content": f.read()}
+
 # ══════════════════════════════════════════════
 # WEBHOOKS (outbound event notifications)
 # ══════════════════════════════════════════════
