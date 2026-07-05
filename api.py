@@ -12,12 +12,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 import jwt
+import bcrypt
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # ── Maya Core ──────────────────────────────────
 from core.maya import Maya
+from infrastructure.supabase_client import supabase_store
 
 maya_instance: Optional[Maya] = None
 
@@ -61,48 +63,42 @@ if SECRET_KEY == "maya-secret-key-2024":
 if ADMIN_PASSWORD == "maya2024":
     print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
 
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+DEFAULT_USER_BUDGET_USD = float(os.getenv("DEFAULT_USER_BUDGET_USD", "5.0"))
 
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+def verify_password(password: str, password_hash: str) -> bool:
+    try:
+        return bcrypt.checkpw(password.encode(), password_hash.encode())
+    except Exception:
+        return False
 
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
-
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
-
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
-
-def create_token(email: str) -> str:
-    payload = {"sub": email, "exp": datetime.utcnow() + timedelta(days=7)}
+def create_token(email: str, uid: str = "", role: str = "admin") -> str:
+    payload = {"sub": email, "uid": uid, "role": role,
+               "exp": datetime.utcnow() + timedelta(days=7)}
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    """Returns {'email', 'uid', 'role'}. Kept as a dict (not just the email
+    string) so downstream endpoints can enforce per-user data and admin-only
+    access once Supabase multi-user mode is on."""
     if not credentials:
         raise HTTPException(status_code=401, detail="Not authenticated")
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=["HS256"])
-        return payload["sub"]
-    except:
+        return {"email": payload.get("sub"), "uid": payload.get("uid", ""),
+                "role": payload.get("role", "admin")}
+    except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    """Use as a dependency on admin-only endpoints once multi-user is on.
+    Before Supabase is configured, every logged-in user is treated as admin
+    (there's only the single ADMIN_EMAIL account), so this stays permissive."""
+    if supabase_store.enabled and user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
 
 # ── In-memory task store ────────────────────────
 tasks_db: dict = {}
@@ -120,12 +116,24 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+class RegisterRequest(BaseModel):
+    name: str = ""
+    email: str
+    password: str
+
+class BanRequest(BaseModel):
+    banned: bool = True
+
+class BudgetRequest(BaseModel):
+    budget_usd: float
+
 class AgentRunRequest(BaseModel):
     goal: str
     budget_usd: Optional[float] = 1.0
 
 class ChatRequest(BaseModel):
     message: str
+    chat_id: Optional[str] = None  # groups messages into one conversation thread
 
 class ThinkRequest(BaseModel):
     problem: str
@@ -156,22 +164,57 @@ class WorkflowCreateRequest(BaseModel):
 # ══════════════════════════════════════════════
 @app.post("/api/v1/auth/login")
 async def login(req: LoginRequest):
+    # ── Multi-user mode (Supabase configured) ──────────────
+    if supabase_store.enabled:
+        user = supabase_store.get_user_by_email(req.email)
+        if not user or not verify_password(req.password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        if user.get("banned"):
+            raise HTTPException(status_code=403, detail="This account has been suspended")
+        token = create_token(user["email"], uid=user["id"], role=user.get("role", "user"))
+        return {"access_token": token, "token_type": "bearer",
+                "email": user["email"], "role": user.get("role", "user")}
+
+    # ── Fallback: single hardcoded admin (no Supabase set up yet) ──
     if req.email == ADMIN_EMAIL and req.password == ADMIN_PASSWORD:
-        token = create_token(req.email)
-        return {"access_token": token, "token_type": "bearer", "email": req.email}
+        token = create_token(req.email, uid="", role="admin")
+        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": "admin"}
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.post("/api/v1/auth/register")
-async def register(payload: Optional[dict] = None):
-    raise HTTPException(status_code=403, detail="Registration is disabled. Contact the admin.")
+async def register(req: RegisterRequest):
+    if not supabase_store.enabled:
+        raise HTTPException(status_code=403,
+            detail="Registration needs Supabase configured. See supabase/schema.sql and set "
+                   "SUPABASE_URL / SUPABASE_SERVICE_KEY in the backend's env vars.")
+    if supabase_store.get_user_by_email(req.email):
+        raise HTTPException(status_code=409, detail="An account with this email already exists")
+    role = "admin" if req.email == ADMIN_EMAIL else "user"
+    user = supabase_store.create_user(
+        email=req.email, password_hash=hash_password(req.password),
+        name=req.name, role=role, budget_usd=DEFAULT_USER_BUDGET_USD,
+    )
+    token = create_token(user["email"], uid=user["id"], role=role)
+    return {"access_token": token, "token_type": "bearer", "email": user["email"], "role": role}
 
 @app.post("/api/v1/auth/logout")
-async def logout(user=Depends(get_current_user)):
+async def logout(user: dict = Depends(get_current_user)):
     return {"message": "Logged out"}
 
 @app.post("/api/v1/auth/refresh")
-async def refresh(user=Depends(get_current_user)):
-    return {"access_token": create_token(user), "token_type": "bearer"}
+async def refresh(user: dict = Depends(get_current_user)):
+    token = create_token(user["email"], uid=user.get("uid", ""), role=user.get("role", "admin"))
+    return {"access_token": token, "token_type": "bearer"}
+
+@app.get("/api/v1/users/me")
+async def get_me(user: dict = Depends(get_current_user)):
+    if not supabase_store.enabled:
+        return {"email": user["email"], "role": "admin", "budget_usd": None, "budget_used_usd": None}
+    full = supabase_store.get_user_by_id(user["uid"]) if user.get("uid") else None
+    if not full:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"email": full["email"], "name": full.get("name"), "role": full.get("role"),
+            "budget_usd": full.get("budget_usd"), "budget_used_usd": full.get("budget_used_usd")}
 
 # ══════════════════════════════════════════════
 # AGENT ROUTES
@@ -182,10 +225,18 @@ async def agent_status(user=Depends(get_current_user)):
         raise HTTPException(status_code=503, detail="Maya not initialized")
     return maya_instance.status()
 
+def check_budget(user: dict):
+    """Blocks the request with 402 if this user (Supabase mode only) has used
+    up their budget_usd allowance. No-op when Supabase isn't configured."""
+    if supabase_store.enabled and user.get("uid") and supabase_store.over_budget(user["uid"]):
+        raise HTTPException(status_code=402,
+            detail="Budget exceeded. Ask an admin to raise your limit in the Admin Panel.")
+
 @app.post("/api/v1/agent/run")
-async def agent_run(req: AgentRunRequest, user=Depends(get_current_user)):
+async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
+    check_budget(user)
     task_id = str(uuid.uuid4())
     task = {
         "id": task_id, "goal": req.goal, "status": "running",
@@ -214,22 +265,40 @@ async def agent_run(req: AgentRunRequest, user=Depends(get_current_user)):
             tasks_db[task_id].update({"status": "failed", "error": str(e)})
         await broadcast({"type": "task_done", "task": tasks_db[task_id]})
         final = tasks_db[task_id]
+        if supabase_store.enabled and user.get("uid") and final.get("cost_usd"):
+            supabase_store.add_budget_usage(user["uid"], float(final["cost_usd"]))
         await fire_webhooks("task.done" if final.get("status") == "done" else "task.failed", final)
 
     asyncio.create_task(run_task())
     return task
 
+CHAT_MESSAGE_FLAT_COST_USD = 0.01  # rough per-call estimate until real token costs are wired in
+
 @app.post("/api/v1/agent/chat")
-async def agent_chat(req: ChatRequest, user=Depends(get_current_user)):
+async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
+    check_budget(user)
+
+    history = []
+    use_supabase_history = supabase_store.enabled and user.get("uid") and req.chat_id
+    if use_supabase_history:
+        past = supabase_store.get_chat_history(user["uid"], req.chat_id, limit=20)
+        history = [{"role": m["role"], "content": m["content"]} for m in past]
+
     response = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.chat(req.message)
+        None, lambda: maya_instance.chat(req.message, history=history)
     )
+
+    if use_supabase_history:
+        supabase_store.add_chat_message(user["uid"], req.chat_id, "user", req.message)
+        supabase_store.add_chat_message(user["uid"], req.chat_id, "assistant", response)
+        supabase_store.add_budget_usage(user["uid"], CHAT_MESSAGE_FLAT_COST_USD)
+
     return {"reply": response, "timestamp": datetime.utcnow().isoformat()}
 
 @app.post("/api/v1/agent/think")
-async def agent_think(req: ThinkRequest, user=Depends(get_current_user)):
+async def agent_think(req: ThinkRequest, user: dict = Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
     result = await asyncio.get_event_loop().run_in_executor(
@@ -1216,6 +1285,34 @@ try:
 except Exception as _p9_err:
     print(f"WARNING: Phase 9 enterprise layer not loaded: {_p9_err}")
 # ══════════════ End Phase 9 integration ══════════════
+
+
+# ══════════════ Multi-user (Supabase) — user management ══════════════
+# Feeds the Admin Panel's "Users" section. Works whenever Supabase is
+# configured (SUPABASE_URL / SUPABASE_SERVICE_KEY); returns an empty/limited
+# response otherwise so the panel just shows "no users yet" instead of erroring.
+@app.get("/api/v1/admin/users")
+async def admin_list_users(user: dict = Depends(require_admin)):
+    return {"enabled": supabase_store.enabled, "users": supabase_store.list_users()}
+
+@app.put("/api/v1/admin/users/{user_id}/ban")
+async def admin_ban_user(user_id: str, req: BanRequest, user: dict = Depends(require_admin)):
+    if not supabase_store.enabled:
+        raise HTTPException(status_code=400, detail="Supabase not configured")
+    updated = supabase_store.set_banned(user_id, req.banned)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated
+
+@app.put("/api/v1/admin/users/{user_id}/budget")
+async def admin_set_budget(user_id: str, req: BudgetRequest, user: dict = Depends(require_admin)):
+    if not supabase_store.enabled:
+        raise HTTPException(status_code=400, detail="Supabase not configured")
+    updated = supabase_store.set_budget(user_id, req.budget_usd)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated
+# ══════════════ End multi-user block ══════════════
 
 
 # ══════════════ Phase 10: Learning Layer integration ══════════════

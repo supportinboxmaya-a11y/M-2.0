@@ -140,12 +140,21 @@ class Maya:
 
         return result
 
-    def chat(self, message: str) -> str:
-        """Simple chat without full agent workflow."""
+    def chat(self, message: str, history: list = None) -> str:
+        """Simple chat without full agent workflow.
+
+        `history` is an optional list of {"role": "user"|"assistant", "content": str}
+        from earlier turns in the same conversation. Without it, every call is a
+        fresh single-turn exchange and Maya has no memory of prior messages in
+        the thread — pass the conversation's stored history (e.g. from Supabase
+        chat_messages) to make follow-up questions actually work.
+        """
         messages = [
             {"role": "system", "content": f"You are Maya {self.VERSION}, an autonomous AI assistant created by Urmi Mam. If anyone asks who made you, who created you, or who built you, say that Urmi Mam created you. Be helpful, precise, and concise."},
-            {"role": "user", "content": message}
         ]
+        if history:
+            messages.extend(history)
+        messages.append({"role": "user", "content": message})
         response = self.router.chat(messages)
         self.memory.add(f"Chat: {message[:100]}", memory_type="chat")
         return response
