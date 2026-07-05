@@ -6,6 +6,8 @@ anthropic>=0.20.0
 
 # Storage (lightweight)
 SQLAlchemy>=2.0.0
+supabase>=2.3.0
+bcrypt>=4.1.0
 
 # Web Tools
 requests>=2.31.0
