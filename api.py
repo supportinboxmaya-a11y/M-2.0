@@ -607,8 +607,21 @@ async def update_plugin(plugin_id: str, body: dict, user=Depends(get_current_use
 @app.post("/api/v1/plugins/{plugin_id}/install")
 async def install_plugin(plugin_id: str, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance, "plugin_loader"):
-        maya_instance.plugin_loader.install(plugin_id)
+        ok = maya_instance.plugin_loader.install(plugin_id)
+        if not ok:
+            raise HTTPException(status_code=501,
+                detail="Installing new plugins from a catalog isn't supported yet — "
+                       "drop a .py file into the plugins/ folder instead.")
     return {"id": plugin_id, "installed": True}
+
+@app.delete("/api/v1/plugins/{plugin_id}")
+async def delete_plugin(plugin_id: str, user=Depends(get_current_user)):
+    if not maya_instance or not hasattr(maya_instance, "plugin_loader"):
+        raise HTTPException(status_code=503, detail="Plugin system not initialized")
+    ok = maya_instance.plugin_loader.uninstall(plugin_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Plugin not found")
+    return {"id": plugin_id, "deleted": True}
 
 # ══════════════════════════════════════════════
 # VISION ROUTES
@@ -698,6 +711,14 @@ async def restore_backup(backup_id: str, user=Depends(get_current_user)):
     if not backup:
         raise HTTPException(status_code=404, detail="Backup not found")
     return {"message": f"Restored from {backup['name']}"}
+
+@app.delete("/api/v1/backup/{backup_id}")
+async def delete_backup(backup_id: str, user=Depends(get_current_user)):
+    global backups_db
+    if not any(b["id"] == backup_id for b in backups_db):
+        raise HTTPException(status_code=404, detail="Backup not found")
+    backups_db = [b for b in backups_db if b["id"] != backup_id]
+    return {"id": backup_id, "deleted": True}
 
 # ══════════════════════════════════════════════
 # SECURITY ROUTES
@@ -1361,6 +1382,18 @@ try:
         org = _p9_orgs.create_org(payload.get("name", "org"))
         _p9_audit.record(_p9_actor(user), "org_created", org["id"], org)
         return org
+
+    @app.delete("/api/v1/admin/orgs/{org_id}")
+    async def _p9_delete_org(org_id: str, user=Depends(require_admin)):
+        _p9_orgs.delete_org(org_id)
+        _p9_audit.record(_p9_actor(user), "org_deleted", org_id, {})
+        return {"id": org_id, "deleted": True}
+
+    @app.delete("/api/v1/admin/orgs/{org_id}/members/{email}")
+    async def _p9_remove_member(org_id: str, email: str, user=Depends(require_admin)):
+        _p9_orgs.remove_member(email, org_id)
+        _p9_audit.record(_p9_actor(user), "member_removed", org_id, {"email": email})
+        return {"org_id": org_id, "email": email, "removed": True}
 
     @app.post("/api/v1/admin/orgs/{org_id}/teams")
     async def _p9_create_team(org_id: str, payload: dict, user=Depends(get_current_user)):

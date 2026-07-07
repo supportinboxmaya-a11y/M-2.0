@@ -25,6 +25,12 @@ class OrgStore:
     def list_orgs(self) -> list:
         return self.db.query("SELECT * FROM orgs ORDER BY created")
 
+    def delete_org(self, org_id: str) -> bool:
+        self.db.execute("DELETE FROM members WHERE org_id=?", (org_id,))
+        self.db.execute("DELETE FROM teams WHERE org_id=?", (org_id,))
+        self.db.execute("DELETE FROM orgs WHERE id=?", (org_id,))
+        return True
+
     # teams
     def create_team(self, org_id: str, name: str) -> dict:
         tid = uuid.uuid4().hex[:10]

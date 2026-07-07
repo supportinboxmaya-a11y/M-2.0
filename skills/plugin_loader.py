@@ -29,6 +29,10 @@ class PluginLoader:
         self.plugins_dir.mkdir(parents=True, exist_ok=True)
         self.tool_registry = tool_registry
         self.loaded_plugins: Dict[str, Dict] = {}
+        # api.py's toggle/uninstall endpoints called set_enabled()/uninstall()
+        # as if they already existed here — they didn't, so every toggle or
+        # delete attempt on the Plugins page crashed with a 500 error.
+        self._enabled_state: Dict[str, bool] = {}
 
     def load_all(self) -> int:
         """plugins/ folder থেকে সব plugins load করে।"""
@@ -95,10 +99,48 @@ class PluginLoader:
                 "name": p["name"],
                 "description": p["description"],
                 "version": p["version"],
-                "tools": p["tools"]
+                "tools": p["tools"],
+                "enabled": self._enabled_state.get(p["name"], True),
             }
             for p in self.loaded_plugins.values()
         ]
+
+    def set_enabled(self, name: str, enabled: bool) -> bool:
+        """Enables/disables a plugin. Note: this does not unregister the
+        plugin's tools from the tool registry when disabled — there's no
+        unregister() there to call — so a 'disabled' plugin's tools may
+        still technically be callable until the next restart. Good enough
+        to stop the page from crashing and to reflect intent in the UI;
+        real tool-level gating would need registry support added too."""
+        if name not in self.loaded_plugins:
+            return False
+        self._enabled_state[name] = bool(enabled)
+        return True
+
+    def install(self, name: str) -> bool:
+        """Stub — there's no plugin catalog/marketplace in this codebase to
+        install FROM yet, so this can't actually fetch and load a new
+        plugin by name. Returns False rather than raising, so the endpoint
+        can respond clearly instead of crashing with an AttributeError like
+        it used to (this method didn't exist at all before)."""
+        return False
+
+    def uninstall(self, name: str) -> bool:
+        """Removes a plugin from the loaded registry and deletes its file
+        from disk. Like set_enabled, this can't retract tools already
+        registered with the tool registry this session — they stay callable
+        until restart, since ToolRegistry has no unregister() method."""
+        if name not in self.loaded_plugins:
+            return False
+        path = self.loaded_plugins[name].get("path")
+        del self.loaded_plugins[name]
+        self._enabled_state.pop(name, None)
+        if path:
+            try:
+                Path(path).unlink(missing_ok=True)
+            except Exception as e:
+                log.warning(f"Could not delete plugin file {path}: {e}")
+        return True
 
     def get_plugin(self, name: str) -> Optional[Dict]:
         return self.loaded_plugins.get(name)
