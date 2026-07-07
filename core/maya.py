@@ -105,7 +105,7 @@ class Maya:
         print(f"  Budget    : ${self.cost.budget_usd:.2f}")
         print(f"{'='*50}\n")
 
-    def run(self, goal: str, max_retries: int = 3) -> dict:
+    def run(self, goal: str, max_retries: int = 3, task_id: str = None) -> dict:
         """
         Goal achieve করার জন্য full autonomous workflow run করে.
         """
@@ -123,7 +123,10 @@ class Maya:
 
         # Human approval if needed
         if self.approval.needs_approval(goal, risk.get("level", "low")):
-            approved = self.approval.request_approval(goal)
+            approved = self.approval.request_approval(
+                goal, reason=risk.get("reason", ""),
+                risk_level=risk.get("level", "high"), task_id=task_id,
+            )
             if not approved:
                 return {"success": False, "result": "User denied approval"}
 

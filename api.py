@@ -2,7 +2,7 @@
 Maya 2.0 ULTRA - FastAPI Server
 Connects Maya core to the React frontend
 """
-import os, uuid, asyncio
+import os, uuid, asyncio, time
 from datetime import datetime, timedelta
 from typing import Optional, List
 from contextlib import asynccontextmanager
@@ -22,11 +22,14 @@ from core.maya import Maya
 from infrastructure.supabase_client import supabase_store
 
 maya_instance: Optional[Maya] = None
+MAIN_EVENT_LOOP: Optional[asyncio.AbstractEventLoop] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global maya_instance
+    global maya_instance, MAIN_EVENT_LOOP
+    MAIN_EVENT_LOOP = asyncio.get_running_loop()
     maya_instance = Maya()
+    maya_instance.approval.request_handler = web_approval_handler
     print("✅ Maya 2.0 ULTRA started")
     yield
     print("Maya shutting down...")
@@ -250,7 +253,7 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
     async def run_task():
         try:
             result = await asyncio.get_event_loop().run_in_executor(
-                None, lambda: maya_instance.run(req.goal)
+                None, lambda: maya_instance.run(req.goal, task_id=task_id)
             )
             tasks_db[task_id].update({
                 "status": "done" if result.get("success") else "failed",
@@ -687,6 +690,54 @@ async def llm_provider_toggle(provider: str, req: ProviderToggleRequest, user=De
         raise HTTPException(status_code=400, detail=str(e))
 
 approvals_db: dict = {}
+APPROVAL_TIMEOUT_SECONDS = int(os.getenv("APPROVAL_TIMEOUT_SECONDS", "600"))
+
+def web_approval_handler(action: str, reason: str = "", risk_level: str = "high", task_id: str = None) -> bool:
+    """The actual link between the Approvals page and the executor.
+
+    Runs inside Maya's background worker thread (agent_run's run_in_executor),
+    NOT the main event loop — so blocking here with time.sleep() only pauses
+    this one task, never the server. It creates a pending row here (the same
+    store /api/v1/approvals reads from), pushes it live over the websocket,
+    and polls until /api/v1/approvals/{id}/{decision} flips the status —
+    that's the endpoint that already existed but had nothing to wake up.
+    """
+    aid = str(uuid.uuid4())
+    approvals_db[aid] = {
+        "id": aid, "action": action, "reason": reason, "risk_level": risk_level,
+        "task_id": task_id, "status": "pending", "created_at": datetime.utcnow().isoformat(),
+    }
+
+    if task_id and task_id in tasks_db:
+        tasks_db[task_id]["status"] = "waiting_approval"
+
+    if MAIN_EVENT_LOOP:
+        try:
+            asyncio.run_coroutine_threadsafe(
+                broadcast({"type": "approval_requested", "approval": approvals_db[aid]}),
+                MAIN_EVENT_LOOP,
+            )
+        except Exception:
+            pass
+
+    waited = 0
+    poll_interval = 2
+    while waited < APPROVAL_TIMEOUT_SECONDS:
+        status = approvals_db.get(aid, {}).get("status")
+        if status == "approved":
+            if task_id and task_id in tasks_db:
+                tasks_db[task_id]["status"] = "running"
+            return True
+        if status == "rejected":
+            return False
+        time.sleep(poll_interval)
+        waited += poll_interval
+
+    # Timed out with no response — fail safe (reject) rather than silently proceeding.
+    approvals_db[aid]["status"] = "rejected"
+    approvals_db[aid]["decided_at"] = datetime.utcnow().isoformat()
+    approvals_db[aid]["reason"] = (reason + " " if reason else "") + "[auto-rejected: no response within timeout]"
+    return False
 
 @app.get("/api/v1/approval/mode")
 async def approval_mode(user=Depends(get_current_user)):
