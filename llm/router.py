@@ -7,6 +7,8 @@ Maya 2.0 - Ultra LLM Router
 import json
 import os
 import time
+import uuid
+from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from .providers.groq import GroqProvider
 from .providers.gemini import GeminiProvider
@@ -118,6 +120,7 @@ class LLMRouter:
             except Exception as e:
                 last_error = str(e)
                 self._update_health(p, success=False, error=last_error)
+                self._log_request(p, model, len(str(messages)), 0, 0, False, error=last_error)
                 print(f"   ⚠️ [{p}] failed: {last_error[:80]}, trying next...")
                 continue
 
@@ -268,15 +271,23 @@ class LLMRouter:
             if h["error_count"] >= 5:
                 h["available"] = False
 
-    def _log_request(self, provider: str, model: Optional[str], input_len: int, output_len: int, elapsed: float, success: bool):
-        """Request log করে।"""
+    def _log_request(self, provider: str, model: Optional[str], input_len: int, output_len: int,
+                      elapsed: float, success: bool, error: str = None):
+        """Request log করে। Includes id/timestamp/duration_ms so the Backend
+        Logs page can actually display these (it previously read from an
+        attribute name, 'logs', that didn't exist on this class at all —
+        every LLM call was silently invisible there)."""
         self.request_log.append({
+            "id": str(uuid.uuid4()),
             "provider": provider,
             "model": model,
             "input_chars": input_len,
             "output_chars": output_len,
             "response_time": round(elapsed, 2),
-            "success": success
+            "duration_ms": round(elapsed * 1000, 1),
+            "success": success,
+            "error": error,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         # Last 100 only রাখি
         if len(self.request_log) > 100:
