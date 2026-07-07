@@ -424,6 +424,30 @@ async def delete_memory(memory_id: str, user=Depends(get_current_user)):
     ok = maya_instance.memory.delete(memory_id)
     return {"message": "Deleted" if ok else "Not found", "deleted": bool(ok)}
 
+class MemoryUpdateRequest(BaseModel):
+    content: str
+
+@app.put("/api/v1/memory/{memory_id}")
+async def update_memory(memory_id: str, req: MemoryUpdateRequest, user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    updated = maya_instance.memory.update(memory_id, req.content)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Memory not found")
+    return updated
+
+@app.get("/api/v1/memory/{memory_id}/versions")
+async def memory_versions(memory_id: str, user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    return {"memory_id": memory_id, "versions": maya_instance.memory.get_versions(memory_id)}
+
+@app.get("/api/v1/memory/analytics")
+async def memory_analytics(user=Depends(get_current_user)):
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    return maya_instance.memory.get_analytics()
+
 @app.get("/api/v1/memory/stats")
 async def memory_stats(user=Depends(get_current_user)):
     if not maya_instance:

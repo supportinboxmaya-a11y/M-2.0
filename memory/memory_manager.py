@@ -253,6 +253,19 @@ class MemoryManager:
         backend even though the UI reported success."""
         return self.long_term.delete(memory_id)
 
+    def update(self, memory_id: str, new_content: str) -> Optional[Dict]:
+        """Edits a memory, re-scoring importance and keeping the old
+        content as a version instead of losing it."""
+        result = self.long_term.update(memory_id, new_content,
+                                        new_metadata={"importance": self.scorer.score(new_content)})
+        return result
+
+    def get_versions(self, memory_id: str) -> List[Dict]:
+        return self.long_term.get_versions(memory_id)
+
+    def get_analytics(self) -> Dict:
+        return self.long_term.get_analytics()
+
     def get_all(self, limit: int = 50, memory_type: str = None) -> List[Dict]:
         """Same story as delete() — api.py's /memory/stats checked for this
         with hasattr() and it didn't exist, so total count was always 0."""
