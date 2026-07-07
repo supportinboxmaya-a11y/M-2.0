@@ -30,6 +30,15 @@ async def lifespan(app: FastAPI):
     MAIN_EVENT_LOOP = asyncio.get_running_loop()
     maya_instance = Maya()
     maya_instance.approval.request_handler = web_approval_handler
+    # Re-apply any provider keys previously set via the Admin Panel — env
+    # vars alone would reset to whatever's in Render on every restart/redeploy.
+    if supabase_store.enabled:
+        try:
+            for provider, key in supabase_store.get_provider_keys().items():
+                if key:
+                    maya_instance.router.set_key(provider, key)
+        except Exception as e:
+            print(f"WARNING: could not load saved provider keys: {e}")
     print("✅ Maya 2.0 ULTRA started")
     yield
     print("Maya shutting down...")
@@ -698,6 +707,28 @@ async def llm_provider_toggle(provider: str, req: ProviderToggleRequest, user=De
         return {"provider": provider, "enabled": req.enabled, "ok": bool(ok)}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+class ProviderKeyRequest(BaseModel):
+    api_key: str
+
+@app.put("/api/v1/llm/providers/{provider}/key")
+async def llm_provider_set_key(provider: str, req: ProviderKeyRequest, user: dict = Depends(require_admin)):
+    """Sets an LLM provider's API key from the Admin Panel instead of Render's
+    env vars — takes effect immediately (no redeploy), and is saved to
+    Supabase so it survives the next restart. Falls back to being in-memory
+    only (lost on restart) if Supabase isn't configured."""
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    if not req.api_key or not req.api_key.strip():
+        raise HTTPException(status_code=400, detail="api_key cannot be empty")
+    ok = maya_instance.router.set_key(provider, req.api_key.strip())
+    if not ok:
+        raise HTTPException(status_code=400, detail=f"Unknown provider or key type: {provider}")
+    persisted = False
+    if supabase_store.enabled:
+        supabase_store.set_provider_key(provider, req.api_key.strip())
+        persisted = True
+    return {"provider": provider, "ok": True, "persisted": persisted}
 
 approvals_db: dict = {}
 APPROVAL_TIMEOUT_SECONDS = int(os.getenv("APPROVAL_TIMEOUT_SECONDS", "600"))
