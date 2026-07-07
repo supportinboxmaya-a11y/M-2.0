@@ -30,7 +30,19 @@ class WorkflowEngine:
         self.memory = memory_manager
         self.learning = learning_engine
 
-    def run(self, goal: str, max_retries: int = 3) -> Dict:
+    def run(self, goal: str, max_retries: int = 3, progress_callback=None) -> Dict:
+        """`progress_callback(dict)` — if given, called live as the workflow
+        moves through phases and steps (planning -> executing each step with
+        its tool -> verifying), instead of the caller only finding out what
+        happened after everything finishes. Never lets a callback error break
+        the actual task."""
+        def notify(payload: Dict):
+            if progress_callback:
+                try:
+                    progress_callback(payload)
+                except Exception:
+                    pass
+
         task = self.task_manager.create_task(goal)
         log.info(f"Starting task: {goal[:80]}")
         print(f"\n{'='*60}")
@@ -44,6 +56,7 @@ class WorkflowEngine:
         for attempt in range(max_retries):
             print(f"\nPlanning... (attempt {attempt+1}/{max_retries})")
             self.task_manager.update_status(task.id, TASK_RUNNING)
+            notify({"phase": "planning", "attempt": attempt + 1})
 
             # Memory context inject করি
             context = self._get_context(goal)
@@ -61,6 +74,7 @@ class WorkflowEngine:
             complexity = plan.get("complexity", "medium")
             log.info(f"Plan created: {len(steps)} steps, complexity={complexity}")
             print(f"Steps: {len(steps)} | Complexity: {complexity}")
+            notify({"phase": "planned", "total_steps": len(steps), "complexity": complexity})
 
             if not steps:
                 errors.append("Planner returned no steps")
@@ -71,9 +85,15 @@ class WorkflowEngine:
             failed_step = None
 
             for step in steps:
+                notify({"phase": "step_start", "step": step.get("step"),
+                        "description": step.get("description", ""), "tool": step.get("tool")})
                 result = self.executor.execute_step(step, context=context, previous_results=results)
                 results.append(result)
                 all_results.append(result)
+                notify({"phase": "step_done", "step": result.get("step"),
+                        "description": result.get("description", ""),
+                        "tool": result.get("tool_used"), "success": result.get("success"),
+                        "result": result.get("result")})
 
                 # Track tools used
                 tool = result.get("tool_used")
@@ -100,6 +120,7 @@ class WorkflowEngine:
 
             # Verify
             final_result = self._combine_results(results)
+            notify({"phase": "verifying"})
             verification = self.verifier.verify(goal, final_result, context=context)
             verdict = verification.get("verdict", "failure")
             quality = verification.get("quality_score", 0)

@@ -6,6 +6,7 @@ Maya 2.0 - Ultra Tool Registry
 
 from typing import Dict, Any, Callable, List, Optional
 import time
+from datetime import datetime, timezone
 
 
 class ToolRegistry:
@@ -72,16 +73,27 @@ class ToolRegistry:
         return list(self._tools.keys())
 
     def list_tools(self) -> List[Dict]:
-        """সব tool এর details।"""
-        return [
-            {
+        """সব tool এর details। Frontend's Tool type expects call_count /
+        success_rate / avg_duration_ms / last_used — this used to only send
+        a raw 'calls' number, so the Tools page always showed "undefined"
+        for the other three fields even when they were being tracked fine
+        internally."""
+        out = []
+        for name in self._tools:
+            stats = self._usage_stats.get(name, {})
+            calls = stats.get("calls", 0)
+            successes = stats.get("successes", 0)
+            out.append({
                 "name": name,
                 "description": self._descriptions.get(name, ""),
                 "category": self._categories.get(name, "general"),
-                "calls": self._usage_stats.get(name, {}).get("calls", 0)
-            }
-            for name in self._tools
-        ]
+                "calls": calls,  # kept for backwards compatibility with any other caller
+                "call_count": calls,
+                "success_rate": round((successes / calls) * 100, 1) if calls else 0,
+                "avg_duration_ms": round(stats.get("avg_time", 0) * 1000, 1),
+                "last_used": stats.get("last_used"),
+            })
+        return out
 
     def tools_by_category(self, category: str) -> List[str]:
         """Category অনুযায়ী tools।"""
@@ -137,6 +149,7 @@ class ToolRegistry:
         """Usage stats update করে।"""
         stats = self._usage_stats.get(name, {})
         stats["calls"] = stats.get("calls", 0) + 1
+        stats["last_used"] = datetime.now(timezone.utc).isoformat()
         if success:
             stats["successes"] = stats.get("successes", 0) + 1
         else:

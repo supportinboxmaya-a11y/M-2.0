@@ -252,17 +252,53 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
     task_id = str(uuid.uuid4())
     task = {
         "id": task_id, "goal": req.goal, "status": "running",
-        "steps": [], "created_at": datetime.utcnow().isoformat(),
+        "steps": [], "current_phase": "starting", "created_at": datetime.utcnow().isoformat(),
         "provider_used": None, "cost_usd": 0, "tokens_used": 0
     }
     tasks_db[task_id] = task
     await broadcast({"type": "task_started", "task": task})
     await fire_webhooks("task.started", task)
 
+    def on_progress(payload: dict):
+        """Called from Maya's worker thread as it plans/executes/verifies —
+        this is what makes 'what is Maya doing right now' actually visible
+        instead of the UI only finding out after the whole task finishes."""
+        if task_id not in tasks_db:
+            return
+        phase = payload.get("phase")
+        tasks_db[task_id]["current_phase"] = phase
+
+        if phase == "step_start":
+            tasks_db[task_id]["steps"].append({
+                "step": payload.get("step"),
+                "title": (payload.get("description") or "Step")[:60],
+                "description": payload.get("description", ""),
+                "tool": payload.get("tool"),
+                "result": None, "success": None, "error": None,
+            })
+        elif phase == "step_done":
+            for s in tasks_db[task_id]["steps"]:
+                if s["step"] == payload.get("step"):
+                    s.update({
+                        "tool": payload.get("tool") or s.get("tool"),
+                        "result": payload.get("result"),
+                        "success": payload.get("success"),
+                    })
+                    break
+
+        if MAIN_EVENT_LOOP:
+            try:
+                asyncio.run_coroutine_threadsafe(
+                    broadcast({"type": "task_progress", "task_id": task_id, "task": tasks_db[task_id]}),
+                    MAIN_EVENT_LOOP,
+                )
+            except Exception:
+                pass
+
     async def run_task():
         try:
             result = await asyncio.get_event_loop().run_in_executor(
-                None, lambda: maya_instance.run(req.goal, task_id=task_id)
+                None, lambda: maya_instance.run(req.goal, task_id=task_id, progress_callback=on_progress)
             )
             raw_steps = result.get("steps", []) or []
             normalized_steps = [{
