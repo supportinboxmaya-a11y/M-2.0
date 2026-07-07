@@ -131,7 +131,8 @@ class WorkflowEngine:
                     "task_id": task.id,
                     "quality_score": quality,
                     "attempts": attempt + 1,
-                    "tools_used": tools_used
+                    "tools_used": tools_used,
+                    "steps": all_results,
                 }
 
             # Partial success হলেও কিছু return করি
@@ -166,7 +167,8 @@ class WorkflowEngine:
             "task_id": task.id,
             "attempts": max_retries,
             "errors": errors,
-            "tools_used": tools_used
+            "tools_used": tools_used,
+            "steps": all_results,
         }
 
     def _get_context(self, goal: str) -> str:
