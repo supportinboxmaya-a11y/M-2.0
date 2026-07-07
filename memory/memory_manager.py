@@ -13,6 +13,10 @@ from .episodic_memory import EpisodicMemory
 from .semantic_memory import SemanticMemory
 from .vector_memory import VectorMemory
 from .context_manager import ContextManager
+from .importance import ImportanceScorer
+from .ranker import MemoryRanker, _tokens
+from .summarizer import MemorySummarizer
+from .lifecycle import MemoryLifecycle
 from maya_logging.logger import get_logger
 
 log = get_logger("memory")
@@ -37,19 +41,37 @@ class MemoryManager:
         self.semantic = SemanticMemory()
         self.vector = VectorMemory()
         self.context = ContextManager()
+        # These four existed as real, tested modules but were never wired
+        # into MemoryManager — add() never scored importance, search()
+        # never ranked by it, nothing deduplicated, and nothing compressed
+        # old memories down. They're connected now.
+        self.scorer = ImportanceScorer()
+        self.ranker = MemoryRanker(self.scorer)
+        self.summarizer = MemorySummarizer()
+        self.lifecycle = MemoryLifecycle(self.long_term, scorer=self.scorer)
         self._session_start = datetime.now().isoformat()
         log.info("Memory systems ready")
 
     def add(self, content: str, memory_type: str = "general", metadata: Dict = None) -> str:
         """
         Content সব memory systems এ add করে।
-        Returns memory ID.
+        Returns memory ID — or the existing memory's ID if this is a
+        near-duplicate of something already stored (dedup check below),
+        so callers can't tell the difference without checking metadata.
         """
         if not content or not content.strip():
             return ""
 
+        existing_id = self._find_duplicate(content, memory_type)
+        if existing_id:
+            log.debug(f"Duplicate memory skipped [{memory_type}]: {content[:60]}")
+            return existing_id
+
+        metadata = dict(metadata or {})
+        metadata["importance"] = self.scorer.score(content, memory_type)
+
         # Short-term এ always add
-        self.short_term.add(content, metadata or {})
+        self.short_term.add(content, metadata)
 
         # Long-term এ persist করি
         mid = self.long_term.add(content, memory_type, metadata)
@@ -60,24 +82,43 @@ class MemoryManager:
         log.debug(f"Memory added [{memory_type}]: {content[:60]}")
         return mid
 
+    def _find_duplicate(self, content: str, memory_type: str, threshold: float = 0.87) -> Optional[str]:
+        """Token-overlap check against recent memories of the same type.
+        Deliberately cheap (no embeddings/network call) — good enough to
+        stop the same fact/preference being saved over and over, which is
+        what was actually happening with none of this in place before."""
+        new_tokens = _tokens(content)
+        if not new_tokens:
+            return None
+        recent = self.long_term.get_all(limit=200, memory_type=memory_type)
+        for m in recent:
+            existing_tokens = _tokens(m.get("content", ""))
+            if not existing_tokens:
+                continue
+            overlap = len(new_tokens & existing_tokens) / len(new_tokens | existing_tokens)
+            if overlap >= threshold:
+                return m["id"]
+        return None
+
     def search(self, query: str, limit: int = 5, memory_type: str = None) -> List[Dict]:
         """
         Query দিয়ে memory search করে।
-        Vector search + keyword search combine করে।
+        Vector search + keyword search combine করে, তারপর relevance +
+        importance দিয়ে rank করে — আগে শুধু vector results আগে, keyword
+        results পরে জোড়া লাগানো হত, প্রকৃত ranking ছাড়াই।
         """
         results = []
 
         # Vector semantic search
         try:
-            vector_results = self.vector.search(query, limit=limit)
+            vector_results = self.vector.search(query, limit=limit * 2)
             results.extend(vector_results)
         except Exception as e:
             log.warning(f"Vector search failed: {e}")
 
         # Keyword search in long-term
         try:
-            keyword_results = self.long_term.search(query, limit=limit)
-            # Deduplicate
+            keyword_results = self.long_term.search(query, limit=limit * 2, memory_type=memory_type)
             existing = {r.get("content", "") for r in results}
             for r in keyword_results:
                 if r.get("content", "") not in existing:
@@ -86,8 +127,9 @@ class MemoryManager:
         except Exception as e:
             log.warning(f"Long-term search failed: {e}")
 
-        log.debug(f"Memory search: '{query}' -> {len(results)} results")
-        return results[:limit]
+        ranked = self.ranker.rank(query, results, limit=limit)
+        log.debug(f"Memory search: '{query}' -> {len(ranked)} results")
+        return ranked
 
     def remember_task(self, goal: str, steps: List[Dict], result: str, success: bool,
                       tools_used: List[str] = None, errors: List[str] = None):
@@ -172,9 +214,57 @@ class MemoryManager:
 
         return "\n".join(tips)
 
+    def compress(self, memory_type: str = "general", keep_recent: int = 20,
+                 dry_run: bool = True) -> Dict:
+        """Summarizes the older, lower-importance memories of a type into a
+        single compact entry and deletes the originals — actual compression,
+        not just an on-demand summary for display (that's what /memory/summary
+        already did; this is the first thing that actually shrinks storage).
+        Keeps the `keep_recent` most recent memories of this type untouched.
+        """
+        rows = self.long_term.get_all(limit=100000, memory_type=memory_type)
+        if len(rows) <= keep_recent:
+            return {"compressed": 0, "kept": len(rows), "dry_run": dry_run}
+
+        rows.sort(key=lambda m: m.get("timestamp", ""), reverse=True)
+        to_compress = rows[keep_recent:]
+        if not to_compress:
+            return {"compressed": 0, "kept": len(rows), "dry_run": dry_run}
+
+        summary_text = self.summarizer.summarize([m.get("content", "") for m in to_compress])
+        result = {
+            "compressed": len(to_compress), "kept": keep_recent,
+            "summary_preview": summary_text[:200], "dry_run": dry_run,
+        }
+        if not dry_run and summary_text:
+            for m in to_compress:
+                self.long_term.delete(m["id"])
+            self.long_term.add(
+                f"[Compressed summary of {len(to_compress)} older '{memory_type}' memories] {summary_text}",
+                memory_type="compressed",
+                metadata={"source_type": memory_type, "source_count": len(to_compress)},
+            )
+        return result
+
+    def delete(self, memory_id: str) -> bool:
+        """Deletes a memory by id. api.py's DELETE endpoint checked for this
+        method with hasattr() before this existed — it was always False, so
+        every 'delete' from the Memory page quietly did nothing on the
+        backend even though the UI reported success."""
+        return self.long_term.delete(memory_id)
+
+    def get_all(self, limit: int = 50, memory_type: str = None) -> List[Dict]:
+        """Same story as delete() — api.py's /memory/stats checked for this
+        with hasattr() and it didn't exist, so total count was always 0."""
+        return self.long_term.get_all(limit=limit, memory_type=memory_type)
+
+    def count(self) -> int:
+        return self.long_term.count()
+
     def get_stats(self) -> Dict:
         """Memory system statistics।"""
         return {
+            "total_memories": self.long_term.count(),
             "short_term_items": len(self.short_term.get_all()),
             "session_start": self._session_start,
             "context_goal": self.context.current_goal,
