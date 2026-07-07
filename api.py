@@ -255,11 +255,21 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
             result = await asyncio.get_event_loop().run_in_executor(
                 None, lambda: maya_instance.run(req.goal, task_id=task_id)
             )
+            raw_steps = result.get("steps", []) or []
+            normalized_steps = [{
+                "step": s.get("step"),
+                "title": (s.get("description") or "Step")[:60],
+                "description": s.get("description", ""),
+                "tool": s.get("tool_used"),
+                "result": s.get("result"),
+                "success": s.get("success"),
+                "error": s.get("error"),
+            } for s in raw_steps]
             tasks_db[task_id].update({
                 "status": "done" if result.get("success") else "failed",
                 "result": result.get("result", ""),
                 "error": result.get("error"),
-                "steps": result.get("steps", []),
+                "steps": normalized_steps,
                 "completed_at": datetime.utcnow().isoformat(),
                 "cost_usd": result.get("cost_usd", 0),
                 "tokens_used": result.get("tokens_used", 0),
