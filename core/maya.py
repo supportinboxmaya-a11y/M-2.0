@@ -105,9 +105,11 @@ class Maya:
         print(f"  Budget    : ${self.cost.budget_usd:.2f}")
         print(f"{'='*50}\n")
 
-    def run(self, goal: str, max_retries: int = 3, task_id: str = None) -> dict:
+    def run(self, goal: str, max_retries: int = 3, task_id: str = None, progress_callback=None) -> dict:
         """
         Goal achieve করার জন্য full autonomous workflow run করে.
+        `progress_callback`, if given, is called live as planning/execution/
+        verification happen — see WorkflowEngine.run() for the payload shapes.
         """
         log.info(f"New goal: {goal}")
 
@@ -136,7 +138,7 @@ class Maya:
         past_tips = self.memory.get_tips_for_goal(goal)
 
         # Run workflow
-        result = self.workflow.run(goal, max_retries=max_retries)
+        result = self.workflow.run(goal, max_retries=max_retries, progress_callback=progress_callback)
 
         # Cost summary
         self.cost.print_summary()
