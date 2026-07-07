@@ -458,10 +458,19 @@ async def update_tool(tool_name: str, req: ToolUpdateRequest, user=Depends(get_c
 async def tool_logs(limit: int = 50, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance, "tool_manager"):
         stats = maya_instance.tool_manager.get_registry()._usage_stats
+        # Field names now match what BackendLogs.tsx actually reads (id,
+        # tool_name, success, timestamp, duration_ms, error). Before this,
+        # every entry rendered as a failed call with an invalid date and a
+        # blank name, no matter how many real successful calls happened —
+        # the data was real, the keys just didn't match what the page read.
         entries = [
-            {"tool": name, "calls": st.get("calls", 0), "successes": st.get("successes", 0),
-             "failures": st.get("failures", 0), "avg_time": round(st.get("avg_time", 0), 3),
-             "last_error": st.get("last_error")}
+            {"id": name, "tool_name": name, "provider": name,
+             "calls": st.get("calls", 0), "successes": st.get("successes", 0),
+             "failures": st.get("failures", 0),
+             "success": st.get("successes", 0) > 0 and st.get("failures", 0) == 0,
+             "duration_ms": round(st.get("avg_time", 0) * 1000, 1),
+             "timestamp": st.get("last_used"),
+             "error": st.get("last_error")}
             for name, st in stats.items() if st.get("calls", 0) > 0
         ]
         return entries[-limit:]
@@ -535,7 +544,10 @@ async def analytics_tools(user=Depends(get_current_user)):
 @app.get("/api/v1/logs/llm")
 async def llm_logs(limit: int = 50, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance, "router"):
-        logs = getattr(maya_instance.router, "logs", [])
+        # Real per-call logs live in request_log (populated by _log_request);
+        # this used to read a "logs" attribute that never existed on
+        # LLMRouter at all, so this endpoint always silently returned [].
+        logs = getattr(maya_instance.router, "request_log", [])
         return logs[-limit:]
     return []
 
