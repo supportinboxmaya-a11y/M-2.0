@@ -414,20 +414,31 @@ async def search_memory(q: str, limit: int = 10, user=Depends(get_current_user))
 async def add_memory(req: MemoryAddRequest, user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
-    maya_instance.remember(req.content)
-    return {"id": str(uuid.uuid4()), "content": req.content, "type": req.type, "timestamp": datetime.utcnow().isoformat()}
+    real_id = maya_instance.remember(req.content, req.type)
+    return {"id": real_id, "content": req.content, "type": req.type, "timestamp": datetime.utcnow().isoformat()}
 
 @app.delete("/api/v1/memory/{memory_id}")
 async def delete_memory(memory_id: str, user=Depends(get_current_user)):
-    if maya_instance and hasattr(maya_instance.memory, "delete"):
-        maya_instance.memory.delete(memory_id)
-    return {"message": "Deleted"}
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    ok = maya_instance.memory.delete(memory_id)
+    return {"message": "Deleted" if ok else "Not found", "deleted": bool(ok)}
 
 @app.get("/api/v1/memory/stats")
 async def memory_stats(user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
-    return {"total": len(maya_instance.memory.get_all()) if hasattr(maya_instance.memory, "get_all") else 0}
+    return maya_instance.memory.get_stats()
+
+@app.post("/api/v1/memory/compress")
+async def compress_memory(memory_type: str = "general", keep_recent: int = 20,
+                           dry_run: bool = True, user=Depends(get_current_user)):
+    """Summarizes older low-value memories of a type into one entry and
+    deletes the originals — dry_run=true (default) only reports what would
+    happen."""
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    return maya_instance.memory.compress(memory_type=memory_type, keep_recent=keep_recent, dry_run=dry_run)
 
 # ══════════════════════════════════════════════
 # TOOLS ROUTES

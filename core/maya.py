@@ -169,9 +169,9 @@ class Maya:
         result = self.reasoner.think(problem, depth="deep")
         return result.get("final_answer", str(result))
 
-    def remember(self, content: str, memory_type: str = "general"):
-        """Manually add to memory."""
-        self.memory.add(content, memory_type)
+    def remember(self, content: str, memory_type: str = "general") -> str:
+        """Manually add to memory. Returns the real memory id."""
+        return self.memory.add(content, memory_type)
 
     def recall(self, query: str, limit: int = 5):
         """Search memory."""
