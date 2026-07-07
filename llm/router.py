@@ -24,7 +24,18 @@ PROVIDER_INFO = {
     "openai": {"label": "GPT (OpenAI)", "env_key": "OPENAI_KEY"},
     "claude": {"label": "Sonnet (Claude)", "env_key": "ANTHROPIC_KEY"},
     "deepseek": {"label": "DeepSeek", "env_key": "DEEPSEEK_KEY"},
-    "local": {"label": "Local LLM", "env_key": ""},
+    "local": {"label": "Local LLM", "env_key": "" },
+}
+
+# Lets set_key() below rebuild a single provider after its API key changes,
+# without needing to restart the whole process.
+PROVIDER_CLASSES = {
+    "groq": GroqProvider,
+    "gemini": GeminiProvider,
+    "openai": OpenAIProvider,
+    "claude": ClaudeProvider,
+    "deepseek": DeepSeekProvider,
+    "local": LocalLLMProvider,
 }
 
 
@@ -160,6 +171,28 @@ class LLMRouter:
             return False
         self._enabled_state[provider] = bool(enabled)
         self._save_enabled_state()
+        return True
+
+    def set_key(self, provider: str, api_key: str) -> bool:
+        """Updates a provider's API key at runtime — no restart needed.
+
+        Sets the env var (so anything else reading it sees the new value too)
+        and rebuilds just that one provider instance so its client picks up
+        the new key immediately. Callers are responsible for persisting the
+        key somewhere durable (Supabase) so it survives the next restart,
+        since this alone only changes the current process's memory.
+        """
+        info = PROVIDER_INFO.get(provider)
+        if not info or not info["env_key"] or provider not in PROVIDER_CLASSES:
+            return False
+        os.environ[info["env_key"]] = api_key
+        try:
+            self.providers[provider] = PROVIDER_CLASSES[provider]()
+        except Exception:
+            return False
+        # Give the freshly-keyed provider a clean slate instead of carrying
+        # over error counts from the old (possibly missing/invalid) key.
+        self.health[provider] = {"available": False, "error_count": 0, "last_error": None, "avg_response_time": 0}
         return True
 
     def _load_enabled_state(self) -> Dict[str, bool]:

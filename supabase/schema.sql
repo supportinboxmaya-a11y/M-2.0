@@ -47,6 +47,13 @@ create table if not exists tasks (
 );
 create index if not exists idx_tasks_user on tasks(user_id, created_at desc);
 
+-- ── LLM provider API keys (settable from the Admin Panel) ────
+create table if not exists provider_keys (
+  provider text primary key,
+  api_key text not null,
+  updated_at timestamptz not null default now()
+);
+
 -- ── Row Level Security ───────────────────────────────────────
 -- The backend talks to Supabase using the SERVICE ROLE key, which bypasses
 -- RLS entirely — so the app works with RLS on. We still enable it and add
@@ -55,6 +62,7 @@ create index if not exists idx_tasks_user on tasks(user_id, created_at desc);
 alter table users enable row level security;
 alter table chat_messages enable row level security;
 alter table tasks enable row level security;
+alter table provider_keys enable row level security;
 
 -- ── Bootstrap: turn your existing ADMIN_EMAIL into the first admin ──
 -- Run this manually AFTER your first successful /auth/register with that

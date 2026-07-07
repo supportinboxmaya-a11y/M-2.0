@@ -131,6 +131,21 @@ class SupabaseStore:
                .order("created_at", desc=False).limit(limit).execute())
         return res.data or []
 
+    # ── LLM provider keys (set from the Admin Panel, survive restarts) ──
+    def get_provider_keys(self) -> dict:
+        if not self.enabled:
+            return {}
+        res = self.client.table("provider_keys").select("provider,api_key").execute()
+        return {row["provider"]: row["api_key"] for row in (res.data or [])}
+
+    def set_provider_key(self, provider: str, api_key: str) -> Optional[dict]:
+        if not self.enabled:
+            return None
+        row = {"provider": provider, "api_key": api_key,
+               "updated_at": datetime.now(timezone.utc).isoformat()}
+        res = self.client.table("provider_keys").upsert(row, on_conflict="provider").execute()
+        return res.data[0] if res.data else row
+
 
 # Single shared instance, imported by api.py
 supabase_store = SupabaseStore()
