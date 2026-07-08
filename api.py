@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -20,6 +20,7 @@ load_dotenv()
 # ── Maya Core ──────────────────────────────────
 from core.maya import Maya
 from infrastructure.supabase_client import supabase_store
+from infrastructure.rate_limiter import RateLimiter
 
 maya_instance: Optional[Maya] = None
 MAIN_EVENT_LOOP: Optional[asyncio.AbstractEventLoop] = None
@@ -76,6 +77,22 @@ if ADMIN_PASSWORD == "maya2024":
     print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
 
 DEFAULT_USER_BUDGET_USD = float(os.getenv("DEFAULT_USER_BUDGET_USD", "5.0"))
+
+def get_client_ip(request: Request) -> str:
+    """Real caller IP, aware of Render's reverse proxy — same logic as the
+    general rate-limit middleware, so a login brute-force limiter keyed by
+    this actually separates different people instead of lumping everyone
+    behind the proxy into one bucket."""
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+# Deliberately stricter than the general 120/min API limit — login/register
+# had NO dedicated brute-force protection before; they only got whatever the
+# general per-IP limit allowed, which is generous enough for normal use that
+# it wasn't much of a deterrent for password-guessing attempts.
+_auth_rate_limiter = RateLimiter(rate=8, per_seconds=300)
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
@@ -175,7 +192,10 @@ class WorkflowCreateRequest(BaseModel):
 # AUTH ROUTES
 # ══════════════════════════════════════════════
 @app.post("/api/v1/auth/login")
-async def login(req: LoginRequest):
+async def login(req: LoginRequest, request: Request):
+    if not _auth_rate_limiter.allow(get_client_ip(request)):
+        raise HTTPException(status_code=429, detail="Too many login attempts. Try again in a few minutes.")
+
     # ── Multi-user mode (Supabase configured) ──────────────
     if supabase_store.enabled:
         user = supabase_store.get_user_by_email(req.email)
@@ -194,7 +214,9 @@ async def login(req: LoginRequest):
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.post("/api/v1/auth/register")
-async def register(req: RegisterRequest):
+async def register(req: RegisterRequest, request: Request):
+    if not _auth_rate_limiter.allow(get_client_ip(request)):
+        raise HTTPException(status_code=429, detail="Too many attempts. Try again in a few minutes.")
     if not supabase_store.enabled:
         raise HTTPException(status_code=403,
             detail="Registration needs Supabase configured. See supabase/schema.sql and set "
@@ -1109,7 +1131,12 @@ try:
     @app.middleware("http")
     async def _p1_observe(request, call_next):
         if request.url.path.startswith("/api/v1/"):
-            ip = request.client.host if request.client else "unknown"
+            # Render (and most hosts) sit the app behind a reverse proxy, so
+            # request.client.host is the PROXY's IP for every request, not
+            # the real caller's — that silently turned this into one shared
+            # rate limit for the whole app instead of one per actual client.
+            forwarded = request.headers.get("x-forwarded-for")
+            ip = forwarded.split(",")[0].strip() if forwarded else (request.client.host if request.client else "unknown")
             if not _p1_rl.allow(ip):
                 from fastapi.responses import JSONResponse
                 _p1_metrics.incr("http.rate_limited")
