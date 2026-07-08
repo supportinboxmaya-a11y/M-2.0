@@ -4,10 +4,17 @@ from .web.google_search import GoogleSearch
 from .web.web_scraper import WebScraper
 from .web.youtube_tool import YouTubeTool
 from .web.browser_tool import BrowserTool
+from .web.rest_api_tool import RestApiTool
+from .web.github_tool import GitHubTool
 from .files.file_manager import FileManager
 from .files.reader import FileReader
 from .files.writer import FileWriter
 from .files.pdf_tool import PDFTool
+from .files.zip_tool import ZipTool
+from .files.csv_tool import CsvTool
+from .files.json_tool import JsonTool
+from .files.excel_tool import ExcelTool
+from .data.database_tool import DatabaseTool
 from .code.code_runner import CodeRunner
 from .code.calculator_tool import CalculatorTool
 from .system.shell import ShellTool
@@ -27,10 +34,17 @@ class ToolManager:
         scraper = WebScraper()
         youtube = YouTubeTool()
         browser = BrowserTool()
+        rest_api = RestApiTool()
+        github = GitHubTool()
         fm = FileManager()
         reader = FileReader()
         writer = FileWriter()
         pdf = PDFTool()
+        zip_tool = ZipTool()
+        csv_tool = CsvTool()
+        json_tool = JsonTool()
+        excel_tool = ExcelTool()
+        db_tool = DatabaseTool()
         code = CodeRunner()
         calc = CalculatorTool()
         shell = ShellTool()
@@ -40,29 +54,44 @@ class ToolManager:
         image_gen = ImageGenTool()
         email_tool = EmailTool()
 
-        self.registry.register("web_search", search.search, "Search the web")
-        self.registry.register("web_scrape", scraper.scrape, "Scrape a web page")
-        self.registry.register("youtube_search", youtube.search, "Search YouTube")
-        self.registry.register("youtube_transcript", youtube.get_transcript, "Get YouTube transcript")
-        self.registry.register("browser_open", browser.open, "Open URL in browser")
-        self.registry.register("browser_click", browser.click, "Click element")
-        self.registry.register("browser_type", browser.type_text, "Type in input")
-        self.registry.register("browser_text", browser.get_text, "Get page text")
-        self.registry.register("browser_screenshot", browser.screenshot, "Take screenshot")
-        self.registry.register("browser_google", browser.search_google, "Google via browser")
-        self.registry.register("read_file", reader.read, "Read a file")
-        self.registry.register("write_file", writer.write, "Write to a file")
-        self.registry.register("list_files", fm.list_files, "List files")
-        self.registry.register("delete_file", fm.delete, "Delete a file")
-        self.registry.register("read_pdf", pdf.run, "Read PDF file")
-        self.registry.register("run_code", code.run, "Execute Python code")
-        self.registry.register("calculate", calc.run, "Calculate math")
-        self.registry.register("run_shell", shell.run, "Run shell command")
-        self.registry.register("run_terminal", terminal.execute, "Execute terminal")
-        self.registry.register("list_processes", pm.list_processes, "List processes")
-        self.registry.register("image_tool", media.run, "Image operations")
-        self.registry.register("generate_image", image_gen.run, "Generate AI image")
-        self.registry.register("email", email_tool.run, "Send/read email")
+        self.registry.register("web_search", search.search, "Search the web", category="web")
+        self.registry.register("web_scrape", scraper.scrape, "Scrape a web page", category="web")
+        self.registry.register("youtube_search", youtube.search, "Search YouTube", category="web")
+        self.registry.register("youtube_transcript", youtube.get_transcript, "Get YouTube transcript", category="web")
+        self.registry.register("browser_open", browser.open, "Open URL in browser", category="web")
+        self.registry.register("browser_click", browser.click, "Click element", category="web")
+        self.registry.register("browser_type", browser.type_text, "Type in input", category="web")
+        self.registry.register("browser_text", browser.get_text, "Get page text", category="web")
+        self.registry.register("browser_screenshot", browser.screenshot, "Take screenshot", category="web")
+        self.registry.register("browser_google", browser.search_google, "Google via browser", category="web")
+        self.registry.register("rest_api_request", rest_api.request, "Make an HTTP request to any REST API", category="web")
+        self.registry.register("github_get_repo", github.get_repo, "Get GitHub repo info (public API)", category="developer")
+        self.registry.register("github_list_files", github.list_files, "List files in a GitHub repo path", category="developer")
+        self.registry.register("github_get_file", github.get_file, "Read a file's content from a GitHub repo", category="developer")
+        self.registry.register("read_file", reader.read, "Read a file", category="file")
+        self.registry.register("write_file", writer.write, "Write to a file", category="file")
+        self.registry.register("list_files", fm.list_files, "List files", category="file")
+        self.registry.register("delete_file", fm.delete, "Delete a file", category="file")
+        self.registry.register("read_pdf", pdf.run, "Read PDF file", category="file")
+        self.registry.register("zip_create", zip_tool.create, "Create a zip archive from files", category="file")
+        self.registry.register("zip_extract", zip_tool.extract, "Extract a zip archive", category="file")
+        self.registry.register("zip_list", zip_tool.list_contents, "List a zip archive's contents", category="file")
+        self.registry.register("csv_read", csv_tool.read, "Read rows from a CSV file", category="file")
+        self.registry.register("csv_write", csv_tool.write, "Write rows to a CSV file", category="file")
+        self.registry.register("json_read", json_tool.read, "Read (and optionally query) a JSON file", category="file")
+        self.registry.register("json_write", json_tool.write, "Write data to a JSON file", category="file")
+        self.registry.register("excel_read", excel_tool.read, "Read rows from an Excel (.xlsx) file", category="file")
+        self.registry.register("excel_write", excel_tool.write, "Write rows to an Excel (.xlsx) file", category="file")
+        self.registry.register("database_query", db_tool.run_query, "Run a SQL query against the agent's own database", category="developer")
+        self.registry.register("database_list_tables", db_tool.list_tables, "List tables in the agent's own database", category="developer")
+        self.registry.register("run_code", code.run, "Execute Python code", category="developer")
+        self.registry.register("calculate", calc.run, "Calculate math", category="developer")
+        self.registry.register("run_shell", shell.run, "Run shell command", category="system")
+        self.registry.register("run_terminal", terminal.execute, "Execute terminal", category="system")
+        self.registry.register("list_processes", pm.list_processes, "List processes", category="system")
+        self.registry.register("image_tool", media.run, "Image operations", category="media")
+        self.registry.register("generate_image", image_gen.run, "Generate AI image", category="media")
+        self.registry.register("email", email_tool.run, "Send/read email", category="communication")
 
     def get_registry(self):
         return self.registry
