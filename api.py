@@ -1259,6 +1259,78 @@ try:
     async def _p4_messages(limit: int = 50, user=Depends(get_current_user)):
         return {"messages": _p4_orch.bus.history(limit)}
 
+    @app.post("/api/v1/agents/run")
+    async def _p4_run(payload: dict, user: dict = Depends(get_current_user)):
+        """Actually EXECUTES the multi-agent plan — /agents/orchestrate only
+        ever produced a plan (analysis + graph + assignments), nothing
+        called Orchestrator.run() which does the real agent-by-agent work.
+        Gated by FLAG_AUTONOMOUS like /autonomous/run, since this lets
+        multiple agents use tools rather than just proposing what they'd do.
+        """
+        try:
+            from infrastructure import flags as _p4_flags
+            enabled = _p4_flags.enabled("autonomous")
+        except Exception:
+            enabled = False
+        if not enabled:
+            raise HTTPException(status_code=403,
+                                 detail="Set FLAG_AUTONOMOUS=true to enable multi-agent execution")
+        goal = payload.get("goal", "")
+        if not goal:
+            raise HTTPException(status_code=400, detail="goal is required")
+        check_budget(user)
+
+        task_id = str(uuid.uuid4())
+        task = {
+            "id": task_id, "goal": goal, "status": "running", "kind": "multi_agent",
+            "steps": [], "current_phase": "starting", "created_at": datetime.utcnow().isoformat(),
+        }
+        tasks_db[task_id] = task
+        await broadcast({"type": "task_started", "task": task})
+
+        def on_agent_progress(payload: dict):
+            if task_id not in tasks_db:
+                return
+            phase = payload.get("phase")
+            tasks_db[task_id]["current_phase"] = phase
+            if phase == "node_start":
+                tasks_db[task_id]["steps"].append({
+                    "step": payload.get("node"), "title": (payload.get("description") or "")[:60],
+                    "description": payload.get("description", ""), "tool": payload.get("agent"),
+                    "result": None, "success": None, "error": None,
+                })
+            elif phase == "node_done":
+                for s in tasks_db[task_id]["steps"]:
+                    if s["step"] == payload.get("node"):
+                        s.update({"success": payload.get("ok"),
+                                   "error": str(payload.get("review", {}).get("issues")) if not payload.get("ok") else None})
+                        break
+            if MAIN_EVENT_LOOP:
+                try:
+                    asyncio.run_coroutine_threadsafe(
+                        broadcast({"type": "task_progress", "task_id": task_id, "task": tasks_db[task_id]}),
+                        MAIN_EVENT_LOOP,
+                    )
+                except Exception:
+                    pass
+
+        async def run_task():
+            try:
+                result = await asyncio.get_event_loop().run_in_executor(
+                    None, lambda: _p4_orch.run(goal, progress_callback=on_agent_progress)
+                )
+                tasks_db[task_id].update({
+                    "status": "done", "result": f"Plan confidence: {result.get('plan_confidence', 0):.0%}. "
+                                                 f"{len(result.get('results', []))} step(s) completed.",
+                    "raw_result": result, "completed_at": datetime.utcnow().isoformat(),
+                })
+            except Exception as e:
+                tasks_db[task_id].update({"status": "failed", "error": str(e)})
+            await broadcast({"type": "task_done", "task": tasks_db[task_id]})
+
+        asyncio.create_task(run_task())
+        return {"task_id": task_id, "status": "running"}
+
     print("Phase 4 multi-agent system active: 11 agents, orchestrator")
 except Exception as _p4_err:
     print(f"WARNING: Phase 4 multi-agent system not loaded: {_p4_err}")
