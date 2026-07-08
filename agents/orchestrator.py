@@ -37,31 +37,48 @@ class Orchestrator:
             assignments[node.id] = node.agent
         return {"analysis": analysis, "graph": graph, "assignments": assignments}
 
-    def run(self, goal: str, execute_fn=None, max_rounds: int = 20) -> dict:
+    def run(self, goal: str, execute_fn=None, max_rounds: int = 20, progress_callback=None) -> dict:
         """Supervised loop. execute_fn(agent, node) -> (output, verified).
 
         Defaults to each agent's LLM handle() when execute_fn is None.
         Permissions are enforced HERE and never bypassed.
+
+        `progress_callback`, if given, is called after each node's result is
+        recorded — this endpoint's execution was previously only reachable
+        via .plan() (analysis + assignments, no actual agent work), so there
+        was nothing to show progress for in the first place.
         """
+        def notify(payload: dict):
+            if progress_callback:
+                try:
+                    progress_callback(payload)
+                except Exception:
+                    pass
+
         planned = self.plan(goal)
         graph = planned["graph"]
+        notify({"phase": "planned", "assignments": planned["assignments"]})
         results = []
-        for _ in range(max_rounds):
+        for round_num in range(max_rounds):
             ready = graph.ready()
             if not ready:
                 break
             for node in ready:                       # parallel-ready set
                 agent = self.registry.get(node.agent)
                 graph.start(node.id)
+                notify({"phase": "node_start", "node": node.id,
+                        "agent": node.agent, "description": node.description})
                 if agent is None or not agent.can_use(node.tool):
                     graph.fail(node.id, f"permission denied: {node.agent} cannot use {node.tool}")
                     if agent:
                         agent.record_error("permission denied")
-                    results.append({"node": node.id, "ok": False,
+                    rec = {"node": node.id, "ok": False,
                                     "confidence": 0.0,
                                     "review": {"acceptable": False,
                                                "issues": ["permission denied"],
-                                               "suggestion": None}})
+                                               "suggestion": None}}
+                    results.append(rec)
+                    notify({"phase": "node_done", **rec})
                     continue
                 try:
                     if execute_fn:
@@ -77,18 +94,23 @@ class Orchestrator:
                     self.bus.send(agent.name, "orchestrator",
                                   {"node": node.id, "ok": rec["ok"]})
                     results.append(rec)
+                    notify({"phase": "node_done", **rec})
                 except Exception as e:               # no silent failures
                     graph.fail(node.id, str(e))
                     agent.record_error(str(e))
-                    results.append({"node": node.id, "ok": False, "confidence": 0.0,
+                    rec = {"node": node.id, "ok": False, "confidence": 0.0,
                                     "review": {"acceptable": False,
-                                               "issues": [str(e)], "suggestion": None}})
+                                               "issues": [str(e)], "suggestion": None}}
+                    results.append(rec)
+                    notify({"phase": "node_done", **rec})
         conf = self.brain.plan_confidence(results) if results else \
             {"plan_confidence": 0.0, "should_replan": True}
-        return {"goal": goal, "progress": graph.progress(),
+        final = {"goal": goal, "progress": graph.progress(),
                 "results": results, **conf,
                 "assignments": planned["assignments"],
                 "graph": graph.to_dict()}
+        notify({"phase": "done", "progress": final["progress"], "plan_confidence": conf.get("plan_confidence")})
+        return final
 
     @staticmethod
     def _pick_tool(sub_goal: str, analysis: dict) -> str | None:
