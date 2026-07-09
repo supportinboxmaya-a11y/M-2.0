@@ -1234,7 +1234,16 @@ except Exception as _p3_err:
 try:
     from agents import Orchestrator as _P4Orch
 
-    _p4_orch = _P4Orch()
+    def _p4_llm(prompt: str) -> str:
+        """Real LLM call for agent.handle() — Orchestrator was being built
+        with no llm_fn at all, so every agent failed immediately with
+        'no llm_fn provided' the moment it tried to do anything."""
+        if not hasattr(_p4_llm, "_router"):
+            from llm.router import LLMRouter
+            _p4_llm._router = LLMRouter()
+        return _p4_llm._router.chat([{"role": "user", "content": prompt}])
+
+    _p4_orch = _P4Orch(llm_fn=_p4_llm)
 
     @app.get("/api/v1/agents")
     async def _p4_agents(user=Depends(get_current_user)):
