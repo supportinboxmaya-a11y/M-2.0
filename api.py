@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect, Request
+from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -20,7 +20,6 @@ load_dotenv()
 # ── Maya Core ──────────────────────────────────
 from core.maya import Maya
 from infrastructure.supabase_client import supabase_store
-from infrastructure.rate_limiter import RateLimiter
 
 maya_instance: Optional[Maya] = None
 MAIN_EVENT_LOOP: Optional[asyncio.AbstractEventLoop] = None
@@ -77,22 +76,6 @@ if ADMIN_PASSWORD == "maya2024":
     print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
 
 DEFAULT_USER_BUDGET_USD = float(os.getenv("DEFAULT_USER_BUDGET_USD", "5.0"))
-
-def get_client_ip(request: Request) -> str:
-    """Real caller IP, aware of Render's reverse proxy — same logic as the
-    general rate-limit middleware, so a login brute-force limiter keyed by
-    this actually separates different people instead of lumping everyone
-    behind the proxy into one bucket."""
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
-
-# Deliberately stricter than the general 120/min API limit — login/register
-# had NO dedicated brute-force protection before; they only got whatever the
-# general per-IP limit allowed, which is generous enough for normal use that
-# it wasn't much of a deterrent for password-guessing attempts.
-_auth_rate_limiter = RateLimiter(rate=8, per_seconds=300)
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
@@ -192,10 +175,7 @@ class WorkflowCreateRequest(BaseModel):
 # AUTH ROUTES
 # ══════════════════════════════════════════════
 @app.post("/api/v1/auth/login")
-async def login(req: LoginRequest, request: Request):
-    if not _auth_rate_limiter.allow(get_client_ip(request)):
-        raise HTTPException(status_code=429, detail="Too many login attempts. Try again in a few minutes.")
-
+async def login(req: LoginRequest):
     # ── Multi-user mode (Supabase configured) ──────────────
     if supabase_store.enabled:
         user = supabase_store.get_user_by_email(req.email)
@@ -214,9 +194,7 @@ async def login(req: LoginRequest, request: Request):
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.post("/api/v1/auth/register")
-async def register(req: RegisterRequest, request: Request):
-    if not _auth_rate_limiter.allow(get_client_ip(request)):
-        raise HTTPException(status_code=429, detail="Too many attempts. Try again in a few minutes.")
+async def register(req: RegisterRequest):
     if not supabase_store.enabled:
         raise HTTPException(status_code=403,
             detail="Registration needs Supabase configured. See supabase/schema.sql and set "
@@ -436,55 +414,20 @@ async def search_memory(q: str, limit: int = 10, user=Depends(get_current_user))
 async def add_memory(req: MemoryAddRequest, user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
-    real_id = maya_instance.remember(req.content, req.type)
-    return {"id": real_id, "content": req.content, "type": req.type, "timestamp": datetime.utcnow().isoformat()}
+    maya_instance.remember(req.content)
+    return {"id": str(uuid.uuid4()), "content": req.content, "type": req.type, "timestamp": datetime.utcnow().isoformat()}
 
 @app.delete("/api/v1/memory/{memory_id}")
 async def delete_memory(memory_id: str, user=Depends(get_current_user)):
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    ok = maya_instance.memory.delete(memory_id)
-    return {"message": "Deleted" if ok else "Not found", "deleted": bool(ok)}
-
-class MemoryUpdateRequest(BaseModel):
-    content: str
-
-@app.put("/api/v1/memory/{memory_id}")
-async def update_memory(memory_id: str, req: MemoryUpdateRequest, user=Depends(get_current_user)):
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    updated = maya_instance.memory.update(memory_id, req.content)
-    if not updated:
-        raise HTTPException(status_code=404, detail="Memory not found")
-    return updated
-
-@app.get("/api/v1/memory/{memory_id}/versions")
-async def memory_versions(memory_id: str, user=Depends(get_current_user)):
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    return {"memory_id": memory_id, "versions": maya_instance.memory.get_versions(memory_id)}
-
-@app.get("/api/v1/memory/analytics")
-async def memory_analytics(user=Depends(get_current_user)):
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    return maya_instance.memory.get_analytics()
+    if maya_instance and hasattr(maya_instance.memory, "delete"):
+        maya_instance.memory.delete(memory_id)
+    return {"message": "Deleted"}
 
 @app.get("/api/v1/memory/stats")
 async def memory_stats(user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
-    return maya_instance.memory.get_stats()
-
-@app.post("/api/v1/memory/compress")
-async def compress_memory(memory_type: str = "general", keep_recent: int = 20,
-                           dry_run: bool = True, user=Depends(get_current_user)):
-    """Summarizes older low-value memories of a type into one entry and
-    deletes the originals — dry_run=true (default) only reports what would
-    happen."""
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    return maya_instance.memory.compress(memory_type=memory_type, keep_recent=keep_recent, dry_run=dry_run)
+    return {"total": len(maya_instance.memory.get_all()) if hasattr(maya_instance.memory, "get_all") else 0}
 
 # ══════════════════════════════════════════════
 # TOOLS ROUTES
@@ -515,19 +458,10 @@ async def update_tool(tool_name: str, req: ToolUpdateRequest, user=Depends(get_c
 async def tool_logs(limit: int = 50, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance, "tool_manager"):
         stats = maya_instance.tool_manager.get_registry()._usage_stats
-        # Field names now match what BackendLogs.tsx actually reads (id,
-        # tool_name, success, timestamp, duration_ms, error). Before this,
-        # every entry rendered as a failed call with an invalid date and a
-        # blank name, no matter how many real successful calls happened —
-        # the data was real, the keys just didn't match what the page read.
         entries = [
-            {"id": name, "tool_name": name, "provider": name,
-             "calls": st.get("calls", 0), "successes": st.get("successes", 0),
-             "failures": st.get("failures", 0),
-             "success": st.get("successes", 0) > 0 and st.get("failures", 0) == 0,
-             "duration_ms": round(st.get("avg_time", 0) * 1000, 1),
-             "timestamp": st.get("last_used"),
-             "error": st.get("last_error")}
+            {"tool": name, "calls": st.get("calls", 0), "successes": st.get("successes", 0),
+             "failures": st.get("failures", 0), "avg_time": round(st.get("avg_time", 0), 3),
+             "last_error": st.get("last_error")}
             for name, st in stats.items() if st.get("calls", 0) > 0
         ]
         return entries[-limit:]
@@ -601,10 +535,7 @@ async def analytics_tools(user=Depends(get_current_user)):
 @app.get("/api/v1/logs/llm")
 async def llm_logs(limit: int = 50, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance, "router"):
-        # Real per-call logs live in request_log (populated by _log_request);
-        # this used to read a "logs" attribute that never existed on
-        # LLMRouter at all, so this endpoint always silently returned [].
-        logs = getattr(maya_instance.router, "request_log", [])
+        logs = getattr(maya_instance.router, "logs", [])
         return logs[-limit:]
     return []
 
@@ -1131,12 +1062,7 @@ try:
     @app.middleware("http")
     async def _p1_observe(request, call_next):
         if request.url.path.startswith("/api/v1/"):
-            # Render (and most hosts) sit the app behind a reverse proxy, so
-            # request.client.host is the PROXY's IP for every request, not
-            # the real caller's — that silently turned this into one shared
-            # rate limit for the whole app instead of one per actual client.
-            forwarded = request.headers.get("x-forwarded-for")
-            ip = forwarded.split(",")[0].strip() if forwarded else (request.client.host if request.client else "unknown")
+            ip = request.client.host if request.client else "unknown"
             if not _p1_rl.allow(ip):
                 from fastapi.responses import JSONResponse
                 _p1_metrics.incr("http.rate_limited")
@@ -1234,16 +1160,7 @@ except Exception as _p3_err:
 try:
     from agents import Orchestrator as _P4Orch
 
-    def _p4_llm(prompt: str) -> str:
-        """Real LLM call for agent.handle() — Orchestrator was being built
-        with no llm_fn at all, so every agent failed immediately with
-        'no llm_fn provided' the moment it tried to do anything."""
-        if not hasattr(_p4_llm, "_router"):
-            from llm.router import LLMRouter
-            _p4_llm._router = LLMRouter()
-        return _p4_llm._router.chat([{"role": "user", "content": prompt}])
-
-    _p4_orch = _P4Orch(llm_fn=_p4_llm)
+    _p4_orch = _P4Orch()
 
     @app.get("/api/v1/agents")
     async def _p4_agents(user=Depends(get_current_user)):
@@ -1267,78 +1184,6 @@ try:
     @app.get("/api/v1/agents/messages")
     async def _p4_messages(limit: int = 50, user=Depends(get_current_user)):
         return {"messages": _p4_orch.bus.history(limit)}
-
-    @app.post("/api/v1/agents/run")
-    async def _p4_run(payload: dict, user: dict = Depends(get_current_user)):
-        """Actually EXECUTES the multi-agent plan — /agents/orchestrate only
-        ever produced a plan (analysis + graph + assignments), nothing
-        called Orchestrator.run() which does the real agent-by-agent work.
-        Gated by FLAG_AUTONOMOUS like /autonomous/run, since this lets
-        multiple agents use tools rather than just proposing what they'd do.
-        """
-        try:
-            from infrastructure import flags as _p4_flags
-            enabled = _p4_flags.enabled("autonomous")
-        except Exception:
-            enabled = False
-        if not enabled:
-            raise HTTPException(status_code=403,
-                                 detail="Set FLAG_AUTONOMOUS=true to enable multi-agent execution")
-        goal = payload.get("goal", "")
-        if not goal:
-            raise HTTPException(status_code=400, detail="goal is required")
-        check_budget(user)
-
-        task_id = str(uuid.uuid4())
-        task = {
-            "id": task_id, "goal": goal, "status": "running", "kind": "multi_agent",
-            "steps": [], "current_phase": "starting", "created_at": datetime.utcnow().isoformat(),
-        }
-        tasks_db[task_id] = task
-        await broadcast({"type": "task_started", "task": task})
-
-        def on_agent_progress(payload: dict):
-            if task_id not in tasks_db:
-                return
-            phase = payload.get("phase")
-            tasks_db[task_id]["current_phase"] = phase
-            if phase == "node_start":
-                tasks_db[task_id]["steps"].append({
-                    "step": payload.get("node"), "title": (payload.get("description") or "")[:60],
-                    "description": payload.get("description", ""), "tool": payload.get("agent"),
-                    "result": None, "success": None, "error": None,
-                })
-            elif phase == "node_done":
-                for s in tasks_db[task_id]["steps"]:
-                    if s["step"] == payload.get("node"):
-                        s.update({"success": payload.get("ok"),
-                                   "error": str(payload.get("review", {}).get("issues")) if not payload.get("ok") else None})
-                        break
-            if MAIN_EVENT_LOOP:
-                try:
-                    asyncio.run_coroutine_threadsafe(
-                        broadcast({"type": "task_progress", "task_id": task_id, "task": tasks_db[task_id]}),
-                        MAIN_EVENT_LOOP,
-                    )
-                except Exception:
-                    pass
-
-        async def run_task():
-            try:
-                result = await asyncio.get_event_loop().run_in_executor(
-                    None, lambda: _p4_orch.run(goal, progress_callback=on_agent_progress)
-                )
-                tasks_db[task_id].update({
-                    "status": "done", "result": f"Plan confidence: {result.get('plan_confidence', 0):.0%}. "
-                                                 f"{len(result.get('results', []))} step(s) completed.",
-                    "raw_result": result, "completed_at": datetime.utcnow().isoformat(),
-                })
-            except Exception as e:
-                tasks_db[task_id].update({"status": "failed", "error": str(e)})
-            await broadcast({"type": "task_done", "task": tasks_db[task_id]})
-
-        asyncio.create_task(run_task())
-        return {"task_id": task_id, "status": "running"}
 
     print("Phase 4 multi-agent system active: 11 agents, orchestrator")
 except Exception as _p4_err:
