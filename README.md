@@ -156,6 +156,18 @@ Background work now survives a server restart or crash.
 
 ---
 
+## Scheduled Tasks (Cron)
+
+Maya can now run jobs automatically on a schedule.
+
+- **Cron engine** (`infrastructure/cron.py`): full 5-field cron parser and matcher (ranges, lists, `*/step`, `1-10/2`) plus aliases `@hourly` `@daily` `@weekly` `@monthly` `@yearly`. Stdlib-only, cron's day-of-month/day-of-week OR semantics respected.
+- **Scheduler** (`infrastructure/scheduler.py`): schedules are stored in SQLite (`storage/scheduler/schedules.db`) so they survive restarts, and each firing is dispatched through the persistent task queue — so a scheduled run is itself restart-proof. A 30s ticker fires due schedules; missed slots during downtime are skipped (no catch-up burst) and `next_run` advances.
+- **API**: `GET/POST /api/v1/schedules`, `DELETE /api/v1/schedules/{id}`, `POST /api/v1/schedules/{id}/enabled`. A schedule references a registered queue job (e.g. `agent_goal`). Disable the whole scheduler with `SCHEDULER_ENABLED=false`.
+
+Example: run a daily briefing at 9am → `{"name":"briefing","cron":"0 9 * * *","job":"agent_goal","args":["Summarize my day"]}`.
+
+---
+
 ## How Maya Works
 
 ```
