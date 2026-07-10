@@ -11,5 +11,7 @@ from .retry import retry
 from .cache import TTLCache
 from .rate_limiter import RateLimiter
 from .task_queue import TaskQueue
+from .cron import CronExpression
+from .scheduler import Scheduler
 from .feature_flags import FeatureFlags, flags
 from .exceptions import MayaError, install_exception_handler

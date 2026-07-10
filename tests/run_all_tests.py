@@ -43,6 +43,7 @@ if __name__ == "__main__":
         "test_recovery_phase16.py",
         "test_streaming_phase17.py",
         "test_queue_phase18.py",
+        "test_scheduler_phase19.py",
     ]
 
     passed = 0

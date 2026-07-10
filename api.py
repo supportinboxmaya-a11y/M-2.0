@@ -1052,6 +1052,7 @@ try:
     from infrastructure import metrics as _p1_metrics
     from infrastructure import flags as _p1_flags
     from infrastructure import TaskQueue as _P1TaskQueue
+    from infrastructure import Scheduler as _P1Scheduler
     from infrastructure import RateLimiter as _P1RateLimiter
     from infrastructure import install_exception_handler as _p1_install_exc
 
@@ -1060,9 +1061,15 @@ try:
                              persist=os.getenv("QUEUE_PERSIST", "true").lower() != "false")
     _p1_rl = _P1RateLimiter(rate=float(os.getenv("RATE_LIMIT_PER_MIN", "120")), per_seconds=60)
 
+    _p1_scheduler = _P1Scheduler(_p1_queue,
+                                 tick_seconds=int(os.getenv("SCHED_TICK", "30")))
+
     @app.on_event("startup")
     async def _p1_start_queue():
         await _p1_queue.start()
+        if os.getenv("SCHEDULER_ENABLED", "true").lower() != "false":
+            await _p1_scheduler.start()
+            print("Scheduler active: cron-based persistent scheduled tasks")
         print("Phase 1 infrastructure active: metrics, task queue, rate limiter, flags")
 
     @app.middleware("http")
@@ -1136,6 +1143,44 @@ try:
             raise HTTPException(status_code=409,
                                 detail="Task not cancellable (already started or missing)")
         return {"task_id": task_id, "state": "cancelled"}
+
+    # ── Scheduled tasks (cron) ──
+    @app.get("/api/v1/schedules")
+    async def _p1_sched_list(user=Depends(get_current_user)):
+        return {"schedules": _p1_scheduler.list()}
+
+    @app.post("/api/v1/schedules")
+    async def _p1_sched_add(body: dict, user=Depends(get_current_user)):
+        """Create a cron schedule. body: {name, cron, job, args?, kwargs?}.
+        `job` must be a registered queue handler (e.g. 'agent_goal').
+        `cron` is a 5-field expression or an alias like @daily."""
+        name = (body.get("name") or "").strip()
+        cron = (body.get("cron") or "").strip()
+        job = (body.get("job") or "").strip()
+        if not (name and cron and job):
+            raise HTTPException(status_code=400,
+                                detail="name, cron and job are required")
+        try:
+            return _p1_scheduler.add(name, cron, job,
+                                     args=body.get("args", []),
+                                     kwargs=body.get("kwargs", {}))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+    @app.delete("/api/v1/schedules/{sid}")
+    async def _p1_sched_remove(sid: str, user=Depends(get_current_user)):
+        if not _p1_scheduler.remove(sid):
+            raise HTTPException(status_code=404, detail="Schedule not found")
+        return {"deleted": sid}
+
+    @app.post("/api/v1/schedules/{sid}/enabled")
+    async def _p1_sched_enable(sid: str, body: dict,
+                               user=Depends(get_current_user)):
+        enabled = bool(body.get("enabled", True))
+        if not _p1_scheduler.set_enabled(sid, enabled):
+            raise HTTPException(status_code=404, detail="Schedule not found")
+        return {"id": sid, "enabled": enabled}
+
 
 except Exception as _p1_err:
     print(f"WARNING: Phase 1 infrastructure not loaded: {_p1_err}")
