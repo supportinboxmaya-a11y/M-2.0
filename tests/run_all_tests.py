@@ -38,6 +38,7 @@ if __name__ == "__main__":
         "test_rag_phase11.py",
         "test_media_phase12.py",
         "test_memory_phase13.py",
+        "test_tools_phase14.py",
     ]
 
     passed = 0

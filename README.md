@@ -105,6 +105,13 @@ Agent tools: `vision_analyze`, `ocr_image`, `text_to_speech` (category: media)
 
 ---
 
+## Developer Tools (Git + GraphQL)
+
+- **Local Git** (`tools/code/git_tool.py`): agents can `git_init`, `git_status`, `git_log`, `git_diff`, `git_add`, `git_commit`, `git_branch`, `git_checkout`, and `git_merge` inside workspace repositories. Argument-list execution (no shell), workspace-confined paths, option-injection blocked, merge conflicts auto-abort safely. Local-only — no push/pull, so no credentials involved.
+- **GraphQL** (`tools/web/graphql_tool.py`): `graphql_query` tool queries any GraphQL endpoint with variables and headers, returning data or GraphQL errors in LLM-friendly form.
+
+---
+
 ## How Maya Works
 
 ```

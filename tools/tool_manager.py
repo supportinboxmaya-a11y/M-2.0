@@ -6,6 +6,7 @@ from .web.youtube_tool import YouTubeTool
 from .web.browser_tool import BrowserTool
 from .web.rest_api_tool import RestApiTool
 from .web.github_tool import GitHubTool
+from .web.graphql_tool import GraphQLTool
 from .files.file_manager import FileManager
 from .files.reader import FileReader
 from .files.writer import FileWriter
@@ -17,6 +18,7 @@ from .files.excel_tool import ExcelTool
 from .data.database_tool import DatabaseTool
 from .code.code_runner import CodeRunner
 from .code.calculator_tool import CalculatorTool
+from .code.git_tool import GitTool
 from .system.shell import ShellTool
 from .system.terminal import TerminalTool
 from .system.process_manager import ProcessManager
@@ -37,6 +39,8 @@ class ToolManager:
         youtube = YouTubeTool()
         browser = BrowserTool()
         rest_api = RestApiTool()
+        graphql = GraphQLTool()
+        git = GitTool()
         github = GitHubTool()
         fm = FileManager()
         reader = FileReader()
@@ -72,6 +76,16 @@ class ToolManager:
         self.registry.register("github_get_repo", github.get_repo, "Get GitHub repo info (public API)", category="developer")
         self.registry.register("github_list_files", github.list_files, "List files in a GitHub repo path", category="developer")
         self.registry.register("github_get_file", github.get_file, "Read a file's content from a GitHub repo", category="developer")
+        self.registry.register("graphql_query", graphql.query, "Query any GraphQL API endpoint", category="web")
+        self.registry.register("git_init", git.init, "Initialize a git repo in a workspace directory", category="developer")
+        self.registry.register("git_status", git.status, "Show git working tree status", category="developer")
+        self.registry.register("git_log", git.log, "Show recent git commit history", category="developer")
+        self.registry.register("git_diff", git.diff, "Show git changes (staged=True for staged)", category="developer")
+        self.registry.register("git_add", git.add, "Stage files for commit", category="developer")
+        self.registry.register("git_commit", git.commit, "Commit staged changes with a message", category="developer")
+        self.registry.register("git_branch", git.branch, "List branches or create+switch to a new one", category="developer")
+        self.registry.register("git_checkout", git.checkout, "Switch to an existing git branch", category="developer")
+        self.registry.register("git_merge", git.merge, "Merge a branch into the current one (conflict-safe)", category="developer")
         self.registry.register("read_file", reader.read, "Read a file", category="file")
         self.registry.register("write_file", writer.write, "Write to a file", category="file")
         self.registry.register("list_files", fm.list_files, "List files", category="file")
