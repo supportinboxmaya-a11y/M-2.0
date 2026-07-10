@@ -145,6 +145,17 @@ Replies now stream token-by-token instead of arriving all at once.
 
 ---
 
+## Persistent Task Queue (Restart-Proof Background Jobs)
+
+Background work now survives a server restart or crash.
+
+- **Persistence**: task status, history, and *pending work* are stored in SQLite (`storage/queue/tasks.db`, WAL mode) — the old queue was purely in-memory and lost everything on restart.
+- **Job registry**: since coroutines can't be serialized, callers register named async handlers once (e.g. `agent_goal`); only the job name + JSON-safe args are persisted. On restart, unfinished jobs are re-enqueued and resumed by name (the Celery/RQ pattern). Orphans with no matching handler are marked failed, never left hanging.
+- **Backward compatible**: `submit(coro_fn, …)` still works for fire-and-forget in-process tasks; `submit_job(name, …)` is the new durable path.
+- **API**: `POST /api/v1/queue/submit` (durable job), `POST /api/v1/queue/cancel/{id}`, `GET /api/v1/queue/stats`, `GET /api/v1/queue/task/{id}`, plus the existing `GET /api/v1/queue/status`. Persistence is on by default; set `QUEUE_PERSIST=false` to disable.
+
+---
+
 ## How Maya Works
 
 ```

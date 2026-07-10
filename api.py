@@ -1056,7 +1056,8 @@ try:
     from infrastructure import install_exception_handler as _p1_install_exc
 
     _p1_install_exc(app, _p1_metrics)
-    _p1_queue = _P1TaskQueue(workers=int(os.getenv("TASK_WORKERS", "2")))
+    _p1_queue = _P1TaskQueue(workers=int(os.getenv("TASK_WORKERS", "2")),
+                             persist=os.getenv("QUEUE_PERSIST", "true").lower() != "false")
     _p1_rl = _P1RateLimiter(rate=float(os.getenv("RATE_LIMIT_PER_MIN", "120")), per_seconds=60)
 
     @app.on_event("startup")
@@ -1088,9 +1089,53 @@ try:
     async def _p1_get_flags(user=Depends(get_current_user)):
         return _p1_flags.all()
 
+    # Register a persistent job: run an autonomous goal in the background.
+    # Because only the job name + JSON args are stored, this survives a
+    # server restart and resumes automatically.
+    async def _p1_agent_goal_job(goal: str):
+        if maya_instance and hasattr(maya_instance, "chat"):
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(
+                None, lambda: maya_instance.chat(goal))
+        return {"note": "maya_instance unavailable", "goal": goal}
+    _p1_queue.register("agent_goal", _p1_agent_goal_job)
+
     @app.get("/api/v1/queue/status")
     async def _p1_queue_status(user=Depends(get_current_user)):
         return _p1_queue.all_status()
+
+    @app.get("/api/v1/queue/stats")
+    async def _p1_queue_stats(user=Depends(get_current_user)):
+        """Queue counts, worker count, and registered persistent jobs."""
+        return _p1_queue.stats()
+
+    @app.get("/api/v1/queue/task/{task_id}")
+    async def _p1_queue_task(task_id: str, user=Depends(get_current_user)):
+        st = _p1_queue.status(task_id)
+        if st is None:
+            raise HTTPException(status_code=404, detail="Task not found")
+        return {"id": task_id, **st}
+
+    @app.post("/api/v1/queue/submit")
+    async def _p1_queue_submit(body: dict, user=Depends(get_current_user)):
+        """Submit a persistent background job. body: {job, args?, kwargs?}.
+        The job must be a registered handler (e.g. 'agent_goal')."""
+        job = (body.get("job") or "").strip()
+        if not job:
+            raise HTTPException(status_code=400, detail="'job' is required")
+        try:
+            task_id = await _p1_queue.submit_job(
+                job, *body.get("args", []), **body.get("kwargs", {}))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        return {"task_id": task_id, "job": job, "state": "queued"}
+
+    @app.post("/api/v1/queue/cancel/{task_id}")
+    async def _p1_queue_cancel(task_id: str, user=Depends(get_current_user)):
+        if not _p1_queue.cancel(task_id):
+            raise HTTPException(status_code=409,
+                                detail="Task not cancellable (already started or missing)")
+        return {"task_id": task_id, "state": "cancelled"}
 
 except Exception as _p1_err:
     print(f"WARNING: Phase 1 infrastructure not loaded: {_p1_err}")
