@@ -96,6 +96,15 @@ Agent tools: `vision_analyze`, `ocr_image`, `text_to_speech` (category: media)
 
 ---
 
+## Vector Memory (Persistent + Synced)
+
+- **Persistent vectors**: ChromaDB now uses `PersistentClient` under `storage/vectors/` — previously the in-memory client silently wiped all vector memory on every restart.
+- **Semantic fallback**: without chromadb installed, a pure-Python TF-IDF cosine engine (rebuilt from long-term memory) replaces the old substring match.
+- **Full sync**: delete, update, compress, and TTL cleanup now keep vectors in step with long-term memory — deleted/expired memories can no longer surface as "ghost" vector search results, and edited memories are re-embedded.
+- `MemoryManager.cleanup()` prunes orphaned vectors; `/api/v1/memory/cleanup` routes through it. `get_stats()` reports `vector_engine` and `vector_count`.
+
+---
+
 ## How Maya Works
 
 ```

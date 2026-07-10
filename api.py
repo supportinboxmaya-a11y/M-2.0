@@ -1117,7 +1117,11 @@ try:
 
     @app.post("/api/v1/memory/cleanup")
     async def _p2_cleanup(dry_run: bool = True, user=Depends(get_current_user)):
-        """Expire old memories per TTL policy. dry_run=true reports only."""
+        """Expire old memories per TTL policy. dry_run=true reports only.
+        Routed through MemoryManager so orphaned vectors get pruned too."""
+        if maya_instance and hasattr(maya_instance, "memory") and \
+                hasattr(maya_instance.memory, "cleanup"):
+            return maya_instance.memory.cleanup(dry_run=dry_run)
         return _p2_lc.cleanup(dry_run=dry_run)
 
     @app.get("/api/v1/memory/summary")

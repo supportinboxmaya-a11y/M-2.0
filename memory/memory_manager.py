@@ -39,7 +39,7 @@ class MemoryManager:
         self.long_term = LongTermMemory()
         self.episodic = EpisodicMemory()
         self.semantic = SemanticMemory()
-        self.vector = VectorMemory()
+        self.vector = VectorMemory(fallback_store=self.long_term)
         self.context = ContextManager()
         # These four existed as real, tested modules but were never wired
         # into MemoryManager — add() never scored importance, search()
@@ -78,6 +78,7 @@ class MemoryManager:
 
         # Vector memory তে semantic search এর জন্য
         self.vector.add(content, doc_id=mid, metadata=metadata)
+        self.vector.invalidate()
 
         log.debug(f"Memory added [{memory_type}]: {content[:60]}")
         return mid
@@ -239,29 +240,58 @@ class MemoryManager:
         if not dry_run and summary_text:
             for m in to_compress:
                 self.long_term.delete(m["id"])
-            self.long_term.add(
+                self.vector.delete(m["id"])
+            summary_meta = {"source_type": memory_type, "source_count": len(to_compress)}
+            sid = self.long_term.add(
                 f"[Compressed summary of {len(to_compress)} older '{memory_type}' memories] {summary_text}",
                 memory_type="compressed",
-                metadata={"source_type": memory_type, "source_count": len(to_compress)},
+                metadata=summary_meta,
             )
+            self.vector.add(
+                f"[Compressed summary of {len(to_compress)} older '{memory_type}' memories] {summary_text}",
+                doc_id=sid, metadata=summary_meta)
+            self.vector.invalidate()
         return result
 
     def delete(self, memory_id: str) -> bool:
         """Deletes a memory by id. api.py's DELETE endpoint checked for this
         method with hasattr() before this existed — it was always False, so
         every 'delete' from the Memory page quietly did nothing on the
-        backend even though the UI reported success."""
-        return self.long_term.delete(memory_id)
+        backend even though the UI reported success.
+
+        Also removes the memory's vector — before this, deleted memories
+        kept surfacing in vector search results forever."""
+        ok = self.long_term.delete(memory_id)
+        if ok:
+            self.vector.delete(memory_id)
+            self.vector.invalidate()
+        return ok
 
     def update(self, memory_id: str, new_content: str) -> Optional[Dict]:
         """Edits a memory, re-scoring importance and keeping the old
         content as a version instead of losing it."""
-        result = self.long_term.update(memory_id, new_content,
-                                        new_metadata={"importance": self.scorer.score(new_content)})
+        new_meta = {"importance": self.scorer.score(new_content)}
+        result = self.long_term.update(memory_id, new_content, new_metadata=new_meta)
+        if result:
+            # Re-embed: without this, vector search kept returning the
+            # pre-edit content for updated memories.
+            self.vector.update(memory_id, new_content, metadata=new_meta)
+            self.vector.invalidate()
         return result
 
     def get_versions(self, memory_id: str) -> List[Dict]:
         return self.long_term.get_versions(memory_id)
+
+    def cleanup(self, dry_run: bool = True) -> Dict:
+        """TTL/overflow cleanup that also prunes the vectors of every
+        deleted memory, so vector search can never return expired
+        content. Prefer this over calling lifecycle.cleanup directly."""
+        report = self.lifecycle.cleanup(dry_run=dry_run)
+        if not dry_run:
+            valid = {m.get("id") for m in self.long_term.get_all(limit=100000)}
+            report["vectors_pruned"] = self.vector.prune(valid)
+            self.vector.invalidate()
+        return report
 
     def get_analytics(self) -> Dict:
         return self.long_term.get_analytics()
@@ -278,6 +308,8 @@ class MemoryManager:
         """Memory system statistics।"""
         return {
             "total_memories": self.long_term.count(),
+            "vector_engine": self.vector.engine,
+            "vector_count": self.vector.count(),
             "short_term_items": len(self.short_term.get_all()),
             "session_start": self._session_start,
             "context_goal": self.context.current_goal,
