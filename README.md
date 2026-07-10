@@ -134,6 +134,17 @@ Every failure also produces a short **reflection note** fed back into the next a
 
 ---
 
+## Streaming Responses (Live Token Output)
+
+Replies now stream token-by-token instead of arriving all at once.
+
+- **Providers**: Groq and Gemini gained native `stream_chat()` (server-side streaming). Providers without it degrade gracefully — their full reply is emitted as a single chunk.
+- **Router**: `LLMRouter.stream_chat()` yields chunks with the same provider-selection and health-based fallback as `chat()`; if one provider fails mid-stream it transparently falls back to the next.
+- **API**: `POST /api/v1/agent/chat/stream` emits Server-Sent Events (`data: {"delta": "..."}` … `data: {"done": true}`), preserving the same history/budget handling as `/agent/chat`.
+- **Frontend**: a new **Live Chat** page renders the reply as it arrives, with a typing cursor and a Stop button; it falls back to the non-streaming endpoint automatically on older backends.
+
+---
+
 ## How Maya Works
 
 ```
