@@ -22,6 +22,8 @@ from .system.terminal import TerminalTool
 from .system.process_manager import ProcessManager
 from .media.media_tool import MediaTool
 from .media.image_gen_tool import ImageGenTool
+from .media.vision_tool import VisionTool
+from .media.tts_tool import TTSTool
 from .communication.email_tool import EmailTool
 
 class ToolManager:
@@ -52,6 +54,8 @@ class ToolManager:
         pm = ProcessManager()
         media = MediaTool()
         image_gen = ImageGenTool()
+        vision = VisionTool()
+        tts = TTSTool()
         email_tool = EmailTool()
 
         self.registry.register("web_search", search.search, "Search the web", category="web")
@@ -90,7 +94,10 @@ class ToolManager:
         self.registry.register("run_terminal", terminal.execute, "Execute terminal", category="system")
         self.registry.register("list_processes", pm.list_processes, "List processes", category="system")
         self.registry.register("image_tool", media.run, "Image operations", category="media")
-        self.registry.register("generate_image", image_gen.run, "Generate AI image", category="media")
+        self.registry.register("generate_image", image_gen.run, "Generate AI image (saved to workspace)", category="media")
+        self.registry.register("vision_analyze", vision.run, "Analyze an image with a multimodal LLM (base64/data URL/workspace path)", category="media")
+        self.registry.register("ocr_image", lambda image: vision.run(action="ocr", image=image), "Extract text from an image (OCR)", category="media")
+        self.registry.register("text_to_speech", tts.run, "Convert text to spoken audio (saved to workspace/audio)", category="media")
         self.registry.register("email", email_tool.run, "Send/read email", category="communication")
 
     def get_registry(self):

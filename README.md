@@ -62,6 +62,40 @@ You: quit
 
 ---
 
+## Knowledge Base (RAG)
+
+Maya includes an enterprise RAG layer (`rag/` package):
+
+- Hybrid retrieval: SQLite FTS5 BM25 keyword search + vector search, fused with Reciprocal Rank Fusion
+- Vector engine: ChromaDB (persistent) when installed, pure-Python TF-IDF fallback otherwise — works with zero extra dependencies
+- Ingestion: PDF, Markdown, code, and plain text with type-aware chunking
+- Dedup + versioning: identical content is never indexed twice; re-ingesting a source bumps its version
+- Source attribution: every answer context carries numbered [n] citations with document, section, and character offsets
+
+API endpoints: `POST /api/v1/rag/ingest`, `GET /api/v1/rag/search`, `GET /api/v1/rag/context`, `GET /api/v1/rag/documents`, `DELETE /api/v1/rag/documents/{id}`, `GET /api/v1/rag/stats`
+
+Agent tools: `knowledge_search`, `knowledge_ingest` (category: memory)
+
+```python
+from rag import RAGRetriever
+rag = RAGRetriever.shared()
+rag.ingest_file("workspace/guide.pdf")
+ctx = rag.get_context("how do I configure providers?")
+```
+
+---
+
+## Multimodal (Vision, OCR, TTS)
+
+- **Vision** (`tools/media/vision_tool.py`): `/api/v1/vision/analyze` now sends the actual image to a multimodal provider — Gemini → OpenAI → Claude fallback. Accepts base64, data URLs, or workspace paths.
+- **OCR**: `/api/v1/vision/ocr` — local pytesseract when installed, vision LLM otherwise.
+- **Text-to-Speech** (`tools/media/tts_tool.py`): `/api/v1/voice/speak` — OpenAI tts-1 → Groq playai-tts; audio saved under `workspace/audio/` and returned as base64.
+- **Image generation**: generated PNGs are now saved to `workspace/images/` and the path is returned.
+
+Agent tools: `vision_analyze`, `ocr_image`, `text_to_speech` (category: media)
+
+---
+
 ## How Maya Works
 
 ```

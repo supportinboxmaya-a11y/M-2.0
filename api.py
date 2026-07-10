@@ -628,16 +628,21 @@ async def delete_plugin(plugin_id: str, user=Depends(get_current_user)):
 # ══════════════════════════════════════════════
 @app.post("/api/v1/vision/analyze")
 async def vision_analyze(body: dict, user=Depends(get_current_user)):
+    """Analyze an image with a real multimodal provider
+    (Gemini → OpenAI → Claude fallback). Accepts base64 / data URL."""
     image = body.get("image", "")
-    prompt = body.get("prompt", "Describe this image")
+    prompt = body.get("prompt", "Describe this image in detail.")
     if not image:
         raise HTTPException(status_code=400, detail="No image provided")
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    response = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.chat(f"[IMAGE ATTACHED] {prompt}")
-    )
-    return {"result": response}
+    from tools.media.vision_tool import VisionTool
+    try:
+        result = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: VisionTool().analyze(image, prompt))
+    except (ValueError, PermissionError, FileNotFoundError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    if not result.get("success"):
+        return {"result": "", "message": result.get("error", "Vision failed")}
+    return {"result": result["result"], "provider": result.get("provider", "")}
 
 # ══════════════════════════════════════════════
 # VOICE ROUTES
@@ -1537,3 +1542,144 @@ try:
 except Exception as _p10_err:
     print(f"WARNING: Phase 10 learning layer not loaded: {_p10_err}")
 # ══════════════ End Phase 10 integration ══════════════
+
+
+# ══════════════ Phase 11: Enterprise RAG integration ══════════════
+# Hybrid retrieval (FTS5 BM25 + vector w/ RRF fusion), document
+# ingestion, knowledge index, source attribution. Soft-fails so the
+# API always boots even if the rag package is missing.
+try:
+    from rag import RAGRetriever as _P11RAG
+    from config.settings import WORKSPACE_DIR as _P11_WS
+
+    _p11_rag = _P11RAG.shared()
+
+    @app.get("/api/v1/rag/stats")
+    async def _p11_stats(user=Depends(get_current_user)):
+        """Knowledge base size, doc types, and active search engines."""
+        return _p11_rag.stats()
+
+    @app.get("/api/v1/rag/documents")
+    async def _p11_docs(limit: int = 200, user=Depends(get_current_user)):
+        return {"documents": _p11_rag.list_documents(limit=limit)}
+
+    @app.delete("/api/v1/rag/documents/{doc_id}")
+    async def _p11_delete(doc_id: str, user=Depends(get_current_user)):
+        if not _p11_rag.delete_document(doc_id):
+            raise HTTPException(status_code=404, detail="Document not found")
+        return {"deleted": doc_id}
+
+    @app.post("/api/v1/rag/ingest")
+    async def _p11_ingest(body: dict, user=Depends(get_current_user)):
+        """Ingest inline text: {text, title?, doc_type?} — or a workspace
+        file: {path} (path is confined to the workspace directory)."""
+        path = (body.get("path") or "").strip()
+        if path:
+            import os as _os
+            full = _os.path.abspath(_os.path.join(str(_P11_WS), path))
+            if not full.startswith(str(_P11_WS)):
+                raise HTTPException(status_code=403,
+                                    detail="Path outside workspace")
+            try:
+                return await asyncio.get_event_loop().run_in_executor(
+                    None, lambda: _p11_rag.ingest_file(full))
+            except FileNotFoundError:
+                raise HTTPException(status_code=404, detail="File not found")
+            except (ValueError, RuntimeError) as e:
+                raise HTTPException(status_code=400, detail=str(e))
+        text = (body.get("text") or "").strip()
+        if not text:
+            raise HTTPException(status_code=400,
+                                detail="Provide 'text' or workspace 'path'")
+        return await asyncio.get_event_loop().run_in_executor(
+            None, lambda: _p11_rag.ingest_text(
+                text, title=body.get("title", "untitled"),
+                doc_type=body.get("doc_type", "text")))
+
+    @app.get("/api/v1/rag/search")
+    async def _p11_search(q: str, limit: int = 5, mode: str = "hybrid",
+                          user=Depends(get_current_user)):
+        """mode: hybrid | keyword | vector"""
+        if mode not in ("hybrid", "keyword", "vector"):
+            raise HTTPException(status_code=400, detail="Invalid mode")
+        hits = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: _p11_rag.search(q, limit=min(limit, 25), mode=mode))
+        return {"query": q, "mode": mode, "results": hits}
+
+    @app.get("/api/v1/rag/context")
+    async def _p11_context(q: str, limit: int = 5, max_chars: int = 6000,
+                           user=Depends(get_current_user)):
+        """LLM-ready numbered context block + citations for a query."""
+        return await asyncio.get_event_loop().run_in_executor(
+            None, lambda: _p11_rag.get_context(
+                q, limit=min(limit, 25), max_chars=min(max_chars, 20000)))
+
+    # Make retrieval available to agents as tools
+    try:
+        _p11_tm = maya_instance.tools if maya_instance else None
+        if _p11_tm and hasattr(_p11_tm, "registry"):
+            _p11_tm.registry.register(
+                "knowledge_search",
+                lambda query, limit=5: _p11_rag.get_context(query, limit=limit),
+                "Search the indexed knowledge base (hybrid RAG) and return "
+                "context with source citations", category="memory")
+            _p11_tm.registry.register(
+                "knowledge_ingest",
+                lambda text, title="untitled": _p11_rag.ingest_text(text, title=title),
+                "Add text to the knowledge base for future retrieval",
+                category="memory")
+    except Exception:
+        pass
+
+    print("Phase 11 RAG active: hybrid search, ingestion, attribution "
+          f"(vector engine: {_p11_rag.vectors.engine})")
+except Exception as _p11_err:
+    print(f"WARNING: Phase 11 RAG not loaded: {_p11_err}")
+# ══════════════ End Phase 11 integration ══════════════
+
+
+# ══════════════ Phase 12: Multimodal integration ══════════════
+# Real OCR and text-to-speech endpoints. Vision analyze was upgraded
+# in place above to use actual multimodal providers. Soft-fails so
+# the API always boots.
+try:
+    from tools.media.vision_tool import VisionTool as _P12Vision
+    from tools.media.tts_tool import TTSTool as _P12TTS
+
+    _p12_vision = _P12Vision()
+    _p12_tts = _P12TTS()
+
+    @app.post("/api/v1/vision/ocr")
+    async def _p12_ocr(body: dict, user=Depends(get_current_user)):
+        """Extract text from an image (pytesseract if installed,
+        vision LLM otherwise). Accepts base64 / data URL."""
+        image = body.get("image", "")
+        if not image:
+            raise HTTPException(status_code=400, detail="No image provided")
+        try:
+            result = await asyncio.get_event_loop().run_in_executor(
+                None, lambda: _p12_vision.ocr(image))
+        except (ValueError, PermissionError, FileNotFoundError) as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        if not result.get("success"):
+            return {"text": "", "message": result.get("error", "OCR failed")}
+        return {"text": result["result"], "provider": result.get("provider", "")}
+
+    @app.post("/api/v1/voice/speak")
+    async def _p12_speak(body: dict, user=Depends(get_current_user)):
+        """Text-to-speech: returns base64 audio (OpenAI tts-1 → Groq
+        playai-tts). Same configuration-message pattern as transcribe."""
+        text = (body.get("text") or "").strip()
+        if not text:
+            raise HTTPException(status_code=400, detail="No text provided")
+        result = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: _p12_tts.synthesize(text, body.get("voice", "alloy")))
+        if not result.get("success"):
+            return {"audio": "", "message": result.get("error", "TTS failed")}
+        return {"audio": result["audio_base64"], "format": result["format"],
+                "provider": result["provider"]}
+
+    print("Phase 12 multimodal active: real vision, OCR, TTS")
+except Exception as _p12_err:
+    print(f"WARNING: Phase 12 multimodal not loaded: {_p12_err}")
+# ══════════════ End Phase 12 integration ══════════════
