@@ -8,6 +8,10 @@ from brain.task_graph import TaskGraph, TaskNode
 
 from .checkpoint import MemoryCheckpoint
 
+# Recovery strategy constants (imported lazily in __init__ to avoid a
+# circular import: autonomous package imports WorkflowEngine).
+RETRY, ALTERNATE, REPLAN, ABORT = "retry", "alternate", "replan", "abort"
+
 _FINAL = ("done", "failed", "blocked", "skipped")
 
 
@@ -22,6 +26,9 @@ class WorkflowRun:
         self.status = "pending"           # pending|running|completed|failed|cancelled
         self.created = time.time()
         self._cancel = False
+        self.recovery_log: list = []      # every recovery decision made
+        self.replan_count = 0
+        self.replans_left = 2             # cap replans to avoid loops
 
     def cancel(self) -> None:
         self._cancel = True
@@ -55,11 +62,18 @@ class WorkflowRun:
 
 class WorkflowEngine:
     def __init__(self, orchestrator: Orchestrator | None = None,
-                 checkpoint=None, max_rounds: int = 30):
+                 checkpoint=None, max_rounds: int = 30,
+                 recovery=None):
         self.orch = orchestrator or Orchestrator()
         self.checkpoint = checkpoint or MemoryCheckpoint()
         self.max_rounds = max_rounds
         self.runs: dict[str, WorkflowRun] = {}
+        # Recovery intelligence: classifies failures and decides how to
+        # recover (retry with backoff / alternate approach / replan / abort).
+        if recovery is None:
+            from autonomous.recovery import RecoveryStrategy
+            recovery = RecoveryStrategy()
+        self.recovery = recovery
 
     # ── pipeline: goal → plan → assign ──
     def create(self, goal: str, conditions: dict | None = None) -> WorkflowRun:
@@ -90,21 +104,42 @@ class WorkflowEngine:
         Checkpoint: saved after every round.
         """
         run.status = "running"
-        retries_left = {nid: retry_failed for nid in run.graph.nodes}
+        budget = max(retry_failed, self.recovery.max_attempts - 1)
+        retries_left = {nid: budget for nid in run.graph.nodes}
         for _ in range(self.max_rounds):
             if run._cancel:
                 run.status = "cancelled"
                 break
             ready = run.graph.ready()
             if not ready:
-                # verification+retry stage: give failed nodes another chance
+                # recovery stage: inspect each failure and act on its kind
                 failed = [n for n in run.graph.nodes.values()
-                          if n.state == "failed" and retries_left.get(n.id, 0) > 0]
-                if not failed:
+                          if n.state == "failed"]
+                actionable = [n for n in failed
+                              if retries_left.get(n.id, 0) > 0]
+                if not actionable:
                     break
-                for n in failed:
+                replan_needed = False
+                for n in actionable:
+                    attempt = budget - retries_left[n.id] + 1
+                    decision = self.recovery.decide(
+                        n.id, n.error or "", attempt,
+                        goal=run.goal, description=n.description)
+                    run.recovery_log.append({"node": n.id, **decision.to_dict()})
+                    if decision.strategy == ABORT:
+                        retries_left[n.id] = 0            # stop trying this node
+                        continue
                     retries_left[n.id] -= 1
+                    if decision.strategy == REPLAN:
+                        replan_needed = True
+                    # Feed the reflection back so the next attempt adapts.
+                    n.recovery_note = decision.reflection
+                    if decision.backoff_seconds > 0:
+                        await asyncio.sleep(min(decision.backoff_seconds, 5.0))
                     run.graph.retry(n.id)
+                if replan_needed and run.replans_left > 0:
+                    run.replans_left -= 1
+                    self._replan(run, retries_left)
                 continue
             # conditional skip
             for node in list(ready):
@@ -127,7 +162,25 @@ class WorkflowEngine:
             [r for r in run.results if "confidence" in r]) if run.results else \
             {"plan_confidence": 0.0, "should_replan": True}
         return {"run_id": run.id, "status": run.status, "progress": prog,
-                "results": run.results, **conf}
+                "results": run.results, "recovery_log": run.recovery_log,
+                "replans_used": run.replan_count, **conf}
+
+    def _replan(self, run: WorkflowRun, retries_left: dict) -> None:
+        """Re-plan the remaining goal when a step's premise was invalid.
+        New nodes are appended and get their own retry budget; already
+        completed work is preserved."""
+        run.replan_count += 1
+        try:
+            done = [n.description for n in run.graph.nodes.values()
+                    if n.state == "done"]
+            planned = self.orch.plan(run.goal)
+            for nid, node in planned["graph"].nodes.items():
+                if node.description in done or nid in run.graph.nodes:
+                    continue
+                run.graph.nodes[nid] = node
+                retries_left[nid] = self.recovery.max_attempts
+        except Exception:
+            pass   # replanning is best-effort; the run continues regardless
 
     async def _run_node(self, run: WorkflowRun, node, execute_fn) -> None:
         agent = self.orch.registry.get(node.agent) or self.orch.registry.route(
@@ -145,6 +198,7 @@ class WorkflowEngine:
                 output, verified = await execute_fn(agent, node)
             else:
                 output, verified = await asyncio.to_thread(execute_fn, agent, node)
+            node.recovery_note = ""   # consumed for this attempt
             rec = self.orch.brain.record(run.graph, node.id, output, verified, run.goal)
             if rec["ok"]:
                 agent.record_success()

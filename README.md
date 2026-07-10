@@ -120,6 +120,20 @@ Agent tools: `vision_analyze`, `ocr_image`, `text_to_speech` (category: media)
 
 ---
 
+## Autonomous Recovery (Self-Correcting Loop)
+
+The autonomous loop no longer retries every failure blindly. A new
+recovery engine (`autonomous/recovery.py`) inspects each failure and picks a strategy:
+
+- **RETRY** — transient errors (timeout, rate limit, connection) get exponential backoff and a fresh attempt.
+- **ALTERNATE** — a failed/unavailable tool triggers a different approach (drops to an LLM step, without that tool). Repeating the same error twice auto-escalates here.
+- **REPLAN** — a wrong premise (missing dependency, impossible step) re-plans the remaining goal, preserving completed work (capped to avoid loops).
+- **ABORT** — hard blocks (security, workspace escape) or an exhausted attempt budget stop wasting tries immediately.
+
+Every failure also produces a short **reflection note** fed back into the next attempt's prompt, so Maya adapts within a single run. The autonomous result now includes a `recovery_log` (every decision made) and `replans_used`. Recovery is deterministic and fully offline; an optional `llm_fn` deepens the reflection when available.
+
+---
+
 ## How Maya Works
 
 ```
