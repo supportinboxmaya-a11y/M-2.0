@@ -8,7 +8,7 @@ import uuid
 
 class TaskNode:
     __slots__ = ("id", "description", "tool", "agent", "depends_on", "state",
-                 "result", "error", "attempts")
+                 "result", "error", "attempts", "recovery_note")
 
     def __init__(self, description: str, tool: str | None = None,
                  agent: str | None = None, depends_on: list | None = None,
@@ -19,6 +19,7 @@ class TaskNode:
         self.agent = agent
         self.depends_on = list(depends_on or [])
         self.state = "pending"          # pending | running | done | failed | blocked
+        self.recovery_note = ""         # reflection fed back on retry
         self.result = None
         self.error = None
         self.attempts = 0

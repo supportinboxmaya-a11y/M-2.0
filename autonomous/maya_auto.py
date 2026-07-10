@@ -38,6 +38,8 @@ class AutonomousMaya:
                 "output": improved["output"],
                 "improvement": {"improved": improved["improved"],
                                 "acceptable": improved["acceptable"]},
+                "recovery_log": result.get("recovery_log", []),
+                "replans_used": result.get("replans_used", 0),
                 "report": report}
 
     def run_sync(self, goal: str) -> dict:

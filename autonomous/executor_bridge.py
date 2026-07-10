@@ -9,6 +9,10 @@ class ExecutorBridge:
 
     def __call__(self, agent, node):
         """execute_fn contract: (output, verified). Never raises."""
+        # On a retry, the recovery strategy leaves a reflection note that
+        # tells this attempt what went wrong last time and how to adapt.
+        note = getattr(node, "recovery_note", "") or ""
+        hint = ("\n" + note) if note else ""
         # 1) try a real tool matching the node's category
         if self.fw is not None and node.tool:
             name = self._pick_tool(node.tool)
@@ -25,14 +29,15 @@ class ExecutorBridge:
                         return self.llm_fn(
                             f"{agent.system_prompt}\nTool '{name}' failed with: "
                             f"{res['error']}. Complete this task without it: "
-                            f"{node.description}"), None
+                            f"{node.description}{hint}"), None
                     except Exception as e:
                         return f"error: {e}", False
                 return f"error: {res['error']}", False
         # 2) pure-LLM step
         if self.llm_fn:
             try:
-                return self.llm_fn(f"{agent.system_prompt}\nTask: {node.description}"), None
+                return self.llm_fn(
+                    f"{agent.system_prompt}\nTask: {node.description}{hint}"), None
             except Exception as e:
                 return f"error: {e}", False
         return "error: no tool framework and no llm_fn configured", False
