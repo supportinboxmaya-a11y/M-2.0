@@ -112,6 +112,14 @@ Agent tools: `vision_analyze`, `ocr_image`, `text_to_speech` (category: media)
 
 ---
 
+## Sandbox Hardening
+
+- **No more secret leaks**: executed code used to inherit the full parent environment — one `os.environ` read exposed every API key. Children now get a scrubbed env (PATH/HOME/LANG only), and Python runs in isolated mode (`-I`).
+- **Kernel resource limits** on every code/shell run: memory (default 512MB), CPU seconds, process count (fork-bomb proof), and max file size (50MB) — a runaway snippet can no longer take the server down. Configurable via `SANDBOX_MEMORY_MB`, `SANDBOX_MAX_PROCS`, `SANDBOX_FSIZE_MB`.
+- **Path boundary fix**: `Sandbox.safe_path` used a raw `startswith()`, so a sibling directory like `workspace_evil` passed the check for `workspace` — now boundary-aware.
+
+---
+
 ## How Maya Works
 
 ```

@@ -1,7 +1,15 @@
 """
-Maya 2.0 - Code Runner (Secure)
----------------------------------
-Executes code in a sandboxed environment.
+Maya 2.0 - Code Runner (Secure, Hardened)
+-----------------------------------------
+Executes code in a sandboxed environment:
+- pattern blocklist (as before)
+- scrubbed environment: executed code can no longer read the parent
+  process's API keys via os.environ
+- kernel resource limits: memory, CPU, process count (fork bombs),
+  and max file size — one runaway snippet can't take the server down
+- python runs with -I (isolated mode: no user site-packages, no
+  PYTHONPATH injection)
+Return shape is unchanged: {success, output, error, returncode}.
 """
 
 import subprocess
@@ -11,6 +19,7 @@ import os
 import re
 from typing import Dict
 from config.settings import WORKSPACE_DIR
+from security.sandbox import Sandbox
 
 # Dangerous patterns to block
 BLOCKED_PATTERNS = [
@@ -28,6 +37,7 @@ class CodeRunner:
     def __init__(self):
         self.workspace = str(WORKSPACE_DIR)
         self.max_output_size = 10000
+        self.sandbox = Sandbox()
 
     def run(self, code: str, language: str = "python", timeout: int = 30) -> Dict:
         if not code or not code.strip():
@@ -62,12 +72,13 @@ class CodeRunner:
 
         try:
             result = subprocess.run(
-                [sys.executable, tmp],
+                [sys.executable, "-I", tmp],
                 capture_output=True,
                 text=True,
                 timeout=timeout,
                 cwd=self.workspace,
-                env={**os.environ, "PYTHONPATH": ""}
+                env=self.sandbox.scrubbed_env(),
+                preexec_fn=self.sandbox.resource_limiter(cpu_seconds=timeout + 5),
             )
             output = result.stdout[:self.max_output_size]
             error = result.stderr[:self.max_output_size]
@@ -103,7 +114,9 @@ class CodeRunner:
                 capture_output=True,
                 text=True,
                 timeout=timeout,
-                cwd=self.workspace
+                cwd=self.workspace,
+                env=self.sandbox.scrubbed_env(),
+                preexec_fn=self.sandbox.resource_limiter(cpu_seconds=timeout + 5),
             )
             return {
                 "success": result.returncode == 0,
