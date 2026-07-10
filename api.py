@@ -1687,3 +1687,66 @@ try:
 except Exception as _p12_err:
     print(f"WARNING: Phase 12 multimodal not loaded: {_p12_err}")
 # ══════════════ End Phase 12 integration ══════════════
+
+
+# ══════════════ Superpower 2: Streaming responses (SSE) ══════════════
+# Server-Sent Events endpoint that streams the assistant's reply token
+# by token, so the UI can render it live. Soft-fails so the API always
+# boots even if something here is unavailable.
+try:
+    from fastapi.responses import StreamingResponse as _Sp2Stream
+    import json as _sp2_json
+
+    @app.post("/api/v1/agent/chat/stream")
+    async def _sp2_chat_stream(req: ChatRequest, user: dict = Depends(get_current_user)):
+        """Stream a chat reply as Server-Sent Events.
+
+        Emits `data: {"delta": "..."}` lines as chunks arrive, then a
+        final `data: {"done": true}`. On error, emits
+        `data: {"error": "..."}`. Mirrors /agent/chat's history handling.
+        """
+        if not maya_instance:
+            raise HTTPException(status_code=503, detail="Maya not initialized")
+        check_budget(user)
+
+        history = []
+        use_hist = supabase_store.enabled and user.get("uid") and req.chat_id
+        if use_hist:
+            past = supabase_store.get_chat_history(user["uid"], req.chat_id, limit=20)
+            history = [{"role": m["role"], "content": m["content"]} for m in past]
+
+        messages = list(history) + [{"role": "user", "content": req.message}]
+
+        def _generate():
+            collected = []
+            try:
+                router = maya_instance.router
+                for delta in router.stream_chat(messages):
+                    if not delta:
+                        continue
+                    collected.append(delta)
+                    yield "data: " + _sp2_json.dumps({"delta": delta}) + "\n\n"
+            except Exception as e:
+                yield "data: " + _sp2_json.dumps({"error": str(e)}) + "\n\n"
+                return
+            full = "".join(collected)
+            if use_hist and full:
+                try:
+                    supabase_store.add_chat_message(user["uid"], req.chat_id,
+                                                    "user", req.message)
+                    supabase_store.add_chat_message(user["uid"], req.chat_id,
+                                                    "assistant", full)
+                    supabase_store.add_budget_usage(user["uid"],
+                                                    CHAT_MESSAGE_FLAT_COST_USD)
+                except Exception:
+                    pass
+            yield "data: " + _sp2_json.dumps({"done": True}) + "\n\n"
+
+        return _Sp2Stream(_generate(), media_type="text/event-stream",
+                          headers={"Cache-Control": "no-cache",
+                                   "X-Accel-Buffering": "no"})
+
+    print("Superpower 2 active: SSE streaming at /api/v1/agent/chat/stream")
+except Exception as _sp2_err:
+    print(f"WARNING: Superpower 2 streaming not loaded: {_sp2_err}")
+# ══════════════ End Superpower 2 ══════════════

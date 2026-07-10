@@ -126,6 +126,61 @@ class LLMRouter:
 
         raise Exception(f"All providers failed. Last error: {last_error}")
 
+    def stream_chat(self, messages: List[Dict], provider: Optional[str] = None,
+                    model: Optional[str] = None, max_tokens: int = 4000,
+                    task_type: str = "general"):
+        """Yield response chunks as they arrive.
+
+        Tries the selected provider then healthy fallbacks, exactly like
+        chat(). Providers exposing stream_chat() stream natively; any
+        other provider degrades gracefully by yielding its full response
+        as a single chunk, so the SSE endpoint works with every backend.
+        """
+        self.total_requests += 1
+        selected = provider if provider and self._is_healthy(provider) \
+            else self._select_best_provider(task_type)
+        if not selected:
+            raise Exception("No LLM provider available! Set at least one API key.")
+
+        providers_to_try = [selected] + [
+            p for p in self.DEFAULT_PRIORITY
+            if p != selected and self._is_healthy(p)]
+
+        last_error = None
+        for p in providers_to_try:
+            impl = self.providers.get(p)
+            if impl is None:
+                continue
+            try:
+                start = time.time()
+                produced = 0
+                if hasattr(impl, "stream_chat"):
+                    for chunk in impl.stream_chat(messages, model=model,
+                                                  max_tokens=max_tokens):
+                        if chunk:
+                            produced += len(chunk)
+                            yield chunk
+                else:
+                    # non-streaming provider: emit whole answer at once
+                    text = impl.chat(messages, model=model, max_tokens=max_tokens)
+                    produced = len(text or "")
+                    if text:
+                        yield text
+                elapsed = time.time() - start
+                self._update_health(p, success=True, response_time=elapsed)
+                self.successful_requests += 1
+                self._log_request(p, model, len(str(messages)), produced,
+                                  elapsed, True)
+                return
+            except Exception as e:
+                last_error = str(e)
+                self._update_health(p, success=False, error=last_error)
+                self._log_request(p, model, len(str(messages)), 0, 0, False,
+                                  error=last_error)
+                print(f"   ⚠️ [{p}] stream failed: {last_error[:80]}, next...")
+                continue
+        raise Exception(f"All providers failed. Last error: {last_error}")
+
     def available_providers(self) -> List[str]:
         """সব available provider এর list।"""
         return [p for p in self.DEFAULT_PRIORITY if self._is_healthy(p)]
