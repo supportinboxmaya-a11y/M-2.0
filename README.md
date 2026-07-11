@@ -276,6 +276,18 @@ The mobile/PWA client now works offline — actions taken while disconnected are
 
 ---
 
+## Live Translation
+
+Real-time translation between 16 languages, powered by Maya's LLM router.
+
+- **LLM-backed translation** (`tools/media/translator.py`): handles context, idioms, and Bengali/English code-mixing far better than a phrase table, reusing the router's provider fallback — no new API to configure.
+- **Script-based detection**: a cheap Unicode-range heuristic auto-detects the source language (Bengali, Devanagari, Arabic, CJK, Hangul, Cyrillic, Tamil, Telugu, Gurmukhi, …) and short-circuits "already in target language" cases so no LLM call is wasted.
+- **TTS pairing**: with `speak: true`, the translation is spoken via the existing TTS tool when available.
+- **Frontend**: a **Translate** page with source/target pickers, auto-detect, direction swap, and copy — added to the sidebar (English "Translate" / Bengali "অনুবাদ").
+- **API**: `GET /api/v1/translate/languages`, `POST /api/v1/translate` (`{text, target, source?, speak?}`), `POST /api/v1/translate/detect`.
+
+---
+
 ## How Maya Works
 
 ```
