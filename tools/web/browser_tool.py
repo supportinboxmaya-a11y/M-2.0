@@ -77,6 +77,61 @@ class BrowserTool:
         except Exception as e:
             return f"Error clicking '{selector or text}': {e}"
 
+    def click_visually(self, instruction: str = "", **kwargs) -> str:
+        """Click something on the page by DESCRIPTION rather than a CSS
+        selector — for pages where the DOM is unreliable (canvas UIs,
+        heavily obfuscated class names, elements only distinguishable by
+        appearance). Screenshots the current page, asks the multimodal
+        vision model for the pixel coordinates of the described element,
+        then clicks there directly. Best-effort — vision coordinate
+        grounding isn't pixel-perfect, so prefer click(selector=...) when
+        a selector is available; use this as the fallback."""
+        if not instruction or not instruction.strip():
+            return "Error: instruction required (describe what to click, e.g. 'the blue Sign In button')"
+        try:
+            page = self._ensure_page()
+            png_bytes = page.screenshot(full_page=False)
+            viewport = page.viewport_size or {"width": 1280, "height": 800}
+            import base64, re
+            b64 = base64.b64encode(png_bytes).decode()
+            from tools.media.vision_tool import VisionTool
+            prompt = (
+                f"This is a screenshot of a web page, {viewport['width']}x{viewport['height']} "
+                f"pixels. Find this element: {instruction.strip()}. Reply with ONLY the pixel "
+                "coordinates of the CENTER of that element, in the exact format 'x,y' "
+                "(e.g. '412,88'). If you can't find it, reply 'not found'. No other text."
+            )
+            result = VisionTool().analyze(f"data:image/png;base64,{b64}", prompt)
+            if not result.get("success"):
+                return f"Error: vision lookup failed — {result.get('error')}"
+            coords_text = (result.get("result") or "").strip()
+            match = re.search(r"(\d+)\s*,\s*(\d+)", coords_text)
+            if not match:
+                return f"Could not locate '{instruction}' on the page (vision reply: {coords_text!r})"
+            x, y = int(match.group(1)), int(match.group(2))
+            page.mouse.click(x, y)
+            return f"Clicked at ({x}, {y}) — vision-located target: {instruction}"
+        except Exception as e:
+            return f"Error in visual click on '{instruction}': {e}"
+
+    def look(self, question: str = "What's on this page?", **kwargs) -> str:
+        """Screenshot the current page and ask the vision model a free-form
+        question about it — for reading layout/state that get_text (DOM
+        text only) can't capture, e.g. 'is the login button greyed out?'
+        or 'what does the chart show?'."""
+        try:
+            page = self._ensure_page()
+            png_bytes = page.screenshot(full_page=False)
+            import base64
+            b64 = base64.b64encode(png_bytes).decode()
+            from tools.media.vision_tool import VisionTool
+            result = VisionTool().analyze(f"data:image/png;base64,{b64}", question)
+            if not result.get("success"):
+                return f"Error: vision lookup failed — {result.get('error')}"
+            return result.get("result", "")
+        except Exception as e:
+            return f"Error looking at page: {e}"
+
     def type_text(self, selector: str = "", text: str = "", submit: bool = False, **kwargs) -> str:
         """Type text into an input identified by CSS selector."""
         if not selector:
