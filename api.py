@@ -2188,3 +2188,85 @@ try:
 except Exception as _p26_err:
     print(f"WARNING: #2/6 plugin upgrade not loaded: {_p26_err}")
 # ══════════════ End #2/6 ══════════════
+
+
+# ══════════════ #3/6: Workflow Builder ══════════════
+# Declarative multi-step workflows (JSON) with conditions + parallel
+# steps, runnable through Maya. Soft-fails so the API always boots.
+try:
+    from workflows.builder import WorkflowBuilder as _P36WB, WorkflowValidationError as _P36Err
+
+    def _p36_prompt(text):
+        if maya_instance and hasattr(maya_instance, "chat"):
+            return maya_instance.chat(text)
+        return f"[maya unavailable] {text}"
+
+    def _p36_tool(name, tool_input):
+        if maya_instance and hasattr(maya_instance, "tools") and \
+                hasattr(maya_instance.tools, "registry"):
+            reg = maya_instance.tools.registry
+            if reg.has(name):
+                # tools take kwargs; pass a single 'input'/'query' best-effort
+                try:
+                    return reg.run(name, {"query": tool_input})
+                except TypeError:
+                    return reg.run(name, {"input": tool_input})
+        return f"[tool '{name}' unavailable] {tool_input}"
+
+    _p36_builder = _P36WB(prompt_fn=_p36_prompt, tool_fn=_p36_tool)
+
+    @app.get("/api/v1/workflows/defs")
+    async def _p36_list(user=Depends(get_current_user)):
+        """List saved declarative workflows."""
+        return {"workflows": _p36_builder.list()}
+
+    @app.get("/api/v1/workflows/defs/{wid}")
+    async def _p36_get(wid: str, user=Depends(get_current_user)):
+        wf = _p36_builder.get(wid)
+        if not wf:
+            raise HTTPException(status_code=404, detail="Workflow not found")
+        return wf
+
+    @app.post("/api/v1/workflows/defs")
+    async def _p36_create(body: dict, user=Depends(get_current_user)):
+        """Create a workflow. body: {name, steps:[...], description?}.
+        Each step: {id, name?, action, input?, tool?, depends_on?, condition?}."""
+        try:
+            return _p36_builder.create(
+                name=(body.get("name") or "").strip(),
+                steps=body.get("steps") or [],
+                description=body.get("description", ""))
+        except _P36Err as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+    @app.put("/api/v1/workflows/defs/{wid}")
+    async def _p36_update(wid: str, body: dict, user=Depends(get_current_user)):
+        try:
+            updated = _p36_builder.update(
+                wid, name=body.get("name"), steps=body.get("steps"),
+                description=body.get("description"))
+        except _P36Err as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        if not updated:
+            raise HTTPException(status_code=404, detail="Workflow not found")
+        return updated
+
+    @app.delete("/api/v1/workflows/defs/{wid}")
+    async def _p36_delete(wid: str, user=Depends(get_current_user)):
+        if not _p36_builder.delete(wid):
+            raise HTTPException(status_code=404, detail="Workflow not found")
+        return {"deleted": wid}
+
+    @app.post("/api/v1/workflows/defs/{wid}/run")
+    async def _p36_run(wid: str, body: dict = None, user=Depends(get_current_user)):
+        """Run a workflow. Optional body: {inputs: {...}} available to
+        steps via {{input.field}}."""
+        try:
+            return await _p36_builder.run(wid, (body or {}).get("inputs") or {})
+        except _P36Err as e:
+            raise HTTPException(status_code=404, detail=str(e))
+
+    print("#3/6 active: workflow builder (declarative multi-step workflows)")
+except Exception as _p36_err:
+    print(f"WARNING: #3/6 workflow builder not loaded: {_p36_err}")
+# ══════════════ End #3/6 ══════════════
