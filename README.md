@@ -179,6 +179,18 @@ Maya now supports isolated per-user memory and shared team spaces.
 
 ---
 
+## RAG Auto-Connect (Grounded Answers)
+
+Maya now consults the knowledge base automatically before answering — no explicit tool call needed.
+
+- **Automatic grounding** (`rag/augmenter.py`): `maya.chat()` retrieves relevant indexed context and injects it into the system prompt, instructing the model to cite sources inline with `[n]` markers. Retrieved sources are appended to the reply as a "Sources:" footer.
+- **Smart gating**: trivial messages ("hi", "thanks") and empty/irrelevant retrievals are skipped, so prompts never get bloated. An optional `min_score` floor drops weak hits.
+- **Safe + optional**: if the RAG index is empty or unavailable, `chat()` behaves exactly as before. Disable entirely with `RAG_AUTOCONNECT=false`.
+
+Together with the existing `knowledge_search` tool, agents can now both search the knowledge base explicitly and have it consulted transparently on every chat turn.
+
+---
+
 ## How Maya Works
 
 ```

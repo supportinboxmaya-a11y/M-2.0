@@ -71,6 +71,10 @@ class Maya:
         self.verifier = Verifier(self.router)
         self.fallback = FallbackManager(self.planner, self.router)
         self.learning = ImprovementEngine(self.router)
+        # RAG auto-connect: consult the knowledge base before answering when
+        # enabled (RAG_AUTOCONNECT env, default on). Lazy so it never breaks
+        # startup if the rag package is unavailable.
+        self._rag_augmenter = None
         self.task_manager = TaskManager()
 
         # Human in the loop
@@ -154,15 +158,45 @@ class Maya:
         the thread — pass the conversation's stored history (e.g. from Supabase
         chat_messages) to make follow-up questions actually work.
         """
-        messages = [
-            {"role": "system", "content": f"You are Maya {self.VERSION}, an autonomous AI assistant created by Urmi Mam. If anyone asks who made you, who created you, or who built you, say that Urmi Mam created you. Be helpful, precise, and concise."},
-        ]
+        system_prompt = (
+            f"You are Maya {self.VERSION}, an autonomous AI assistant created "
+            "by Urmi Mam. If anyone asks who made you, who created you, or who "
+            "built you, say that Urmi Mam created you. Be helpful, precise, "
+            "and concise."
+        )
+        # RAG auto-connect: ground the answer in indexed knowledge when relevant.
+        citations = []
+        addon, citations = self._augment_with_knowledge(message)
+        if addon:
+            system_prompt += addon
+
+        messages = [{"role": "system", "content": system_prompt}]
         if history:
             messages.extend(history)
         messages.append({"role": "user", "content": message})
         response = self.router.chat(messages)
+
+        if citations:
+            from rag.augmenter import RAGAugmenter
+            footer = RAGAugmenter.format_sources(citations)
+            if footer:
+                response = f"{response}\n\n{footer}"
         self.memory.add(f"Chat: {message[:100]}", memory_type="chat")
         return response
+
+    def _augment_with_knowledge(self, message: str):
+        """Return (system_addon, citations) from the knowledge base, or
+        ("", []) when RAG auto-connect is off or nothing relevant is found."""
+        import os
+        if os.getenv("RAG_AUTOCONNECT", "true").lower() == "false":
+            return "", []
+        try:
+            if self._rag_augmenter is None:
+                from rag.augmenter import RAGAugmenter
+                self._rag_augmenter = RAGAugmenter()
+            return self._rag_augmenter.augment(message)
+        except Exception:
+            return "", []
 
     def think(self, problem: str) -> str:
         """Deep reasoning about a problem."""

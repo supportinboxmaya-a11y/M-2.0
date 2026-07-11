@@ -45,6 +45,7 @@ if __name__ == "__main__":
         "test_queue_phase18.py",
         "test_scheduler_phase19.py",
         "test_workspace_phase20.py",
+        "test_rag_autoconnect_phase21.py",
     ]
 
     passed = 0
