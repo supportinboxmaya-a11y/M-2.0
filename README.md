@@ -240,6 +240,20 @@ Plugins define `DESCRIPTION`, `VERSION`, `TOOLS`, and a `register_tools(registry
 
 ---
 
+## Workflow Builder (Declarative Multi-step Automation)
+
+Build multi-step workflows as data — no code required — with conditions and parallel steps.
+
+- **Declarative workflows** (`workflows/builder.py`): a workflow is a list of steps, each with an `action` (`prompt` → run text through Maya, or `tool` → call a tool), an `input`, `depends_on` dependencies, and an optional `condition`. Definitions are stored in SQLite and validated on save (unique ids, no missing/cyclic dependencies, known actions/ops).
+- **Data flow**: each step's output is captured and available to later steps via `{{step_id.output}}` templating; workflow inputs are available as `{{input.field}}`.
+- **Conditional branching**: a step's `condition` (`contains`, `equals`, `not_equals`, `not_empty`, `gt`, `lt`) is evaluated against prior outputs — false skips the step (and its dependents), enabling if/then logic without code.
+- **Parallel execution**: independent steps at the same dependency level run concurrently, then join.
+- **API**: `GET/POST /api/v1/workflows/defs`, `GET/PUT/DELETE /api/v1/workflows/defs/{id}`, `POST /api/v1/workflows/defs/{id}/run`.
+
+Example: step 1 classifies a ticket, step 2 (condition: classification contains "urgent") escalates, step 3 drafts a reply — all defined as JSON.
+
+---
+
 ## How Maya Works
 
 ```
