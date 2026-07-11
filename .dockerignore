@@ -1,0 +1,40 @@
+# Version control
+.git
+.gitignore
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local runtime data (must NOT ship in the image)
+storage/
+workspace/
+*.db
+*.db-wal
+*.db-shm
+*.log
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+
+# Node / frontend (backend image doesn't need these)
+node_modules/
+dist/
+build/
+
+# Dev tooling & docs
+.vscode/
+.idea/
+tests/
+*.md
+!README.md
+
+# OS junk
+.DS_Store
+Thumbs.db

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -2531,3 +2531,44 @@ try:
 except Exception as _p36_err:
     print(f"WARNING: #3/6 workflow builder not loaded: {_p36_err}")
 # ══════════════ End #3/6 ══════════════
+
+
+# ══════════════ #4/6: Deployment Health & Monitoring ══════════════
+# Liveness/readiness probes + system info for production deployment.
+# Soft-fails so the API always boots.
+try:
+    from infrastructure.health import HealthMonitor as _P46Health
+
+    def _p46_providers():
+        try:
+            if maya_instance and hasattr(maya_instance, "router"):
+                return maya_instance.router.available_providers()
+        except Exception:
+            pass
+        return []
+
+    _p46_monitor = _P46Health(provider_checker=_p46_providers)
+
+    @app.get("/health/live")
+    async def _p46_live():
+        """Liveness probe — cheap, never touches dependencies. 200 = up."""
+        return _p46_monitor.liveness()
+
+    @app.get("/health/ready")
+    async def _p46_ready(response: Response):
+        """Readiness probe — checks storage, DB, and LLM providers.
+        Returns 503 when not ready so load balancers hold traffic."""
+        result = _p46_monitor.readiness()
+        if not result["ready"]:
+            response.status_code = 503
+        return result
+
+    @app.get("/health/system")
+    async def _p46_system(user=Depends(get_current_user)):
+        """System info for dashboards (uptime, disk, memory, platform)."""
+        return _p46_monitor.system_info()
+
+    print("#4/6 active: deployment health probes (/health/live, /health/ready)")
+except Exception as _p46_err:
+    print(f"WARNING: #4/6 health monitoring not loaded: {_p46_err}")
+# ══════════════ End #4/6 ══════════════
