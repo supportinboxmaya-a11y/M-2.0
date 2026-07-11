@@ -2069,3 +2069,83 @@ try:
 except Exception as _sp8_err:
     print(f"WARNING: Superpower 8 notifications not loaded: {_sp8_err}")
 # ══════════════ End Superpower 8 ══════════════
+
+
+# ══════════════ Superpower 9: Prompt Library ══════════════
+# Save, organize, and reuse prompt templates with {{variables}}.
+# Soft-fails so the API always boots.
+try:
+    from infrastructure.prompt_library import PromptLibrary as _Sp9Lib
+
+    _sp9_lib = _Sp9Lib()
+
+    @app.get("/api/v1/prompts")
+    async def _sp9_list(category: str = "", q: str = "", limit: int = 100,
+                        user=Depends(get_current_user)):
+        """List prompts (optionally filtered by category/search), plus
+        the category breakdown for the sidebar."""
+        return {"prompts": _sp9_lib.list(category or None, q, min(limit, 300)),
+                "categories": _sp9_lib.categories()}
+
+    @app.get("/api/v1/prompts/{pid}")
+    async def _sp9_get(pid: str, user=Depends(get_current_user)):
+        p = _sp9_lib.get(pid)
+        if not p:
+            raise HTTPException(status_code=404, detail="Prompt not found")
+        return p
+
+    @app.post("/api/v1/prompts")
+    async def _sp9_create(body: dict, user=Depends(get_current_user)):
+        """Create a prompt. body: {name, body, description?, category?,
+        tags?, variables?}. Variables are auto-derived from {{...}}."""
+        try:
+            return _sp9_lib.create(
+                name=(body.get("name") or "").strip(),
+                body=body.get("body", ""),
+                description=body.get("description", ""),
+                category=body.get("category", "general"),
+                tags=body.get("tags") or [],
+                variables=body.get("variables") or [])
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+    @app.put("/api/v1/prompts/{pid}")
+    async def _sp9_update(pid: str, body: dict, user=Depends(get_current_user)):
+        updated = _sp9_lib.update(
+            pid, body=body.get("body"), name=body.get("name"),
+            description=body.get("description"), category=body.get("category"),
+            tags=body.get("tags"))
+        if not updated:
+            raise HTTPException(status_code=404, detail="Prompt not found")
+        return updated
+
+    @app.delete("/api/v1/prompts/{pid}")
+    async def _sp9_delete(pid: str, user=Depends(get_current_user)):
+        if not _sp9_lib.delete(pid):
+            raise HTTPException(status_code=404, detail="Prompt not found")
+        return {"deleted": pid}
+
+    @app.get("/api/v1/prompts/{pid}/history")
+    async def _sp9_history(pid: str, user=Depends(get_current_user)):
+        if not _sp9_lib.get(pid):
+            raise HTTPException(status_code=404, detail="Prompt not found")
+        return {"history": _sp9_lib.history(pid)}
+
+    @app.post("/api/v1/prompts/{pid}/render")
+    async def _sp9_render(pid: str, body: dict, user=Depends(get_current_user)):
+        """Fill a prompt's {{variables}} with body.values and return the
+        final text. Optionally run it through Maya if body.run is true."""
+        try:
+            rendered = _sp9_lib.render(pid, body.get("values") or {})
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        result = {"rendered": rendered}
+        if body.get("run") and maya_instance and hasattr(maya_instance, "chat"):
+            result["response"] = await asyncio.get_event_loop().run_in_executor(
+                None, lambda: maya_instance.chat(rendered))
+        return result
+
+    print("Superpower 9 active: prompt library (reusable templates)")
+except Exception as _sp9_err:
+    print(f"WARNING: Superpower 9 prompt library not loaded: {_sp9_err}")
+# ══════════════ End Superpower 9 ══════════════

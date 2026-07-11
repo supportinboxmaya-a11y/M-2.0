@@ -215,6 +215,18 @@ Maya can now alert you when things happen — task done, task failed, scheduled 
 
 ---
 
+## Prompt Library (Reusable Templates)
+
+Save common prompts once and reuse them with variables.
+
+- **Templates with variables** (`infrastructure/prompt_library.py`): a prompt body uses `{{variable}}` placeholders that are auto-derived on save. Variables can carry a description and a default (defaulted variables are optional; the rest are required).
+- **Organization**: categories, tags, and search over name/body/description; a category breakdown for the sidebar. Popular prompts surface first via a usage counter.
+- **Versioning**: editing a prompt's body archives the previous version and re-derives its variables — full history is retrievable.
+- **Rendering**: `render(id, values)` fills the template; missing required variables raise, optional ones fall back to defaults. The API can optionally run the rendered prompt straight through Maya.
+- **API**: `GET/POST /api/v1/prompts`, `GET/PUT/DELETE /api/v1/prompts/{id}`, `GET /api/v1/prompts/{id}/history`, `POST /api/v1/prompts/{id}/render`.
+
+---
+
 ## How Maya Works
 
 ```
