@@ -1840,3 +1840,72 @@ try:
 except Exception as _sp2_err:
     print(f"WARNING: Superpower 2 streaming not loaded: {_sp2_err}")
 # ══════════════ End Superpower 2 ══════════════
+
+
+# ══════════════ Superpower 5: Multi-user Workspaces ══════════════
+# Per-user private + shared team workspaces for memory. Reuses the
+# enterprise OrgStore for team membership. Soft-fails so the API always
+# boots. Single-user deployments are unaffected (default workspace).
+try:
+    from enterprise.workspace import WorkspaceContext as _Sp5Ctx, WorkspaceError as _Sp5Err
+    from enterprise.scoped_memory import ScopedMemory as _Sp5Mem
+
+    _sp5_orgs = None
+    try:
+        _sp5_orgs = _p9_orgs          # reuse enterprise OrgStore if present
+    except NameError:
+        _sp5_orgs = None
+    _sp5_ctx = _Sp5Ctx(org_store=_sp5_orgs)
+    _sp5_mem = _Sp5Mem()
+
+    def _sp5_resolve(user: dict, workspace: str):
+        try:
+            return _sp5_ctx.resolve(user, workspace)
+        except _Sp5Err as e:
+            raise HTTPException(status_code=403, detail=str(e))
+
+    @app.get("/api/v1/workspaces")
+    async def _sp5_list_ws(user=Depends(get_current_user)):
+        """List workspaces the current user may use (default, personal, teams)."""
+        return {"workspaces": [w.to_dict() for w in _sp5_ctx.available(user)]}
+
+    @app.get("/api/v1/workspace/memory")
+    async def _sp5_ws_search(workspace: str = "default", q: str = "",
+                             limit: int = 20, user=Depends(get_current_user)):
+        """Search memory within a workspace. Results never cross workspaces."""
+        ws = _sp5_resolve(user, workspace)
+        return {"workspace": ws.to_dict(),
+                "results": _sp5_mem.search(ws.scope, q, limit=min(limit, 100))}
+
+    @app.post("/api/v1/workspace/memory")
+    async def _sp5_ws_add(body: dict, user=Depends(get_current_user)):
+        """Add a memory to a workspace. body: {workspace, content, type?, metadata?}."""
+        ws = _sp5_resolve(user, body.get("workspace", "default"))
+        content = (body.get("content") or "").strip()
+        if not content:
+            raise HTTPException(status_code=400, detail="content is required")
+        mid = _sp5_mem.add(ws.scope, content,
+                           author=user.get("email", ""),
+                           memory_type=body.get("type", "general"),
+                           metadata=body.get("metadata") or {})
+        return {"id": mid, "workspace": ws.to_dict()}
+
+    @app.delete("/api/v1/workspace/memory/{memory_id}")
+    async def _sp5_ws_del(memory_id: str, workspace: str = "default",
+                          user=Depends(get_current_user)):
+        ws = _sp5_resolve(user, workspace)
+        if not _sp5_mem.delete(ws.scope, memory_id):
+            raise HTTPException(status_code=404,
+                                detail="Memory not found in this workspace")
+        return {"deleted": memory_id, "workspace": ws.scope}
+
+    @app.get("/api/v1/workspace/stats")
+    async def _sp5_ws_stats(workspace: str = "default",
+                            user=Depends(get_current_user)):
+        ws = _sp5_resolve(user, workspace)
+        return {"workspace": ws.to_dict(), **_sp5_mem.stats(ws.scope)}
+
+    print("Superpower 5 active: multi-user workspaces (personal + team memory)")
+except Exception as _sp5_err:
+    print(f"WARNING: Superpower 5 workspaces not loaded: {_sp5_err}")
+# ══════════════ End Superpower 5 ══════════════
