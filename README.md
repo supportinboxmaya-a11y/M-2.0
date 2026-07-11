@@ -191,6 +191,19 @@ Together with the existing `knowledge_search` tool, agents can now both search t
 
 ---
 
+## Inbound Webhook Triggers (External → Maya)
+
+External services can now trigger Maya. This complements the existing outbound webhooks (Maya notifying others when tasks finish).
+
+- **Signed triggers** (`infrastructure/webhook_triggers.py`): create a trigger with a job + goal template; Maya returns a secret (shown once). External services POST to `/api/v1/hooks/{id}` with an `X-Maya-Signature` (or GitHub-style `X-Hub-Signature-256`) HMAC-SHA256 header, verified in constant time. Unsigned triggers are supported for trusted internal use.
+- **Template rendering**: the goal is built from a `{{path.to.field}}` template filled from the incoming JSON payload (supports nested paths and list indices; missing paths render empty, never crash).
+- **Queued execution**: each firing enqueues the job on the persistent task queue, so a triggered run is restart-proof and shows up in `/api/v1/queue/status`.
+- **API**: `GET/POST /api/v1/hooks`, `DELETE /api/v1/hooks/{id}`, `POST /api/v1/hooks/{id}/enabled`, and the public `POST /api/v1/hooks/{id}` fire endpoint.
+
+Example (GitHub PR → review): `{"name":"pr-review","job":"agent_goal","template":"Review PR: {{pull_request.title}}"}`.
+
+---
+
 ## How Maya Works
 
 ```
