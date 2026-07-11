@@ -49,6 +49,7 @@ if __name__ == "__main__":
         "test_webhooks_phase22.py",
         "test_notifications_phase23.py",
         "test_prompts_phase24.py",
+        "test_plugins_phase25.py",
     ]
 
     passed = 0

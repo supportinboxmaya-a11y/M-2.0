@@ -2149,3 +2149,42 @@ try:
 except Exception as _sp9_err:
     print(f"WARNING: Superpower 9 prompt library not loaded: {_sp9_err}")
 # ══════════════ End Superpower 9 ══════════════
+
+
+# ══════════════ #2/6: Plugin System (install from code) ══════════════
+# Real plugin installation from source + working enable/disable that
+# actually retracts tools (ToolRegistry.unregister added). Soft-fails.
+try:
+    @app.post("/api/v1/plugins/install-code")
+    async def _p26_install_code(body: dict, user=Depends(get_current_user)):
+        """Install a plugin from source code. body: {name, code}.
+        The code must define register_tools(registry). Tools become
+        callable immediately; disabling/uninstalling retracts them."""
+        if not maya_instance or not hasattr(maya_instance, "plugin_loader"):
+            raise HTTPException(status_code=503, detail="Plugin system not initialized")
+        name = (body.get("name") or "").strip()
+        code = body.get("code") or ""
+        try:
+            info = await asyncio.get_event_loop().run_in_executor(
+                None, lambda: maya_instance.plugin_loader.install_from_code(name, code))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        return {"installed": True, "name": info.get("name", name),
+                "tools": info.get("registered_tools", [])}
+
+    @app.get("/api/v1/plugins/{plugin_id}/tools")
+    async def _p26_plugin_tools(plugin_id: str, user=Depends(get_current_user)):
+        """List the tools a plugin registered."""
+        if not maya_instance or not hasattr(maya_instance, "plugin_loader"):
+            raise HTTPException(status_code=503, detail="Plugin system not initialized")
+        info = maya_instance.plugin_loader.get_plugin(plugin_id)
+        if not info:
+            raise HTTPException(status_code=404, detail="Plugin not found")
+        return {"id": plugin_id,
+                "tools": info.get("registered_tools", []),
+                "enabled": maya_instance.plugin_loader._enabled_state.get(plugin_id, True)}
+
+    print("Plugin system upgraded: install-from-code + real tool retraction")
+except Exception as _p26_err:
+    print(f"WARNING: #2/6 plugin upgrade not loaded: {_p26_err}")
+# ══════════════ End #2/6 ══════════════

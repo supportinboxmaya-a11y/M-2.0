@@ -43,6 +43,27 @@ class ToolRegistry:
             "last_error": None
         }
 
+    def unregister(self, name: str) -> bool:
+        """Remove a tool completely so it can no longer be called.
+
+        Plugins rely on this to actually retract their tools when a
+        plugin is disabled or uninstalled — before this existed, a
+        'disabled' plugin's tools stayed callable until the next restart.
+        Returns True if a tool was removed.
+        """
+        if name not in self._tools:
+            return False
+        self._tools.pop(name, None)
+        self._descriptions.pop(name, None)
+        self._categories.pop(name, None)
+        self._schemas.pop(name, None)
+        self._usage_stats.pop(name, None)
+        return True
+
+    def names_in_category(self, category: str) -> List[str]:
+        """Every registered tool name in a given category."""
+        return [n for n, c in self._categories.items() if c == category]
+
     def run(self, name: str, inputs: Dict = None) -> Any:
         """
         Tool execute করে। Stats update করে।
