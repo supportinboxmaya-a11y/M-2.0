@@ -204,6 +204,17 @@ Example (GitHub PR → review): `{"name":"pr-review","job":"agent_goal","templat
 
 ---
 
+## Notifications (Multi-channel Alerts)
+
+Maya can now alert you when things happen — task done, task failed, scheduled run, webhook fired.
+
+- **Channels** (`infrastructure/notifications.py`): `in_app` (persisted, read via the API bell), `email` (SMTP — configured via `SMTP_HOST/PORT/USER/PASS/FROM`; skipped cleanly when unconfigured), and `webhook` (POST to a URL). Delivery never raises — a broken channel degrades to a recorded failure.
+- **In-app center**: per-recipient notifications with read/unread state and an unread badge count, so the UI can show a notification bell.
+- **Auto-notify on jobs**: every persistent-queue job now raises an in-app notification when it completes or fails, wired transparently around the registered handlers.
+- **API**: `GET /api/v1/notifications` (list + unread count), `GET /api/v1/notifications/unread`, `POST /api/v1/notifications/{id}/read`, `POST /api/v1/notifications/read-all`, `POST /api/v1/notifications/send` (fan out to chosen channels).
+
+---
+
 ## How Maya Works
 
 ```
