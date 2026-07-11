@@ -72,6 +72,8 @@ class ToolManager:
         self.registry.register("browser_text", browser.get_text, "Get page text", category="web")
         self.registry.register("browser_screenshot", browser.screenshot, "Take screenshot", category="web")
         self.registry.register("browser_google", browser.search_google, "Google via browser", category="web")
+        self.registry.register("browser_click_visually", browser.click_visually, "Click an element by visual description when no CSS selector works (vision-guided)", category="web")
+        self.registry.register("browser_look", browser.look, "Ask a free-form question about what's currently visible on the page (vision)", category="web")
         self.registry.register("rest_api_request", rest_api.request, "Make an HTTP request to any REST API", category="web")
         self.registry.register("github_get_repo", github.get_repo, "Get GitHub repo info (public API)", category="developer")
         self.registry.register("github_list_files", github.list_files, "List files in a GitHub repo path", category="developer")

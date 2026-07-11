@@ -80,6 +80,22 @@ class Maya:
         # Human in the loop
         self.approval = ApprovalManager(mode=os.environ.get("APPROVAL_MODE", "auto"))
 
+        # Self-tool-creation: lets Maya write and register a brand-new
+        # tool mid-task instead of being limited to the fixed set above.
+        # Needs both self.plugins and self.approval, so it's wired here
+        # rather than inside ToolManager (which is built before either
+        # of those exists).
+        from tools.system.tool_creator import ToolCreator
+        self.tool_creator = ToolCreator(self.plugins, self.approval)
+        self.tool_manager.get_registry().register(
+            "create_tool", self.tool_creator.create_tool,
+            "Write and register a brand-new tool for yourself when none "
+            "of your existing tools can do the job. Args: name, code "
+            "(must define register_tools(registry)), reason. Goes "
+            "through a safety scan and human approval before it's loaded.",
+            category="meta",
+        )
+
         # Security
         self.risk = RiskChecker()
         self.permissions = PermissionManager()
