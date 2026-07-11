@@ -1523,6 +1523,10 @@ try:
         _p9_audit.record(_p9_actor(user), "team_created", team["id"], team)
         return team
 
+    @app.get("/api/v1/admin/orgs/{org_id}/teams")
+    async def _p9_list_teams(org_id: str, user=Depends(get_current_user)):
+        return {"teams": _p9_orgs.list_teams(org_id)}
+
     @app.post("/api/v1/admin/orgs/{org_id}/members")
     async def _p9_add_member(org_id: str, payload: dict, user=Depends(get_current_user)):
         m = _p9_orgs.add_member(payload.get("email", ""), org_id,
