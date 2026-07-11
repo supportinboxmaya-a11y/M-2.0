@@ -1360,7 +1360,40 @@ try:
         run.cancel()
         return {"run_id": run_id, "cancelling": True}
 
-    print("Phase 6 workflow engine active: plan, runs, cancel, checkpoints")
+    def _p6_llm(prompt: str) -> str:
+        """Route this engine's LLM calls through the existing router.
+        Self-contained (not shared with Phase 7's _p7_llm) since Phase 6
+        loads before Phase 7 in this file."""
+        try:
+            from llm.router import LLMRouter
+            if not hasattr(_p6_llm, "_router"):
+                _p6_llm._router = LLMRouter()
+            return _p6_llm._router.chat([{"role": "user", "content": prompt}])
+        except Exception as e:
+            return f"error: llm unavailable ({e})"
+
+    @app.post("/api/v1/workflows/runs/{run_id}/execute")
+    async def _p6_execute(run_id: str, user=Depends(get_current_user)):
+        """Execute a previously planned/checkpointed run to completion.
+        Mirrors how Phase 7's AutonomousMaya drives the same engine:
+        Phase 5's tool framework (if loaded) plus an LLM fallback via
+        ExecutorBridge, so this fills in the "plan only" gap without
+        duplicating the actual execution logic in workflows/engine.py."""
+        run = _p6_engine.runs.get(run_id)
+        if run is None:
+            run = _p6_engine.resume(run_id)
+            if run is None:
+                raise HTTPException(status_code=404, detail="run not found")
+        try:
+            _fw = _p5_fw            # Phase 5 framework with adopted tools
+        except NameError:
+            _fw = None
+        from autonomous.executor_bridge import ExecutorBridge
+        bridge = ExecutorBridge(_fw, _p6_llm, approve_dangerous=False)
+        result = await _p6_engine.execute(run, bridge)
+        return result
+
+    print("Phase 6 workflow engine active: plan, runs, execute, cancel, checkpoints")
 except Exception as _p6_err:
     print(f"WARNING: Phase 6 workflow engine not loaded: {_p6_err}")
 # ══════════════ End Phase 6 integration ══════════════
