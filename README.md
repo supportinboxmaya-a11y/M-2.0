@@ -254,6 +254,17 @@ Example: step 1 classifies a ticket, step 2 (condition: classification contains 
 
 ---
 
+## Deployment Ready (Health, Probes & Container)
+
+Maya is now production-deployable behind a load balancer or orchestrator.
+
+- **Health probes** (`infrastructure/health.py`): `GET /health/live` (cheap liveness — never touches dependencies, used to decide restarts) and `GET /health/ready` (deep readiness — checks storage is writable, the SQLite layer works, and at least one LLM provider is configured; returns 503 when not ready so traffic is held). `GET /health/system` reports uptime, disk, memory (via psutil if present), and platform for dashboards.
+- **Hardened Dockerfile**: cached dependency layer, non-root user (uid 10001), `EXPOSE`, a container `HEALTHCHECK` hitting `/health/live`, and a production `uvicorn` command honoring `$PORT` and `$WEB_CONCURRENCY` workers.
+- **`.dockerignore`**: keeps `storage/`, `.env`, `tests/`, caches, and `node_modules/` out of the image — smaller, faster, safer builds.
+- The original `/health` endpoint is unchanged for backward compatibility.
+
+---
+
 ## How Maya Works
 
 ```
