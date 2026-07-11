@@ -680,6 +680,36 @@ async def voice_transcribe(body: dict, user=Depends(get_current_user)):
         return {"transcript": "", "message": f"Transcription failed: {e}"}
 
 # ══════════════════════════════════════════════
+# WORKSPACE FILES ROUTES
+# ══════════════════════════════════════════════
+@app.get("/api/v1/workspace/files")
+async def list_workspace_files(user=Depends(get_current_user)):
+    """List files tools have written into the workspace (screenshots, exports, etc.)."""
+    from pathlib import Path
+    from config.settings import WORKSPACE_DIR
+    out = []
+    try:
+        for p in sorted(Path(WORKSPACE_DIR).iterdir(), key=lambda p: p.stat().st_mtime, reverse=True):
+            if p.is_file():
+                out.append({"name": p.name, "size": p.stat().st_size, "modified": p.stat().st_mtime})
+    except FileNotFoundError:
+        pass
+    return {"files": out[:200]}
+
+@app.get("/api/v1/workspace/files/{filename}")
+async def get_workspace_file(filename: str, user=Depends(get_current_user)):
+    """Serve a file a tool wrote into the workspace (e.g. a browser_screenshot PNG)."""
+    from fastapi.responses import FileResponse
+    from tools.files.safe_path import resolve_safe_path
+    try:
+        path = resolve_safe_path(filename)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="file not found")
+    return FileResponse(str(path))
+
+# ══════════════════════════════════════════════
 # BACKUP ROUTES
 # ══════════════════════════════════════════════
 backups_db: list = []
