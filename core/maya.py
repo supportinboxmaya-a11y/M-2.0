@@ -96,6 +96,29 @@ class Maya:
             category="meta",
         )
 
+        # Device Bridge: lets Maya reach a person's own paired desktop
+        # for things a headless browser can't do. Does nothing unless a
+        # device has actually been paired via Settings > Device Bridge.
+        from infrastructure.device_bridge import DeviceBridge
+        from tools.system.device_control import DeviceControlTool
+        self.device_bridge = DeviceBridge()
+        self._device_control_tool = DeviceControlTool(self.device_bridge, self.approval)
+        self.tool_manager.get_registry().register(
+            "device_control", self._device_control_tool.control,
+            "Queue a GUI action (move_mouse, click, type_text, press_key, "
+            "screenshot) on the person's own PAIRED desktop — for native "
+            "apps a browser can't reach. Fails clearly if no device is "
+            "paired. Requires human approval. Args: action, device_id?, "
+            "reason, plus action-specific kwargs (x, y, text, key).",
+            category="meta",
+        )
+        self.tool_manager.get_registry().register(
+            "device_result", self._device_control_tool.device_result,
+            "Check the status/result of a command queued with "
+            "device_control. Args: command_id.",
+            category="meta",
+        )
+
         # Security
         self.risk = RiskChecker()
         self.permissions = PermissionManager()
