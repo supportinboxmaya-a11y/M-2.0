@@ -1909,3 +1909,83 @@ try:
 except Exception as _sp5_err:
     print(f"WARNING: Superpower 5 workspaces not loaded: {_sp5_err}")
 # ══════════════ End Superpower 5 ══════════════
+
+
+# ══════════════ Superpower 7: Inbound Webhook Triggers ══════════════
+# External services (GitHub, Slack, forms, Zapier) POST to a signed
+# endpoint to trigger a queued job. Complements the existing OUTBOUND
+# webhooks. Soft-fails so the API always boots.
+try:
+    from infrastructure.webhook_triggers import WebhookTriggers as _Sp7WT
+    from fastapi import Request as _Sp7Request
+
+    _sp7_triggers = _Sp7WT()
+
+    @app.get("/api/v1/hooks")
+    async def _sp7_list(user=Depends(get_current_user)):
+        """List inbound webhook triggers (secrets never shown)."""
+        return {"triggers": _sp7_triggers.list()}
+
+    @app.post("/api/v1/hooks")
+    async def _sp7_create(body: dict, user=Depends(get_current_user)):
+        """Create an inbound trigger. body: {name, job, template, signed?}.
+        `job` must be a registered queue handler (e.g. 'agent_goal').
+        `template` may use {{path.to.field}} from the incoming payload.
+        The secret is returned ONCE — store it to sign future calls."""
+        job = (body.get("job") or "").strip()
+        if job and hasattr(_p1_queue, "_handlers") and job not in _p1_queue._handlers:
+            raise HTTPException(status_code=400,
+                                detail=f"job '{job}' is not a registered queue handler")
+        try:
+            return _sp7_triggers.create(
+                name=(body.get("name") or "").strip(),
+                job=job,
+                template=(body.get("template") or "").strip(),
+                signed=bool(body.get("signed", True)))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+    @app.delete("/api/v1/hooks/{tid}")
+    async def _sp7_delete(tid: str, user=Depends(get_current_user)):
+        if not _sp7_triggers.delete(tid):
+            raise HTTPException(status_code=404, detail="Trigger not found")
+        return {"deleted": tid}
+
+    @app.post("/api/v1/hooks/{tid}/enabled")
+    async def _sp7_enable(tid: str, body: dict, user=Depends(get_current_user)):
+        enabled = bool(body.get("enabled", True))
+        if not _sp7_triggers.set_enabled(tid, enabled):
+            raise HTTPException(status_code=404, detail="Trigger not found")
+        return {"id": tid, "enabled": enabled}
+
+    @app.post("/api/v1/hooks/{tid}")
+    async def _sp7_fire(tid: str, request: _Sp7Request):
+        """Public trigger endpoint — NO auth (external services call it),
+        but signed triggers require a valid HMAC-SHA256 signature in the
+        X-Maya-Signature (or X-Hub-Signature-256) header."""
+        trig = _sp7_triggers.get(tid)
+        if not trig or not trig.get("enabled"):
+            raise HTTPException(status_code=404, detail="Trigger not found")
+        raw = await request.body()
+        signature = request.headers.get("x-maya-signature") or \
+            request.headers.get("x-hub-signature-256") or ""
+        if not _sp7_triggers.verify_signature(trig.get("secret"), raw, signature):
+            raise HTTPException(status_code=401, detail="Invalid signature")
+        try:
+            payload = json.loads(raw.decode("utf-8")) if raw else {}
+        except Exception:
+            payload = {}
+        goal = _sp7_triggers.render_goal(trig["template"], payload)
+        try:
+            task_id = await _p1_queue.submit_job(
+                trig["job"], goal, label=f"hook:{trig['name']}")
+        except Exception as e:
+            raise HTTPException(status_code=400,
+                                detail=f"could not enqueue job: {e}")
+        _sp7_triggers.mark_fired(tid)
+        return {"triggered": tid, "task_id": task_id, "goal": goal}
+
+    print("Superpower 7 active: inbound webhook triggers (external -> queue)")
+except Exception as _sp7_err:
+    print(f"WARNING: Superpower 7 webhook triggers not loaded: {_sp7_err}")
+# ══════════════ End Superpower 7 ══════════════
