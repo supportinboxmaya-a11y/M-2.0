@@ -2643,3 +2643,57 @@ try:
 except Exception as _p56_err:
     print(f"WARNING: #5/6 offline sync not loaded: {_p56_err}")
 # ══════════════ End #5/6 ══════════════
+
+
+# ══════════════ #6/6: Live Translation ══════════════
+# LLM-backed translation with script detection, optional TTS. Soft-fails.
+try:
+    from tools.media.translator import Translator as _P66Translator
+
+    def _p66_chat(messages):
+        if maya_instance and hasattr(maya_instance, "router"):
+            return maya_instance.router.chat(messages)
+        return "[translator unavailable]"
+
+    _p66_translator = _P66Translator(chat_fn=_p66_chat)
+
+    @app.get("/api/v1/translate/languages")
+    async def _p66_langs(user=Depends(get_current_user)):
+        """List supported languages."""
+        return {"languages": _p66_translator.supported_languages()}
+
+    @app.post("/api/v1/translate")
+    async def _p66_translate(body: dict, user=Depends(get_current_user)):
+        """Translate text. body: {text, target, source?, speak?}.
+        target/source are language codes ('bn') or names ('Bengali').
+        If speak=true and TTS is available, also returns spoken audio."""
+        try:
+            result = await asyncio.get_event_loop().run_in_executor(
+                None, lambda: _p66_translator.translate(
+                    body.get("text", ""), body.get("target", "en"),
+                    body.get("source")))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        # Optional: speak the translation via the existing TTS tool.
+        if body.get("speak") and maya_instance and \
+                hasattr(maya_instance, "tools"):
+            try:
+                reg = maya_instance.tools.registry
+                if reg.has("text_to_speech"):
+                    audio = reg.run("text_to_speech",
+                                    {"text": result["translation"]})
+                    result["audio"] = audio
+            except Exception:
+                pass
+        return result
+
+    @app.post("/api/v1/translate/detect")
+    async def _p66_detect(body: dict, user=Depends(get_current_user)):
+        """Detect the language of a piece of text."""
+        code = _p66_translator.detect(body.get("text", ""))
+        return {"code": code, "name": _p66_translator.language_name(code)}
+
+    print("#6/6 active: live translation (LLM-backed, script detection)")
+except Exception as _p66_err:
+    print(f"WARNING: #6/6 translation not loaded: {_p66_err}")
+# ══════════════ End #6/6 ══════════════

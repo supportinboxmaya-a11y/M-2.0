@@ -53,6 +53,7 @@ if __name__ == "__main__":
         "test_workflows_phase26.py",
         "test_health_phase27.py",
         "test_sync_phase28.py",
+        "test_translate_phase29.py",
     ]
 
     passed = 0
