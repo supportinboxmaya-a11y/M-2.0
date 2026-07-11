@@ -168,6 +168,17 @@ Example: run a daily briefing at 9am → `{"name":"briefing","cron":"0 9 * * *",
 
 ---
 
+## Multi-user Workspaces (Personal + Team Memory)
+
+Maya now supports isolated per-user memory and shared team spaces.
+
+- **Workspace scopes**: `default` (the legacy single-user space, unchanged), `user:<uid>` (a user's private space), and `team:<team_id>` (a shared team space). `WorkspaceContext` (`enterprise/workspace.py`) resolves and authorizes them, reusing the enterprise OrgStore for team membership — no new source of truth.
+- **Isolation**: `ScopedMemory` (`enterprise/scoped_memory.py`) partitions memory by scope in SQLite. One user's search never returns another user's memory; team members share a genuinely common space. Membership is enforced on every team-workspace access.
+- **Backward compatible**: single-user deployments are untouched — with no workspace specified, everything resolves to `default`, exactly as before.
+- **API**: `GET /api/v1/workspaces` (list yours), `GET/POST /api/v1/workspace/memory`, `DELETE /api/v1/workspace/memory/{id}`, `GET /api/v1/workspace/stats` — all take a `workspace` parameter (`default` | `personal` | `team:<id>`).
+
+---
+
 ## How Maya Works
 
 ```
