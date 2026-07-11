@@ -71,10 +71,16 @@ class PluginLoader:
 
             self.loaded_plugins[plugin_name] = plugin_info
 
-            # Tool registry তে register করি
+            # Tool registry তে register করি — track which tools this
+            # plugin adds so we can cleanly unregister them later.
+            registered = []
             if self.tool_registry and hasattr(module, "register_tools"):
+                before = set(getattr(self.tool_registry, "_tools", {}).keys())
                 module.register_tools(self.tool_registry)
+                after = set(getattr(self.tool_registry, "_tools", {}).keys())
+                registered = sorted(after - before)
                 log.info(f"Plugin loaded: {plugin_name} v{plugin_info['version']}")
+            plugin_info["registered_tools"] = registered
 
             return True
 
@@ -106,16 +112,42 @@ class PluginLoader:
         ]
 
     def set_enabled(self, name: str, enabled: bool) -> bool:
-        """Enables/disables a plugin. Note: this does not unregister the
-        plugin's tools from the tool registry when disabled — there's no
-        unregister() there to call — so a 'disabled' plugin's tools may
-        still technically be callable until the next restart. Good enough
-        to stop the page from crashing and to reflect intent in the UI;
-        real tool-level gating would need registry support added too."""
-        if name not in self.loaded_plugins:
+        """Enable/disable a plugin AND its tools. Disabling now actually
+        unregisters the plugin's tools from the registry (ToolRegistry
+        gained unregister()), so a disabled plugin's tools are no longer
+        callable. Re-enabling re-runs the plugin's register_tools()."""
+        info = self.loaded_plugins.get(name)
+        if info is None:
             return False
-        self._enabled_state[name] = bool(enabled)
+        enabled = bool(enabled)
+        currently = self._enabled_state.get(name, True)
+        if enabled == currently:
+            self._enabled_state[name] = enabled
+            return True
+        if not enabled:
+            self._unregister_plugin_tools(info)
+        else:
+            module = info.get("module")
+            if self.tool_registry and module and hasattr(module, "register_tools"):
+                before = set(getattr(self.tool_registry, "_tools", {}).keys())
+                try:
+                    module.register_tools(self.tool_registry)
+                except Exception as e:
+                    log.warning(f"Re-enable failed for {name}: {e}")
+                    return False
+                after = set(getattr(self.tool_registry, "_tools", {}).keys())
+                info["registered_tools"] = sorted(after - before)
+        self._enabled_state[name] = enabled
         return True
+
+    def _unregister_plugin_tools(self, info: Dict) -> int:
+        """Retract every tool a plugin registered. Returns how many."""
+        removed = 0
+        if self.tool_registry and hasattr(self.tool_registry, "unregister"):
+            for tool_name in info.get("registered_tools", []):
+                if self.tool_registry.unregister(tool_name):
+                    removed += 1
+        return removed
 
     def install(self, name: str) -> bool:
         """Stub — there's no plugin catalog/marketplace in this codebase to
@@ -126,13 +158,15 @@ class PluginLoader:
         return False
 
     def uninstall(self, name: str) -> bool:
-        """Removes a plugin from the loaded registry and deletes its file
-        from disk. Like set_enabled, this can't retract tools already
-        registered with the tool registry this session — they stay callable
-        until restart, since ToolRegistry has no unregister() method."""
-        if name not in self.loaded_plugins:
+        """Remove a plugin: retract its tools from the registry, drop it
+        from the loaded set, and delete its file. Tools are now actually
+        unregistered (ToolRegistry.unregister), so they stop being
+        callable immediately — no restart required."""
+        info = self.loaded_plugins.get(name)
+        if info is None:
             return False
-        path = self.loaded_plugins[name].get("path")
+        self._unregister_plugin_tools(info)
+        path = info.get("path")
         del self.loaded_plugins[name]
         self._enabled_state.pop(name, None)
         if path:
@@ -141,6 +175,33 @@ class PluginLoader:
             except Exception as e:
                 log.warning(f"Could not delete plugin file {path}: {e}")
         return True
+
+    def install_from_code(self, name: str, code: str) -> Dict:
+        """Install a plugin from source code: validate it parses, write it
+        to the plugins dir, and load it. Gives the API a real install path
+        (the old install() had nothing to install from). Raises ValueError
+        on bad input."""
+        import ast as _ast
+        safe = "".join(ch for ch in (name or "") if ch.isalnum() or ch in "_-")
+        if not safe:
+            raise ValueError("invalid plugin name")
+        if not code or not code.strip():
+            raise ValueError("plugin code is empty")
+        try:
+            _ast.parse(code)
+        except SyntaxError as e:
+            raise ValueError(f"plugin code has a syntax error: {e}")
+        if "register_tools" not in code:
+            raise ValueError("plugin must define a register_tools(registry) function")
+        target = self.plugins_dir / f"{safe}.py"
+        target.write_text(code, encoding="utf-8")
+        if not self.load_plugin(str(target)):
+            try:
+                target.unlink()
+            except Exception:
+                pass
+            raise ValueError("plugin failed to load")
+        return self.loaded_plugins.get(safe, {"name": safe})
 
     def get_plugin(self, name: str) -> Optional[Dict]:
         return self.loaded_plugins.get(name)

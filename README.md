@@ -227,6 +227,19 @@ Save common prompts once and reuse them with variables.
 
 ---
 
+## Plugin System (Extensible Tools)
+
+Third parties can add their own tools to Maya — and now those tools can be cleanly retracted.
+
+- **Real tool retraction**: `ToolRegistry` gained `unregister()`, so disabling or uninstalling a plugin actually removes its tools from the registry (they stop being callable immediately). Previously a "disabled" plugin's tools stayed live until the next restart.
+- **Tool tracking**: the plugin loader records exactly which tools each plugin registers, so disable/re-enable/uninstall operate precisely on that plugin's tools.
+- **Install from code**: `install_from_code(name, code)` validates the source parses and defines `register_tools(registry)`, writes it to the plugins dir, and loads it — giving a real install path (the old `install()` had nothing to install from). Exposed at `POST /api/v1/plugins/install-code`.
+- **API**: existing `GET /api/v1/plugins`, `PUT /api/v1/plugins/{id}` (enable/disable), `DELETE /api/v1/plugins/{id}`, plus new `POST /api/v1/plugins/install-code` and `GET /api/v1/plugins/{id}/tools`.
+
+Plugins define `DESCRIPTION`, `VERSION`, `TOOLS`, and a `register_tools(registry)` function (see `skills/plugin_loader.py` PluginTemplate).
+
+---
+
 ## How Maya Works
 
 ```
