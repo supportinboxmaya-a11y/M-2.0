@@ -1989,3 +1989,83 @@ try:
 except Exception as _sp7_err:
     print(f"WARNING: Superpower 7 webhook triggers not loaded: {_sp7_err}")
 # ══════════════ End Superpower 7 ══════════════
+
+
+# ══════════════ Superpower 8: Notifications ══════════════
+# Multi-channel alerts (in-app + email + webhook) when things happen.
+# Also auto-notifies when persistent queue jobs finish. Soft-fails.
+try:
+    from infrastructure.notifications import Notifier as _Sp8Notifier
+
+    _sp8_notifier = _Sp8Notifier()
+
+    @app.get("/api/v1/notifications")
+    async def _sp8_list(unread_only: bool = False, limit: int = 50,
+                        user=Depends(get_current_user)):
+        """List the current user's notifications (newest first)."""
+        rcpt = user.get("email", "")
+        return {"notifications": _sp8_notifier.list(rcpt, unread_only, min(limit, 200)),
+                "unread": _sp8_notifier.unread_count(rcpt)}
+
+    @app.get("/api/v1/notifications/unread")
+    async def _sp8_unread(user=Depends(get_current_user)):
+        return {"unread": _sp8_notifier.unread_count(user.get("email", ""))}
+
+    @app.post("/api/v1/notifications/{nid}/read")
+    async def _sp8_read(nid: str, user=Depends(get_current_user)):
+        if not _sp8_notifier.mark_read(nid):
+            raise HTTPException(status_code=404, detail="Notification not found")
+        return {"id": nid, "read": True}
+
+    @app.post("/api/v1/notifications/read-all")
+    async def _sp8_read_all(user=Depends(get_current_user)):
+        n = _sp8_notifier.mark_all_read(user.get("email", ""))
+        return {"marked_read": n}
+
+    @app.post("/api/v1/notifications/send")
+    async def _sp8_send(body: dict, user=Depends(get_current_user)):
+        """Send a notification. body: {title, body?, channels?, event?,
+        email_to?, webhook_url?}. Defaults to an in-app notification for
+        the current user."""
+        title = (body.get("title") or "").strip()
+        if not title:
+            raise HTTPException(status_code=400, detail="title is required")
+        return _sp8_notifier.notify(
+            event=body.get("event", "manual"),
+            title=title, body=body.get("body", ""),
+            channels=body.get("channels") or ["in_app"],
+            recipient=body.get("recipient") or user.get("email", ""),
+            email_to=body.get("email_to", ""),
+            webhook_url=body.get("webhook_url", ""),
+            meta=body.get("meta") or {})
+
+    # Auto-notify on persistent queue job completion. We wrap the queue's
+    # registered handlers so every finish/fail raises an in-app alert,
+    # without touching the queue internals.
+    try:
+        if "_p1_queue" in dir() and hasattr(_p1_queue, "_handlers"):
+            def _sp8_wrap(name, handler):
+                async def wrapped(*a, **kw):
+                    try:
+                        result = await handler(*a, **kw)
+                        _sp8_notifier.notify(
+                            event="job.done", title=f"Job '{name}' completed",
+                            body=str(result)[:400], channels=["in_app"],
+                            meta={"job": name})
+                        return result
+                    except Exception as e:
+                        _sp8_notifier.notify(
+                            event="job.failed", title=f"Job '{name}' failed",
+                            body=str(e)[:400], channels=["in_app"],
+                            meta={"job": name})
+                        raise
+                return wrapped
+            for _jname, _jhandler in list(_p1_queue._handlers.items()):
+                _p1_queue._handlers[_jname] = _sp8_wrap(_jname, _jhandler)
+    except Exception:
+        pass
+
+    print("Superpower 8 active: notifications (in-app + email + webhook)")
+except Exception as _sp8_err:
+    print(f"WARNING: Superpower 8 notifications not loaded: {_sp8_err}")
+# ══════════════ End Superpower 8 ══════════════
