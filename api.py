@@ -65,16 +65,6 @@ if SECRET_KEY == "maya-secret-key-2024":
 if ADMIN_PASSWORD == "maya2024":
     print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
 
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
-
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
-
 DEFAULT_USER_BUDGET_USD = float(os.getenv("DEFAULT_USER_BUDGET_USD", "5.0"))
 
 def hash_password(password: str) -> str:
