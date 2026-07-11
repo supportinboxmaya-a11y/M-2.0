@@ -265,6 +265,17 @@ Maya is now production-deployable behind a load balancer or orchestrator.
 
 ---
 
+## Mobile Offline Sync
+
+The mobile/PWA client now works offline — actions taken while disconnected are queued and replayed when connectivity returns.
+
+- **Idempotent replay** (`infrastructure/sync_engine.py`): each queued action carries a client-generated `op_id`; the server records processed op_ids so a flaky connection re-sending a batch never double-applies. Applied/failed/rejected op statuses are stored (in SQLite) so the client can reconcile exactly what landed.
+- **Decoupled handlers**: action types (`add_memory`, `create_prompt`, `enqueue_goal`) are registered handlers, so the engine stays independent of the rest of the app; unknown types are rejected, not silently dropped, and a failing handler is isolated (other actions in the batch still apply).
+- **Frontend queue** (`src/lib/offlineSync.ts`): `enqueue(type, payload)` stores an action locally; `startAutoSync()` (wired into `main.tsx`) flushes on load, on the browser `online` event, and on an interval — removing applied/skipped/rejected ops and retrying only transient failures. The existing PWA service worker already provides offline caching.
+- **API**: `POST /api/v1/sync/push` (replay a batch), `GET /api/v1/sync/types`, `GET /api/v1/sync/status/{op_id}`, `GET /api/v1/sync/recent`.
+
+---
+
 ## How Maya Works
 
 ```

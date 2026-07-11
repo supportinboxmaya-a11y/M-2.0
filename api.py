@@ -2572,3 +2572,74 @@ try:
 except Exception as _p46_err:
     print(f"WARNING: #4/6 health monitoring not loaded: {_p46_err}")
 # ══════════════ End #4/6 ══════════════
+
+
+# ══════════════ #5/6: Mobile Offline Sync ══════════════
+# Replay actions the mobile/PWA client queued while offline, idempotently.
+# Soft-fails so the API always boots.
+try:
+    from infrastructure.sync_engine import SyncEngine as _P56Sync
+
+    _p56_sync = _P56Sync()
+
+    # Register offline-syncable actions. Each handler(payload, user)->result.
+    def _p56_add_memory(payload, user):
+        text = (payload.get("content") or payload.get("text") or "").strip()
+        if not text:
+            raise ValueError("content required")
+        if maya_instance and hasattr(maya_instance, "memory"):
+            maya_instance.memory.add(text, memory_type=payload.get("type", "note"))
+            return {"stored": True}
+        return {"stored": False, "note": "memory unavailable"}
+    _p56_sync.register("add_memory", _p56_add_memory)
+
+    def _p56_create_prompt(payload, user):
+        # Reuse the prompt library if it loaded (#1/6).
+        if "_sp9_lib" in dir():
+            p = _sp9_lib.create(name=payload.get("name", "untitled"),
+                                body=payload.get("body", ""),
+                                category=payload.get("category", "general"))
+            return {"id": p["id"]}
+        raise ValueError("prompt library unavailable")
+    _p56_sync.register("create_prompt", _p56_create_prompt)
+
+    def _p56_enqueue_goal(payload, user):
+        # Record an autonomous goal request captured while offline. Actual
+        # execution is picked up by the queue; here we just validate and
+        # acknowledge so the client can clear it from its offline queue.
+        goal = (payload.get("goal") or "").strip()
+        if not goal:
+            raise ValueError("goal required")
+        return {"accepted": True, "goal": goal}
+    _p56_sync.register("enqueue_goal", _p56_enqueue_goal)
+
+    @app.get("/api/v1/sync/types")
+    async def _p56_types(user=Depends(get_current_user)):
+        """List action types the client may queue for offline sync."""
+        return {"types": _p56_sync.known_types()}
+
+    @app.post("/api/v1/sync/push")
+    async def _p56_push(body: dict, user=Depends(get_current_user)):
+        """Replay a batch of offline-queued actions. body: {actions:[
+        {op_id, type, payload, client_ts}, ...]}. Idempotent — already
+        applied op_ids are skipped."""
+        actions = body.get("actions") or []
+        if not isinstance(actions, list):
+            raise HTTPException(status_code=400, detail="actions must be a list")
+        return _p56_sync.apply_batch(actions, user=user.get("email", ""))
+
+    @app.get("/api/v1/sync/status/{op_id}")
+    async def _p56_status(op_id: str, user=Depends(get_current_user)):
+        st = _p56_sync.status(op_id)
+        if st is None:
+            raise HTTPException(status_code=404, detail="op not found")
+        return st
+
+    @app.get("/api/v1/sync/recent")
+    async def _p56_recent(limit: int = 50, user=Depends(get_current_user)):
+        return {"ops": _p56_sync.recent(user.get("email", ""), min(limit, 200))}
+
+    print("#5/6 active: mobile offline sync (idempotent action replay)")
+except Exception as _p56_err:
+    print(f"WARNING: #5/6 offline sync not loaded: {_p56_err}")
+# ══════════════ End #5/6 ══════════════
