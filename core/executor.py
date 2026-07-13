@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Ultra Executor
 --------------------------
@@ -166,13 +167,27 @@ Execute this task and return JSON:
             return {"success": False, "result": None, "error": str(e), "tool_used": "llm"}
 
     def _build_context(self, previous_results: List[Dict], base_context: str = "") -> str:
-        """Previous results থেকে context string তৈরি করে।"""
+        """Previous results থেকে context string তৈরি করে।
+
+        Carries what earlier steps DID and what they produced so later steps can
+        build on them instead of starting blind — this is the inter-step
+        'communication' that makes multi-step goals actually chain together."""
         parts = []
         if base_context:
             parts.append(f"Base context: {base_context}")
-        for r in previous_results[-3:]:  # Last 3 results only
-            if r.get("success") and r.get("result"):
-                parts.append(f"Step {r.get('step', '?')} result: {str(r.get('result', ''))[:500]}")
+        for r in previous_results[-5:]:  # last 5 steps
+            if not r.get("success"):
+                continue
+            step_no = r.get("step", "?")
+            did = r.get("description") or r.get("summary") or ""
+            out = r.get("result", "")
+            out = str(out.get("output") if isinstance(out, dict) and out.get("output") else out)
+            line = f"Step {step_no}"
+            if did:
+                line += f" ({str(did)[:120]})"
+            if out and out.strip():
+                line += f" produced: {out.strip()[:1200]}"
+            parts.append(line)
         return "\n".join(parts)
 
     def _inject_context(self, tool_input: Dict, context: str) -> Dict:
