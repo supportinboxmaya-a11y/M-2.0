@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Ultra Tool Registry
 --------------------------------
@@ -6,7 +7,55 @@ Maya 2.0 - Ultra Tool Registry
 
 from typing import Dict, Any, Callable, List, Optional
 import time
+import inspect
 from datetime import datetime, timezone
+
+
+# Common ways an LLM names a tool argument, mapped to the canonical parameter
+# name the tools actually use. Applied only when the tool really has that
+# parameter and the LLM didn't already supply it. This keeps tool calls from
+# crashing with TypeError just because the model wrote "path" instead of
+# "filename" or added an extra "language" key.
+_ARG_ALIASES = {
+    "filename": ["path", "filepath", "file", "file_name", "file_path"],
+    "content": ["text", "data", "body", "file_content"],
+    "name": ["project_name", "project", "site_name", "app_name"],
+    "files": ["file_map", "filemap", "file_dict"],
+    "code": ["source", "script", "snippet", "program"],
+    "url": ["link", "address", "uri"],
+    "query": ["q", "search", "search_query", "keyword", "keywords", "term"],
+    "command": ["cmd", "shell_command", "shell"],
+}
+
+
+def _adapt_inputs(func: Callable, inputs: Dict) -> Dict:
+    """Reshape LLM-provided inputs to match a tool's real signature.
+
+    - If the tool accepts **kwargs, pass everything through untouched.
+    - Otherwise: fill canonical params from known aliases, then drop any
+      keys the function doesn't accept (prevents 'unexpected keyword
+      argument' TypeErrors from stray keys like 'language').
+    """
+    if not inputs:
+        return inputs or {}
+    try:
+        params = inspect.signature(func).parameters
+    except (TypeError, ValueError):
+        return inputs
+    # If the function takes **kwargs, it can absorb anything.
+    if any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()):
+        return inputs
+    accepted = set(params.keys())
+    adapted = dict(inputs)
+    # Map aliases into canonical names the function accepts.
+    for canonical, aliases in _ARG_ALIASES.items():
+        if canonical in accepted and canonical not in adapted:
+            for alias in aliases:
+                if alias in adapted:
+                    adapted[canonical] = adapted.pop(alias)
+                    break
+    # Drop anything the function can't accept, so **inputs won't raise.
+    return {k: v for k, v in adapted.items() if k in accepted}
 
 
 class ToolRegistry:
@@ -75,7 +124,8 @@ class ToolRegistry:
         start = time.time()
 
         try:
-            result = self._tools[name](**inputs)
+            call_args = _adapt_inputs(self._tools[name], inputs)
+            result = self._tools[name](**call_args)
             elapsed = time.time() - start
             self._update_stats(name, success=True, elapsed=elapsed)
             return result
