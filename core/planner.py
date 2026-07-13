@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Ultra Planner
 -------------------------
@@ -24,7 +25,7 @@ class Planner:
     AVAILABLE_TOOLS = [
         "web_search", "web_scrape", "read_file", "write_file",
         "run_code", "run_shell", "list_files", "delete_file",
-        "run_terminal", "list_processes"
+        "run_terminal", "list_processes", "web_build", "web_deploy"
     ]
 
     def __init__(self, router: LLMRouter):
@@ -55,16 +56,24 @@ CRITICAL rules for run_code (read carefully — most failures come from breaking
 - Prefer the fewest steps possible. For a typical "build/write me a <program>" goal, a single run_code step that contains the complete, runnable program (with a small demo/test at the bottom) is the correct plan.
 - Make the code complete and runnable on the first try: include every definition it uses, handle obvious edge cases, and end with a demonstration so its output is visible.
 
+CRITICAL rules for building apps, websites, or any UI (read carefully):
+- This runs on a HEADLESS SERVER with no screen. Desktop-GUI toolkits (tkinter, PyQt, PySide, pygame, turtle, kivy, wx) CANNOT run here — run_code on such code crashes with errors like "libtk8.6.so: cannot open shared object file". NEVER use run_code to build a GUI/desktop app.
+- When the goal is to build an app, website, tool, game, dashboard, or anything with a user interface, build it as a WEB app: generate the HTML/CSS/JS (a single self-contained index.html is ideal for simple apps), then use the web_build tool to package it, and web_deploy to publish it and get a live URL.
+- Typical plan for "build a <X> app/website": one step that produces the files as a {path: content} map, then a web_build step (name + those files), then optionally a web_deploy step. The user should end up with a live link or a downloadable zip — not console text.
+- Only use run_code for pure logic/scripts/data tasks that print a text result (calculations, parsing, automation) — never for something the user is meant to open and interact with.
+
 Available tools:
 - web_search: Search the internet for information
 - web_scrape: Read content from a specific URL
 - read_file: Read a file from disk
 - write_file: Write content to a file
-- run_code: Execute Python code
+- run_code: Execute Python code (text/logic only — NOT for GUIs or apps)
 - run_shell: Run shell/bash commands
 - run_terminal: Execute terminal commands
 - list_files: List files in a directory
 - delete_file: Delete a file
+- web_build: Package a set of {path: content} web files into a project + zip (use this to build apps/websites)
+- web_deploy: Deploy a built web project to the internet and return a live URL
 
 Always respond with ONLY valid JSON, no extra text."""
 
