@@ -4,7 +4,7 @@ Maya 2.0 - Vision Tool (Real Multimodal)
 Sends the actual image bytes to a multimodal LLM. Provider chain
 (first configured wins, next tried on failure):
 
-    Gemini (gemini-1.5-flash) → OpenAI (gpt-4o-mini) → Claude (haiku)
+    Gemini (gemini-flash-latest) → OpenAI (gpt-4o-mini) → Claude (haiku)
 
 Also provides OCR: local pytesseract when installed, otherwise the
 vision LLM with a strict transcription prompt.
@@ -120,7 +120,7 @@ class VisionTool:
             raise _NotConfigured()
         import google.generativeai as genai
         genai.configure(api_key=key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-flash-latest")
         resp = model.generate_content([{"mime_type": media, "data": raw}, prompt])
         return (resp.text or "").strip()
 
@@ -160,3 +160,4 @@ class VisionTool:
 
 class _NotConfigured(Exception):
     """Provider key absent — silently try the next provider."""
+
