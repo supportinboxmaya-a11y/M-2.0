@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Settings
 --------------------
@@ -31,8 +32,8 @@ ANTHROPIC_KEY = env_first("ANTHROPIC_KEY", "ANTHROPIC_API_KEY")
 DEEPSEEK_KEY = env_first("DEEPSEEK_KEY", "DEEPSEEK_API_KEY")
 
 # Models
-PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "llama-3.3-70b-versatile")
-FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", "gemini-1.5-flash")
+PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "openai/gpt-oss-120b")
+FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", "gemini-flash-latest")
 
 # Agent settings
 MAX_STEPS = int(os.environ.get("MAX_STEPS", "25"))
