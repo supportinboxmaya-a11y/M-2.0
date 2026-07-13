@@ -1,3 +1,4 @@
+
 import os
 from config.settings import env_first
 from typing import List, Dict, Optional
@@ -6,8 +7,8 @@ import google.generativeai as genai
 class GeminiProvider:
     def __init__(self):
         genai.configure(api_key=env_first("GEMINI_KEY", "GEMINI_API_KEY"))
-        self.default_model = "gemini-1.5-flash"
-        self.available_models = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"]
+        self.default_model = "gemini-flash-latest"
+        self.available_models = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
 
     def chat(self, messages: List[Dict], model: Optional[str] = None, max_tokens: int = 8000) -> str:
         try:
