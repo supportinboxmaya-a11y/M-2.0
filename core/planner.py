@@ -48,6 +48,13 @@ Rules:
 5. If a step might fail, add a verification step after it
 6. Think like a senior engineer solving this problem
 
+CRITICAL rules for run_code (read carefully — most failures come from breaking these):
+- Every run_code step runs in a BRAND-NEW, ISOLATED Python process. Nothing carries over between run_code steps: variables, functions, imports, and state from an earlier run_code call DO NOT exist in a later one.
+- Therefore, when a goal needs code (e.g. "build a calculator app", "write a script"), write the ENTIRE program in ONE single run_code step: all imports, all function definitions, AND the code that calls/tests them, together in one self-contained snippet that runs top to bottom and prints its result.
+- NEVER split a program across multiple run_code steps (do not define a function in one step and call it in another — it will fail with NameError).
+- Prefer the fewest steps possible. For a typical "build/write me a <program>" goal, a single run_code step that contains the complete, runnable program (with a small demo/test at the bottom) is the correct plan.
+- Make the code complete and runnable on the first try: include every definition it uses, handle obvious edge cases, and end with a demonstration so its output is visible.
+
 Available tools:
 - web_search: Search the internet for information
 - web_scrape: Read content from a specific URL
@@ -209,3 +216,4 @@ Create a smart recovery plan. Return JSON:
             "success_criteria": "Goal completed successfully",
             "risks": []
         }
+
