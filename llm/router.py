@@ -1,4 +1,5 @@
 
+
 """
 Maya 2.0 - Ultra LLM Router
 -----------------------------
@@ -285,14 +286,17 @@ class LLMRouter:
 
     def _select_best_provider(self, task_type: str = "general") -> Optional[str]:
         """Task type অনুযায়ী best provider select করে।"""
-        # Task type based preferences
+        # Task type based preferences.
+        # Groq (openai/gpt-oss-120b) has a large free tier, so it leads every
+        # task type. Gemini's free tier is only ~20 requests/day, so it sits
+        # behind Groq as a fallback and is rarely hit.
         preferences = {
-            "coding": ["deepseek", "groq", "openai", "claude"],
-            "research": ["gemini", "claude", "openai", "groq"],
-            "fast": ["groq", "gemini", "deepseek"],
-            "analysis": ["claude", "openai", "gemini"],
-            "creative": ["claude", "openai", "gemini"],
-            "general": self.DEFAULT_PRIORITY
+            "coding":   ["groq", "deepseek", "gemini", "openai", "claude"],
+            "research": ["groq", "gemini", "claude", "openai"],
+            "fast":     ["groq", "gemini", "deepseek"],
+            "analysis": ["groq", "claude", "openai", "gemini"],
+            "creative": ["groq", "claude", "openai", "gemini"],
+            "general":  self.DEFAULT_PRIORITY
         }
 
         priority = preferences.get(task_type, self.DEFAULT_PRIORITY)
