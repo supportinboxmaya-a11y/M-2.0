@@ -106,6 +106,7 @@ class LLMRouter:
         ]
 
         last_error = None
+        all_errors = []
         for p in providers_to_try:
             try:
                 start = time.time()
@@ -121,12 +122,13 @@ class LLMRouter:
 
             except Exception as e:
                 last_error = str(e)
+                all_errors.append(f"[{p}] {last_error}")
                 self._update_health(p, success=False, error=last_error)
                 self._log_request(p, model, len(str(messages)), 0, 0, False, error=last_error)
                 print(f"   ⚠️ [{p}] failed: {last_error[:80]}, trying next...")
                 continue
 
-        raise Exception(f"All providers failed. Last error: {last_error}")
+        raise Exception("All providers failed. Errors: " + " | ".join(all_errors))
 
     def stream_chat(self, messages: List[Dict], provider: Optional[str] = None,
                     model: Optional[str] = None, max_tokens: int = 4000,
