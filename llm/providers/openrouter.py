@@ -1,45 +1,68 @@
-"""OpenRouter provider (Phase 8) — OpenAI-compatible aggregator API."""
-import json
-import os
-import urllib.request
 
-try:
-    from config.settings import env_first
-except ImportError:  # pre-Phase-0 codebases
-    def env_first(*names, default=""):
-        for n in names:
-            v = os.environ.get(n, "")
-            if v:
-                return v
-        return default
+import os
+from config.settings import env_first
+from typing import List, Dict, Optional
+from openai import OpenAI
+
+# OpenRouter is OpenAI-compatible and exposes 190+ models with a ":free"
+# suffix that cost nothing. One key, many fallback models.
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 
 class OpenRouterProvider:
-    BASE = "https://openrouter.ai/api/v1/chat/completions"
-
-    def __init__(self, model: str = "openrouter/auto", http_fn=None):
-        self.model = model
-        self.http_fn = http_fn or self._http   # injectable for tests
-
-    @staticmethod
-    def available() -> bool:
-        return bool(env_first("OPENROUTER_KEY", "OPENROUTER_API_KEY"))
-
-    def build_payload(self, messages: list) -> dict:
-        return {"model": self.model, "messages": messages}
-
-    def chat(self, messages: list) -> str:
+    def __init__(self):
+        self.client = None
         key = env_first("OPENROUTER_KEY", "OPENROUTER_API_KEY")
-        if not key:
-            raise RuntimeError("OpenRouter key not configured")
-        data = self.http_fn(self.BASE, self.build_payload(messages), key)
-        return data["choices"][0]["message"]["content"]
+        if key:
+            try:
+                # The referer/title headers are optional but recommended by
+                # OpenRouter for free-tier attribution.
+                self.client = OpenAI(
+                    api_key=key,
+                    base_url=OPENROUTER_BASE_URL,
+                    default_headers={
+                        "HTTP-Referer": "https://m-2-0-1.onrender.com",
+                        "X-Title": "Maya",
+                    },
+                )
+            except Exception:
+                self.client = None
+        # Overridable via env; default to a free Llama model.
+        self.default_model = os.environ.get(
+            "OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"
+        )
 
-    @staticmethod
-    def _http(url: str, payload: dict, key: str) -> dict:
-        req = urllib.request.Request(
-            url, data=json.dumps(payload).encode(),
-            headers={"Authorization": f"Bearer {key}",
-                     "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            return json.loads(resp.read().decode())
+    def chat(self, messages: List[Dict], model: Optional[str] = None, max_tokens: int = 8000) -> str:
+        if not self.client:
+            raise Exception("OpenRouter error: OPENROUTER_KEY not configured")
+        try:
+            response = self.client.chat.completions.create(
+                model=model or self.default_model,
+                messages=messages,
+                max_tokens=max_tokens,
+                temperature=0.7,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            raise Exception(f"OpenRouter error: {e}")
+
+    def stream_chat(self, messages: List[Dict], model: Optional[str] = None, max_tokens: int = 8000):
+        if not self.client:
+            raise Exception("OpenRouter error: OPENROUTER_KEY not configured")
+        try:
+            stream = self.client.chat.completions.create(
+                model=model or self.default_model,
+                messages=messages,
+                max_tokens=max_tokens,
+                temperature=0.7,
+                stream=True,
+            )
+            for chunk in stream:
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    yield delta
+        except Exception as e:
+            raise Exception(f"OpenRouter streaming error: {e}")
+
+    def is_available(self) -> bool:
+        return self.client is not None
