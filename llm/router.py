@@ -1,5 +1,4 @@
 
-
 """
 Maya 2.0 - Ultra LLM Router
 -----------------------------
@@ -14,6 +13,8 @@ from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from .providers.groq import GroqProvider
 from .providers.gemini import GeminiProvider
+from .providers.cerebras import CerebrasProvider
+from .providers.openrouter import OpenRouterProvider
 from .providers.openai import OpenAIProvider
 from .providers.claude import ClaudeProvider
 from .providers.deepseek import DeepSeekProvider
@@ -24,6 +25,8 @@ PROVIDER_STATE_FILE = str(STORAGE_DIR / "provider_state.json")
 
 PROVIDER_INFO = {
     "groq": {"label": "Groq", "env_key": "GROQ_KEY"},
+    "cerebras": {"label": "Cerebras", "env_key": "CEREBRAS_KEY"},
+    "openrouter": {"label": "OpenRouter", "env_key": "OPENROUTER_KEY"},
     "gemini": {"label": "Gemini", "env_key": "GEMINI_KEY"},
     "openai": {"label": "GPT (OpenAI)", "env_key": "OPENAI_KEY"},
     "claude": {"label": "Sonnet (Claude)", "env_key": "ANTHROPIC_KEY"},
@@ -35,6 +38,8 @@ PROVIDER_INFO = {
 # without needing to restart the whole process.
 PROVIDER_CLASSES = {
     "groq": GroqProvider,
+    "cerebras": CerebrasProvider,
+    "openrouter": OpenRouterProvider,
     "gemini": GeminiProvider,
     "openai": OpenAIProvider,
     "claude": ClaudeProvider,
@@ -55,11 +60,13 @@ class LLMRouter:
     """
 
     # Provider priority (fast → powerful)
-    DEFAULT_PRIORITY = ["groq", "gemini", "deepseek", "openai", "claude", "local"]
+    DEFAULT_PRIORITY = ["groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude", "local"]
 
     def __init__(self):
         self.providers = {
             "groq": GroqProvider(),
+            "cerebras": CerebrasProvider(),
+            "openrouter": OpenRouterProvider(),
             "gemini": GeminiProvider(),
             "openai": OpenAIProvider(),
             "claude": ClaudeProvider(),
@@ -293,11 +300,11 @@ class LLMRouter:
         # task type. Gemini's free tier is only ~20 requests/day, so it sits
         # behind Groq as a fallback and is rarely hit.
         preferences = {
-            "coding":   ["groq", "deepseek", "gemini", "openai", "claude"],
-            "research": ["groq", "gemini", "claude", "openai"],
-            "fast":     ["groq", "gemini", "deepseek"],
-            "analysis": ["groq", "claude", "openai", "gemini"],
-            "creative": ["groq", "claude", "openai", "gemini"],
+            "coding":   ["groq", "cerebras", "openrouter", "deepseek", "gemini"],
+            "research": ["groq", "cerebras", "openrouter", "gemini", "claude"],
+            "fast":     ["groq", "cerebras", "openrouter", "gemini"],
+            "analysis": ["groq", "cerebras", "openrouter", "claude", "gemini"],
+            "creative": ["groq", "cerebras", "openrouter", "claude", "gemini"],
             "general":  self.DEFAULT_PRIORITY
         }
 
