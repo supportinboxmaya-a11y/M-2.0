@@ -1,4 +1,5 @@
 
+
 import os
 from config.settings import env_first
 from typing import List, Dict, Optional
@@ -13,11 +14,11 @@ class GroqProvider:
                 self.client = Groq(api_key=key)
             except Exception:
                 self.client = None
-        self.default_model = os.environ.get("PRIMARY_MODEL", "llama-3.3-70b-versatile")
+        self.default_model = os.environ.get("PRIMARY_MODEL", "openai/gpt-oss-120b")
         self.available_models = [
-            "llama-3.3-70b-versatile",
+            "openai/gpt-oss-120b",
+            "openai/gpt-oss-20b",
             "llama-3.1-8b-instant",
-            "gemma2-9b-it",
         ]
 
     def chat(self, messages, model=None, max_tokens=8000):
@@ -26,9 +27,10 @@ class GroqProvider:
         use_model = model or self.default_model
         old_models = {
             "llama3-8b-8192": "llama-3.1-8b-instant",
-            "llama3-70b-8192": "llama-3.3-70b-versatile",
-            "mixtral-8x7b-32768": "llama-3.3-70b-versatile",
-            "gemma-7b-it": "gemma2-9b-it",
+            "llama-3.3-70b-versatile": "openai/gpt-oss-120b",
+            "llama3-70b-8192": "openai/gpt-oss-120b",
+            "mixtral-8x7b-32768": "openai/gpt-oss-120b",
+            "gemma-7b-it": "llama-3.1-8b-instant",
         }
         use_model = old_models.get(use_model, use_model)
         try:
@@ -49,9 +51,10 @@ class GroqProvider:
         use_model = model or self.default_model
         old_models = {
             "llama3-8b-8192": "llama-3.1-8b-instant",
-            "llama3-70b-8192": "llama-3.3-70b-versatile",
-            "mixtral-8x7b-32768": "llama-3.3-70b-versatile",
-            "gemma-7b-it": "gemma2-9b-it",
+            "llama-3.3-70b-versatile": "openai/gpt-oss-120b",
+            "llama3-70b-8192": "openai/gpt-oss-120b",
+            "mixtral-8x7b-32768": "openai/gpt-oss-120b",
+            "gemma-7b-it": "llama-3.1-8b-instant",
         }
         use_model = old_models.get(use_model, use_model)
         try:
