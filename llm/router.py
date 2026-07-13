@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Ultra LLM Router
 -----------------------------
@@ -188,6 +189,19 @@ class LLMRouter:
     def best_provider(self, task_type: str = "general") -> Optional[str]:
         """Best provider return করে।"""
         return self._select_best_provider(task_type)
+
+    def secondary_provider(self, exclude: Optional[str] = None) -> Optional[str]:
+        """A healthy provider DIFFERENT from `exclude` (or from the primary).
+
+        Used for cross-checking: one model writes/answers, a *different* model
+        verifies it, so a mistake baked into one model is more likely to be
+        caught. Returns None if no second model is available (then the caller
+        just uses the default one — no cross-check, but still works)."""
+        primary = exclude or self._select_best_provider("general")
+        for p in self.available_providers():
+            if p != primary:
+                return p
+        return None
 
     def get_stats(self) -> Dict:
         """Router statistics।"""
