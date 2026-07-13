@@ -1,4 +1,5 @@
 
+
 from .registry import ToolRegistry
 from .web.google_search import GoogleSearch
 from .web.web_scraper import WebScraper
@@ -19,6 +20,7 @@ from .data.database_tool import DatabaseTool
 from .code.code_runner import CodeRunner
 from .code.calculator_tool import CalculatorTool
 from .code.git_tool import GitTool
+from .code.web_builder_tool import WebBuilderTool
 from .system.shell import ShellTool
 from .system.terminal import TerminalTool
 from .system.process_manager import ProcessManager
@@ -41,6 +43,7 @@ class ToolManager:
         rest_api = RestApiTool()
         graphql = GraphQLTool()
         git = GitTool()
+        web = WebBuilderTool()
         github = GitHubTool()
         fm = FileManager()
         reader = FileReader()
@@ -88,6 +91,8 @@ class ToolManager:
         self.registry.register("git_branch", git.branch, "List branches or create+switch to a new one", category="developer")
         self.registry.register("git_checkout", git.checkout, "Switch to an existing git branch", category="developer")
         self.registry.register("git_merge", git.merge, "Merge a branch into the current one (conflict-safe)", category="developer")
+        self.registry.register("web_build", web.build, "Scaffold {path: content} files into a project folder and zip it (deliverable)", category="developer")
+        self.registry.register("web_deploy", web.deploy, "Deploy a built project to Netlify and return a live URL (needs NETLIFY_TOKEN)", category="developer")
         self.registry.register("read_file", reader.read, "Read a file", category="file")
         self.registry.register("write_file", writer.write, "Write to a file", category="file")
         self.registry.register("list_files", fm.list_files, "List files", category="file")
