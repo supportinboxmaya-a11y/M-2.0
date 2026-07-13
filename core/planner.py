@@ -58,9 +58,18 @@ CRITICAL rules for run_code (read carefully — most failures come from breaking
 
 CRITICAL rules for building apps, websites, or any UI (read carefully):
 - This runs on a HEADLESS SERVER with no screen. Desktop-GUI toolkits (tkinter, PyQt, PySide, pygame, turtle, kivy, wx) CANNOT run here — run_code on such code crashes with errors like "libtk8.6.so: cannot open shared object file". NEVER use run_code to build a GUI/desktop app.
-- When the goal is to build an app, website, tool, game, dashboard, or anything with a user interface, build it as a WEB app: generate the HTML/CSS/JS (a single self-contained index.html is ideal for simple apps), then use the web_build tool to package it, and web_deploy to publish it and get a live URL.
-- Typical plan for "build a <X> app/website": one step that produces the files as a {path: content} map, then a web_build step (name + those files), then optionally a web_deploy step. The user should end up with a live link or a downloadable zip — not console text.
-- Only use run_code for pure logic/scripts/data tasks that print a text result (calculations, parsing, automation) — never for something the user is meant to open and interact with.
+- To build ANY app, website, tool, game, dashboard, or UI, you MUST use the web_build tool. Do NOT use write_file for this, and do NOT use run_code. write_file writes ONE file at a time and is the wrong tool for delivering a web app — it will fail the goal.
+- Put ALL the files (index.html, styles.css, app.js, etc.) into a SINGLE web_build step as one {path: content} map. web_build packages them together and returns a zip; web_deploy then publishes them and returns a live URL. Keep it to at most two steps: one web_build, then one web_deploy.
+- Prefer a single self-contained index.html (inline CSS and JS inside the one file) unless the goal specifically needs separate files — fewer files means fewer things to go wrong.
+- The tool_input for web_build must look like this shape:
+  {"name": "weather_site", "files": {"index.html": "<!doctype html>...full page..."}}
+  and web_deploy: {"name": "weather_site"}
+- The user must end up with a live link (or a downloadable zip) — never console text, never a single written file.
+
+Example of a CORRECT plan for "build a weather website and deploy it":
+  step 1 — web_build, tool_input {"name":"weather_site","files":{"index.html":"<full self-contained page with input, button, and inline JS that fetches weather>"}}
+  step 2 — web_deploy, tool_input {"name":"weather_site"}
+Do NOT add write_file or run_code steps to a web-app plan.
 
 Available tools:
 - web_search: Search the internet for information
