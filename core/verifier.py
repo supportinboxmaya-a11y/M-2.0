@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Ultra Verifier
 --------------------------
@@ -64,7 +65,10 @@ Verify if this result truly satisfies the goal. Return JSON:
             {"role": "user", "content": user}
         ]
 
-        response = self.router.chat(messages, max_tokens=1500)
+        # Cross-check: verify with a DIFFERENT model than the one that produced
+        # the result, so one model's mistake is more likely to be caught.
+        checker = self.router.secondary_provider()
+        response = self.router.chat(messages, provider=checker, max_tokens=1500)
         verdict = self._parse_json(response)
 
         if not verdict:
@@ -106,7 +110,8 @@ Return JSON:
             {"role": "user", "content": user}
         ]
 
-        response = self.router.chat(messages)
+        checker = self.router.secondary_provider()
+        response = self.router.chat(messages, provider=checker)
         return self._parse_json(response) or {"passed": bool(step_result), "reason": "Auto-checked", "quality": "acceptable"}
 
     def needs_human_review(self, goal: str, result: str, quality_threshold: int = 6) -> bool:
