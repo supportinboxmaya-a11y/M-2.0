@@ -1,3 +1,4 @@
+
 """
 Maya 2.0 - Ultra Workflow Engine
 ----------------------------------
@@ -219,8 +220,39 @@ class WorkflowEngine:
     def _combine_results(self, results: List[Dict]) -> str:
         parts = []
         for r in results:
-            if r.get("success") and r.get("result"):
-                content = str(r.get("result", ""))
-                if content.strip():
-                    parts.append(content)
+            if not r.get("success"):
+                continue
+            content = self._clean_text(r.get("result", ""))
+            if content and content.strip():
+                parts.append(content.strip())
         return "\n\n".join(parts)
+
+    @staticmethod
+    def _clean_text(value) -> str:
+        """Turn a step result into clean human-readable text.
+
+        Tool results are often dicts like {'success': True, 'output': '4\\n',
+        'error': '', 'returncode': 0}. Surfacing that raw dict to the user is
+        ugly, so pull out the meaningful field (the program's actual output /
+        answer) instead of str(dict)."""
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            return value
+        if isinstance(value, (int, float, bool)):
+            return str(value)
+        if isinstance(value, dict):
+            for key in ("output", "result", "reply", "message", "text", "content", "answer", "stdout"):
+                v = value.get(key)
+                if isinstance(v, str) and v.strip():
+                    return v
+                if isinstance(v, dict):
+                    inner = WorkflowEngine._clean_text(v)
+                    if inner.strip():
+                        return inner
+            err = value.get("error")
+            if isinstance(err, str) and err.strip():
+                return ""  # a failed sub-result: don't dump the raw error dict into the answer
+            # nothing useful found — avoid dumping the raw dict
+            return ""
+        return str(value)
