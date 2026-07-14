@@ -14,19 +14,19 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
-      - key: GROQ_KEY
+      - key: GROQ_API_KEY
         sync: false
-      - key: GEMINI_KEY
+      - key: GEMINI_API_KEY
         sync: false
       - key: CORS_ORIGINS
         value: "*"
-      - key: NETLIFY_TOKEN
+      - key: NETLIFY_API_TOKEN
         sync: false
-      - key: CEREBRAS_KEY
+      - key: CEREBRAS_API_KEY
         sync: false
       - key: FLAG_AUTONOMOUS
         sync: false
-      - key: OPENROUTER_KEY
+      - key: OPENROUTER_API_KEY
         sync: false
       - key: SUPABASE_DB_URL
         sync: false
