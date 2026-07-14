@@ -2,15 +2,19 @@
 services:
   - type: web
     name: maya-backend
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
     envVars:
+      - key: PORT
+        value: "8000"
+      - key: SECRET_KEY
+        generateValue: true
       - key: ADMIN_EMAIL
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
-      - key: SECRET_KEY
+      - key: GROQ_KEY
         sync: false
       - key: GEMINI_KEY
         sync: false
@@ -25,6 +29,4 @@ services:
       - key: OPENROUTER_KEY
         sync: false
       - key: SUPABASE_DB_URL
-        sync: false
-      - key: GROQ_KEY
         sync: false
