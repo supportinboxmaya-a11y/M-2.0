@@ -1,22 +1,21 @@
+
 """
 Maya 2.0 - Ultra Fallback Manager
-------------------------------------
-যখন কিছু fail করে, intelligent recovery করে।
+Intelligent recovery engine for LLM failures, rate limits, and errors.
 """
 
 import json
 from typing import Dict, List, Optional
 from llm.router import LLMRouter
 
-
 class FallbackManager:
     """
-    Maya-র failure recovery engine.
-    - Step failure analyze করে
-    - Alternative strategies তৈরি করে
-    - Provider switch করে
-    - Tool alternatives খোঁজে
-    - Max retry limit manage করে
+    Failure recovery engine for Maya.
+    - Analyzes step failures
+    - Generates alternative execution strategies
+    - Manages provider switches (Groq, Gemini, OpenRouter, Cerebras, etc.)
+    - Finds tool alternatives
+    - Tracks and enforces max retry limits
     """
 
     TOOL_ALTERNATIVES = {
@@ -29,7 +28,7 @@ class FallbackManager:
         "write_file": [],
     }
 
-    def __init__(self, planner=None, router: LLMRouter = None):
+    def __init__(self, planner=None, router: Optional[LLMRouter] = None):
         self.planner = planner
         self.router = router
         self.recovery_history: List[Dict] = []
@@ -37,23 +36,18 @@ class FallbackManager:
         self.global_retry_count = 0
 
     def recover(self, goal: str, error: str, completed_steps: List[Dict], failed_step: Dict, context: str = "") -> Dict:
-        """
-        Failure থেকে recover করার strategy তৈরি করে।
-        """
+        """Determines the best recovery strategy from a failure context."""
         self.global_retry_count += 1
 
         if self.global_retry_count > self.max_global_retries:
             return {
                 "should_abort": True,
-                "reason": f"Max retries ({self.max_global_retries}) exceeded",
+                "reason": f"Max retries ({self.max_global_retries}) exceeded.",
                 "recovery_strategy": "abort",
                 "new_steps": []
             }
 
-        # Error type detect করি
         error_type = self._detect_error_type(error)
-
-        # Recovery strategy বেছে নিই
         strategy = self._choose_strategy(error_type, failed_step, completed_steps)
 
         recovery = {
@@ -67,13 +61,13 @@ class FallbackManager:
         if strategy == "switch_tool":
             alt_tool = self._get_alternative_tool(failed_step.get("tool"))
             if alt_tool:
-                new_step = {**failed_step, "tool": alt_tool, "description": f"[Retry with {alt_tool}] {failed_step.get('description', '')}"}
+                new_step = {**failed_step, "tool": alt_tool, "description": f"Retry with {alt_tool}: {failed_step.get('description')}"}
                 recovery["new_steps"] = [new_step]
                 recovery["message"] = f"Switching to alternative tool: {alt_tool}"
 
         elif strategy == "replan" and self.planner:
             completed_summary = "\n".join([
-                f"Step {s.get('step')}: {s.get('description')} → {s.get('result', 'done')}"
+                f"Step {s.get('step')}: {s.get('description')} -> {s.get('result', 'done')}"
                 for s in completed_steps if s.get("success")
             ])
             new_plan = self.planner.replan(goal, error, completed_steps, failed_step)
@@ -81,7 +75,6 @@ class FallbackManager:
             recovery["message"] = new_plan.get("recovery_strategy", "Replanning...")
 
         elif strategy == "simplify":
-            # Step টা ছোট করে আবার try করি
             simplified = {
                 **failed_step,
                 "tool": None,
@@ -98,22 +91,22 @@ class FallbackManager:
             "error": error,
             "error_type": error_type,
             "strategy": strategy,
-            "success": None  # Will be updated later
+            "success": None
         })
 
         return recovery
 
     def select_fallback_provider(self, failed_provider: str, available_providers: List[str], task_type: str = "general") -> Optional[str]:
-        """Failed provider এর বদলে best alternative বেছে নেয়।"""
+        """Finds the best alternative provider based on current preferences and availability."""
         alternatives = [p for p in available_providers if p != failed_provider]
         if not alternatives:
             return None
 
-        # Task type based preference
+        # Task type preferences expanded with OpenRouter and Cerebras
         task_preferences = {
-            "coding": ["deepseek", "openai", "groq"],
-            "research": ["gemini", "claude", "openai"],
-            "general": ["groq", "gemini", "openai", "claude", "deepseek"]
+            "coding": ["deepseek", "openai", "groq", "openrouter", "cerebras"],
+            "research": ["gemini", "claude", "openai", "openrouter"],
+            "general": ["groq", "gemini", "openrouter", "cerebras", "openai", "claude", "deepseek"]
         }
 
         preferred = task_preferences.get(task_type, task_preferences["general"])
@@ -124,11 +117,10 @@ class FallbackManager:
         return alternatives[0]
 
     def should_retry(self, error: str, attempt: int, max_attempts: int) -> bool:
-        """Retry করা উচিত কিনা।"""
+        """Determines if a retry should be attempted based on the error message."""
         if attempt >= max_attempts:
             return False
 
-        # এই errors retry করা ঠিক না
         no_retry_errors = ["permission denied", "api key", "authentication", "unauthorized", "quota exceeded"]
         error_lower = error.lower()
         if any(e in error_lower for e in no_retry_errors):
@@ -137,7 +129,7 @@ class FallbackManager:
         return True
 
     def _detect_error_type(self, error: str) -> str:
-        """Error type detect করে।"""
+        """Categorizes raw error strings into structured types."""
         error_lower = error.lower()
         if any(k in error_lower for k in ["timeout", "timed out", "connection"]):
             return "network"
@@ -154,29 +146,29 @@ class FallbackManager:
         return "unknown"
 
     def _choose_strategy(self, error_type: str, failed_step: Dict, completed_steps: List[Dict]) -> str:
-        """Error type অনুযায়ী best recovery strategy বেছে নেয়।"""
+        """Maps specific error types to the ideal recovery strategy."""
         if error_type == "auth":
-            return "abort"  # API key নেই, কিছু করার নেই
+            return "abort"
         if error_type == "rate_limit":
-            return "replan"  # Different provider দিয়ে try
+            return "replan"
         if error_type == "network":
-            return "switch_tool"  # Alternative tool try
+            return "switch_tool"
         if error_type == "not_found":
-            return "replan"  # Different approach
+            return "replan"
         if error_type == "parse":
-            return "simplify"  # Simpler approach
+            return "simplify"
         if failed_step.get("tool"):
-            return "switch_tool"  # Tool ছিল, alternative try
+            return "switch_tool"
         return "replan"
 
     def _get_alternative_tool(self, tool_name: Optional[str]) -> Optional[str]:
-        """Tool এর alternative বেছে দেয়।"""
+        """Fetches alternative tool configurations if available."""
         if not tool_name:
             return None
         alternatives = self.TOOL_ALTERNATIVES.get(tool_name, [])
         return alternatives[0] if alternatives else None
 
     def reset(self):
-        """Recovery counter reset করে।"""
+        """Resets the internal recovery counters."""
         self.global_retry_count = 0
         self.recovery_history = []
