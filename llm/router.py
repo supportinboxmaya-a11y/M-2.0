@@ -1,7 +1,8 @@
 
 """
 Maya 2.0 - LLM Router
-Handles provider management, live configuration, health checks, and automatic fallbacks.
+Handles provider management, live configuration, health checks, automatic fallbacks,
+and intelligent error diagnostics.
 """
 
 import os
@@ -15,8 +16,6 @@ from config.settings import (
     DEEPSEEK_KEY, OPENROUTER_KEY, CEREBRAS_KEY, env_first
 )
 
-# Mock/Import provider classes as structured in your framework
-# Assumed to be imported or defined in your actual environment context
 from llm.providers import (
     GroqProvider, CerebrasProvider, OpenRouterProvider, 
     GeminiProvider, OpenAIProvider, AnthropicProvider, 
@@ -96,7 +95,11 @@ class LLMRouter:
                 all_errors.append(f"[{p}]: {last_error}")
                 self._update_health(p, success=False, error=last_error)
                 self._log_request(p, model, len(str(messages)), 0, 0.0, False, error=last_error)
-                print(f"Warning: [{p}] failed: {last_error[:80]}, trying next...")
+                
+                # Intelligent error diagnostics for logging
+                readable_error = self._interpret_error(p, last_error)
+                print(f"\n[Maya Diagnostics] {readable_error}")
+                print(f"🔄 Action: Skipping [{p}] and routing to the next available backup...\n")
                 continue
 
         raise Exception(f"All providers failed. Errors: " + " | ".join(all_errors))
@@ -144,7 +147,11 @@ class LLMRouter:
                 last_error = str(e)
                 self._update_health(p, success=False, error=last_error)
                 self._log_request(p, model, len(str(messages)), 0, 0.0, False, error=last_error)
-                print(f"Warning: Stream [{p}] failed: {last_error[:80]}, next...")
+                
+                # Diagnostics during stream breakdown
+                readable_error = self._interpret_error(p, last_error)
+                print(f"\n[Maya Stream Diagnostics] {readable_error}")
+                print(f"🔄 Action: Falling back from [{p}] seamlessly...\n")
                 continue
 
         raise Exception(f"All providers failed. Last error: {last_error}")
@@ -186,7 +193,12 @@ class LLMRouter:
         for name in self.DEFAULT_PRIORITY:
             info = PROVIDER_INFO.get(name, {"label": name, "env_key": ""})
             env_key = info["env_key"]
-            configured = bool(env_first(env_key, env_key.replace("_KEY", "_API_KEY"))) if env_key else True
+            configured = False
+            if env_key:
+                alt_key = env_key.replace("_KEY", "_API_KEY")
+                configured = bool(env_first(env_key) or env_first(alt_key))
+            else:
+                configured = True
             enabled = self._enabled_state.get(name, True)
             h = self.health.get(name, {})
             out.append({
@@ -303,3 +315,18 @@ class LLMRouter:
         })
         if len(self.request_log) > 100:
             self.request_log = self.request_log[-100:]
+
+    def _interpret_error(self, provider: str, error_msg: str) -> str:
+        """Analyzes raw error string and returns a human-readable diagnosis."""
+        err_lower = error_msg.lower()
+        if any(k in err_lower for k in ["api key", "invalid key", "unauthorized", "401"]):
+            return f"🔑 [Authentication Error]: The API key for '{provider}' is missing, incorrect, or expired. Check settings."
+        elif any(k in err_lower for k in ["rate limit", "quota", "429", "too many requests"]):
+            return f"⏳ [Rate Limit Exceeded]: '{provider}' has rate limited or exhausted the quota limit. Maya is switching providers."
+        elif any(k in err_lower for k in ["timeout", "timed out", "connection", "network", "502", "503"]):
+            return f"🌐 [Network Error]: Connection issues with '{provider}'. Servers might be temporarily down."
+        elif any(k in err_lower for k in ["context_length_exceeded", "max tokens", "too long"]):
+            return f"📄 [Context Limit Error]: Sent prompt to '{provider}' is too long or exceeds model boundaries."
+        elif any(k in err_lower for k in ["model_not_found", "404", "unknown model"]):
+            return f"🤖 [Model Match Error]: Selected model target is unavailable inside the '{provider}' endpoint."
+        return f"⚠️ [Exception]: '{provider}' encountered raw error -> {error_msg}"
