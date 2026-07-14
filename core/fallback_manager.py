@@ -1,7 +1,7 @@
 
 """
 Maya 2.0 - Ultra Fallback Manager
-Intelligent recovery engine for LLM failures, rate limits, and errors.
+Intelligent recovery engine for LLM failures, rate limits, and task-level errors.
 """
 
 import json
@@ -9,15 +9,6 @@ from typing import Dict, List, Optional
 from llm.router import LLMRouter
 
 class FallbackManager:
-    """
-    Failure recovery engine for Maya.
-    - Analyzes step failures
-    - Generates alternative execution strategies
-    - Manages provider switches (Groq, Gemini, OpenRouter, Cerebras, etc.)
-    - Finds tool alternatives
-    - Tracks and enforces max retry limits
-    """
-
     TOOL_ALTERNATIVES = {
         "web_search": ["web_scrape"],
         "web_scrape": ["web_search"],
@@ -25,7 +16,7 @@ class FallbackManager:
         "run_shell": ["run_terminal", "run_code"],
         "run_terminal": ["run_shell"],
         "read_file": [],
-        "write_file": [],
+        "write_file": []
     }
 
     def __init__(self, planner=None, router: Optional[LLMRouter] = None):
@@ -61,16 +52,16 @@ class FallbackManager:
         if strategy == "switch_tool":
             alt_tool = self._get_alternative_tool(failed_step.get("tool"))
             if alt_tool:
-                new_step = {**failed_step, "tool": alt_tool, "description": f"Retry with {alt_tool}: {failed_step.get('description')}"}
+                new_step = {**failed_step, "tool": alt_tool, "description": f"Retry with {alt_tool} instead of {failed_step.get('tool')}"}
                 recovery["new_steps"] = [new_step]
                 recovery["message"] = f"Switching to alternative tool: {alt_tool}"
-
+            
         elif strategy == "replan" and self.planner:
             completed_summary = "\n".join([
                 f"Step {s.get('step')}: {s.get('description')} -> {s.get('result', 'done')}"
                 for s in completed_steps if s.get("success")
             ])
-            new_plan = self.planner.replan(goal, error, completed_steps, failed_step)
+            new_plan = self.planner.replan(goal, error, completed_summary, failed_step)
             recovery["new_steps"] = new_plan.get("new_steps", [])
             recovery["message"] = new_plan.get("recovery_strategy", "Replanning...")
 
@@ -104,8 +95,8 @@ class FallbackManager:
 
         # Task type preferences expanded with OpenRouter and Cerebras
         task_preferences = {
-            "coding": ["deepseek", "openai", "groq", "openrouter", "cerebras"],
-            "research": ["gemini", "claude", "openai", "openrouter"],
+            "coding": ["groq", "cerebras", "openrouter", "deepseek", "openai"],
+            "research": ["groq", "cerebras", "openrouter", "gemini", "claude"],
             "general": ["groq", "gemini", "openrouter", "cerebras", "openai", "claude", "deepseek"]
         }
 
