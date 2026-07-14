@@ -1,7 +1,7 @@
 
 """
 Maya 2.0 - Settings
---------------------
+-------------------
 Central configuration with validation and type safety.
 """
 
@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).parent.parent
 
 
 def env_first(*names: str, default: str = "") -> str:
-    """First non-empty env var among names (supports *_KEY and *_API_KEY)."""
+    """Return first non-empty env var among names (supports *_KEY and *_API_KEY)."""
     for name in names:
         value = os.environ.get(name, "")
         if value:
@@ -24,12 +24,14 @@ def env_first(*names: str, default: str = "") -> str:
     return default
 
 
-# API Keys (dual-read)
-GROQ_KEY = env_first("GROQ_KEY", "GROQ_API_KEY")
-GEMINI_KEY = env_first("GEMINI_KEY", "GEMINI_API_KEY")
-OPENAI_KEY = env_first("OPENAI_KEY", "OPENAI_API_KEY")
-ANTHROPIC_KEY = env_first("ANTHROPIC_KEY", "ANTHROPIC_API_KEY")
-DEEPSEEK_KEY = env_first("DEEPSEEK_KEY", "DEEPSEEK_API_KEY")
+# API Keys (dual-read mapping to Render Environment Variables)
+GROQ_KEY = env_first("GROQ_API_KEY", "GROQ_KEY")
+GEMINI_KEY = env_first("GEMINI_API_KEY", "GEMINI_KEY")
+OPENAI_KEY = env_first("OPENAI_API_KEY", "OPENAI_KEY")
+ANTHROPIC_KEY = env_first("ANTHROPIC_API_KEY", "ANTHROPIC_KEY")
+DEEPSEEK_KEY = env_first("DEEPSEEK_API_KEY", "DEEPSEEK_KEY")
+OPENROUTER_KEY = env_first("OPENROUTER_API_KEY", "OPENROUTER_KEY")
+CEREBRAS_KEY = env_first("CEREBRAS_API_KEY", "CEREBRAS_KEY")
 
 # Models
 PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "openai/gpt-oss-120b")
@@ -55,15 +57,25 @@ DB_FILE = str(MEMORY_DIR / "maya.db")
 for d in [STORAGE_DIR, MEMORY_DIR, WORKSPACE_DIR, LOG_DIR, BACKUP_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
+
 # Validation
 def validate():
     """Check at least one LLM provider is configured."""
-    keys = [GROQ_KEY, GEMINI_KEY, OPENAI_KEY, ANTHROPIC_KEY, DEEPSEEK_KEY]
+    keys = [
+        GROQ_KEY,
+        GEMINI_KEY,
+        OPENAI_KEY,
+        ANTHROPIC_KEY,
+        DEEPSEEK_KEY,
+        OPENROUTER_KEY,
+        CEREBRAS_KEY,
+    ]
     if not any(keys):
         print("WARNING: No API keys found! Set at least one in .env file.")
         print("  Get free Groq key at: console.groq.com")
         print("  Get free Gemini key at: aistudio.google.com")
         return False
     return True
+
 
 validate()
