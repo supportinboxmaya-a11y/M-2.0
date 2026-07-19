@@ -3245,3 +3245,173 @@ try:
 except Exception as _p16_err:
     print(f"WARNING: Phase 16 remote VPS deploy not loaded: {_p16_err}")
 # ══════════════ End Phase 16 integration ══════════════
+
+# ══════════════ Phase 17: Autonomous Cognition Loop ══════════════
+try:
+    from infrastructure.cognition import (
+        cognition_engine as _p17_cog,
+        COGNITION_ENABLED as _P17_ENABLED,
+        COGNITION_AUTORUN as _P17_AUTORUN,
+    )
+    from enterprise.rbac import RBAC as _P17RBAC
+    from human.intervention import InterventionHandler
+
+    _p17_rbac = _P17RBAC()
+    _p17_intervention = InterventionHandler()
+
+    def _p17_check_execute(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p17_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(status_code=403,
+                                detail="execute permission required (admin or developer role)")
+
+    def _p17_require_enabled():
+        """Clean 503 instead of a 500 when the cognition loop is off."""
+        if not _P17_ENABLED:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Cognition loop not enabled — set COGNITION_ENABLED=true "
+                    "in .env and restart"
+                ),
+            )
+
+    # ── Missions ───────────────────────────────────────────────────
+    @app.get("/api/v1/cognitive/missions")
+    async def _p17_list_missions(
+        active_only: bool = False,
+        user=Depends(get_current_user),
+    ):
+        _p17_require_enabled()
+        return {"missions": _p17_cog.list_missions(active_only=active_only)}
+
+    @app.post("/api/v1/cognitive/missions")
+    async def _p17_create_mission(
+        body: dict, user=Depends(get_current_user),
+    ):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        name = body.get("name", "")
+        if not name:
+            raise HTTPException(status_code=400, detail="'name' is required")
+        mission = _p17_cog.create_mission(
+            name=name,
+            description=body.get("description", ""),
+            self_gen=body.get("self_gen", True),
+            active=body.get("active", True),
+        )
+        return mission
+
+    @app.patch("/api/v1/cognitive/missions/{mission_id}")
+    async def _p17_update_mission(
+        mission_id: str, body: dict,
+        user=Depends(get_current_user),
+    ):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        # Support toggle via active field
+        if "active" in body:
+            ok = _p17_cog.toggle_mission(mission_id, bool(body["active"]))
+            if not ok:
+                raise HTTPException(status_code=404, detail="Mission not found")
+        mission = _p17_cog.update_mission(
+            mission_id,
+            name=body.get("name"),
+            description=body.get("description"),
+            self_gen=body.get("self_gen"),
+        )
+        if not mission:
+            raise HTTPException(status_code=404, detail="Mission not found")
+        return mission
+
+    @app.delete("/api/v1/cognitive/missions/{mission_id}")
+    async def _p17_delete_mission(
+        mission_id: str, user=Depends(get_current_user),
+    ):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        ok = _p17_cog.delete_mission(mission_id)
+        if not ok:
+            raise HTTPException(status_code=404, detail="Mission not found")
+        return {"ok": True}
+
+    @app.post("/api/v1/cognitive/missions/{mission_id}/generate")
+    async def _p17_generate_objectives(
+        mission_id: str, user=Depends(get_current_user),
+    ):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        objectives = _p17_cog.generate_objectives(mission_id)
+        return {"objectives": objectives, "count": len(objectives)}
+
+    # ── Objectives ─────────────────────────────────────────────────
+    @app.get("/api/v1/cognitive/objectives")
+    async def _p17_list_objectives(
+        mission_id: Optional[str] = None,
+        status: Optional[str] = None,
+        user=Depends(get_current_user),
+    ):
+        _p17_require_enabled()
+        return {
+            "objectives": _p17_cog.list_objectives(
+                mission_id=mission_id, status=status
+            ),
+        }
+
+    @app.post("/api/v1/cognitive/objectives")
+    async def _p17_add_objective(
+        body: dict, user=Depends(get_current_user),
+    ):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        mission_id = body.get("mission_id", "")
+        description = body.get("description", "")
+        if not mission_id or not description:
+            raise HTTPException(
+                status_code=400,
+                detail="'mission_id' and 'description' are required",
+            )
+        obj = _p17_cog.add_objective(
+            mission_id=mission_id,
+            description=description,
+            priority=body.get("priority", 0.0),
+            depends_on=body.get("depends_on"),
+            requires_approval=body.get("requires_approval", False),
+        )
+        return obj
+
+    # ── Cycle & control ────────────────────────────────────────────
+    @app.post("/api/v1/cognitive/cycle")
+    async def _p17_trigger_cycle(user=Depends(get_current_user)):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        result = await _p17_cog.cycle()
+        return result
+
+    @app.post("/api/v1/cognitive/pause")
+    async def _p17_pause(user=Depends(get_current_user)):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        _p17_intervention.enable()
+        return {"ok": True, "detail": "Cognition loop paused"}
+
+    @app.post("/api/v1/cognitive/resume")
+    async def _p17_resume(user=Depends(get_current_user)):
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        _p17_intervention.disable()
+        return {"ok": True, "detail": "Cognition loop resumed"}
+
+    @app.get("/api/v1/cognitive/status")
+    async def _p17_status(user=Depends(get_current_user)):
+        """Engine status — works even when disabled (reports the flag state)."""
+        return _p17_cog.status()
+
+    print(
+        f"Phase 17 active: cognition loop (ENABLED={_P17_ENABLED}, "
+        f"AUTORUN={_P17_AUTORUN})"
+    )
+except Exception as _p17_err:
+    print(f"WARNING: Phase 17 cognition loop not loaded: {_p17_err}")
+# ══════════════ End Phase 17 integration ══════════════
