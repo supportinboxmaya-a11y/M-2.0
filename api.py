@@ -958,6 +958,20 @@ def web_approval_handler(action: str, reason: str = "", risk_level: str = "high"
         except Exception:
             pass
 
+    # Push a phone notification so the user knows something needs their
+    # attention without polling.  Falls back to in-app store if FCM is
+    # not configured.
+    if risk_level in ("high", "critical"):
+        try:
+            from infrastructure.notifications import notify_phone
+            notify_phone(
+                f"⚠️ Approval needed: {action[:80]}",
+                reason[:300] or action[:300],
+                level="warning",
+            )
+        except Exception:
+            pass
+
     waited = 0
     poll_interval = 2
     while waited < APPROVAL_TIMEOUT_SECONDS:
