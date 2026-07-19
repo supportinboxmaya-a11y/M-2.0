@@ -234,7 +234,7 @@ class LLMRouter:
 
     def _load_enabled_state(self) -> Dict[str, bool]:
         try:
-            if os.path.path.exists(PROVIDER_STATE_FILE):
+            if os.path.exists(PROVIDER_STATE_FILE):
                 with open(PROVIDER_STATE_FILE, "r", encoding="utf-8") as f:
                     return json.load(f)
         except Exception:
