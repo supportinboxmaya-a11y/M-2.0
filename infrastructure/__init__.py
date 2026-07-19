@@ -15,3 +15,4 @@ from .cron import CronExpression
 from .scheduler import Scheduler
 from .feature_flags import FeatureFlags, flags
 from .exceptions import MayaError, install_exception_handler
+from .instances import instance_manager
