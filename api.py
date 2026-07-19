@@ -3139,3 +3139,109 @@ try:
 except Exception as _p15_err:
     print(f"WARNING: Phase 15 hosting API not loaded: {_p15_err}")
 # ══════════════ End Phase 15 integration ══════════════
+
+# ══════════════ Phase 16: Remote VPS Deploy over SSH + Docker ══════════════
+try:
+    from infrastructure.remote_deploy import remote_deployer as _p16_remote
+    from enterprise.rbac import RBAC as _P16RBAC
+    from human.approval import ApprovalManager
+    from security.risk_checker import RiskChecker
+
+    _p16_rbac = _P16RBAC()
+    _p16_approval = ApprovalManager(mode=os.environ.get("APPROVAL_MODE", "auto"))
+    _p16_risk = RiskChecker()
+
+    def _p16_check_execute(user: dict):
+        """Raise 403 if the user lacks the RBAC 'execute' permission."""
+        if not supabase_store.enabled:
+            return
+        if not _p16_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(status_code=403,
+                                detail="execute permission required (admin or developer role)")
+
+    def _p16_abort_if_not_configured():
+        """Return a clean JSON response if no VPS is configured (not a 500)."""
+        if not _p16_remote.configured:
+            raise HTTPException(status_code=503,
+                                detail="VPS not configured — set VPS_HOST and credentials")
+
+    @app.post("/api/v1/hosting/remote/deploy")
+    async def _p16_remote_deploy(body: dict, user=Depends(get_current_user)):
+        """Build image (optional) and run a container on the remote VPS.
+
+        Request body:
+          app            — container name (required)
+          image          — Docker image to run (required)
+          dockerfile_dir — if set, ``docker build -t <image> <dir>`` first
+          ports          — dict mapping ``host_port → container_port``
+          env            — dict mapping env var names → values
+        """
+        _p16_check_execute(user)
+        _p16_abort_if_not_configured()
+
+        app = body.get("app", "")
+        image = body.get("image", "")
+        if not app or not image:
+            raise HTTPException(status_code=400, detail="'app' and 'image' are required")
+
+        dockerfile_dir = body.get("dockerfile_dir")
+        ports = body.get("ports")
+        env = body.get("env")
+
+        # Optional build step
+        if dockerfile_dir:
+            build_result = _p16_remote.build_image(app, dockerfile_dir)
+            if not build_result.get("ok"):
+                raise HTTPException(status_code=400,
+                                    detail=build_result.get("error", "build failed"))
+
+        # Run the container
+        result = _p16_remote.run_container(app, image, ports=ports, env=env)
+        if not result.get("ok"):
+            raise HTTPException(status_code=400,
+                                detail=result.get("error", "deploy failed"))
+        return result
+
+    @app.post("/api/v1/hosting/remote/{app}/{action}")
+    async def _p16_remote_action(app: str, action: str, user=Depends(get_current_user)):
+        """Control a remote container.
+
+        *action* — one of ``start``, ``stop``, ``restart``, ``logs``.
+        """
+        _p16_check_execute(user)
+        _p16_abort_if_not_configured()
+
+        valid = {"start", "stop", "restart", "logs"}
+        if action not in valid:
+            raise HTTPException(status_code=400,
+                                detail=f"Invalid action '{action}'. Valid: {', '.join(sorted(valid))}")
+
+        # Destructive ops go through the approval gate
+        if action in ("stop",):
+            risk = _p16_risk.check(f"remote stop container {app}")
+            if _p16_approval.needs_approval(f"remote:stop:{app}", risk.get("level", "medium")):
+                approved = _p16_approval.request_approval(
+                    action=f"Stop remote container '{app}' on VPS",
+                    reason=risk.get("reason", "User requested container stop"),
+                    risk_level=risk.get("level", "medium"),
+                )
+                if not approved:
+                    raise HTTPException(status_code=403, detail="Stop denied by user")
+
+        method_map = {
+            "start": _p16_remote.start_container,
+            "stop": _p16_remote.stop_container,
+            "restart": _p16_remote.restart_container,
+            "logs": lambda a: _p16_remote.container_logs(a),
+        }
+
+        result = method_map[action](app)
+        if not result.get("ok"):
+            detail = result.get("error", f"{action} failed")
+            raise HTTPException(status_code=400, detail=detail)
+        return result
+
+    print("Phase 16 active: remote VPS deploy over SSH + Docker (RBAC + approval gate)")
+except Exception as _p16_err:
+    print(f"WARNING: Phase 16 remote VPS deploy not loaded: {_p16_err}")
+# ══════════════ End Phase 16 integration ══════════════
