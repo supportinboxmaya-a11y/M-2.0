@@ -2697,3 +2697,134 @@ try:
 except Exception as _p66_err:
     print(f"WARNING: #6/6 translation not loaded: {_p66_err}")
 # ══════════════ End #6/6 ══════════════
+
+
+# ══════════════ Phase 13: Phone Control Command & State ══════════════
+# Natural-language control channel for phone.  Routes text to chat() or
+# run() depending on intent, and exposes a compact dashboard for the
+# phone home screen.  Soft-fails so the API always boots.
+try:
+    _p13_ACTION_PREFIXES = (
+        "run ", "execute ", "do ", "create ", "build ", "make ", "find ",
+        "search ", "send ", "analyze ", "calculate ", "compute ",
+        "generate ", "write ", "edit ", "update ", "delete ", "remove ",
+        "install ", "configure ", "deploy ", "start ", "stop ", "restart ",
+    )
+
+    def _p13_classify(text: str) -> str:
+        """Return 'run' if text looks like an action goal, else 'chat'."""
+        t = text.strip().lower()
+        if t.startswith(_p13_ACTION_PREFIXES) or len(t) > 100:
+            return "run"
+        return "chat"
+
+    @app.post("/api/v1/control/command")
+    async def _p13_command(body: dict, user: dict = Depends(get_current_user)):
+        """
+        Natural-language control command from phone.
+
+        Body: {text, instance_id?}
+
+        Routes short/conversational text to maya_instance.chat() and
+        longer/action-oriented text to maya_instance.run().  Returns
+        {reply, actions_taken} for the phone to display.
+        """
+        if not maya_instance:
+            raise HTTPException(status_code=503, detail="Maya not initialized")
+        text = (body.get("text") or "").strip()
+        if not text:
+            raise HTTPException(status_code=400, detail="text is required")
+
+        mode = _p13_classify(text)
+        loop = asyncio.get_event_loop()
+
+        if mode == "run":
+            result = await loop.run_in_executor(
+                None, lambda: maya_instance.run(text, task_id=str(uuid.uuid4()))
+            )
+            reply = result.get("result", str(result))
+            actions_taken = 1 if result.get("success") else 0
+        else:
+            reply = await loop.run_in_executor(
+                None, lambda: maya_instance.chat(text)
+            )
+            actions_taken = 0
+
+        return {"reply": reply, "actions_taken": actions_taken}
+
+    @app.get("/api/v1/control/state")
+    async def _p13_state(user: dict = Depends(get_current_user)):
+        """
+        Compact phone dashboard snapshot.
+
+        Returns hosted_apps_count, active_instances_count,
+        pending_approvals_count, queue_depth, and provider_health_summary.
+        """
+        if not maya_instance:
+            return {
+                "hosted_apps_count": 0,
+                "active_instances_count": 0,
+                "pending_approvals_count": 0,
+                "queue_depth": 0,
+                "provider_health_summary": {},
+            }
+
+        # Hosted apps — not yet implemented, always 0
+        hosted_apps = 0
+
+        # Active instances: Maya itself + running tasks
+        try:
+            running_tasks = len([
+                t for t in tasks_db.values()
+                if t.get("status") in ("running", "pending", "waiting_approval")
+            ])
+        except Exception:
+            running_tasks = 0
+        active_instances = 1 + running_tasks
+
+        # Pending approvals
+        try:
+            pending_approvals = len([
+                a for a in approvals_db.values()
+                if a.get("status") == "pending"
+            ])
+        except Exception:
+            pending_approvals = 0
+
+        # Queue depth (safe — Phase 1 may be absent or _p1_queue not in scope)
+        queue_depth = 0
+        try:
+            # _p1_queue is scoped to Phase 1's try block; attempt to reach
+            # through the module's symbol table as a last resort.
+            import api as _p13_api
+            q = getattr(_p13_api, "_p1_queue", None)
+            if q is not None and hasattr(q, "pending_count"):
+                queue_depth = q.pending_count()
+        except Exception:
+            pass
+
+        # Provider health summary
+        try:
+            health = maya_instance.router.health
+            summary = {
+                p: {
+                    "available": h["available"],
+                    "errors": h["error_count"],
+                }
+                for p, h in health.items()
+            }
+        except Exception:
+            summary = {}
+
+        return {
+            "hosted_apps_count": hosted_apps,
+            "active_instances_count": active_instances,
+            "pending_approvals_count": pending_approvals,
+            "queue_depth": queue_depth,
+            "provider_health_summary": summary,
+        }
+
+    print("Phase 13 active: phone control command + state endpoints")
+except Exception as _p13_err:
+    print(f"WARNING: Phase 13 phone control not loaded: {_p13_err}")
+# ══════════════ End Phase 13 integration ══════════════
