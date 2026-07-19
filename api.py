@@ -132,10 +132,12 @@ class BudgetRequest(BaseModel):
 class AgentRunRequest(BaseModel):
     goal: str
     budget_usd: Optional[float] = 1.0
+    instance_id: Optional[str] = None
 
 class ChatRequest(BaseModel):
     message: str
     chat_id: Optional[str] = None  # groups messages into one conversation thread
+    instance_id: Optional[str] = None
 
 class ThinkRequest(BaseModel):
     problem: str
@@ -239,11 +241,26 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
     check_budget(user)
+    # Resolve optional instance
+    _run_instance = None
+    if req.instance_id:
+        try:
+            from infrastructure.instances import instance_manager as _run_im
+            _run_instance = _run_im.get(req.instance_id)
+        except Exception:
+            pass
+    _run_goal = req.goal
+    if _run_instance:
+        p = (_run_instance.get("persona") or "").strip()
+        if p:
+            _run_goal = f"[Instance: {_run_instance['name']}] Persona: {p}\n\n{_run_goal}"
+
     task_id = str(uuid.uuid4())
     task = {
         "id": task_id, "goal": req.goal, "status": "running",
         "steps": [], "current_phase": "starting", "created_at": datetime.utcnow().isoformat(),
-        "provider_used": None, "cost_usd": 0, "tokens_used": 0
+        "provider_used": None, "cost_usd": 0, "tokens_used": 0,
+        "instance_id": req.instance_id,
     }
     tasks_db[task_id] = task
     await broadcast({"type": "task_started", "task": task})
@@ -288,7 +305,7 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
     async def run_task():
         try:
             result = await asyncio.get_event_loop().run_in_executor(
-                None, lambda: maya_instance.run(req.goal, task_id=task_id, progress_callback=on_progress)
+                None, lambda: maya_instance.run(_run_goal, task_id=task_id, progress_callback=on_progress)
             )
             raw_steps = result.get("steps", []) or []
             normalized_steps = [{
@@ -328,6 +345,18 @@ async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=503, detail="Maya not initialized")
     check_budget(user)
 
+    _chat_msg = req.message
+    if req.instance_id:
+        try:
+            from infrastructure.instances import instance_manager as _chat_im
+            _chat_inst = _chat_im.get(req.instance_id)
+            if _chat_inst:
+                p = (_chat_inst.get("persona") or "").strip()
+                if p:
+                    _chat_msg = f"[Instance: {_chat_inst['name']}] Persona: {p}\n\n{_chat_msg}"
+        except Exception:
+            pass
+
     history = []
     use_supabase_history = supabase_store.enabled and user.get("uid") and req.chat_id
     if use_supabase_history:
@@ -335,7 +364,7 @@ async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
         history = [{"role": m["role"], "content": m["content"]} for m in past]
 
     response = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.chat(req.message, history=history)
+        None, lambda: maya_instance.chat(_chat_msg, history=history)
     )
 
     if use_supabase_history:
@@ -2763,6 +2792,20 @@ try:
         if not text:
             raise HTTPException(status_code=400, detail="text is required")
 
+        # Resolve optional instance for persona injection
+        _inst = None
+        iid = body.get("instance_id")
+        if iid:
+            try:
+                from infrastructure.instances import instance_manager as _p13_im
+                _inst = _p13_im.get(iid)
+            except Exception:
+                pass
+        if _inst:
+            p = (_inst.get("persona") or "").strip()
+            if p:
+                text = f"[Instance: {_inst['name']}] Persona: {p}\n\n{text}"
+
         mode = _p13_classify(text)
         loop = asyncio.get_event_loop()
 
@@ -2856,3 +2899,72 @@ try:
 except Exception as _p13_err:
     print(f"WARNING: Phase 13 phone control not loaded: {_p13_err}")
 # ══════════════ End Phase 13 integration ══════════════
+
+
+# ══════════════ Phase 14: Instance CRUD + Per-Instance Routing ══════════
+# Manage named Maya instances (persona, skills, budget, memory scope).
+# Soft-fails so the API always boots.
+try:
+    from infrastructure.instances import instance_manager as _p14_im
+
+    @app.post("/api/v1/instances")
+    async def _p14_create(body: dict, user=Depends(get_current_user)):
+        """Create a new Maya instance.
+
+        Body: {name, persona, skills?, budget_usd?}.
+        Owner defaults to the current user's email.
+        """
+        name = (body.get("name") or "").strip()
+        if not name:
+            raise HTTPException(status_code=400, detail="name is required")
+        persona = (body.get("persona") or "").strip()
+        if not persona:
+            raise HTTPException(status_code=400, detail="persona is required")
+        instance = _p14_im.create(
+            name=name,
+            persona=persona,
+            skills=body.get("skills"),
+            budget_usd=body.get("budget_usd", 5.0),
+            owner=user.get("email", ""),
+        )
+        return instance
+
+    @app.get("/api/v1/instances")
+    async def _p14_list(user=Depends(get_current_user)):
+        """List instances.  Admins see all; others see only their own."""
+        email = user.get("email", "")
+        role = user.get("role", "")
+        if supabase_store.enabled and role != "admin":
+            return {"instances": _p14_im.list(owner=email)}
+        return {"instances": _p14_im.list()}
+
+    @app.get("/api/v1/instances/{iid}")
+    async def _p14_get(iid: str, user=Depends(get_current_user)):
+        """Get a single instance by id.  Non-admins may only fetch their
+        own instances."""
+        inst = _p14_im.get(iid)
+        if not inst:
+            raise HTTPException(status_code=404, detail="Instance not found")
+        email = user.get("email", "")
+        role = user.get("role", "")
+        if supabase_store.enabled and role != "admin" and inst.get("owner") != email:
+            raise HTTPException(status_code=404, detail="Instance not found")
+        return inst
+
+    @app.delete("/api/v1/instances/{iid}")
+    async def _p14_delete(iid: str, user=Depends(get_current_user)):
+        """Delete an instance.  Non-admins may only delete their own."""
+        inst = _p14_im.get(iid)
+        if not inst:
+            raise HTTPException(status_code=404, detail="Instance not found")
+        email = user.get("email", "")
+        role = user.get("role", "")
+        if supabase_store.enabled and role != "admin" and inst.get("owner") != email:
+            raise HTTPException(status_code=404, detail="Instance not found")
+        _p14_im.delete(iid)
+        return {"deleted": iid}
+
+    print("Phase 14 active: instance CRUD + per-instance routing")
+except Exception as _p14_err:
+    print(f"WARNING: Phase 14 instance management not loaded: {_p14_err}")
+# ══════════════ End Phase 14 integration ══════════════
