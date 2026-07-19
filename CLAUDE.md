@@ -201,7 +201,27 @@ publishing / external accounts. Isolation lets its safety rules be the strictest
 
 ---
 
-## 9. How to resume in a new chat / session
+## 9. LLM Strategy (decided — $0/month stack)
+
+Budget: ~$0/month (hard limit $1-2). No paid frontier APIs.
+
+Primary brain: **NVIDIA NIM** — free API, 80+ strong open models
+(DeepSeek V3.2/V4, Qwen3 Coder 480B, MiniMax, GLM, Kimi, Llama).
+- Sign up free at build.nvidia.com (phone verification, no credit card)
+- OpenAI-compatible: `base_url = https://integrate.api.nvidia.com/v1`
+- env: `NVIDIA_NIM_KEY=nvapi-...` ; limit ~40 req/min, no daily token cap
+- Model IDs use slash format, e.g. `deepseek-ai/deepseek-v3`
+
+Fallbacks (when NIM rate-limits): OpenRouter free (one key, 35+ free
+models), Cerebras free, Groq free.
+Special cases only: GitHub Models (free GPT-5/o3 class, tiny token limits).
+
+Rules: never anchor to a single free provider; always keep at least one
+fallback. Router default = NIM, fallback chain = OpenRouter → Cerebras → Groq.
+
+---
+
+## 10. How to resume in a new chat / session
 
 1. Give this file to Claude (or let Command Code read it — it reads CLAUDE.md
    each session).
