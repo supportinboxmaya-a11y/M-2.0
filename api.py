@@ -241,12 +241,15 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
     check_budget(user)
-    # Resolve optional instance
+    # Resolve optional instance (persona + memory scope)
     _run_instance = None
+    _run_scope = ""
     if req.instance_id:
         try:
             from infrastructure.instances import instance_manager as _run_im
             _run_instance = _run_im.get(req.instance_id)
+            if _run_instance:
+                _run_scope = _run_instance.get("memory_scope", "")
         except Exception:
             pass
     _run_goal = req.goal
@@ -305,7 +308,9 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
     async def run_task():
         try:
             result = await asyncio.get_event_loop().run_in_executor(
-                None, lambda: maya_instance.run(_run_goal, task_id=task_id, progress_callback=on_progress)
+                None, lambda: maya_instance.run(_run_goal, task_id=task_id,
+                                                progress_callback=on_progress,
+                                                scope=_run_scope)
             )
             raw_steps = result.get("steps", []) or []
             normalized_steps = [{
@@ -346,11 +351,13 @@ async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
     check_budget(user)
 
     _chat_msg = req.message
+    _chat_scope = ""
     if req.instance_id:
         try:
             from infrastructure.instances import instance_manager as _chat_im
             _chat_inst = _chat_im.get(req.instance_id)
             if _chat_inst:
+                _chat_scope = _chat_inst.get("memory_scope", "")
                 p = (_chat_inst.get("persona") or "").strip()
                 if p:
                     _chat_msg = f"[Instance: {_chat_inst['name']}] Persona: {p}\n\n{_chat_msg}"
@@ -364,7 +371,7 @@ async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
         history = [{"role": m["role"], "content": m["content"]} for m in past]
 
     response = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.chat(_chat_msg, history=history)
+        None, lambda: maya_instance.chat(_chat_msg, history=history, scope=_chat_scope)
     )
 
     if use_supabase_history:
@@ -2792,7 +2799,7 @@ try:
         if not text:
             raise HTTPException(status_code=400, detail="text is required")
 
-        # Resolve optional instance for persona injection
+        # Resolve optional instance for persona + memory scope
         _inst = None
         iid = body.get("instance_id")
         if iid:
@@ -2801,6 +2808,7 @@ try:
                 _inst = _p13_im.get(iid)
             except Exception:
                 pass
+        _scope = _inst.get("memory_scope", "") if _inst else ""
         if _inst:
             p = (_inst.get("persona") or "").strip()
             if p:
@@ -2811,13 +2819,14 @@ try:
 
         if mode == "run":
             result = await loop.run_in_executor(
-                None, lambda: maya_instance.run(text, task_id=str(uuid.uuid4()))
+                None, lambda: maya_instance.run(text, task_id=str(uuid.uuid4()),
+                                                scope=_scope)
             )
             reply = result.get("result", str(result))
             actions_taken = 1 if result.get("success") else 0
         else:
             reply = await loop.run_in_executor(
-                None, lambda: maya_instance.chat(text)
+                None, lambda: maya_instance.chat(text, scope=_scope)
             )
             actions_taken = 0
 

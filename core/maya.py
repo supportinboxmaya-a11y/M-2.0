@@ -148,11 +148,51 @@ class Maya:
         print(f"  Budget    : ${self.cost.budget_usd:.2f}")
         print(f"{'='*50}\n")
 
-    def run(self, goal: str, max_retries: int = 3, task_id: str = None, progress_callback=None) -> dict:
+    # ── scoped memory helper ────────────────────────────────────────
+    _scoped_memory_instance = None
+
+    def _scoped_memory(self):
+        """Lazy singleton ScopedMemory instance (thread-safe SQLite)."""
+        if self._scoped_memory_instance is None:
+            try:
+                from enterprise.scoped_memory import ScopedMemory
+                self._scoped_memory_instance = ScopedMemory()
+            except Exception:
+                self._scoped_memory_instance = False  # sentinel
+        return self._scoped_memory_instance if self._scoped_memory_instance else None
+
+    def _scoped_search(self, scope: str, query: str, limit: int = 5) -> str:
+        """Search scoped memory and format as text, or return empty string."""
+        sm = self._scoped_memory()
+        if not sm:
+            return ""
+        try:
+            results = sm.search(scope, query, limit=limit)
+            if results:
+                lines = [f"- {r['content'][:200]}" for r in results]
+                return "\n".join(lines)
+        except Exception:
+            pass
+        return ""
+
+    def _scoped_add(self, scope: str, content: str, memory_type: str = "general"):
+        """Write to scoped memory.  Never raises."""
+        sm = self._scoped_memory()
+        if not sm:
+            return
+        try:
+            sm.add(scope, content, author="system", memory_type=memory_type)
+        except Exception:
+            pass
+
+    def run(self, goal: str, max_retries: int = 3, task_id: str = None,
+            progress_callback=None, scope: str = "") -> dict:
         """
         Goal achieve করার জন্য full autonomous workflow run করে.
         `progress_callback`, if given, is called live as planning/execution/
         verification happen — see WorkflowEngine.run() for the payload shapes.
+        *scope* — when non-empty, routes memory reads/writes through the
+        per-scope ScopedMemory store instead of the global MemoryManager.
         """
         log.info(f"New goal: {goal}")
 
@@ -175,20 +215,30 @@ class Maya:
             if not approved:
                 return {"success": False, "result": "User denied approval"}
 
-        # Memory context
+        # Memory context — use scoped store when scope is set
         self.memory.set_goal(goal)
-        memory_hints = self.memory.get_relevant_memories(goal)
-        past_tips = self.memory.get_tips_for_goal(goal)
+        if scope:
+            memory_hints = self._scoped_search(scope, goal, limit=10)
+            past_tips = ""  # episodic tips stay global; cross-instance reads
+                             # are blocked by ScopedMemory WHERE scope=?
+        else:
+            memory_hints = self.memory.get_relevant_memories(goal)
+            past_tips = self.memory.get_tips_for_goal(goal)
 
         # Run workflow
         result = self.workflow.run(goal, max_retries=max_retries, progress_callback=progress_callback)
+
+        # Persist result to scoped memory if scope is set
+        if scope and result.get("success"):
+            summary = f"Goal: {goal[:200]}\nResult: {str(result.get('result', ''))[:500]}"
+            self._scoped_add(scope, summary, memory_type="task")
 
         # Cost summary
         self.cost.print_summary()
 
         return result
 
-    def chat(self, message: str, history: list = None) -> str:
+    def chat(self, message: str, history: list = None, scope: str = "") -> str:
         """Simple chat without full agent workflow.
 
         `history` is an optional list of {"role": "user"|"assistant", "content": str}
@@ -196,6 +246,9 @@ class Maya:
         fresh single-turn exchange and Maya has no memory of prior messages in
         the thread — pass the conversation's stored history (e.g. from Supabase
         chat_messages) to make follow-up questions actually work.
+
+        *scope* — when non-empty, routes the memory write through the per-scope
+        ScopedMemory store instead of the global MemoryManager.
         """
         system_prompt = (
             f"You are Maya {self.VERSION}, an autonomous AI assistant created "
@@ -209,6 +262,14 @@ class Maya:
         if addon:
             system_prompt += addon
 
+        # Prepend scoped memory context when scope is set
+        if scope:
+            ctx = self._scoped_search(scope, message, limit=5)
+            if ctx:
+                system_prompt += (
+                    "\n\nRelevant past memories for this instance:\n" + ctx
+                )
+
         messages = [{"role": "system", "content": system_prompt}]
         if history:
             messages.extend(history)
@@ -220,7 +281,10 @@ class Maya:
             footer = RAGAugmenter.format_sources(citations)
             if footer:
                 response = f"{response}\n\n{footer}"
-        self.memory.add(f"Chat: {message[:100]}", memory_type="chat")
+        if scope:
+            self._scoped_add(scope, f"Chat: {message[:100]}", memory_type="chat")
+        else:
+            self.memory.add(f"Chat: {message[:100]}", memory_type="chat")
         return response
 
     def _augment_with_knowledge(self, message: str):
