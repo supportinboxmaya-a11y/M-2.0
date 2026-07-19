@@ -2849,8 +2849,12 @@ try:
                 "provider_health_summary": {},
             }
 
-        # Hosted apps — not yet implemented, always 0
-        hosted_apps = 0
+        # Hosted apps
+        try:
+            from infrastructure.hosting_manager import hosting_manager as _p13_hosting
+            hosted_apps = len(_p13_hosting.list())
+        except Exception:
+            hosted_apps = 0
 
         # Active instances: Maya itself + running tasks
         try:
@@ -2977,3 +2981,161 @@ try:
 except Exception as _p14_err:
     print(f"WARNING: Phase 14 instance management not loaded: {_p14_err}")
 # ══════════════ End Phase 14 integration ══════════════
+
+
+# ══════════════ Phase 15: Hosting API (RBAC + owner-scoped) ════════════
+# Deploy and manage locally hosted apps.  Mutating routes (deploy, start,
+# stop, restart, remove, tunnel) require the RBAC 'execute' permission
+# (admin or developer role).  Non-admins only see / act on their own apps
+# by owner email.  Soft-fails so the API always boots.
+try:
+    from infrastructure.hosting_manager import hosting_manager as _p15_hosting
+    from enterprise.rbac import RBAC as _P15RBAC
+
+    _p15_rbac = _P15RBAC()
+
+    def _p15_check_execute(user: dict):
+        """Raise 403 if the user lacks the RBAC 'execute' permission."""
+        if not supabase_store.enabled:
+            return  # single-user mode — always allow
+        if not _p15_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(status_code=403,
+                                detail="execute permission required (admin or developer role)")
+
+    def _p15_owner_check(user: dict, app_owner: str):
+        """Raise 404 if a non-admin tries to access someone else's app."""
+        if not supabase_store.enabled:
+            return
+        if user.get("role", "") != "admin" and app_owner != user.get("email", ""):
+            raise HTTPException(status_code=404, detail="App not found")
+
+    # ── List ──────────────────────────────────────────────────────────
+    @app.get("/api/v1/hosting/apps")
+    async def _p15_list(user=Depends(get_current_user)):
+        """List hosted apps.  Admins see all; others see only their own."""
+        email = user.get("email", "")
+        role = user.get("role", "")
+        if supabase_store.enabled and role != "admin":
+            return {"apps": _p15_hosting.list(owner=email)}
+        return {"apps": _p15_hosting.list()}
+
+    # ── Deploy ────────────────────────────────────────────────────────
+    @app.post("/api/v1/hosting/deploy")
+    async def _p15_deploy(body: dict, user=Depends(get_current_user)):
+        """Deploy a new app.
+
+        Body: {name, kind, entry?, path?, command?, port?, env?,
+               tunnel?, autostart?, owner?}.
+
+        *owner* may only be set by admins; non-admins are always tagged
+        with their own email.
+        """
+        _p15_check_execute(user)
+        owner = user.get("email", "")
+        if supabase_store.enabled and user.get("role") == "admin" and body.get("owner"):
+            owner = body["owner"]
+        result = _p15_hosting.deploy(
+            name=body.get("name", ""),
+            kind=body.get("kind", ""),
+            entry=body.get("entry", ""),
+            path=body.get("path", ""),
+            command=body.get("command", ""),
+            port=body.get("port"),
+            env=body.get("env"),
+            owner=owner,
+            autostart=body.get("autostart", True),
+            tunnel=body.get("tunnel", False),
+        )
+        if not result.get("ok"):
+            raise HTTPException(status_code=400, detail=result.get("error", "deploy failed"))
+        return result
+
+    # ── Status ────────────────────────────────────────────────────────
+    @app.get("/api/v1/hosting/apps/{name}")
+    async def _p15_status(name: str, user=Depends(get_current_user)):
+        """Get live status for a hosted app."""
+        result = _p15_hosting.status(name)
+        if result.get("ok") is False:
+            raise HTTPException(status_code=404, detail=result.get("error", "not found"))
+        _p15_owner_check(user, result.get("owner", ""))
+        return result
+
+    # ── Start ─────────────────────────────────────────────────────────
+    @app.post("/api/v1/hosting/apps/{name}/start")
+    async def _p15_start(name: str, user=Depends(get_current_user)):
+        _p15_check_execute(user)
+        app = _p15_hosting.status(name)
+        if app.get("ok") is False:
+            raise HTTPException(status_code=404, detail=app.get("error", "not found"))
+        _p15_owner_check(user, app.get("owner", ""))
+        result = _p15_hosting.start(name)
+        if not result.get("ok"):
+            raise HTTPException(status_code=400, detail=result.get("error", "start failed"))
+        return result
+
+    # ── Stop ──────────────────────────────────────────────────────────
+    @app.post("/api/v1/hosting/apps/{name}/stop")
+    async def _p15_stop(name: str, user=Depends(get_current_user)):
+        _p15_check_execute(user)
+        app = _p15_hosting.status(name)
+        if app.get("ok") is False:
+            raise HTTPException(status_code=404, detail=app.get("error", "not found"))
+        _p15_owner_check(user, app.get("owner", ""))
+        result = _p15_hosting.stop(name)
+        if not result.get("ok"):
+            raise HTTPException(status_code=400, detail=result.get("error", "stop failed"))
+        return result
+
+    # ── Restart ───────────────────────────────────────────────────────
+    @app.post("/api/v1/hosting/apps/{name}/restart")
+    async def _p15_restart(name: str, user=Depends(get_current_user)):
+        _p15_check_execute(user)
+        app = _p15_hosting.status(name)
+        if app.get("ok") is False:
+            raise HTTPException(status_code=404, detail=app.get("error", "not found"))
+        _p15_owner_check(user, app.get("owner", ""))
+        result = _p15_hosting.restart(name)
+        if not result.get("ok"):
+            raise HTTPException(status_code=400, detail=result.get("error", "restart failed"))
+        return result
+
+    # ── Tunnel ────────────────────────────────────────────────────────
+    @app.post("/api/v1/hosting/apps/{name}/tunnel")
+    async def _p15_tunnel(name: str, user=Depends(get_current_user)):
+        _p15_check_execute(user)
+        app = _p15_hosting.status(name)
+        if app.get("ok") is False:
+            raise HTTPException(status_code=404, detail=app.get("error", "not found"))
+        _p15_owner_check(user, app.get("owner", ""))
+        result = _p15_hosting.open_tunnel(name)
+        if not result.get("ok"):
+            raise HTTPException(status_code=400, detail=result.get("error", "tunnel failed"))
+        return result
+
+    # ── Logs ──────────────────────────────────────────────────────────
+    @app.get("/api/v1/hosting/apps/{name}/logs")
+    async def _p15_logs(name: str, lines: int = 100, user=Depends(get_current_user)):
+        """Tail the app's log file.  *lines* defaults to 100, capped at 2000."""
+        app = _p15_hosting.status(name)
+        if app.get("ok") is False:
+            raise HTTPException(status_code=404, detail=app.get("error", "not found"))
+        _p15_owner_check(user, app.get("owner", ""))
+        return _p15_hosting.logs(name, lines=min(max(lines, 1), 2000))
+
+    # ── Remove ────────────────────────────────────────────────────────
+    @app.delete("/api/v1/hosting/apps/{name}")
+    async def _p15_remove(name: str, user=Depends(get_current_user)):
+        _p15_check_execute(user)
+        app = _p15_hosting.status(name)
+        if app.get("ok") is False:
+            raise HTTPException(status_code=404, detail=app.get("error", "not found"))
+        _p15_owner_check(user, app.get("owner", ""))
+        result = _p15_hosting.remove(name)
+        if not result.get("ok"):
+            raise HTTPException(status_code=400, detail=result.get("error", "remove failed"))
+        return result
+
+    print("Phase 15 active: hosting API (RBAC + owner-scoped)")
+except Exception as _p15_err:
+    print(f"WARNING: Phase 15 hosting API not loaded: {_p15_err}")
+# ══════════════ End Phase 15 integration ══════════════
