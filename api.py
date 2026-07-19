@@ -2300,6 +2300,20 @@ try:
             webhook_url=body.get("webhook_url", ""),
             meta=body.get("meta") or {})
 
+    @app.post("/api/v1/notifications/register-device")
+    async def _sp8_register_device(body: dict,
+                                   user=Depends(get_current_user)):
+        """Register a device push token. body: {token, platform}.
+        Platform is 'android' or 'ios'.  Idempotent — re-registering
+        the same token updates the recipient."""
+        token = (body.get("token") or "").strip()
+        platform = (body.get("platform") or "").strip().lower()
+        if not token or not platform:
+            raise HTTPException(status_code=400,
+                                detail="token and platform are required")
+        return _sp8_notifier.register_device(
+            token, platform, user.get("email", ""))
+
     # Auto-notify on persistent queue job completion. We wrap the queue's
     # registered handlers so every finish/fail raises an in-app alert,
     # without touching the queue internals.

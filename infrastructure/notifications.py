@@ -9,6 +9,9 @@ Channels:
     email   : SMTP, configured via env (SMTP_HOST/PORT/USER/PASS/FROM).
               No config -> email channel is simply skipped, never errors.
     webhook : POST the notification to a URL (reuses the outbound idea).
+    push    : phone push via FCM (Firebase). If no push provider is
+              configured the call degrades to an in-app notification so
+              the phone can still pick it up by polling.
 
 Design:
 - notify(event, title, body, channels=..., **meta) fans out to the
@@ -17,6 +20,8 @@ Design:
   recorded failure, so notifications can't take down the caller.
 - In-app notifications are per-recipient (email/uid) and support
   read/unread + listing, so the UI can show a notification center.
+- notify_phone(title, body, level, recipient) is a convenience helper
+  that tries FCM push first and falls back to the in-app store.
 """
 
 import json
@@ -34,6 +39,56 @@ from config.settings import STORAGE_DIR, env_first
 NOTIF_DIR = STORAGE_DIR / "notifications"
 NOTIF_DIR.mkdir(parents=True, exist_ok=True)
 NOTIF_DB = str(NOTIF_DIR / "notifications.db")
+
+# ── Optional FCM push ─────────────────────────────────────────────────────
+try:
+    import firebase_admin
+    from firebase_admin import credentials, messaging as _fcm_messaging
+    _HAS_FCM = True
+except ImportError:
+    _HAS_FCM = False
+    _fcm_messaging = None
+
+# Lazy-init FCM app singleton so import of this module never connects
+# to Firebase — only the first push attempt triggers it.
+_FCM_APP = None
+
+
+def _ensure_fcm():
+    """Initialise the Firebase Admin SDK on first use, or return False if
+    the SDK is not installed or no credentials are configured."""
+    global _FCM_APP
+    if _FCM_APP is not None:
+        return True
+    if not _HAS_FCM:
+        return False
+    cred_path = env_first("FCM_CREDENTIALS_PATH", "FCM_CREDENTIALS")
+    if not cred_path:
+        return False
+    try:
+        _FCM_APP = firebase_admin.initialize_app(
+            credentials.Certificate(cred_path),
+        )
+        return True
+    except Exception:
+        return False
+
+
+# ── Module-level helper (zero-import singleton) ───────────────────────────
+_notifier_instance: Optional["Notifier"] = None
+
+
+def notify_phone(title: str, body: str = "", level: str = "info",
+                 recipient: str = "") -> dict:
+    """Convenience function importable by any module.
+
+    Tries FCM push first.  Falls back to storing an in-app notification
+    so the phone can poll ``GET /api/v1/notifications/unread``.
+    """
+    global _notifier_instance
+    if _notifier_instance is None:
+        _notifier_instance = Notifier()
+    return _notifier_instance.notify_phone(title, body, level, recipient)
 
 
 class Notifier:
@@ -58,6 +113,14 @@ class Notifier:
             )""")
             c.execute("CREATE INDEX IF NOT EXISTS idx_notif_recipient "
                       "ON notifications(recipient, read)")
+            c.execute("""CREATE TABLE IF NOT EXISTS push_tokens (
+                token TEXT PRIMARY KEY,
+                platform TEXT NOT NULL,
+                recipient TEXT NOT NULL,
+                created_at REAL
+            )""")
+            c.execute("CREATE INDEX IF NOT EXISTS idx_push_recipient "
+                      "ON push_tokens(recipient)")
 
     @contextmanager
     def _conn(self):
@@ -107,6 +170,86 @@ class Notifier:
             return {"ok": True, "id": nid}
         except Exception as e:
             return {"ok": False, "error": str(e)}
+
+    # ── channel: phone push (FCM) ──────────────────────────────────
+    def _send_push(self, title: str, body: str, level: str,
+                   token: str, platform: str) -> Dict:
+        """Send a single push notification via FCM.  Returns per-token
+        result dict — never raises."""
+        if not _ensure_fcm():
+            return {"ok": False, "skipped": "FCM not configured"}
+        try:
+            msg = _fcm_messaging.Message(
+                notification=_fcm_messaging.Notification(title=title, body=body),
+                data={"level": level},
+                token=token,
+            )
+            response = _fcm_messaging.send(msg)
+            return {"ok": True, "fcm_id": response}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    # ── device registration ────────────────────────────────────────
+    def register_device(self, token: str, platform: str,
+                        recipient: str) -> Dict:
+        """Store or update a push token.  Idempotent — re-registering
+        the same token updates its recipient/platform."""
+        try:
+            with self._lock, self._conn() as c:
+                c.execute(
+                    "INSERT OR REPLACE INTO push_tokens "
+                    "(token, platform, recipient, created_at) "
+                    "VALUES (?,?,?,?)",
+                    (token, platform, recipient, time.time()),
+                )
+            return {"ok": True, "token": token[:8] + "…"}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    def unregister_device(self, token: str) -> bool:
+        """Remove a push token (e.g. on logout)."""
+        try:
+            with self._lock, self._conn() as c:
+                return c.execute("DELETE FROM push_tokens WHERE token=?",
+                                 (token,)).rowcount > 0
+        except Exception:
+            return False
+
+    # ── phone notification helper (push + in-app fallback) ─────────
+    def notify_phone(self, title: str, body: str = "",
+                     level: str = "info", recipient: str = "") -> Dict:
+        """Push to phone via FCM.  Falls back to storing an in-app
+        notification so the phone can poll on next request.
+
+        Level can be ``"info"``, ``"warn"``, or ``"error"`` — mapped
+        to an FCM data field so the app can colour the alert."""
+        pushed = False
+        push_results: list = []
+        if recipient:
+            try:
+                with self._conn() as c:
+                    rows = c.execute(
+                        "SELECT token, platform FROM push_tokens "
+                        "WHERE recipient=? ORDER BY created_at DESC",
+                        (recipient,),
+                    ).fetchall()
+                for row in rows:
+                    r = self._send_push(title, body, level,
+                                        row["token"], row["platform"])
+                    push_results.append(r)
+                    if r.get("ok"):
+                        pushed = True
+            except Exception:
+                pass
+
+        # Always store in-app as fallback
+        stored = self._store("phone_push", title, body, recipient,
+                             {"level": level, "pushed": pushed})
+        return {
+            "pushed": pushed,
+            "push_results": push_results,
+            "in_app": stored,
+        }
 
     def list(self, recipient: str = "", unread_only: bool = False,
              limit: int = 50) -> List[Dict]:
