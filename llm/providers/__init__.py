@@ -48,6 +48,7 @@ PROVIDER_INFO: Dict[str, dict] = {
     "openai":     {"label": "OpenAI",      "env_key": "OPENAI_KEY"},
     "claude":     {"label": "Anthropic",   "env_key": "ANTHROPIC_KEY"},
     "deepseek":   {"label": "DeepSeek",    "env_key": "DEEPSEEK_KEY"},
+    "nvidia_nim": {"label": "NVIDIA NIM",  "env_key": "NVIDIA_NIM_KEY"},
     "local":      {"label": "Local LLM",   "env_key": ""},
 }
 
@@ -123,6 +124,15 @@ except ImportError:
             super().__init__("DeepSeek", "openai")
 
 try:
+    from llm.providers.nvidia_nim import NvidiaNimProvider as _RealNvidiaNim
+    NvidiaNimProvider = _RealNvidiaNim
+except ImportError:
+    print("WARNING: NVIDIA NIM SDK (openai) not installed – NvidiaNimProvider will use a stub.")
+    class NvidiaNimProvider(_StubProvider):                     # type: ignore
+        def __init__(self):
+            super().__init__("NvidiaNim", "openai")
+
+try:
     from llm.providers.local_llm import LocalLLMProvider as _RealLocal
     LocalLLMProvider = _RealLocal
 except ImportError:
@@ -142,6 +152,7 @@ PROVIDER_CLASSES: Dict[str, Type] = {
     "openai": OpenAIProvider,
     "claude": AnthropicProvider,
     "deepseek": DeepSeekProvider,
+    "nvidia_nim": NvidiaNimProvider,
     "local": LocalLLMProvider,
 }
 
@@ -156,6 +167,7 @@ __all__ = [
     "OpenAIProvider",
     "AnthropicProvider",
     "DeepSeekProvider",
+    "NvidiaNimProvider",
     "LocalLLMProvider",
     "PROVIDER_INFO",
     "PROVIDER_CLASSES",

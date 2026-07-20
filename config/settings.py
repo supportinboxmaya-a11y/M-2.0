@@ -32,6 +32,7 @@ ANTHROPIC_KEY = env_first("ANTHROPIC_API_KEY", "ANTHROPIC_KEY")
 DEEPSEEK_KEY = env_first("DEEPSEEK_API_KEY", "DEEPSEEK_KEY")
 OPENROUTER_KEY = env_first("OPENROUTER_API_KEY", "OPENROUTER_KEY")
 CEREBRAS_KEY = env_first("CEREBRAS_API_KEY", "CEREBRAS_KEY")
+NVIDIA_NIM_KEY = env_first("NVIDIA_NIM_API_KEY", "NVIDIA_NIM_KEY")
 
 # Models
 PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "openai/gpt-oss-120b")
@@ -69,6 +70,7 @@ def validate():
         DEEPSEEK_KEY,
         OPENROUTER_KEY,
         CEREBRAS_KEY,
+        NVIDIA_NIM_KEY,
     ]
     if not any(keys):
         print("WARNING: No API keys found! Set at least one in .env file.")
