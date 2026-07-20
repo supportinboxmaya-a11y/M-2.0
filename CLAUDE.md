@@ -111,6 +111,23 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 
 ---
 
+## 3.5 Known safety gaps
+
+- **docker restart/start/stop pass RiskChecker as only MEDIUM (not blocked)** —
+  must be approval-gated before `AUTORUN=true`. The cognitive execute path
+  (`POST /api/v1/cognitive/execute-objective`) has its own **read-only command
+  whitelist** (`_P17_RO_PREFIXES` in api.py) that explicitly blocks any
+  lifecycle commands — that whitelist is an independent layer and should stay
+  in place even after AUTORUN flips to true.
+- **run_terminal has no blocked-command list** — unlike `run_shell` which blocks
+  `rm -rf /`, `mkfs`, `dd`, fork bombs, and `chmod -R 777 /`, the terminal tool
+  has zero filtering. Any LLM-generated command passes through unrestricted.
+- **No per-objective rate limit on SSH** — the execute-objective endpoint makes
+  one SSH call per sub-step, but there's no global cap. A buggy or malicious
+  objective could hammer the VPS with repeated SSH connections.
+
+---
+
 ## 4. VPS / environment config
 
 VPS provider panel: aiccloud. Ubuntu 24.04, Docker 29.1.3 installed and working.

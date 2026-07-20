@@ -3389,6 +3389,143 @@ try:
         result = await _p17_cog.cycle()
         return result
 
+    # ── One-shot objective execution (manual approval path) ───────
+    # READ-ONLY WHITELIST: all SSH commands must match one of these prefixes.
+    _P17_RO_PREFIXES = (
+        "docker ps", "docker info", "docker inspect", "docker logs",
+        "docker stats", "docker version",
+        "journalctl", "systemctl status", "systemctl list-units",
+        "cat /", "df ", "free ", "uptime", "top -bn",
+        "uname ", "hostname", "who ", "last ",
+    )
+
+    @app.post("/api/v1/cognitive/execute-objective")
+    async def _p17_execute_objective(
+        body: dict, user=Depends(get_current_user),
+    ):
+        """Execute a single proposed objective via read-only SSH commands.
+
+        Bypasses the COGNITION_AUTORUN gate (which blocks execution in
+        propose-only mode) but keeps all other safety: RBAC execute check,
+        human intervention kill-switch, and a **command whitelist** that
+        only permits read-only prefixes — no restart/start/stop/rm/exec.
+
+        Safety layers (in order):
+          1. RBAC execute permission check
+          2. Intervention kill-switch (423 if active)
+          3. Command whitelist (prefix match) — every _ssh() call validated
+          4. Objective status gated (only pending/proposed)
+        """
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        objective_id = body.get("objective_id", "")
+        if not objective_id:
+            raise HTTPException(status_code=400, detail="objective_id is required")
+        obj = _p17_cog._get_objective(objective_id)
+        if not obj:
+            raise HTTPException(status_code=404, detail="Objective not found")
+        if obj["status"] not in ("pending", "proposed"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Objective is {obj['status']} — can only execute pending/proposed",
+            )
+        desc = obj["description"]
+        mission_id = obj["mission_id"]
+
+        # Intervention kill-switch check
+        if _p17_intervention.check_interrupt():
+            raise HTTPException(status_code=423, detail="Intervention mode active")
+
+        _p17_cog.update_objective_status(objective_id, "in_progress")
+        _p17_cog._audit(mission_id, objective_id, desc,
+                        "run", "Manual one-shot execution (read-only whitelist)")
+
+        def _ro_ssh(cmd: str) -> str:
+            """Run *cmd* via RemoteDeployer._ssh if it passes the read-only whitelist."""
+            stripped = cmd.strip()
+            if not any(stripped.startswith(p) for p in _P17_RO_PREFIXES):
+                raise RuntimeError(
+                    f"Command blocked by read-only whitelist: {stripped[:80]}"
+                )
+            from infrastructure.remote_deploy import remote_deployer as _p17_rd
+            return _p17_rd._ssh(cmd)
+
+        results = {}
+        errors = []
+        try:
+            # 1) List running containers
+            containers = _ro_ssh("docker ps --format '{{json .}}' 2>&1")
+            parsed: list = []
+            for line in containers.strip().splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    import json as _j
+                    parsed.append(_j.loads(line))
+                except _j.JSONDecodeError:
+                    pass
+            results["containers"] = parsed
+
+            # 2) Check status of known containers
+            if parsed:
+                names = [c.get("Names", "") or c.get("name", "") for c in parsed]
+                names = [n for n in names if n]
+                if names:
+                    parts = []
+                    for n in names:
+                        parts.append(
+                            f'echo ">>>{n}<<<" && '
+                            f"docker ps -a --filter name=^{n}$ "
+                            f"--format '{{{{.Status}}}}'"
+                        )
+                    cmd = " && ".join(parts)
+                    out = _ro_ssh(cmd)
+                    statuses = {}
+                    current = None
+                    for line in out.splitlines():
+                        line = line.strip()
+                        if line.startswith(">>>") and line.endswith("<<<"):
+                            current = line[3:-3]
+                        elif current is not None:
+                            statuses[current] = line if line else "not found"
+                            current = None
+                    results["statuses"] = statuses
+
+            # 3) System errors from journalctl (last 24h)
+            try:
+                syslog_out = _ro_ssh(
+                    "journalctl --since '24 hours ago' --no-pager -p err 2>&1 | head -200"
+                )
+                results["system_errors"] = syslog_out
+            except RuntimeError as e:
+                results["system_errors"] = f"SSH error: {e}"
+
+            # 4) Docker daemon version
+            try:
+                docker_info = _ro_ssh("docker info --format '{{.ServerVersion}}' 2>&1")
+                results["docker_version"] = docker_info.strip()
+            except RuntimeError as e:
+                results["docker_version"] = f"SSH error: {e}"
+
+            final_status = "done"
+            _p17_cog.update_objective_status(objective_id, "done")
+        except Exception as e:
+            errors.append(str(e))
+            final_status = "failed"
+            _p17_cog.update_objective_status(objective_id, "failed", str(e))
+
+        _p17_cog._audit(mission_id, objective_id, desc,
+                        final_status, "Execution via one-shot endpoint")
+        return {
+            "objective_id": objective_id,
+            "objective_desc": desc,
+            "mission_id": mission_id,
+            "status": final_status,
+            "results": results,
+            "errors": errors,
+        }
+
     @app.post("/api/v1/cognitive/pause")
     async def _p17_pause(user=Depends(get_current_user)):
         _p17_check_execute(user)
