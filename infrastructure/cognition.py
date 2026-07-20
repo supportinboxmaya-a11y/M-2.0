@@ -219,8 +219,8 @@ class CognitionEngine:
     def delete_mission(self, mission_id: str) -> bool:
         with self._lock, self._conn() as c:
             c.execute("DELETE FROM objectives WHERE mission_id = ?", (mission_id,))
-            c.execute("DELETE FROM missions WHERE id = ?", (mission_id,))
-            return c.rowcount > 0
+            cur = c.execute("DELETE FROM missions WHERE id = ?", (mission_id,))
+            return cur.rowcount > 0
 
     # ── Objective lifecycle ────────────────────────────────────────────────
 
