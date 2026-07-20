@@ -195,6 +195,51 @@ class RemoteDeployer:
         except RuntimeError as e:
             return {"ok": False, "error": str(e)}
 
+    def batch_container_status(self, names: List[str]) -> Dict[str, str]:
+        """Check status of multiple containers in ONE SSH session.
+
+        Builds a single SSH command that inspects all *names*
+        sequentially, then parses the combined output into a
+        ``{name → status}`` dict.
+
+        Status values are raw ``docker ps -a`` status strings
+        (e.g. ``"Up 2 hours"``, ``"Exited (0)"``) or ``"not found"``
+        when the container does not exist on the remote host.
+        """
+        if not names:
+            return {}
+
+        parts: List[str] = []
+        for n in names:
+            q = self._q(n)
+            # Use regex anchor so ``^name$`` doesn't match substring.
+            parts.append(
+                f'echo ">>>{n}<<<" && '
+                f'docker ps -a --filter name=^{q}$ '
+                f"--format '{{{{.Status}}}}'"
+            )
+        cmd = " && ".join(parts)
+
+        try:
+            out = self._ssh(cmd)
+        except RuntimeError:
+            return {}
+
+        results: Dict[str, str] = {}
+        current = None
+        for line in out.splitlines():
+            line = line.strip()
+            if line.startswith(">>>") and line.endswith("<<<"):
+                current = line[3:-3]
+            elif current is not None:
+                results[current] = line if line else "not found"
+                current = None
+        # Handle the case where a container was never found (no output after marker)
+        for n in names:
+            if n not in results:
+                results[n] = "not found"
+        return results
+
     def container_logs(self, app: str, lines: int = 100) -> dict:
         """SSH ``docker logs --tail <lines> <app>``."""
         try:
