@@ -272,18 +272,18 @@ class CognitionEngine:
         with self._lock, self._conn() as c:
             now = time.time()
             if status in ("done", "failed"):
-                c.execute(
+                cur = c.execute(
                     "UPDATE objectives SET status = ?, completed_at = ?, "
                     "last_error = ? WHERE id = ?",
                     (status, now, error[:500], objective_id),
                 )
             else:
-                c.execute(
+                cur = c.execute(
                     "UPDATE objectives SET status = ?, last_error = ? "
                     "WHERE id = ?",
                     (status, error[:500], objective_id),
                 )
-            return c.rowcount > 0
+            return cur.rowcount > 0
 
     def propose_objective(self, objective_id: str) -> None:
         """Set objective status to 'proposed' — signals it's ready for
