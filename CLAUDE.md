@@ -55,6 +55,8 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - Routes under `/api/v1/hosting/registry/...` — CRUD, health-check (single-SSH
   sweep), restart (approval-gated), logs. Default OFF behind `APP_MONITOR_ENABLED`.
 
+- `.env` backup lives at `~/storage/downloads/maya-env-backup.txt` — refresh it after any .env change.
+
 ### Remote deploy — DONE & LIVE (committed `d11f259`)
 - `infrastructure/remote_deploy.py` — `RemoteDeployer` (SSH + Docker).
 - api.py routes: `POST /api/v1/hosting/remote/deploy` and
@@ -64,7 +66,7 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - **Verified live:** deployed an nginx container to the real VPS
   (container id `7213ab4ab5a8`, confirmed with `docker ps`).
 
-### Phase 17 — Autonomous Cognition engine — BUILT, tested, NOT yet committed, flags OFF
+### Phase 17 — Autonomous Cognition engine — BUILT, committed, flags ON (propose-only)
 - File: `infrastructure/cognition.py` (moved here from `autonomous/` to avoid a
   circular import via `autonomous/__init__.py` → AutonomousMaya → BrainEngine).
 - `CognitionEngine`: SQLite store (missions, objectives, cognition_audit).
@@ -76,8 +78,8 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - api.py Phase 17 block: 10 routes under `/api/v1/cognitive/...`, all require
   RBAC `execute`; when disabled they return clean 503, `/status` works even when
   disabled. Server boots with ~196 routes.
-- **Two feature flags, both default OFF:**
-  - `COGNITION_ENABLED=false` — the loop/routes don't activate at all.
+- **Two feature flags:**
+  - ~~`COGNITION_ENABLED=false`~~ → now `COGNITION_ENABLED=true` (live in propose-only).
   - `COGNITION_AUTORUN=false` — even when enabled, `_cycle()` only PROPOSES the
     chosen objective (propose-only); it does NOT call `AutonomousMaya.run()`.
 - `_cycle()` order (the three safety gates are all present, verified in summary):
