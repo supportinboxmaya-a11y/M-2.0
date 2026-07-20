@@ -50,6 +50,11 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - Phase 13 vector memory · Phase 14 git + GraphQL tools · Phase 15 sandbox
   hardening · Phase 16 (tests) autonomous recovery
 
+### Phase 30 — App registry + remote monitoring (NEW, verified live)
+- `infrastructure/app_registry.py` — SQLite store for remote Docker containers
+- Routes under `/api/v1/hosting/registry/...` — CRUD, health-check (single-SSH
+  sweep), restart (approval-gated), logs. Default OFF behind `APP_MONITOR_ENABLED`.
+
 ### Remote deploy — DONE & LIVE (committed `d11f259`)
 - `infrastructure/remote_deploy.py` — `RemoteDeployer` (SSH + Docker).
 - api.py routes: `POST /api/v1/hosting/remote/deploy` and
@@ -161,11 +166,20 @@ SECRET_KEY=<your-own-secret>
   `POST /api/v1/cognitive/cycle` once, and read what Maya PROPOSES. No execution.
 - Gradually loosen only after watching several propose-only cycles.
 
-### Phase 18 — App lifecycle: build → deploy → MANAGE
+### Phase 30 — App registry + remote monitoring (DONE)
+- `infrastructure/app_registry.py` — SQLite store for remote Docker apps.
+- Health checks via single-connection `batch_container_status()` SSH sweep.
+- Auto-restart through approval gate.
+- Routes under `/api/v1/hosting/registry/...` (Phase 15's `/hosting/apps/` is
+  local subprocesses — separate domain).
+- Default OFF: `APP_MONITOR_ENABLED=false`.
+
+### Phase 18 (future) — App lifecycle: build → deploy → MANAGE
 - Wire the coding/frontend/backend agents' output into `remote_deploy` (Maya
   builds an app, then deploys it).
-- Add the missing **manage** layer: app registry (what's running where), health
-  checks, auto-restart, log streaming. This completes "host + manage".
+- Phase 30 already provides the **manage** layer (registry, health, restart,
+  logs). Phase 18 would close the loop by making Maya build → deploy
+  autonomously.
 
 ### Phase 19 — Market / research engine
 - Turn the research agent + web scraping into market analysis: scrape →

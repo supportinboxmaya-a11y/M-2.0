@@ -3415,3 +3415,157 @@ try:
 except Exception as _p17_err:
     print(f"WARNING: Phase 17 cognition loop not loaded: {_p17_err}")
 # ══════════════ End Phase 17 integration ══════════════
+
+
+# ══════════════ Phase 30: App Registry + Remote Monitoring ══════════════
+try:
+    from infrastructure.app_registry import (
+        app_registry as _p30_registry,
+        APP_MONITOR_ENABLED as _P30_MONITOR_ENABLED,
+    )
+    from infrastructure.remote_deploy import remote_deployer as _p30_remote
+    from enterprise.rbac import RBAC as _P30RBAC
+    from human.approval import ApprovalManager
+    from security.risk_checker import RiskChecker
+
+    _p30_rbac = _P30RBAC()
+    _p30_approval = ApprovalManager(
+        mode=os.environ.get("APPROVAL_MODE", "auto")
+    )
+    _p30_risk = RiskChecker()
+
+    def _p30_check_execute(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p30_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(
+                status_code=403,
+                detail="execute permission required (admin or developer role)",
+            )
+
+    # ── Registry CRUD ───────────────────────────────────────────────
+
+    @app.get("/api/v1/hosting/registry")
+    async def _p30_list(user=Depends(get_current_user)):
+        """List all tracked apps in the registry."""
+        return {"apps": _p30_registry.list()}
+
+    @app.post("/api/v1/hosting/registry")
+    async def _p30_register(body: dict, user=Depends(get_current_user)):
+        """Register an app in the registry."""
+        _p30_check_execute(user)
+        name = body.get("name")
+        if not name:
+            raise HTTPException(status_code=400, detail="'name' is required")
+        app = _p30_registry.register(
+            name=name,
+            container_id=body.get("container_id", ""),
+            image=body.get("image", ""),
+            host=body.get("host", ""),
+        )
+        return app
+
+    @app.get("/api/v1/hosting/registry/{name}")
+    async def _p30_get(name: str, user=Depends(get_current_user)):
+        """Get a single tracked app."""
+        app = _p30_registry.get(name)
+        if not app:
+            raise HTTPException(status_code=404, detail="App not found")
+        return app
+
+    @app.delete("/api/v1/hosting/registry/{name}")
+    async def _p30_unregister(name: str, user=Depends(get_current_user)):
+        """Remove an app from the registry."""
+        _p30_check_execute(user)
+        ok = _p30_registry.unregister(name)
+        if not ok:
+            raise HTTPException(status_code=404, detail="App not found")
+        return {"ok": True}
+
+    @app.patch("/api/v1/hosting/registry/{name}/monitor")
+    async def _p30_toggle_monitor(
+        name: str, body: dict, user=Depends(get_current_user),
+    ):
+        """Enable/disable health monitoring for an app."""
+        _p30_check_execute(user)
+        enabled = body.get("enabled")
+        if enabled is None:
+            raise HTTPException(status_code=400, detail="'enabled' (bool) is required")
+        ok = _p30_registry.set_monitor(name, bool(enabled))
+        if not ok:
+            raise HTTPException(status_code=404, detail="App not found")
+        return {"ok": True, "name": name, "monitor": bool(enabled)}
+
+    # ── Health & lifecycle ──────────────────────────────────────────
+
+    @app.post("/api/v1/hosting/registry/{name}/health")
+    async def _p30_health(name: str, user=Depends(get_current_user)):
+        """Trigger a health check for one app."""
+        result = _p30_registry.health_check(name)
+        if not result.get("ok"):
+            raise HTTPException(
+                status_code=404 if result.get("error") == "not found" else 502,
+                detail=result.get("error", "Health check failed"),
+            )
+        return result
+
+    @app.post("/api/v1/hosting/registry/check-all")
+    async def _p30_check_all(user=Depends(get_current_user)):
+        """Health-check all monitored apps in one remote sweep."""
+        if not _p30_remote.configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Remote VPS not configured — set VPS_HOST in .env",
+            )
+        results = _p30_registry.check_all()
+        return {"checked": len(results), "results": results}
+
+    @app.post("/api/v1/hosting/registry/{name}/restart")
+    async def _p30_restart(name: str, user=Depends(get_current_user)):
+        """Restart a container on the remote VPS (approval-gated)."""
+        _p30_check_execute(user)
+        app = _p30_registry.get(name)
+        if not app:
+            raise HTTPException(status_code=404, detail="App not found")
+        if not _p30_remote.configured:
+            raise HTTPException(
+                status_code=503, detail="Remote VPS not configured"
+            )
+
+        # Risk check + approval gate for the restart action.
+        risk = _p30_risk.check(f"remote restart container {name}")
+        if _p30_approval.needs_approval(
+            f"appregistry:restart:{name}",
+            risk.get("level", "medium"),
+        ):
+            approved = _p30_approval.request_approval(
+                action=f"[AppRegistry] Restart remote container '{name}'",
+                reason=risk.get("reason", "User requested container restart"),
+                risk_level=risk.get("level", "medium"),
+                task_id=name,
+            )
+            if not approved:
+                raise HTTPException(status_code=403, detail="Restart denied by user")
+
+        result = _p30_registry.restart(name)
+        if not result.get("ok"):
+            raise HTTPException(status_code=502, detail=result.get("error", "Restart failed"))
+        return {"ok": True, "name": name}
+
+    @app.get("/api/v1/hosting/registry/{name}/logs")
+    async def _p30_logs(
+        name: str, lines: int = 100, user=Depends(get_current_user),
+    ):
+        """Fetch remote container logs."""
+        result = _p30_registry.logs(name, lines=max(1, min(5000, lines)))
+        if not result.get("ok"):
+            raise HTTPException(status_code=404, detail=result.get("error", "Log fetch failed"))
+        return {"name": name, "logs": result.get("logs", "")}
+
+    print(
+        f"Phase 30 active: app registry + remote monitoring "
+        f"(MONITOR={_P30_MONITOR_ENABLED})"
+    )
+except Exception as _p30_err:
+    print(f"WARNING: Phase 30 app registry not loaded: {_p30_err}")
+# ══════════════ End Phase 30 integration ══════════════
