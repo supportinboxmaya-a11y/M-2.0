@@ -13,20 +13,22 @@ import uuid
 from typing import List, Dict, Optional
 from config.settings import (
     GROQ_KEY, GEMINI_KEY, OPENAI_KEY, ANTHROPIC_KEY, 
-    DEEPSEEK_KEY, OPENROUTER_KEY, CEREBRAS_KEY, env_first
+    DEEPSEEK_KEY, OPENROUTER_KEY, CEREBRAS_KEY, NVIDIA_NIM_KEY, env_first
 )
 
 from llm.providers import (
     GroqProvider, CerebrasProvider, OpenRouterProvider, 
     GeminiProvider, OpenAIProvider, AnthropicProvider, 
-    DeepSeekProvider, LocalLLMProvider, PROVIDER_INFO, PROVIDER_CLASSES, PROVIDER_STATE_FILE
+    DeepSeekProvider, NvidiaNimProvider, LocalLLMProvider,
+    PROVIDER_INFO, PROVIDER_CLASSES, PROVIDER_STATE_FILE
 )
 
 class LLMRouter:
-    DEFAULT_PRIORITY = ["groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude", "local"]
+    DEFAULT_PRIORITY = ["nvidia_nim", "groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude", "local"]
 
     def __init__(self):
         self.providers = {
+            "nvidia_nim": NvidiaNimProvider(),
             "groq": GroqProvider(),
             "cerebras": CerebrasProvider(),
             "openrouter": OpenRouterProvider(),
