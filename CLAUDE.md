@@ -56,6 +56,7 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
   sweep), restart (approval-gated), logs. Default OFF behind `APP_MONITOR_ENABLED`.
 
 - `.env` backup lives at `~/storage/downloads/maya-env-backup.txt` — refresh it after any .env change.
+- Phase 17.5 verified — 2 propose-only cycles clean, proposals sensible; duplicate mission cleaned; delete_mission rowcount bug fixed.
 
 ### Remote deploy — DONE & LIVE (committed `d11f259`)
 - `infrastructure/remote_deploy.py` — `RemoteDeployer` (SSH + Docker).
