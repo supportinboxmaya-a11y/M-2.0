@@ -3846,3 +3846,77 @@ try:
 except Exception as _p31_err:
     print(f"WARNING: Phase 31 deploy pipeline not loaded: {_p31_err}")
 # ══════════════ End Phase 31 integration ══════════════
+
+# ══════════════ Phase 32: Research / Market Engine ══════════════
+try:
+    from infrastructure.research_engine import (
+        research_engine as _p32_engine,
+        RESEARCH_ENGINE_ENABLED as _P32_ENABLED,
+    )
+    from enterprise.rbac import RBAC as _P32RBAC
+
+    _p32_rbac = _P32RBAC()
+
+    def _p32_check_view(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p32_rbac.can(user.get("role", ""), "view"):
+            raise HTTPException(
+                status_code=403,
+                detail="view permission required",
+            )
+
+    def _p32_require_enabled():
+        """Clean 503 when the research engine is disabled."""
+        if not _P32_ENABLED:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Research engine not enabled — set "
+                    "RESEARCH_ENGINE_ENABLED=true in .env and restart"
+                ),
+            )
+
+    # ── Analyze ─────────────────────────────────────────────────
+    @app.post("/api/v1/research/analyze")
+    async def _p32_analyze(body: dict, user=Depends(get_current_user)):
+        """Run a full research analysis: fetch → summarize → report.
+
+        Analysis-only: reads public web pages, writes local report.
+        No external writes of any kind.
+        """
+        _p32_check_view(user)
+        _p32_require_enabled()
+        result = _p32_engine.analyze(
+            topic=body.get("topic", ""),
+            urls=body.get("urls"),
+            max_sources=body.get("max_sources", 5),
+        )
+        return result
+
+    # ── List reports ────────────────────────────────────────────
+    @app.get("/api/v1/research/reports")
+    async def _p32_list_reports(user=Depends(get_current_user)):
+        """List all research reports, most recent first."""
+        _p32_check_view(user)
+        _p32_require_enabled()
+        return {"reports": _p32_engine.list_reports()}
+
+    # ── Get report ──────────────────────────────────────────────
+    @app.get("/api/v1/research/reports/{report_id}")
+    async def _p32_get_report(report_id: str, user=Depends(get_current_user)):
+        """Get a single research report."""
+        _p32_check_view(user)
+        _p32_require_enabled()
+        report = _p32_engine.get_report(report_id)
+        if not report:
+            raise HTTPException(status_code=404, detail="Report not found")
+        return report
+
+    print(
+        f"Phase 32 active: research/market engine "
+        f"(ENABLED={_P32_ENABLED})"
+    )
+except Exception as _p32_err:
+    print(f"WARNING: Phase 32 research engine not loaded: {_p32_err}")
+# ══════════════ End Phase 32 integration ══════════════
