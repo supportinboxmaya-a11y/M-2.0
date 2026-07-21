@@ -10,7 +10,7 @@
 
 ## ⏸ PROJECT PAUSED — 2026-07-20
 
-**Highest completed phase: 31** (Build → Deploy Pipeline).
+**Highest completed phase: 32** (Research / Market Engine).
 
 **What works:**
 - Cognition propose-only (Phase 17) — `POST /api/v1/cognitive/cycle` proposes
@@ -96,6 +96,16 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - Reads: local directory with Dockerfile + code → SCP to VPS → build → run → register
 - Rolling: 4-step rollback cleans remote dir, image, and orphan container on any failure
 - Default OFF behind `DEPLOY_PIPELINE_ENABLED=false`
+
+### Phase 32 — Research / Market Engine (NEW, flag OFF)
+- `infrastructure/research_engine.py` — `ResearchEngine` class + singleton
+- `POST /api/v1/research/analyze` — fetch URLs → chunk → summarize via LLM → save report
+- `GET /api/v1/research/reports` — list all reports (most recent first)
+- `GET /api/v1/research/reports/{id}` — get a single report with URLs and metadata
+- Analysis-only: reads public web pages, writes local SQLite + markdown file only
+- Reuses: WebScraper, LLMRouter (Nvidia NIM + fallback), Chunker, MemorySummarizer
+- Per-domain crawl delay >= 1s; Chrome user-agent; LLM failure falls back to extractive
+- Default OFF behind `RESEARCH_ENGINE_ENABLED=false`
 
 - `.env` backup lives at `~/storage/downloads/maya-env-backup.txt` — refresh it after any .env change.
 - Phase 17.5 verified — 2 propose-only cycles clean, proposals sensible; duplicate mission cleaned; delete_mission rowcount bug fixed.
@@ -241,11 +251,14 @@ SECRET_KEY=<your-own-secret>
 - SCP local source → VPS → docker build → docker run → auto-register.
 - `/plan` (no SSH, no side effects), `/execute` (approval-gated, dry-run by default),
   `/status` (last result).
-- 4-step rollback on failure. Needs live VPS test before enabling.
+- 4-step rollback on failure.
 
-### Phase 19 — Market / research engine
-- Turn the research agent + web scraping into market analysis: scrape →
-  summarize → report. Analysis only, NO external action. Safe first business step.
+### Phase 32 — Research / Market Engine (DONE, flag OFF)
+- `infrastructure/research_engine.py` — `ResearchEngine` class + singleton.
+- 3 routes: POST /analyze (fetch→chunk→summarize→save), GET /reports, GET /reports/{id}.
+- Analysis-only: reads public web pages, writes local SQLite + markdown. Zero external writes.
+- Reuses: WebScraper, LLMRouter (Nvidia NIM + fallback), Chunker, MemorySummarizer.
+- Per-domain crawl delay >= 1s. LLM failure → extractive fallback.
 
 ### Phase 20 — Business agents + strategy
 - Add pricing / finance / marketing / strategy agents and a "business goal" type.
