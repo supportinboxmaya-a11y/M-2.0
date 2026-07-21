@@ -8,6 +8,38 @@
 
 ---
 
+## ⏸ PROJECT PAUSED — 2026-07-20
+
+**Highest completed phase: 31** (Build → Deploy Pipeline).
+
+**What works:**
+- Cognition propose-only (Phase 17) — `POST /api/v1/cognitive/cycle` proposes
+  objectives from the VPS Health mission; AUTORUN=false so nothing auto-executes.
+- Approved one-shot execution via `POST /api/v1/cognitive/execute-objective`
+  (read-only whitelist: docker ps/info/logs, journalctl, systemctl status, etc.).
+- Build→Deploy pipeline (Phase 31) — verified live end-to-end: SCP local source
+  to VPS → docker build → docker run → auto-register in Phase 30 AppRegistry.
+
+**Flag state (all safe defaults):**
+- `COGNITION_ENABLED=true` — cognition loop enabled, but propos-only.
+- `COGNITION_AUTORUN=false` — Maya never auto-executes; proposes only.
+- `DEPLOY_PIPELINE_ENABLED=false` — pipeline routes return 503.
+- `APP_MONITOR_ENABLED=false` — Phase 30 health monitor off.
+
+**Known safety gaps (CLAUDE.md section 3.5, must fix before AUTORUN=true):**
+  1. `docker restart`/`start`/`stop` pass RiskChecker as only MEDIUM (not blocked).
+  2. `run_terminal` has no blocked-command list (unlike `run_shell`).
+  3. No per-objective rate limit on SSH.
+
+**Remaining roadmap:**
+- Phase 19 — Market / research engine
+- Phase 20 — Business agents + strategy
+- Phase 21 — Guarded real-world action
+
+**Resume command:** `cd ~/maya/M-2.0 && cat CLAUDE.md`
+
+---
+
 ## 1. What Maya is
 
 Maya is an autonomous, modular AI agent ("AI OS"). It understands a goal, breaks
