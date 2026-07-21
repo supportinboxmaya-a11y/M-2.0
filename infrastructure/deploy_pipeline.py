@@ -177,8 +177,18 @@ class DeployPipeline:
                     {"step": 1, "action": "SCP source", "status": "running"}
                 )
                 self._scp_to_vps(resolved, remote_dir)
+                # Verify files landed (will raise if empty)
+                verify_out = self._rd._ssh(
+                    f"find {remote_dir} -type f 2>&1"
+                )
+                if "Dockerfile" not in verify_out:
+                    raise RuntimeError(
+                        f"Dockerfile not found after SCP: {verify_out[:500]}"
+                    )
                 steps_log[-1]["status"] = "done"
-                steps_log[-1]["detail"] = f"{resolved} \u2192 {remote_dir}"
+                steps_log[-1]["detail"] = (
+                    f"{self._rd._ssh(f'ls {remote_dir}/ 2>&1')[:200]}"
+                )
 
                 # ── Step 2: Docker build ─────────────────────────────
                 steps_log.append(
@@ -301,88 +311,31 @@ class DeployPipeline:
     # ── Internal helpers ─────────────────────────────────────────────────
 
     def _scp_to_vps(self, local_path: str, remote_path: str) -> None:
-        """Tar the local directory, SCP to VPS, extract remotely.
-
-        Uses system ``tar``, ``scp``, and ``ssh`` binaries.
-        Authenticates via the same env vars as ``RemoteDeployer``.
-        """
-        host = os.environ.get("VPS_HOST", "").strip()
-        if not host:
-            raise RuntimeError("VPS not configured (VPS_HOST is not set)")
-        port = os.environ.get("VPS_PORT", str(DEFAULT_SSH_PORT)).strip()
-        user = os.environ.get("VPS_USER", "root").strip()
-        password = os.environ.get("VPS_PASSWORD", "")
-        key_path = os.environ.get("VPS_SSH_KEY_PATH", "")
-
-        scp_bin = shutil.which("scp")
-        ssh_bin = shutil.which("ssh")
-        tar_bin = shutil.which("tar")
-        if not scp_bin:
-            raise RuntimeError("scp binary not found on PATH")
-        if not tar_bin:
-            raise RuntimeError("tar binary not found on PATH")
-
-        # Create tar archive in a temp location
-        dir_name = os.path.basename(local_path.rstrip("/"))
-        fd, tar_path = tempfile.mkstemp(suffix=".tar.gz")
-        os.close(fd)
+        """Tar the local directory and extract on the VPS over a single SSH call."""
+        import base64, io
+        resolved = os.path.abspath(os.path.expanduser(local_path.rstrip("/")))
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            tar.add(resolved, arcname=".")
+        b64 = base64.b64encode(buf.getvalue()).decode()
+        cmd = (
+            f"mkdir -p {remote_path} && "
+            f"echo '{b64}' | base64 -d | tar xzf - -C {remote_path}"
+        )
+        import builtins
+        builtins.print(f"[p31_debug] _scp_to_vps remote_path={remote_path} b64_len={len(b64)}")
         try:
-            with tarfile.open(tar_path, "w:gz") as tar:
-                tar.add(local_path, arcname=dir_name)
-
-            # ── SCP the tar to VPS ──────────────────────────────────
-            scp_args = [
-                scp_bin,
-                "-o", "StrictHostKeyChecking=no",
-                "-o", "UserKnownHostsFile=/dev/null",
-                "-P", port,
-            ]
-            if key_path and os.path.isfile(key_path):
-                scp_args += ["-i", key_path]
-            if password and shutil.which("sshpass"):
-                scp_args = [shutil.which("sshpass"), "-e"] + scp_args
-                os.environ["SSHPASS"] = password
-
-            scp_args += [tar_path, f"{user}@{host}:{remote_path}.tar.gz"]
-
-            scp_result = subprocess.run(
-                scp_args, capture_output=True, text=True, timeout=120
-            )
-            if scp_result.returncode != 0:
-                err = (scp_result.stderr or scp_result.stdout or "").strip()
-                raise RuntimeError(f"SCP failed: {err}")
-
-            # ── SSH to create target dir and extract ────────────────
-            ssh_args = [
-                ssh_bin,
-                "-o", "StrictHostKeyChecking=no",
-                "-o", "UserKnownHostsFile=/dev/null",
-                "-p", port,
-            ]
-            if key_path and os.path.isfile(key_path):
-                ssh_args += ["-i", key_path]
-            if password and shutil.which("sshpass"):
-                ssh_args = [shutil.which("sshpass"), "-e"] + ssh_args
-                os.environ["SSHPASS"] = password
-
-            extract_cmd = (
-                f"mkdir -p {remote_path} && "
-                f"tar xzf {remote_path}.tar.gz -C {remote_path} && "
-                f"rm {remote_path}.tar.gz"
-            )
-            ssh_args += [f"{user}@{host}", extract_cmd]
-
-            ssh_result = subprocess.run(
-                ssh_args, capture_output=True, text=True, timeout=60
-            )
-            if ssh_result.returncode != 0:
-                err = (ssh_result.stderr or ssh_result.stdout or "").strip()
-                raise RuntimeError(f"SSH extract failed: {err}")
-        finally:
-            try:
-                os.remove(tar_path)
-            except OSError:
-                pass
+            self._rd._ssh(cmd)
+        except RuntimeError as e:
+            builtins.print(f"[p31_debug] _scp_to_vps FAILED: {e}")
+            raise
+        # Verify
+        try:
+            v = self._rd._ssh(f"ls -la {remote_path}/ 2>&1")
+            builtins.print(f"[p31_debug] ls result: {v[:300]}")
+        except RuntimeError as e_verify:
+            builtins.print(f"[p31_debug] verify ls failed: {e_verify}")
+            # This is non-fatal during debugging
 
     @staticmethod
     def _run_cmd_template(
