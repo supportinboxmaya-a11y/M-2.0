@@ -3706,3 +3706,143 @@ try:
 except Exception as _p30_err:
     print(f"WARNING: Phase 30 app registry not loaded: {_p30_err}")
 # ══════════════ End Phase 30 integration ══════════════
+
+# ══════════════ Phase 31: Build → Deploy Pipeline ══════════════
+try:
+    from infrastructure.deploy_pipeline import (
+        deploy_pipeline as _p31_pipe,
+        DEPLOY_PIPELINE_ENABLED as _P31_ENABLED,
+    )
+    from enterprise.rbac import RBAC as _P31RBAC
+    from human.approval import ApprovalManager
+    from security.risk_checker import RiskChecker
+    from human.intervention import InterventionHandler as _P31IH
+
+    _p31_rbac = _P31RBAC()
+    _p31_approval = ApprovalManager(
+        mode=os.environ.get("APPROVAL_MODE", "auto")
+    )
+    _p31_risk = RiskChecker()
+    _p31_intervention = _P31IH()
+
+    def _p31_check_execute(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p31_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(
+                status_code=403,
+                detail="execute permission required (admin or developer role)",
+            )
+
+    def _p31_require_enabled():
+        """Clean 503 when the pipeline is disabled."""
+        if not _P31_ENABLED:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Deploy pipeline not enabled — set "
+                    "DEPLOY_PIPELINE_ENABLED=true in .env and restart"
+                ),
+            )
+
+    # ── Plan (dry-run) ───────────────────────────────────────────────
+    @app.post("/api/v1/deploy/pipeline/plan")
+    async def _p31_plan(body: dict, user=Depends(get_current_user)):
+        """Preview build→deploy→register steps without executing.
+
+        Reads the local source directory.  No SSH, no VPS changes,
+        no side effects.
+        """
+        _p31_check_execute(user)
+        _p31_require_enabled()
+        result = _p31_pipe.plan(
+            app_name=body.get("app_name", ""),
+            source_dir=body.get("source_dir", ""),
+            ports=body.get("ports"),
+            env=body.get("env"),
+        )
+        return result
+
+    # ── Execute (state-changing, gated) ──────────────────────────────
+    @app.post("/api/v1/deploy/pipeline/execute")
+    async def _p31_execute(body: dict, user=Depends(get_current_user)):
+        """Run the full pipeline: build→deploy→register.
+
+        Dry-run by default — set ``confirm=true`` to execute.
+        State-changing: goes through RiskChecker + ApprovalManager.
+        """
+        _p31_check_execute(user)
+        _p31_require_enabled()
+
+        app_name = body.get("app_name", "")
+        source_dir = body.get("source_dir", "")
+        ports = body.get("ports")
+        env = body.get("env")
+        confirm = bool(body.get("confirm", False))
+
+        # Dry-run without confirm
+        if not confirm:
+            result = _p31_pipe.plan(app_name, source_dir, ports, env)
+            return {
+                "ok": False,
+                "detail": (
+                    "Dry-run — set confirm=true to execute. "
+                    "This is a state-changing operation."
+                ),
+                "plan": result,
+            }
+
+        # Intervention kill-switch
+        if _p31_intervention.check_interrupt():
+            raise HTTPException(status_code=423, detail="Intervention mode active")
+
+        # VPS configured check
+        from infrastructure.remote_deploy import remote_deployer as _p31_rd
+        if not _p31_rd.configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Remote VPS not configured (VPS_HOST not set)",
+            )
+
+        # Risk check + approval gate
+        risk = _p31_risk.check(f"build:deploy {app_name}")
+        if _p31_approval.needs_approval(
+            f"deploy:pipeline:execute:{app_name}",
+            risk.get("level", "high"),
+        ):
+            approved = _p31_approval.request_approval(
+                action=f"[DeployPipeline] Build and deploy '{app_name}'",
+                reason=risk.get("reason", "User-initiated deploy"),
+                risk_level=risk.get("level", "high"),
+                task_id=app_name,
+            )
+            if not approved:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Deploy denied by user",
+                )
+
+        # Execute
+        result = _p31_pipe.execute(
+            app_name=app_name,
+            source_dir=source_dir,
+            ports=ports,
+            env=env,
+            confirm=True,
+        )
+        return result
+
+    # ── Status ──────────────────────────────────────────────────────
+    @app.get("/api/v1/deploy/pipeline/status")
+    async def _p31_status(user=Depends(get_current_user)):
+        """Return the last pipeline execution result."""
+        _p31_require_enabled()
+        return _p31_pipe.status()
+
+    print(
+        f"Phase 31 active: build→deploy pipeline "
+        f"(ENABLED={_P31_ENABLED})"
+    )
+except Exception as _p31_err:
+    print(f"WARNING: Phase 31 deploy pipeline not loaded: {_p31_err}")
+# ══════════════ End Phase 31 integration ══════════════

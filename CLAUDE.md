@@ -55,6 +55,16 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - Routes under `/api/v1/hosting/registry/...` — CRUD, health-check (single-SSH
   sweep), restart (approval-gated), logs. Default OFF behind `APP_MONITOR_ENABLED`.
 
+### Phase 31 — Build → Deploy Pipeline (NEW, flag OFF)
+- `infrastructure/deploy_pipeline.py` — `DeployPipeline` class + singleton
+- `POST /api/v1/deploy/pipeline/plan` — validate inputs, return step list (no SSH)
+- `POST /api/v1/deploy/pipeline/execute` — dry-run by default; `confirm=true` triggers
+  SCP → docker build → docker run → auto-register in Phase 30 AppRegistry
+- `GET /api/v1/deploy/pipeline/status` — last execution result
+- Reads: local directory with Dockerfile + code → SCP to VPS → build → run → register
+- Rolling: 4-step rollback cleans remote dir, image, and orphan container on any failure
+- Default OFF behind `DEPLOY_PIPELINE_ENABLED=false`
+
 - `.env` backup lives at `~/storage/downloads/maya-env-backup.txt` — refresh it after any .env change.
 - Phase 17.5 verified — 2 propose-only cycles clean, proposals sensible; duplicate mission cleaned; delete_mission rowcount bug fixed.
 
@@ -186,7 +196,7 @@ SECRET_KEY=<your-own-secret>
   `POST /api/v1/cognitive/cycle` once, and read what Maya PROPOSES. No execution.
 - Gradually loosen only after watching several propose-only cycles.
 
-### Phase 30 — App registry + remote monitoring (DONE)
+### Phase 30 — App registry + remote monitoring (DONE, verified live)
 - `infrastructure/app_registry.py` — SQLite store for remote Docker apps.
 - Health checks via single-connection `batch_container_status()` SSH sweep.
 - Auto-restart through approval gate.
@@ -194,12 +204,12 @@ SECRET_KEY=<your-own-secret>
   local subprocesses — separate domain).
 - Default OFF: `APP_MONITOR_ENABLED=false`.
 
-### Phase 18 (future) — App lifecycle: build → deploy → MANAGE
-- Wire the coding/frontend/backend agents' output into `remote_deploy` (Maya
-  builds an app, then deploys it).
-- Phase 30 already provides the **manage** layer (registry, health, restart,
-  logs). Phase 18 would close the loop by making Maya build → deploy
-  autonomously.
+### Phase 31 — Build → Deploy Pipeline (DONE, flag OFF)
+- `infrastructure/deploy_pipeline.py` — `DeployPipeline` class + singleton.
+- SCP local source → VPS → docker build → docker run → auto-register.
+- `/plan` (no SSH, no side effects), `/execute` (approval-gated, dry-run by default),
+  `/status` (last result).
+- 4-step rollback on failure. Needs live VPS test before enabling.
 
 ### Phase 19 — Market / research engine
 - Turn the research agent + web scraping into market analysis: scrape →
