@@ -24,6 +24,36 @@ def env_first(*names: str, default: str = "") -> str:
     return default
 
 
+def _m1_fetch_key(provider: str, fallback: str) -> str:
+    """If M1_INTEGRATION_ENABLED, make a raw HTTP call to the M1
+    keystore at http://localhost:3001/keys/reveal?provider=<provider>.
+    Falls back to *fallback* on any failure, timeout, or if disabled.
+    Never raises.  Does not import any other module."""
+    if os.environ.get("M1_INTEGRATION_ENABLED", "false").lower() != "true":
+        return fallback
+    m1_url = os.environ.get("M1_URL", "http://localhost:3001").rstrip("/")
+    m1_token = os.environ.get("M1_KEYS_TOKEN", "")
+    if not m1_token:
+        return fallback
+    try:
+        import urllib.request
+        import json
+        req = urllib.request.Request(
+            f"{m1_url}/keys/reveal?provider={provider}",
+            headers={"Authorization": f"Bearer {m1_token}"},
+            method="GET",
+        )
+        with urllib.request.urlopen(req, timeout=2) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode())
+                key = data.get("key", "")
+                if key:
+                    return key
+    except Exception:
+        pass
+    return fallback
+
+
 # API Keys (dual-read mapping to Render Environment Variables)
 GROQ_KEY = env_first("GROQ_API_KEY", "GROQ_KEY")
 GEMINI_KEY = env_first("GEMINI_API_KEY", "GEMINI_KEY")
@@ -32,7 +62,7 @@ ANTHROPIC_KEY = env_first("ANTHROPIC_API_KEY", "ANTHROPIC_KEY")
 DEEPSEEK_KEY = env_first("DEEPSEEK_API_KEY", "DEEPSEEK_KEY")
 OPENROUTER_KEY = env_first("OPENROUTER_API_KEY", "OPENROUTER_KEY")
 CEREBRAS_KEY = env_first("CEREBRAS_API_KEY", "CEREBRAS_KEY")
-NVIDIA_NIM_KEY = env_first("NVIDIA_NIM_API_KEY", "NVIDIA_NIM_KEY")
+NVIDIA_NIM_KEY = _m1_fetch_key("nim", env_first("NVIDIA_NIM_API_KEY", "NVIDIA_NIM_KEY"))
 
 # Models
 PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "openai/gpt-oss-120b")
