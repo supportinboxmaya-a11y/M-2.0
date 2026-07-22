@@ -220,11 +220,6 @@ SECRET_KEY=<your-own-secret>
 
 ## 6. Loose threads — seal these to "finish" the current work
 
-- [ ] **Commit Phase 17** (`infrastructure/cognition.py` + api.py block). Not yet
-      committed — do this so it isn't lost.
-- [ ] **Add an LLM key** to `.env` (GROQ_KEY or GEMINI_KEY). Without it Maya
-      cannot actually think — self-goal generation needs an LLM. (`No API keys
-      found` warning has been appearing.)
 - [ ] **Rotate VPS password** in the panel, update `.env`.
 - [ ] **Rotate JWT `SECRET_KEY`** away from the default `maya-secret-key-2024`.
 
