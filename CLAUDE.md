@@ -320,5 +320,5 @@ fallback. Router default = NIM, fallback chain = OpenRouter → Cerebras → Gro
    enable one flag at a time.
 4. Never skip the Safety Rules in section 5.
 
-_Last updated: after Phase 17 cognition engine built (flags OFF, not yet
-committed) and remote deploy verified live on the VPS._
+_Last updated: Phase 17 cognition engine committed (`b398210`), flags ON
+(propose-only). Remote deploy verified live. M1 keystore integrated._
