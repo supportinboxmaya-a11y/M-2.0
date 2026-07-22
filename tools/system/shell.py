@@ -4,7 +4,7 @@ from config.settings import WORKSPACE_DIR
 
 BLOCKED_COMMANDS = [
     "rm -rf /", "rm -rf ~", "mkfs", "dd if=/dev/",
-    ":(){ :|:& };:", "chmod -R 777 /", "wget | sh", "curl | sh"
+    ":(){ :|:& };:", "chmod -r 777 /", "wget | sh", "curl | sh"
 ]
 
 class ShellTool:

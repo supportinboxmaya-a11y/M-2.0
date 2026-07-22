@@ -3399,6 +3399,10 @@ try:
         "uname ", "hostname", "who ", "last ",
     )
 
+    # Per-objective SSH rate limiter: {objective_id: call_count}
+    _p17_ssh_count: Dict[str, int] = {}
+    _P17_SSH_MAX_PER_OBJECTIVE = 10
+
     @app.post("/api/v1/cognitive/execute-objective")
     async def _p17_execute_objective(
         body: dict, user=Depends(get_current_user),
@@ -3415,6 +3419,7 @@ try:
           2. Intervention kill-switch (423 if active)
           3. Command whitelist (prefix match) — every _ssh() call validated
           4. Objective status gated (only pending/proposed)
+          5. Per-objective SSH rate limit (_P17_SSH_MAX_PER_OBJECTIVE calls max)
         """
         _p17_check_execute(user)
         _p17_require_enabled()
@@ -3441,11 +3446,19 @@ try:
                         "run", "Manual one-shot execution (read-only whitelist)")
 
         def _ro_ssh(cmd: str) -> str:
-            """Run *cmd* via RemoteDeployer._ssh if it passes the read-only whitelist."""
+            """Run *cmd* via RemoteDeployer._ssh if it passes the read-only whitelist
+            and the per-objective SSH rate limit."""
             stripped = cmd.strip()
             if not any(stripped.startswith(p) for p in _P17_RO_PREFIXES):
                 raise RuntimeError(
                     f"Command blocked by read-only whitelist: {stripped[:80]}"
+                )
+            # Per-objective SSH rate limit
+            _p17_ssh_count[objective_id] = _p17_ssh_count.get(objective_id, 0) + 1
+            if _p17_ssh_count[objective_id] > _P17_SSH_MAX_PER_OBJECTIVE:
+                raise RuntimeError(
+                    f"SSH rate limit exceeded: "
+                    f"{_P17_SSH_MAX_PER_OBJECTIVE} calls per objective"
                 )
             from infrastructure.remote_deploy import remote_deployer as _p17_rd
             return _p17_rd._ssh(cmd)
