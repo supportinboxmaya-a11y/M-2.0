@@ -40,6 +40,9 @@ class RiskChecker:
         "sudo rm",
         # Filesystem destruction
         "format", "mkfs",
+        # Docker lifecycle — requires approval
+        "docker restart", "docker start", "docker stop",
+        "docker kill", "docker rm", "docker rmi",
     ]
 
     # ── MEDIUM: risky, warns user but doesn't block in auto mode ────

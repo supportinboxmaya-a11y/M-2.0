@@ -26,10 +26,10 @@
 - `DEPLOY_PIPELINE_ENABLED=false` — pipeline routes return 503.
 - `APP_MONITOR_ENABLED=false` — Phase 30 health monitor off.
 
-**Known safety gaps (CLAUDE.md section 3.5, must fix before AUTORUN=true):**
-  1. `docker restart`/`start`/`stop` pass RiskChecker as only MEDIUM (not blocked).
-  2. `run_terminal` has no blocked-command list (unlike `run_shell`).
-  3. No per-objective rate limit on SSH.
+**All safety gaps (CLAUDE.md section 3.5) are now FIXED and verified (uncommitted working tree):**
+  1. `docker restart`/`start`/`stop/kill/rm/rmi` — promoted from MEDIUM to HIGH in RiskChecker (blocked without approval).
+  2. `run_terminal` blocklist — added matching `BLOCKED_COMMANDS` list (same 8 patterns as `run_shell`).
+  3. Per-objective SSH rate limit — `_P17_SSH_MAX_PER_OBJECTIVE=10` counter in execute-objective endpoint.
 
 **Remaining roadmap:**
 - Phase 19 — Market / research engine
