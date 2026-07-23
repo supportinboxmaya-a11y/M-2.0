@@ -97,6 +97,7 @@ class CognitionEngine:
                     description TEXT DEFAULT '',
                     self_gen    INTEGER DEFAULT 1,
                     active      INTEGER DEFAULT 1,
+                    mission_type TEXT DEFAULT 'general',
                     created_at  REAL,
                     updated_at  REAL
                 );
@@ -131,6 +132,14 @@ class CognitionEngine:
                 CREATE INDEX IF NOT EXISTS idx_audit_ts
                     ON cognition_audit(timestamp);
                 """)
+                # Phase 20 migration: add mission_type if the column doesn't exist
+                try:
+                    c.execute(
+                        "ALTER TABLE missions ADD COLUMN mission_type "
+                        "TEXT DEFAULT 'general'"
+                    )
+                except sqlite3.OperationalError:
+                    pass  # column already exists
         except Exception as e:
             print(f"WARNING: CognitionEngine DB init error: {e}")
 
@@ -152,32 +161,40 @@ class CognitionEngine:
 
     def create_mission(
         self, name: str, description: str = "",
-        self_gen: bool = True, active: bool = True
+        self_gen: bool = True, active: bool = True,
+        mission_type: str = "general",
     ) -> dict:
         mid = uuid.uuid4().hex[:12]
         now = time.time()
         with self._lock, self._conn() as c:
             c.execute(
                 "INSERT INTO missions (id, name, description, self_gen, "
-                "active, created_at, updated_at) VALUES (?,?,?,?,?,?,?)",
+                "active, mission_type, created_at, updated_at) "
+                "VALUES (?,?,?,?,?,?,?,?)",
                 (mid, name[:200], description[:2000], int(self_gen),
-                 int(active), now, now),
+                 int(active), mission_type[:50], now, now),
             )
         return self._get_mission(mid)
 
     def get_mission(self, mission_id: str) -> Optional[dict]:
         return self._get_mission(mission_id)
 
-    def list_missions(self, active_only: bool = False) -> List[dict]:
+    def list_missions(
+        self, active_only: bool = False,
+        mission_type: Optional[str] = None,
+    ) -> List[dict]:
+        clauses: List[str] = []
+        vals: list = []
+        if active_only:
+            clauses.append("active = 1")
+        if mission_type:
+            clauses.append("mission_type = ?")
+            vals.append(mission_type)
+        where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
         with self._conn() as c:
-            if active_only:
-                rows = c.execute(
-                    "SELECT * FROM missions WHERE active = 1 ORDER BY created_at"
-                ).fetchall()
-            else:
-                rows = c.execute(
-                    "SELECT * FROM missions ORDER BY created_at"
-                ).fetchall()
+            rows = c.execute(
+                f"SELECT * FROM missions {where} ORDER BY created_at", vals
+            ).fetchall()
         return [self._row_dict(r) for r in rows]
 
     def toggle_mission(self, mission_id: str, active: bool) -> bool:
@@ -193,6 +210,7 @@ class CognitionEngine:
         name: Optional[str] = None,
         description: Optional[str] = None,
         self_gen: Optional[bool] = None,
+        mission_type: Optional[str] = None,
     ) -> Optional[dict]:
         fields = []
         vals = []
@@ -205,6 +223,9 @@ class CognitionEngine:
         if self_gen is not None:
             fields.append("self_gen = ?")
             vals.append(int(self_gen))
+        if mission_type is not None:
+            fields.append("mission_type = ?")
+            vals.append(mission_type[:50])
         if not fields:
             return self._get_mission(mission_id)
         fields.append("updated_at = ?")
@@ -305,13 +326,25 @@ class CognitionEngine:
         if not self.llm_fn:
             return []
 
-        prompt = (
-            f"Mission: {mission['description'] or mission['name']}\n\n"
-            "Decompose this mission into 3-8 concrete, actionable objectives. "
-            "Each objective must be a single sentence describing a specific task. "
-            "Return ONLY a JSON array of strings, no other text:\n"
-            '["objective one", "objective two", ...]'
-        )
+        is_business = mission.get("mission_type") == "business"
+        if is_business:
+            prompt = (
+                f"Business Mission: {mission['description'] or mission['name']}\n\n"
+                "Decompose this business mission into 3-8 concrete business analysis "
+                "objectives. Each objective must be a single sentence describing a "
+                "specific analysis, research, or planning task (e.g. pricing analysis, "
+                "financial projection, marketing strategy, competitive research). "
+                "Return ONLY a JSON array of strings, no other text:\n"
+                '["objective one", "objective two", ...]'
+            )
+        else:
+            prompt = (
+                f"Mission: {mission['description'] or mission['name']}\n\n"
+                "Decompose this mission into 3-8 concrete, actionable objectives. "
+                "Each objective must be a single sentence describing a specific task. "
+                "Return ONLY a JSON array of strings, no other text:\n"
+                '["objective one", "objective two", ...]'
+            )
         try:
             raw = self.llm_fn(prompt)
             raw = raw.strip()
@@ -329,19 +362,23 @@ class CognitionEngine:
             if not isinstance(desc, str) or len(desc.strip()) < 5:
                 continue
 
-            # Analyze the goal for complexity hints
-            analysis = {}
-            if self.goal_analyzer:
-                try:
-                    analysis = self.goal_analyzer.analyze(desc)
-                except Exception:
-                    pass
+            # Business objectives are pure analysis — no approval needed
+            if is_business:
+                requires_approval = False
+            else:
+                # Analyze the goal for complexity hints
+                analysis = {}
+                if self.goal_analyzer:
+                    try:
+                        analysis = self.goal_analyzer.analyze(desc)
+                    except Exception:
+                        pass
 
-            # Mark as requiring approval if tools suggest external actions
-            suggested = analysis.get("suggested_tools", [])
-            requires_approval = any(
-                t in ("web", "shell", "file") for t in suggested
-            )
+                # Mark as requiring approval if tools suggest external actions
+                suggested = analysis.get("suggested_tools", [])
+                requires_approval = any(
+                    t in ("web", "shell", "file") for t in suggested
+                )
 
             priority = self._score_priority(desc, analysis)
             obj = self.add_objective(
@@ -451,13 +488,21 @@ class CognitionEngine:
         objective_id = candidates[0]["id"]
         description = candidates[0]["description"]
         requires_approval = bool(candidates[0].get("requires_approval", 0))
+        is_business = candidates[0].get("mission_type") == "business"
 
         result["mission_id"] = mission_id
         result["objective_id"] = objective_id
         result["objective_desc"] = description
 
-        # 5. Approval gate for external/irreversible actions
-        if requires_approval and self.approval is not None:
+        # 5. Approval gate for external/irreversible actions.
+        # Business objectives ALWAYS require approval — they have no
+        # execution path through AutonomousMaya and must be triggered
+        # manually via POST /analyze. The requires_approval field on the
+        # objective itself is set to False (because the objective is pure
+        # analysis), but the mission_type gate here ensures no business
+        # objective is ever auto-executed without explicit human approval.
+        should_gate = (requires_approval or is_business) and self.approval is not None
+        if should_gate:
             try:
                 if self.approval.needs_approval(
                     f"cognition:run:{objective_id}", risk_level="high"
@@ -483,15 +528,58 @@ class CognitionEngine:
         if not COGNITION_AUTORUN:
             self.propose_objective(objective_id)
             result["action"] = "proposed"
-            result["detail"] = (
-                f"Objective proposed — COGNITION_AUTORUN is false. "
-                f"Set it to true to auto-execute."
-            )
+            if is_business:
+                result["detail"] = (
+                    f"Business objective proposed — trigger analysis via "
+                    f"POST /cognitive/missions/{mission_id}/analyze"
+                )
+            else:
+                result["detail"] = (
+                    f"Objective proposed — COGNITION_AUTORUN is false. "
+                    f"Set it to true to auto-execute."
+                )
             self._audit(mission_id, objective_id, description,
                         "proposed", result["detail"])
             return result
 
-        # 7. Execute via AutonomousMaya
+        # 7. Execute (AUTORUN=true path)
+        # Business objectives are PURE ANALYSIS — they MUST NOT go through
+        # AutonomousMaya (which has tool access). Instead they route through
+        # BusinessResearchEngine (pure LLM, no tools), or if that's not
+        # available, they stay proposed. This is a structural safety gate:
+        # even if AUTORUN is flipped on, business objectives never reach
+        # auto_maya.run().
+        if is_business:
+            self.update_objective_status(objective_id, "in_progress")
+            self._audit(mission_id, objective_id, description, "run",
+                        "Starting business analysis via BusinessResearchEngine")
+            try:
+                from infrastructure.business_research import business_research as _bre
+                if _bre and self.llm_fn:
+                    report = _bre.analyze(
+                        mission_id=mission_id,
+                        objective_id=objective_id,
+                        description=description,
+                        llm_fn=self.llm_fn,
+                    )
+                    self.update_objective_status(objective_id, "done")
+                    result["action"] = "done"
+                    result["detail"] = "Business analysis complete"
+                else:
+                    self.propose_objective(objective_id)
+                    result["action"] = "proposed"
+                    result["detail"] = (
+                        "Business objective proposed — no LLM or research "
+                        "engine available"
+                    )
+            except Exception as e:
+                self.update_objective_status(objective_id, "failed", str(e))
+                result["action"] = "failed"
+                result["detail"] = f"Business analysis error: {e}"
+            self._audit(mission_id, objective_id, description,
+                        result["action"], result["detail"])
+            return result
+
         self.update_objective_status(objective_id, "in_progress")
         self._audit(mission_id, objective_id, description, "run",
                     "Starting AutonomousMaya execution")
@@ -619,6 +707,7 @@ class CognitionEngine:
     def status(self) -> dict:
         missions = self.list_missions()
         active_missions = [m for m in missions if m.get("active")]
+        business_missions = [m for m in missions if m.get("mission_type") == "business"]
         pending = self.list_objectives(status="pending")
         proposed = self.list_objectives(status="proposed")
         in_progress = self.list_objectives(status="in_progress")
@@ -630,6 +719,7 @@ class CognitionEngine:
             "schedule_id": self._schedule_id,
             "missions_total": len(missions),
             "missions_active": len(active_missions),
+            "missions_business": len(business_missions),
             "objectives_pending": len(pending),
             "objectives_proposed": len(proposed),
             "objectives_in_progress": len(in_progress),
@@ -657,7 +747,7 @@ class CognitionEngine:
         missions, ordered by priority descending."""
         with self._conn() as c:
             rows = c.execute(
-                "SELECT o.* FROM objectives o "
+                "SELECT o.*, m.mission_type FROM objectives o "
                 "JOIN missions m ON m.id = o.mission_id "
                 "WHERE o.status = 'pending' AND m.active = 1 "
                 "ORDER BY o.priority DESC LIMIT ?",
@@ -712,8 +802,24 @@ class CognitionEngine:
         for k in ("active", "self_gen", "requires_approval"):
             if k in d:
                 d[k] = bool(d[k])
+        # mission_type default
+        if "mission_type" not in d or not d.get("mission_type"):
+            d["mission_type"] = "general"
         return d
 
 
 # ── Module singleton ────────────────────────────────────────────────────────
-cognition_engine = CognitionEngine()
+try:
+    from llm.router import LLMRouter
+    _cog_router = LLMRouter()
+    def _cog_llm_fn(prompt: str) -> str:
+        return _cog_router.chat(
+            [{"role": "user", "content": prompt}],
+            model="google/gemma-2-2b-it",
+            max_tokens=2000,
+        )
+except Exception as e:
+    print(f"WARNING: Cognition LLM router init failed: {e}")
+    _cog_llm_fn = None
+
+cognition_engine = CognitionEngine(llm_fn=_cog_llm_fn)
