@@ -14,6 +14,15 @@ _SPEC = [
     ("database", "Database", ("database", "sql", "schema", "query", "migration"), ("code", "file")),
     ("frontend", "Frontend", ("frontend", "ui", "react", "css", "component"), ("code", "file")),
     ("backend", "Backend", ("backend", "endpoint", "fastapi", "route", "service"), ("code", "file", "shell")),
+    # Phase 20 — Business agents (pure LLM, no tool permissions)
+    ("pricing", "Pricing", ("pricing", "price", "cost", "subscription",
+     "tier", "licensing", "revenue"), ()),
+    ("finance", "Finance", ("finance", "financial", "budget", "forecast",
+     "cashflow", "profit", "expense"), ()),
+    ("marketing", "Marketing", ("marketing", "campaign", "brand", "content",
+     "seo", "social", "ad", "growth"), ()),
+    ("strategy", "Strategy", ("strategy", "strategic", "roadmap",
+     "competitive", "swot", "positioning"), ()),
 ]
 
 

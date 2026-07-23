@@ -255,9 +255,20 @@ SECRET_KEY=<your-own-secret>
 - Reuses: WebScraper, LLMRouter (Nvidia NIM + fallback), Chunker, MemorySummarizer.
 - Per-domain crawl delay >= 1s. LLM failure → extractive fallback.
 
-### Phase 20 — Business agents + strategy
-- Add pricing / finance / marketing / strategy agents and a "business goal" type.
-- Output = plans/proposals, not execution.
+### Phase 20 — Business agents + strategy (DONE, flagless — no env toggle needed)
+- 4 new business agents in `agents/roster.py` — pricing, finance, marketing, strategy
+  (all pure-LLM with `permissions=()`, zero tool access).
+- New `mission_type` column on the missions table (`'general'` or `'business'`).
+- `infrastructure/business_research.py` — `BusinessResearchEngine` that runs a
+  business objective through all 4 agents via `llm_fn` in sequence and produces
+  a bundled report (pricing → finance → marketing → strategy → summary).
+- 3 new API endpoints under the Phase 17 block:
+  - `POST /cognitive/missions/{id}/analyze` — triggers business analysis
+  - `GET /cognitive/missions/{id}/reports` — list reports
+  - `GET /cognitive/missions/{id}/reports/{report_id}` — full report with agent responses
+- Business objectives set `requires_approval=False` (pure analysis — no side effects).
+- Propose-only design: `COGNITION_AUTORUN=false` throughout.
+- No SSH, no Docker, no tool execution, no payment/publish paths.
 
 ### Phase 21 — Guarded real-world action
 - publish / accounts / payments — all behind hard approval gates + full audit.

@@ -3281,10 +3281,13 @@ try:
     @app.get("/api/v1/cognitive/missions")
     async def _p17_list_missions(
         active_only: bool = False,
+        mission_type: Optional[str] = None,
         user=Depends(get_current_user),
     ):
         _p17_require_enabled()
-        return {"missions": _p17_cog.list_missions(active_only=active_only)}
+        return {"missions": _p17_cog.list_missions(
+            active_only=active_only, mission_type=mission_type,
+        )}
 
     @app.post("/api/v1/cognitive/missions")
     async def _p17_create_mission(
@@ -3295,11 +3298,18 @@ try:
         name = body.get("name", "")
         if not name:
             raise HTTPException(status_code=400, detail="'name' is required")
+        mission_type = body.get("mission_type", "general")
+        if mission_type not in ("general", "business"):
+            raise HTTPException(
+                status_code=400,
+                detail="mission_type must be 'general' or 'business'",
+            )
         mission = _p17_cog.create_mission(
             name=name,
             description=body.get("description", ""),
             self_gen=body.get("self_gen", True),
             active=body.get("active", True),
+            mission_type=mission_type,
         )
         return mission
 
@@ -3320,6 +3330,7 @@ try:
             name=body.get("name"),
             description=body.get("description"),
             self_gen=body.get("self_gen"),
+            mission_type=body.get("mission_type"),
         )
         if not mission:
             raise HTTPException(status_code=404, detail="Mission not found")
@@ -3557,6 +3568,114 @@ try:
     async def _p17_status(user=Depends(get_current_user)):
         """Engine status — works even when disabled (reports the flag state)."""
         return _p17_cog.status()
+
+    # ── Phase 20: Business analysis endpoints ──────────────────────
+    from infrastructure.business_research import (
+        business_research as _p20_biz,
+    )
+
+    @app.post("/api/v1/cognitive/missions/{mission_id}/analyze")
+    async def _p20_analyze_objective(
+        mission_id: str, body: dict = {},
+        user=Depends(get_current_user),
+    ):
+        """Run a business mission's top pending objective through the
+        four business-agent analysis pipeline (pricing → finance →
+        marketing → strategy). Only works for mission_type='business'.
+
+        Returns a report dict with per-agent responses and a combined
+        executive summary. Pure LLM — no side effects, no tool calls.
+        """
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        mission = _p17_cog.get_mission(mission_id)
+        if not mission:
+            raise HTTPException(status_code=404, detail="Mission not found")
+        if mission.get("mission_type") != "business":
+            raise HTTPException(
+                status_code=400,
+                detail="This endpoint is only for business missions "
+                       "(mission_type='business')",
+            )
+        # Pick the top pending objective, or use an explicit one
+        objective_id = body.get("objective_id", "")
+        if objective_id:
+            obj = _p17_cog._get_objective(objective_id)
+            if not obj:
+                raise HTTPException(404, detail="Objective not found")
+            if obj["status"] not in ("pending", "proposed"):
+                raise HTTPException(
+                    400,
+                    detail=f"Objective is {obj['status']} — must be pending or proposed",
+                )
+        else:
+            pending = _p17_cog.list_objectives(
+                mission_id=mission_id, status="pending"
+            )
+            if not pending:
+                raise HTTPException(
+                    400, detail="No pending objectives for this mission"
+                )
+            # Highest priority first (list_objectives orders by priority DESC)
+            obj = pending[0]
+
+        _p17_cog.update_objective_status(obj["id"], "in_progress")
+        _p17_cog._audit(
+            mission_id, obj["id"], obj["description"],
+            "run", "Starting business analysis",
+        )
+
+        try:
+            llm = _p17_cog.llm_fn
+            report = _p20_biz.analyze(
+                mission_id=mission_id,
+                objective_id=obj["id"],
+                description=obj["description"],
+                llm_fn=llm,
+            )
+            _p17_cog.update_objective_status(obj["id"], "done")
+            _p17_cog._audit(
+                mission_id, obj["id"], obj["description"],
+                "done", "Business analysis complete",
+            )
+            return report
+        except Exception as e:
+            _p17_cog.update_objective_status(obj["id"], "failed", str(e))
+            _p17_cog._audit(
+                mission_id, obj["id"], obj["description"],
+                "failed", f"Business analysis error: {e}",
+            )
+            raise HTTPException(500, detail=str(e))
+
+    @app.get("/api/v1/cognitive/missions/{mission_id}/reports")
+    async def _p20_list_reports(
+        mission_id: str, user=Depends(get_current_user),
+    ):
+        """List all business analysis reports for a mission."""
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        mission = _p17_cog.get_mission(mission_id)
+        if not mission:
+            raise HTTPException(status_code=404, detail="Mission not found")
+        reports = _p20_biz.list_reports(mission_id=mission_id)
+        return {"reports": reports, "count": len(reports)}
+
+    @app.get("/api/v1/cognitive/missions/{mission_id}/reports/{report_id}")
+    async def _p20_get_report(
+        mission_id: str, report_id: str,
+        user=Depends(get_current_user),
+    ):
+        """Get a single business analysis report with full agent responses."""
+        _p17_check_execute(user)
+        _p17_require_enabled()
+        report = _p20_biz.get_report(report_id)
+        if not report:
+            raise HTTPException(status_code=404, detail="Report not found")
+        if report.get("mission_id") != mission_id:
+            raise HTTPException(
+                status_code=404, detail="Report not found for this mission"
+            )
+        return report
 
     print(
         f"Phase 17 active: cognition loop (ENABLED={_P17_ENABLED}, "
