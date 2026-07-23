@@ -3216,17 +3216,17 @@ try:
             raise HTTPException(status_code=400,
                                 detail=f"Invalid action '{action}'. Valid: {', '.join(sorted(valid))}")
 
-        # Destructive ops go through the approval gate
-        if action in ("stop",):
-            risk = _p16_risk.check(f"remote stop container {app}")
-            if _p16_approval.needs_approval(f"remote:stop:{app}", risk.get("level", "medium")):
+        # Container lifecycle ops always go through the approval gate
+        # at HIGH risk (gates in all modes — auto, human, skip).
+        if action in ("stop", "start", "restart"):
+            if _p16_approval.needs_approval(f"remote:{action}:{app}", risk_level="high"):
                 approved = _p16_approval.request_approval(
-                    action=f"Stop remote container '{app}' on VPS",
-                    reason=risk.get("reason", "User requested container stop"),
-                    risk_level=risk.get("level", "medium"),
+                    action=f"[Remote] {action.capitalize()} container '{app}' on VPS",
+                    reason=f"User requested {action} of container '{app}'",
+                    risk_level="high",
                 )
                 if not approved:
-                    raise HTTPException(status_code=403, detail="Stop denied by user")
+                    raise HTTPException(status_code=403, detail=f"{action.capitalize()} denied by user")
 
         method_map = {
             "start": _p16_remote.start_container,
@@ -3904,15 +3904,15 @@ try:
             )
 
         # Risk check + approval gate for the restart action.
-        risk = _p30_risk.check(f"remote restart container {name}")
+        # Hard-coded at HIGH so it gates in all approval modes.
         if _p30_approval.needs_approval(
             f"appregistry:restart:{name}",
-            risk.get("level", "medium"),
+            risk_level="high",
         ):
             approved = _p30_approval.request_approval(
                 action=f"[AppRegistry] Restart remote container '{name}'",
-                reason=risk.get("reason", "User requested container restart"),
-                risk_level=risk.get("level", "medium"),
+                reason="User requested container restart via AppRegistry",
+                risk_level="high",
                 task_id=name,
             )
             if not approved:
