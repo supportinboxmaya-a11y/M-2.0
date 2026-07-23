@@ -270,9 +270,15 @@ SECRET_KEY=<your-own-secret>
 - Propose-only design: `COGNITION_AUTORUN=false` throughout.
 - No SSH, no Docker, no tool execution, no payment/publish paths.
 
-### Phase 21 — Guarded real-world action
-- publish / accounts / payments — all behind hard approval gates + full audit.
-- This is where isolation matters most (see Business Maya below).
+### Phase 21 — Guarded publish (DONE — scoped to static-site publish only)
+- `infrastructure/publish_engine.py` — wraps `WebBuilderTool.deploy()` with:
+  - Hard approval gate via `ApprovalManager` (risk_level="critical" — blocks in ALL modes)
+  - Approval prompt shows **exact file contents verbatim**, not a summary
+  - Permanent, write-once audit trail (`publish_audit` SQLite table in `storage/publish/`)
+- 3 API endpoints: `POST /api/v1/publish`, `GET /api/v1/publish/history`,
+  `GET /api/v1/publish/history/{id}`
+- No new SSH, Docker, payment, or account-modifying code paths.
+- Payments and account management remain for a future phase.
 
 ---
 

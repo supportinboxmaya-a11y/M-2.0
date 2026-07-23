@@ -3686,6 +3686,108 @@ except Exception as _p17_err:
 # ══════════════ End Phase 17 integration ══════════════
 
 
+# ══════════════ Phase 21: Guarded Publish (real-world action) ══════════════
+try:
+    from infrastructure.publish_engine import (
+        publish_engine as _p21_engine,
+    )
+    from enterprise.rbac import RBAC as _P21RBAC
+
+    _p21_rbac = _P21RBAC()
+
+    def _p21_check_execute(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p21_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(
+                status_code=403,
+                detail="execute permission required (admin or developer role)",
+            )
+
+    @app.post("/api/v1/publish")
+    async def _p21_publish(
+        body: dict, user=Depends(get_current_user),
+    ):
+        """Propose and execute a publish action.
+
+        The caller provides the site name and file content. The engine
+        creates a permanent audit record, then blocks for human approval
+        (showing the exact file contents). On approval, it deploys to
+        Netlify via the existing WebBuilderTool.
+
+        Body:
+          - site_name: str (required, alphanumeric + ._-)
+          - files: {path: content, ...} (required)
+          - description: str (optional)
+
+        Returns the result (published URL) or error.
+        """
+        _p21_check_execute(user)
+        site_name = body.get("site_name", "")
+        if not site_name:
+            raise HTTPException(status_code=400, detail="'site_name' is required")
+        files = body.get("files")
+        if not files or not isinstance(files, dict):
+            raise HTTPException(
+                status_code=400,
+                detail="'files' must be a non-empty {path: content} dict",
+            )
+        # Validate site name matches WebBuilderTool's _SAFE_NAME
+        import re
+        if not re.match(r"^[A-Za-z0-9._-]+$", site_name):
+            raise HTTPException(
+                status_code=400,
+                detail="site_name may only contain letters, numbers, '.', '_' and '-'",
+            )
+        description = body.get("description", "")
+
+        # 1. Create the permanent audit record
+        proposal = _p21_engine.propose(
+            site_name=site_name, files=files, description=description,
+        )
+        if "error" in proposal:
+            raise HTTPException(status_code=500, detail=proposal["error"])
+
+        # 2. Pass through the approval gate (blocks until decision)
+        approval = maya_instance.approval if maya_instance else None
+        result = _p21_engine.publish(
+            proposal_id=proposal["id"],
+            approval=approval,
+            user={"email": user.get("email", ""), "username": user.get("username", "")},
+        )
+        if "error" in result and not result.get("url"):
+            # Check if there's a detailed audit record to return anyway
+            audit = _p21_engine.get_proposal(proposal["id"])
+            if audit:
+                return audit
+            raise HTTPException(status_code=403 if "rejected" in result.get("error", "") else 500, detail=result["error"])
+
+        return result
+
+    @app.get("/api/v1/publish/history")
+    async def _p21_list_history(user=Depends(get_current_user)):
+        """List all publish proposals (audit trail), newest first."""
+        _p21_check_execute(user)
+        return {"proposals": _p21_engine.list_history()}
+
+    @app.get("/api/v1/publish/history/{proposal_id}")
+    async def _p21_get_history(
+        proposal_id: str, user=Depends(get_current_user),
+    ):
+        """Get full detail for a single publish proposal, including the
+        exact proposed file contents (files_json)."""
+        _p21_check_execute(user)
+        proposal = _p21_engine.get_proposal(proposal_id)
+        if not proposal:
+            raise HTTPException(status_code=404, detail="Proposal not found")
+        return proposal
+
+    print("Phase 21 active: guarded publish (hard approval + permanent audit)")
+except Exception as _p21_err:
+    print(f"WARNING: Phase 21 publish engine not loaded: {_p21_err}")
+# ══════════════ End Phase 21 integration ══════════════
+
+
 # ══════════════ Phase 30: App Registry + Remote Monitoring ══════════════
 try:
     from infrastructure.app_registry import (
