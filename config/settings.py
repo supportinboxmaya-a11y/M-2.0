@@ -76,6 +76,25 @@ BUDGET_USD = float(os.environ.get("BUDGET_USD", "1.0"))
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 DEBUG = os.environ.get("DEBUG", "false").lower() == "true"
 
+# Provisioner
+PROVISIONER_EMAIL = env_first("PROVISIONER_EMAIL", "")
+PROVISIONER_NAME = env_first("PROVISIONER_NAME", "")
+
+# Communication — email
+SMTP_HOST = env_first("SMTP_HOST")
+SMTP_PORT = int(env_first("SMTP_PORT", default="587") or "587")
+SMTP_USER = env_first("SMTP_USER", "SMTP_USERNAME")
+SMTP_PASS = env_first("SMTP_PASS", "SMTP_PASSWORD")
+SMTP_FROM = env_first("SMTP_FROM", default=SMTP_USER)
+
+# Communication — outbound webhooks
+WEBHOOK_SLACK_URL = env_first("WEBHOOK_SLACK_URL")
+WEBHOOK_DISCORD_URL = env_first("WEBHOOK_DISCORD_URL")
+WEBHOOK_GENERIC_URL = env_first("WEBHOOK_GENERIC_URL")
+
+# Communication — push notifications (FCM)
+FCM_CREDENTIALS_PATH = env_first("FCM_CREDENTIALS_PATH")
+
 # Storage
 STORAGE_DIR = BASE_DIR / "storage"
 MEMORY_DIR = STORAGE_DIR / "memory"

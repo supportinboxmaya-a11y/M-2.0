@@ -29,24 +29,32 @@ python main.py
 
 ## API Keys Setup
 
-Edit `.env` file:
+Edit `.env` file (see `.env.example` for the full list):
 
 ```env
 # Required (at least one)
+NVIDIA_NIM_KEY=nvapi-...        # Primary — free at build.nvidia.com (phone verify)
 GROQ_KEY=your_groq_key          # Free at console.groq.com
 GEMINI_KEY=your_gemini_key      # Free at aistudio.google.com
 
-# Optional
+# Optional but recommended (fallbacks)
+OPENROUTER_KEY=your_openrouter_key  # Free one-key access to 35+ models
+CEREBRAS_KEY=your_cerebras_key      # Fastest LLM inference
 OPENAI_KEY=your_openai_key
 ANTHROPIC_KEY=your_anthropic_key
 DEEPSEEK_KEY=your_deepseek_key
 
-# For web search
+# Web search (optional — falls back to DuckDuckGo)
 GOOGLE_API_KEY=your_google_key
 GOOGLE_CSE_ID=your_cse_id
+
+# Communication (optional)
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
 ```
 
-Minimum requirement: At least one of `GROQ_KEY` or `GEMINI_KEY`
+Minimum requirement: At least one LLM provider key from the table below.
 
 ---
 
@@ -288,6 +296,62 @@ Real-time translation between 16 languages, powered by Maya's LLM router.
 
 ---
 
+## Communication Tools
+
+Maya can send messages through multiple channels.
+
+### Email (SMTP)
+```bash
+# Configure in .env:
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+SMTP_FROM=your_email@gmail.com
+```
+Tool: `email(to, subject, body)` — sends an email. Use `action=test` to verify config.
+
+### Outbound Webhooks (Slack / Discord)
+```bash
+# Configure in .env:
+WEBHOOK_SLACK_URL=https://hooks.slack.com/services/xxx/yyy/zzz
+WEBHOOK_DISCORD_URL=https://discord.com/api/webhooks/xxx/yyy
+```
+Tool: `webhook_send(channel="slack", message, title)` — posts to Slack/Discord.
+
+### Push Notifications
+Phone push via FCM (Firebase). Configure `FCM_CREDENTIALS_PATH`.
+The `infrastructure/notifications.py` `Notify` class also supports in-app storage
+and email delivery — never raises on a broken channel.
+
+### Inbound Webhooks
+External services can trigger Maya via `POST /api/v1/hooks/{id}` with
+HMAC-signed payloads. Create a trigger, get a one-time secret, then POST
+JSON to the hook URL. See `infrastructure/webhook_triggers.py`.
+
+---
+
+## API Key Provisioner
+
+Maya can autonomously sign up for LLM API keys and keep them in sync with
+the M1 keystore.
+
+- **`search_free_apis(provider_filter)`** — scans web + provider pages +
+  Hacker News + r/LocalLLaMA for new free/cheap APIs. Propose-only, pushes
+  results to your phone.
+- **`provision_api_key(provider, email, name)`** — full automated signup:
+  1. Navigates to provider page, fills form
+  2. Shows exact form contents in a **critical-risk approval gate** (gates in all modes)
+  3. On approve: submits form
+  4. If CAPTCHA/OTP detected: notifies phone, pauses for manual handling
+  5. Extracts the API key, validates with a test call
+  6. Stores hashed via `APIKeyManager` + writes to `.env` silently +
+     syncs to M1 keystore + M1's `.env`
+
+Supported providers: groq, gemini, openrouter, nvidia_nim, together, cerebras, mistral.
+
+---
+
 ## How Maya Works
 
 ```
@@ -310,13 +374,13 @@ If failed --> Fallback Manager --> Replan & Retry
 
 ```
 M-2.0/
-|-- main.py                  # Entry point
+|-- main.py                  # CLI entry point
+|-- api.py                   # FastAPI server entry point
 |-- .env                     # API keys (never commit!)
 |-- requirements.txt         # Dependencies
-|-- backup_restore.py        # Backup system
 |
-|-- core/
-|   |-- maya.py              # Main agent brain
+|-- core/                    # Core agent logic
+|   |-- maya.py              # Main agent class
 |   |-- planner.py           # Goal to step-by-step plan
 |   |-- reasoner.py          # Deep thinking and decisions
 |   |-- executor.py          # Execute steps with tools
@@ -325,10 +389,36 @@ M-2.0/
 |   |-- fallback_manager.py  # Failure recovery
 |   `-- task_manager.py      # Task lifecycle
 |
+|-- brain/                   # Phase 3 — Planning intelligence
+|   |-- brain_engine.py      # Goal analysis + graph building + confidence
+|   |-- goal_analyzer.py     # Decompose goals into steps
+|   |-- task_graph.py        # DAG with dependency tracking
+|   |-- confidence.py        # Step/plan confidence scoring
+|   `-- reflection.py        # Self-critique of results
+|
+|-- agents/                  # Phase 4 — Multi-agent system
+|   |-- base.py              # BaseAgent with permissions + health
+|   |-- registry.py          # Skill/keyword-based routing
+|   |-- roster.py            # 15 specialist agents
+|   |-- orchestrator.py      # Brain → agent assignment → supervised run
+|   `-- messaging.py         # Inter-agent message bus
+|
+|-- workflows/               # Phase 6 — Declarative workflows
+|   |-- engine.py            # Supervised, parallel, resumable runs
+|   |-- builder.py           # Declarative workflow definitions
+|   `-- checkpoint.py        # State persistence for resume
+|
+|-- autonomous/              # Phase 7 — Autonomous mode
+|   |-- maya_auto.py         # Self-running loop
+|   |-- executor_bridge.py   # Tool execution bridge
+|   |-- recovery.py          # Failure classification + strategy
+|   |-- improver.py          # Output improvement
+|   `-- reporter.py          # Run report generation
+|
 |-- llm/
-|   |-- router.py            # Smart LLM routing
+|   |-- router.py            # Smart LLM routing with fallback
 |   |-- prompt_builder.py    # Prompt templates
-|   `-- providers/           # Groq, Gemini, OpenAI, Claude, DeepSeek
+|   `-- providers/           # Groq, Gemini, OpenAI, Claude, DeepSeek, NIM
 |
 |-- memory/
 |   |-- memory_manager.py    # Unified memory interface
@@ -336,64 +426,118 @@ M-2.0/
 |   |-- long_term.py         # SQLite persistent memory
 |   |-- episodic_memory.py   # Past task episodes
 |   |-- semantic_memory.py   # Facts and knowledge
-|   |-- vector_memory.py     # Semantic search (ChromaDB)
+|   |-- vector_memory.py     # Semantic search (ChromaDB/TF-IDF)
 |   `-- context_manager.py   # Context tracking
 |
 |-- tools/
-|   |-- registry.py          # Tool management
-|   |-- web/                 # Web search and scraping
-|   |-- files/               # File read/write
-|   |-- code/                # Python code execution
-|   `-- system/              # Shell and terminal
+|   |-- registry.py          # Central tool registry
+|   |-- web/                 # Web search, browser, scraping
+|   |-- files/               # File read/write/manage
+|   |-- code/                # Code execution, git, web builder
+|   |-- system/              # Shell, terminal, process manager
+|   |-- media/               # Vision, OCR, TTS, image generation
+|   |-- communication/       # Email (SMTP), webhooks (Slack/Discord)
+|   |-- infrastructure/      # API key provisioner
+|   |-- bridge/              # Desktop GUI bridge agent
+|   `-- data/                # Database tools
+|
+|-- infrastructure/          # Service infrastructure
+|   |-- notifications.py     # Multi-channel alerts (in-app, email, webhook, FCM)
+|   |-- webhook_triggers.py  # Inbound webhooks with HMAC verification
+|   |-- scheduler.py         # Cron-based persistent job scheduling
+|   |-- cron.py              # 5-field cron expression parser
+|   |-- device_bridge.py     # Desktop GUI pairing
+|   |-- deploy_pipeline.py   # Build → Deploy pipeline
+|   |-- research_engine.py   # Market research engine
+|   |-- cognition.py         # Autonomous cognition loop
+|   `-- ...                  # Rate limiter, cache, flags, etc.
+|
+|-- enterprise/              # Enterprise features
+|   |-- api_keys.py          # API key lifecycle (hash-stored)
+|   |-- rbac.py              # Role-based access control
+|   `-- ...                  # Orgs, audit, workspace scoping
+|
+|-- rag/                     # Retrieval-Augmented Generation
+|   |-- retriever.py         # Hybrid search (BM25 + vector)
+|   |-- augmenter.py         # RAG auto-connect in chat()
+|   `-- ...                  # Chunker, indexer, sources
 |
 |-- learning/
 |   |-- improvement_engine.py  # Learn from every task
 |   `-- experience_store.py    # Store lessons
 |
 |-- security/
-|   |-- risk_checker.py      # Risk assessment
+|   |-- risk_checker.py      # Risk assessment (HIGH/MEDIUM/LOW/CRITICAL)
 |   |-- permissions.py       # Tool permissions
-|   `-- sandbox.py           # File system sandbox
+|   `-- sandbox.py           # File system sandbox + env scrubbing
 |
 |-- human/
 |   |-- approval.py          # Human approval for risky actions
 |   |-- feedback.py          # Collect user feedback
-|   `-- intervention.py      # Manual intervention
+|   `-- intervention.py      # Manual intervention / kill-switch
 |
 `-- storage/                 # Auto-created at runtime
     |-- memory/              # Database files
     |-- logs/                # Log files
-    `-- backups/             # Code backups
+    |-- backups/             # Code backups
+    |-- publish/             # Publish audit trail
+    |-- scheduler/           # Cron schedule persistence
+    |-- notifications/       # In-app notification store
+    `-- hooks/               # Webhook trigger store
 ```
 
 ---
 
 ## Available Tools
 
-| Tool | Description |
-|------|-------------|
-| web_search | Search the internet |
-| web_scrape | Read any webpage |
-| read_file | Read files from disk |
-| write_file | Write files to disk |
-| list_files | List directory contents |
-| run_code | Execute Python code |
-| run_shell | Run shell commands |
-| run_terminal | Execute terminal commands |
-| list_processes | List running processes |
+| Category | Tool | Description |
+|----------|------|-------------|
+| web | `web_search` | Search the internet (SerpAPI → Google CSE → DuckDuckGo) |
+| web | `web_scrape` | Read any webpage |
+| web | `browser_open` / `browser_click` / `browser_type` | Browser automation (Playwright) |
+| web | `browser_click_visually` | Vision-guided clicking (screenshot → coords → click) |
+| web | `browser_look` | Ask vision questions about the current page |
+| web | `rest_api_request` | Make HTTP requests to any REST API |
+| web | `graphql_query` | Query any GraphQL endpoint |
+| web | `search_free_apis` | Scan for new free/cheap LLM APIs and report findings |
+| web | `provision_api_key` | Automate LLM API key signup with approval gate |
+| web | `youtube_search` / `youtube_transcript` | YouTube search and transcripts |
+| file | `read_file` / `write_file` / `list_files` / `delete_file` | File operations |
+| file | `read_pdf` / `csv_read` / `csv_write` / `json_read` / `json_write` / `excel_read` / `excel_write` | Document handling |
+| file | `zip_create` / `zip_extract` / `zip_list` | Zip archive operations |
+| code | `run_code` | Execute Python code in a sandbox |
+| code | `calculate` | Math calculations |
+| system | `run_shell` / `run_terminal` | Shell and terminal commands |
+| system | `list_processes` | List running processes |
+| developer | `git_init` / `git_status` / `git_log` / `git_diff` / `git_add` / `git_commit` / `git_branch` / `git_checkout` / `git_merge` | Local git operations |
+| developer | `github_get_repo` / `github_list_files` / `github_get_file` | GitHub public API |
+| developer | `database_query` / `database_list_tables` | SQL queries against own DB |
+| developer | `web_build` / `web_deploy` | Scaffold and deploy static sites |
+| media | `vision_analyze` | Image analysis (Gemini → OpenAI → Claude fallback) |
+| media | `ocr_image` | Text extraction from images |
+| media | `text_to_speech` | Convert text to spoken audio |
+| media | `generate_image` | AI image generation |
+| media | `image_tool` | Image operations |
+| communication | `email` | Send email via SMTP (config: `SMTP_HOST/PORT/USER/PASS/FROM`) |
+| communication | `webhook_send` | Send messages to Slack/Discord/generic webhooks |
+| memory | `knowledge_search` / `knowledge_ingest` | RAG knowledge base |
+| meta | `create_tool` | Self-write and register new tools (approval-gated) |
+| meta | `device_control` / `device_result` | Desktop GUI control via Device Bridge |
 
 ---
 
 ## Supported LLM Providers
 
-| Provider | Models | Speed | Best For |
-|----------|--------|-------|----------|
-| Groq | LLaMA 3, Mixtral | Fastest | General tasks |
-| Gemini | 1.5 Flash, Pro | Fast | Research, long context |
-| OpenAI | GPT-4o, GPT-4 | Smart | Complex reasoning |
-| Claude | Haiku, Sonnet | Best | Writing, analysis |
-| DeepSeek | Chat, Coder | Best | Coding, math |
-| Local | Ollama | Private | Offline use |
+| Provider | Speed | Free Tier | Notes |
+|----------|-------|-----------|-------|
+| **NVIDIA NIM** | Fast | ✅ Free (80+ models) | Primary brain — DeepSeek V3/V4, Qwen, Llama, Kimi, MiniMax |
+| **OpenRouter** | Fast | ✅ Free (35+ models) | Fallback #1 — one key, many models |
+| **Cerebras** | Fastest | ✅ Free | Fallback #2 |
+| **Groq** | Fastest | ✅ Free | Fallback #3 — Llama, Mixtral |
+| Gemini | Fast | ✅ Free | Vision, long context |
+| OpenAI | Smart | Paid | GPT-4o, complex reasoning |
+| Claude | Best | Paid | Writing, analysis |
+| DeepSeek | Best | Paid | Coding, math |
 
 ---
 

@@ -1,93 +1,121 @@
 """
-Maya 2.0 - Workflow Engine
-Drives the orchestration loop, executes graph nodes, 
-and coordinates live fallback interventions upon failures.
+BrainEngine — Planning intelligence for Maya 3.0.
+
+Orchestrates the Phase 3 sub-modules:
+  - GoalAnalyzer  → decompose a goal into steps
+  - TaskGraph     → build a DAG of those steps
+  - ConfidenceScorer → score step / plan quality
+  - Reflector     → critique results before returning them
+
+All sub-modules are stdlib-only and have no I/O.  BrowserTool safe.
 """
+from __future__ import annotations
 
-import time
-from typing import Dict, List, Optional
-from brain.brain_engine import BrainEngine
-from brain.task_graph import TaskGraph
-from llm.router import LLMRouter
-from core.executor import Executor
+from typing import Any, Dict, List, Optional
 
-class WorkflowEngine:
-    def __init__(self, router: Optional[LLMRouter] = None, executor: Optional[Executor] = None):
-        self.router = router or LLMRouter()
-        self.executor = executor or Executor()
-        
-        # Correctly pass self.router to BrainEngine to empower FallbackManager
-        self.brain = BrainEngine(llm_fn=self._router_call, router=self.router)
-        self.graph: Optional[TaskGraph] = None
-        self.current_goal: str = ""
+from .goal_analyzer import GoalAnalyzer
+from .task_graph import TaskGraph, TaskNode
+from .confidence import ConfidenceScorer
+from .reflection import Reflector
 
-    def run(self, goal: str) -> str:
-        """Executes a complete goal through structured step decomposition and validation."""
-        self.current_goal = goal
-        print(f"\n🚀 [Workflow Started]: Processing goal -> '{goal}'")
-        
-        # 1. Analyze and Plan steps
-        analysis = self.brain.analyze(goal)
-        steps = analysis.get("steps", [])
-        if not steps:
-            return "Failed to parse actionable steps from the goal."
-            
-        # 2. Build DAG Task Graph
-        self.graph = self.brain.build_graph(steps)
-        results = []
 
-        # 3. Execution Cycle Loop
-        while not self.graph.is_complete():
-            ready_nodes = self.graph.get_ready()
-            if not ready_nodes and not self.graph.is_complete():
-                print("⚠️ [Deadlock]: Active dependency conflict detected in task layers.")
-                break
+class BrainEngine:
+    """Goal decomposition, step graph building, execution recording,
+    confidence scoring, and reflection — the core planning intelligence."""
 
-            for node_id in ready_nodes:
-                node = self.graph.nodes[node_id]
-                print(f"\n⚙️ [Executing Step]: {node.description}")
-                
-                try:
-                    # Execute node utilizing tools/agents context
-                    out, success = self.executor.execute_node(node)
-                    
-                    # Record execution results with context and fix missing goal argument
-                    res = self.brain.record(self.graph, node_id, str(out), verified=success, goal=goal)
-                    results.append(res)
-                    
-                    # Handle real-time recovery injections if a node breakdown is detected
-                    if not res.get("ok") and res.get("fallback_triggered"):
-                        recovery = res.get("recovery", {})
-                        if recovery.get("should_abort"):
-                            print(f"🛑 [Workflow Aborted]: {recovery.get('reason')}")
-                            return f"Workflow aborted during execution: {recovery.get('reason')}"
-                            
-                        # Dynamic execution path patching
-                        new_steps = recovery.get("new_steps", [])
-                        if new_steps:
-                            print(f"🔄 [Injecting Mitigation Steps]: {recovery.get('message')}")
-                            # Re-inject new conditional branches cleanly into graph runtime topology
-                            for s in new_steps:
-                                self.graph.add_node_dynamically(s)
-                                
-                except Exception as e:
-                    # Catch raw exceptions and utilize the router's smart diagnostic interpreter
-                    raw_err = str(e)
-                    readable_err = self.router._interpret_error("Workflow Runtime", raw_err)
-                    print(f"\n🛑 [Critical Runtime Failure]: {readable_err}")
-                    
-                    self.graph.fail(node_id, error=raw_err)
-                    return f"Execution halted due to unhandled runtime crash: {raw_err}"
+    def __init__(self, llm_fn=None, router=None):
+        self.analyzer = GoalAnalyzer()
+        self.scorer = ConfidenceScorer()
+        self.reflector = Reflector(llm_fn)
+        self._router = router
 
-        # 4. Final Plan Confidence Evaluation Check
-        summary_evaluation = self.brain.plan_confidence(results)
-        if summary_evaluation.get("should_replan"):
-            print("🔄 [Low Global Score Summary]: Triggering systemic optimization loops...")
-            
-        print("\n✅ [Workflow Completed Successfully] All downstream graph branches satisfied.\n")
-        return "Goal executed successfully."
+    # ── Goal analysis ────────────────────────────────────────────────
 
-    def _router_call(self, messages: List[Dict], model: Optional[str] = None) -> str:
-        """Gateway wrapper redirecting underlying planning steps back through the unified LLMRouter."""
-        return self.router.chat(messages=messages, model=model)
+    def analyze(self, goal: str) -> Dict[str, Any]:
+        """Decompose *goal* into structured steps with tool hints."""
+        return self.analyzer.analyze(goal)
 
+    # ── Graph building ───────────────────────────────────────────────
+
+    def build_graph(self, steps: List[Dict]) -> TaskGraph:
+        """Convert a list of step dicts (with 'description', 'tool',
+        and optional 'depends_on') into a TaskGraph DAG.
+
+        Each dict may also carry an 'agent' key for the orchestrator.
+        """
+        graph = TaskGraph()
+        for i, s in enumerate(steps):
+            deps = s.get("depends_on")
+            if deps is None:
+                # Sequential: each step depends on the previous one
+                deps = [steps[i - 1].get("_node_id")] if i > 0 else []
+            else:
+                deps = [steps[d].get("_node_id", str(d)) if isinstance(d, int) else d
+                        for d in deps]
+
+            node = TaskNode(
+                description=s.get("description", ""),
+                tool=s.get("tool"),
+                agent=s.get("agent"),
+                depends_on=deps,
+            )
+            graph.add(node)
+            s["_node_id"] = node.id
+        return graph
+
+    # ── Execution recording ──────────────────────────────────────────
+
+    def record(self, graph: TaskGraph, node_id: str,
+               output: str, verified: bool = False,
+               goal: str = "") -> Dict[str, Any]:
+        """Record a step result, run reflection, and return a structured
+        result dict with confidence and recovery info."""
+        node = graph.nodes.get(node_id)
+        if not node:
+            return {"ok": False, "error": f"Unknown node: {node_id}"}
+
+        confidence = self.scorer.score_step(output, verified=verified,
+                                            attempts=node.attempts)
+        reflection = self.reflector.critique(goal, output)
+
+        # The executor's verified flag is the primary gate. Reflection is
+        # advisory — it provides issues for debugging and suggestion text
+        # but does not override a verified, non-empty result.
+        ok = verified
+        fallback_triggered = not ok and node.attempts > 1
+        should_abort = fallback_triggered and confidence < 0.2
+
+        if ok:
+            graph.complete(node_id, output)
+        else:
+            graph.fail(node_id, error=reflection.get("suggestion") or
+                       reflection.get("issues", ["unknown"])[0])
+
+        return {
+            "ok": ok,
+            "node": node_id,
+            "confidence": confidence,
+            "output": output[:2000],
+            "review": reflection,
+            "fallback_triggered": fallback_triggered,
+            "recovery": {
+                "should_abort": should_abort,
+                "message": f"Node {node_id} failed after {node.attempts} attempts"
+                           if fallback_triggered else "",
+                "new_steps": [],
+                "reason": f"Confidence {confidence} too low, aborting"
+                          if should_abort else "",
+            } if fallback_triggered or not ok else {},
+        }
+
+    # ── Plan confidence ──────────────────────────────────────────────
+
+    def plan_confidence(self, results: List[Dict]) -> Dict[str, Any]:
+        """Score the whole plan from individual step results."""
+        scores = [r.get("confidence", 0.0) for r in results]
+        plan_score = self.scorer.score_plan(scores)
+        return {
+            "plan_confidence": plan_score,
+            "should_replan": self.scorer.should_replan(plan_score),
+            "step_count": len(results),
+        }

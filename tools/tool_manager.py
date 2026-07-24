@@ -29,6 +29,8 @@ from .media.image_gen_tool import ImageGenTool
 from .media.vision_tool import VisionTool
 from .media.tts_tool import TTSTool
 from .communication.email_tool import EmailTool
+from .communication.webhook_tool import WebhookTool
+from .infrastructure.api_key_provisioner import APIKeyProvisioner
 
 class ToolManager:
     def __init__(self):
@@ -64,6 +66,7 @@ class ToolManager:
         vision = VisionTool()
         tts = TTSTool()
         email_tool = EmailTool()
+        webhook_tool = WebhookTool()
 
         self.registry.register("web_search", search.search, "Search the web", category="web")
         self.registry.register("web_scrape", scraper.scrape, "Scrape a web page", category="web")
@@ -119,7 +122,36 @@ class ToolManager:
         self.registry.register("vision_analyze", vision.run, "Analyze an image with a multimodal LLM (base64/data URL/workspace path)", category="media")
         self.registry.register("ocr_image", lambda image: vision.run(action="ocr", image=image), "Extract text from an image (OCR)", category="media")
         self.registry.register("text_to_speech", tts.run, "Convert text to spoken audio (saved to workspace/audio)", category="media")
-        self.registry.register("email", email_tool.run, "Send/read email", category="communication")
+        self.registry.register("email", email_tool.run,
+            "Send email via SMTP. Args: action=send, to, subject, body. "
+            "Use action=test to check configuration. "
+            "Set SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM in .env.",
+            category="communication")
+        self.registry.register("webhook_send", webhook_tool.run,
+            "Send a message to Slack, Discord, or a generic webhook URL. "
+            "Args: message (required), channel (slack/discord/generic), "
+            "title (optional heading). Use action=test to check config. "
+            "Set WEBHOOK_SLACK_URL, WEBHOOK_DISCORD_URL, or "
+            "WEBHOOK_GENERIC_URL in .env.",
+            category="communication")
+
+        # ── API Key Provisioner ──────────────────────────────────────
+        provisioner = APIKeyProvisioner()
+        self.registry.register(
+            "search_free_apis", provisioner.search_free_apis,
+            "Scan for new free/cheap LLM APIs and report findings. "
+            "Args: provider_filter (optional string to narrow results). "
+            "Proposal only — no auto-signup.",
+            category="web")
+        self.registry.register(
+            "provision_api_key", provisioner.provision_key,
+            "Automate LLM API key signup for a given provider. "
+            "Args: provider (required, one of groq/gemini/openrouter/...), "
+            "email (optional, defaults to PROVISIONER_EMAIL from .env), "
+            "name (optional, defaults to PROVISIONER_NAME from .env). "
+            "One-tap critical approval before form submission. "
+            "Pauses for CAPTCHA/OTP with phone notification.",
+            category="web")
 
     def get_registry(self):
         return self.registry

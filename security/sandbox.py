@@ -76,26 +76,35 @@ class Sandbox:
                          fsize_mb: int = DEFAULT_FSIZE_MB
                          ) -> Optional[Callable]:
         """Returns a preexec_fn applying rlimits in the child, or None on
-        platforms without the `resource` module (Windows)."""
+        platforms without the `resource` module (Windows).
+
+        Skips RLIMIT_AS on platforms where it is known to cause SIGABRT
+        (e.g. Android/Termux).  Each limit is individually guarded so
+        that a single unsupported limit never breaks the child."""
         try:
             import resource
         except ImportError:
             return None
+
+        # Detect known-problematic platforms for RLIMIT_AS
+        _skip_as = (os.environ.get("TERMUX_VERSION", "") or
+                    os.environ.get("ANDROID_ROOT", "") or "")
 
         def _apply():
             def _set(limit, value):
                 try:
                     resource.setrlimit(limit, (value, value))
                 except (ValueError, OSError):
-                    pass  # container may already enforce a lower cap
+                    pass  # low-cap container or unsupported on this kernel
 
-            _set(resource.RLIMIT_AS, memory_mb * 1024 * 1024)
+            if not _skip_as:
+                _set(resource.RLIMIT_AS, memory_mb * 1024 * 1024)
             _set(resource.RLIMIT_CPU, max(1, int(cpu_seconds)))
             _set(resource.RLIMIT_FSIZE, fsize_mb * 1024 * 1024)
             if hasattr(resource, "RLIMIT_NPROC"):
                 _set(resource.RLIMIT_NPROC, max_procs)
             try:
-                os.setsid()  # own process group -> clean kill on timeout
+                os.setsid()
             except OSError:
                 pass
 

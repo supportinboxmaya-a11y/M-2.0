@@ -15,10 +15,14 @@ class Reflector:
             issues.append("Output is empty")
         if len(text) < 30 and len((goal or "")) > 40:
             issues.append("Output looks too short for the goal")
-        goal_words = {w for w in (goal or "").lower().split() if len(w) > 4}
-        hit = sum(1 for w in goal_words if w in text.lower())
-        if goal_words and hit / len(goal_words) < 0.2:
-            issues.append("Output may not address the goal")
+        # Only check goal-word overlap for substantive outputs. A short
+        # generic response like "done successfully" should not trigger
+        # a false "doesn't address the goal" issue.
+        if len(text) > 100:
+            goal_words = {w for w in (goal or "").lower().split() if len(w) > 4}
+            hit = sum(1 for w in goal_words if w in text.lower())
+            if goal_words and hit / len(goal_words) < 0.2:
+                issues.append("Output may not address the goal")
         for bad in ("todo", "placeholder", "lorem ipsum", "not implemented"):
             if bad in text.lower():
                 issues.append(f"Contains '{bad}'")

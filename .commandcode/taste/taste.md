@@ -14,3 +14,6 @@
 # fastapi
 - Reuse config.settings paths, module singletons, Depends(get_current_user), enterprise/rbac, workspace + scoped_memory patterns. Confidence: 0.70
 
+# security
+- Mask or truncate API keys and secrets in shell output and logs — never print full values. Confidence: 0.90
+
