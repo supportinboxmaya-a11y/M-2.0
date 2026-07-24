@@ -104,7 +104,9 @@ class WorkflowEngine:
         Checkpoint: saved after every round.
         """
         run.status = "running"
-        budget = max(retry_failed, self.recovery.max_attempts - 1)
+        # retry_failed is the caller's explicit retry budget. The recovery
+        # module's max_attempts only caps it — never overrides downwards.
+        budget = min(retry_failed, self.recovery.max_attempts - 1)
         retries_left = {nid: budget for nid in run.graph.nodes}
         for _ in range(self.max_rounds):
             if run._cancel:

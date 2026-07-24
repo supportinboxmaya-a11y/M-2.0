@@ -25,13 +25,13 @@ def test_registry_routing():
     r = AgentRegistry()
     for ag in build_default_agents():
         r.register(ag)
-    assert len(r.list()) == 11                                   # full spec roster
+    assert len(r.list()) == 15                                   # 11 core + 4 business (Phase 20)
     assert r.route("search the web for AI news").name == "research"
     assert r.route("write a python function", tool="code").name == "coding"
     assert r.route("deploy to render server").name == "deployment"
     assert r.route("xyz nothing matches", tool="web").can_use("web")   # permission fallback
     assert r.route("anything", preferred="security").name == "security"
-    assert len(r.health_report()) == 11
+    assert len(r.health_report()) == 15
     print("PASS registry_routing")
 
 

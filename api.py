@@ -4,7 +4,7 @@ Connects Maya core to the React frontend
 """
 import os, uuid, asyncio, time
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Optional, List, Dict
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect, Response

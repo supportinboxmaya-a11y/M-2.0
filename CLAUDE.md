@@ -8,9 +8,29 @@
 
 ---
 
-## ⏸ PROJECT PAUSED — 2026-07-20
+## ⚡ ACTIVE — 2026-07-24
 
-**Highest completed phase: 32** (Research / Market Engine).
+**Highest completed phase: 33** (APIKeyProvisioner + Communication overhaul).
+
+**Latest session (2026-07-24):**
+- Built `APIKeyProvisioner` — autonomous LLM API key signup with vision-guided
+  browser automation, critical-risk approval gate, CAPTCHA/OTP pause/resume,
+  M1 keystore integration (`tools/infrastructure/api_key_provisioner.py`).
+- Completed communication system: fixed `EmailTool` (env_first, SMTP_FROM),
+  built `WebhookTool` for Slack/Discord/generic webhooks, added SMTP/webhook/FCM
+  vars to `.env.example` and `config/settings.py`.
+- Fixed `brain/brain_engine.py` — was accidentally a broken copy of
+  `core/workflow_engine.py` with a self-import (circular). Rewrote as the proper
+  `BrainEngine` class orchestrating GoalAnalyzer, TaskGraph, ConfidenceScorer,
+  Reflector.
+- Fixed `security/sandbox.py` — `RLIMIT_AS` causes SIGABRT on Android/Termux;
+  now skipped when `TERMUX_VERSION` or `ANDROID_ROOT` is set.
+- Fixed `workflows/engine.py` — retry budget now uses `min()` instead of `max()`
+  so `retry_failed=0` actually means no retries.
+- Fixed `brain/reflection.py` — "output too short for the goal" and "doesn't
+  address the goal" heuristics now only fire for substantive outputs (>100 chars).
+  `record()` uses `verified` from the executor as the primary ok/not-ok gate.
+- **All 35 tests pass, 0 failures.**
 
 **What works:**
 - Cognition propose-only (Phase 17) — `POST /api/v1/cognitive/cycle` proposes
@@ -96,6 +116,17 @@ development at `/data/data/com.termux/files/home/maya/M-2.0`.
 - Reads: local directory with Dockerfile + code → SCP to VPS → build → run → register
 - Rolling: 4-step rollback cleans remote dir, image, and orphan container on any failure
 - Default OFF behind `DEPLOY_PIPELINE_ENABLED=false`
+
+### Phase 33 — APIKeyProvisioner + Communication (NEW, no flag needed)
+- `tools/infrastructure/api_key_provisioner.py` — `APIKeyProvisioner` class with
+  `search_free_apis` (weekly watcher, propose-only scans) and `provision_key`
+  (autonomous signup with critical-risk approval gate, CAPTCHA/OTP pause, M1 key
+  pool integration). Registered as `search_free_apis` and `provision_api_key` tools.
+- Communication tools — `EmailTool` fixed (env_first, SMTP_FROM, test action),
+  `WebhookTool` added (Slack/Discord/generic outbound webhooks). Both registered
+  under `communication` category in tool_manager.py.
+- `.env.example` updated with SMTP, webhook URL, and FCM credential vars.
+- Brain engine fixed — circular import resolved, 35/35 tests passing.
 
 ### Phase 32 — Research / Market Engine (NEW, flag OFF)
 - `infrastructure/research_engine.py` — `ResearchEngine` class + singleton

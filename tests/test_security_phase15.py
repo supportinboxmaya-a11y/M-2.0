@@ -25,6 +25,9 @@ try:
     HAS_RLIMITS = True
 except ImportError:
     HAS_RLIMITS = False
+# RLIMIT_AS is skipped on Android/Termux (causes SIGABRT)
+_RLIMIT_AS_AVAILABLE = HAS_RLIMITS and not (
+    os.environ.get("TERMUX_VERSION") or os.environ.get("ANDROID_ROOT") or "")
 
 _tmp = tempfile.mkdtemp(prefix="maya_sbx15_")
 
@@ -72,6 +75,9 @@ def test_env_scrubbing_no_secret_leak():
 def test_memory_limit_kills_runaway():
     if not HAS_RLIMITS:
         print("SKIP memory limit (no resource module)")
+        return
+    if not _RLIMIT_AS_AVAILABLE:
+        print("SKIP memory limit (RLIMIT_AS unsupported on this platform)")
         return
     r = CodeRunner().run(
         "x = bytearray(1024 * 1024 * 1024); print('allocated')", timeout=20)
