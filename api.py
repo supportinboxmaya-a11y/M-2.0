@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import jwt
 import bcrypt
@@ -4154,3 +4155,24 @@ try:
 except Exception as _p32_err:
     print(f"WARNING: Phase 32 research engine not loaded: {_p32_err}")
 # ══════════════ End Phase 32 integration ══════════════
+
+# ── SPA fallback: serve index.html for any non-API path ──────────
+import os as _fe_os
+import pathlib as _fe_path
+_frontend_root = _fe_path.Path(__file__).parent / "frontend"
+_frontend_index = _frontend_root / "index.html"
+
+@app.api_route("/{path:path}", methods=["GET"])
+async def spa_fallback(path: str):
+    # Only serve non-API, non-dotfile paths as SPA routes
+    if path.startswith("api/") or path.startswith(".") or path.startswith("_"):
+        raise HTTPException(status_code=404, detail="Not found")
+    resolved = (_frontend_root / path).resolve()
+    # Security: only serve files under frontend/
+    if str(resolved).startswith(str(_frontend_root.resolve())) and resolved.is_file():
+        from fastapi.responses import FileResponse
+        return FileResponse(str(resolved))
+    if _frontend_index.is_file():
+        from fastapi.responses import FileResponse
+        return FileResponse(str(_frontend_index))
+    raise HTTPException(status_code=404, detail="Not found")
