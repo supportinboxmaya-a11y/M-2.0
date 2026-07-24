@@ -251,8 +251,8 @@ SECRET_KEY=<your-own-secret>
 
 ## 6. Loose threads — seal these to "finish" the current work
 
-- [ ] **Rotate VPS password** in the panel, update `.env`.
-- [ ] **Rotate JWT `SECRET_KEY`** away from the default `maya-secret-key-2024`.
+- [x] **Rotate VPS password** in the panel, update `.env` — DONE (both `.env` and VPS panel updated).
+- [x] **Rotate JWT `SECRET_KEY`** away from the default `maya-secret-key-2024` — DONE (256-bit random hex in `.env`).
 
 ---
 
