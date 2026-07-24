@@ -37,6 +37,8 @@
     flags:          {},
     skills:         [],
     docs:           [],
+    projects:       [],
+    metrics:        null,
     hosting:        { apps: [], registry: [] },
     cognition:      { missions: [], objectives: [], status: null },
     instances:      [],
@@ -445,6 +447,25 @@
     const res = await _action('sync_types', () => MayaAPI.sync.types());
     if (res.ok) _set('sync', { types: res.data });
   };
+  Store.loadLogs = async () => {
+    const [llm, tools] = await Promise.all([
+      _action('logs', () => MayaAPI.logs.llm(50)),
+      _action('logs', () => MayaAPI.logs.tools(50)),
+    ]);
+    _set('logs', {
+      llm: llm.ok ? llm.data : [],
+      tools: tools.ok ? tools.data : [],
+    });
+  };
+  Store.loadMetrics = async () => {
+    const res = await _action('metrics', () => MayaAPI.metrics.get());
+    if (res.ok) _set('metrics', res.data);
+  };
+  Store.loadProjects = async () => {
+    const res = await _action('projects', () => MayaAPI.projects.list());
+    if (res.ok) _set('projects', res.data?.projects || []);
+  };
+
   Store.loadLanguages = async () => {
     const res = await _action('languages', () => MayaAPI.translate.languages());
     if (res.ok) _set('languages', res.data);

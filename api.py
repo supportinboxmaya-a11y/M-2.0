@@ -1223,6 +1223,12 @@ async def websocket_endpoint(ws: WebSocket):
 # ══════════════════════════════════════════════
 @app.get("/")
 async def root():
+    # Serve the frontend SPA when the frontend directory exists
+    import pathlib as _root_path
+    _root_idx = _root_path.Path(__file__).parent / "frontend" / "index.html"
+    if _root_idx.is_file():
+        from fastapi.responses import FileResponse
+        return FileResponse(str(_root_idx))
     return {"status": "ok", "service": "Maya 2.0 ULTRA API", "version": "2.0.0"}
 
 @app.get("/health")
