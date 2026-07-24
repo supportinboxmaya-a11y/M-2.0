@@ -3,8 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="description" content="Maya 2.0 ULTRA — Autonomous AI Agent">
+<meta name="theme-color" content="#161b22">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Maya AI">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Maya AI">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
+<link rel="apple-touch-startup-image" href="assets/icons/icon-512.png" media="(device-width: 414px)">
 <title>Maya 2.0 ULTRA</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
 <style>
 /* ── Reset & Base ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -127,7 +137,7 @@ code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px;font-
 <main class="main" id="main"></main>
 
 <!-- Toast Container -->
-<div class="toast-container" id="toasts"></div>
+  <div class="toast-container" id="toasts"></div>
 
 <!-- Modal Overlay -->
 <div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
@@ -136,5 +146,15 @@ code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px;font-
 <script src="js/store.js"></script>
 <script src="js/hardware.js"></script>
 <script src="js/app.js"></script>
+<script>
+// Register service worker for PWA installability
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(function(reg) {
+    console.log('SW registered:', reg.scope);
+  }).catch(function(err) {
+    console.log('SW registration failed:', err);
+  });
+}
+</script>
 </body>
 </html>
