@@ -11,7 +11,7 @@ All sub-modules are stdlib-only and have no I/O.  BrowserTool safe.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from .goal_analyzer import GoalAnalyzer
 from .task_graph import TaskGraph, TaskNode

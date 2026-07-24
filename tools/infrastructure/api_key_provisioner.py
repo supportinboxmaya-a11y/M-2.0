@@ -18,7 +18,7 @@ import re
 import time
 from typing import Dict, List, Optional
 
-from config.settings import env_first, BASE_DIR, WORKSPACE_DIR
+from config.settings import env_first, BASE_DIR
 from human.approval import ApprovalManager
 from enterprise.api_keys import APIKeyManager
 from tools.web.browser_tool import BrowserTool

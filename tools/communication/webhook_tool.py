@@ -7,8 +7,6 @@ Supports multiple webhook URLs via .env variables:
   WEBHOOK_DISCORD_URL — Discord incoming webhook URL
   WEBHOOK_GENERIC_URL — fallback generic webhook URL
 """
-import json as _json
-
 import requests
 
 from config.settings import env_first
@@ -33,14 +31,14 @@ class WebhookTool:
 
     def run(self, action: str = "send", message: str = "",
             channel: str = "slack", title: str = "",
-            json: dict = None, **kwargs) -> str:
+            raw_payload: dict = None, **kwargs) -> str:
         """Send a webhook message.
         Args:
             action: 'send' or 'test'
             message: the text body (in Slack this is the fallback text)
             channel: 'slack', 'discord', or 'generic'
             title: optional bold heading (Slack) or embed title (Discord)
-            json: optional raw payload dict (overrides message/title)
+            raw_payload: optional raw payload dict (overrides message/title)
         """
         if action == "test":
             ok = self.configured(channel) if channel else self.configured()
@@ -70,12 +68,12 @@ class WebhookTool:
                 f"Set WEBHOOK_{channel.upper()}_URL in .env."
             )
 
-        if not message and not json:
+        if not message and not raw_payload:
             return "Error: message or json payload required"
 
         try:
-            if json:
-                payload = json
+            if raw_payload:
+                payload = raw_payload
             elif channel == "slack":
                 payload = {"text": message}
                 if title:
