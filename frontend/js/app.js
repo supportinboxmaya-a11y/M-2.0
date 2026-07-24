@@ -37,6 +37,8 @@
     'voice':        { label: 'Voice',          icon: '🎤', screen: 'screenVoice' },
     'translate':    { label: 'Translate',      icon: '🌐', screen: 'screenTranslate' },
     'schedules':    { label: 'Schedules',      icon: '⏰', screen: 'screenSchedules' },
+    'projects':     { label: 'Projects',       icon: '🎯', screen: 'screenProjects' },
+    'logs':         { label: 'Logs',           icon: '📜', screen: 'screenLogs' },
     'devices':      { label: 'Device Bridge',  icon: '🖥️', screen: 'screenDevices' },
     'instances':    { label: 'Instances',      icon: '📦', screen: 'screenInstances' },
     'backups':      { label: 'Backups',        icon: '💾', screen: 'screenBackups' },
@@ -1175,6 +1177,70 @@
     document.getElementById('transResult').innerHTML = res.ok
       ? `<pre>${esc(res.data?.translation || res.data?.text || JSON.stringify(res.data))}</pre>`
       : `<div class="tag tag-error">${esc(res.error)}</div>`;
+  };
+
+  // Projects (Standing Goals)
+  ROUTES.projects.screen = makeListScreen('Projects', '🎯', () => MayaStore.loadProjects(), () => {
+    const projects = MayaStore.get('projects') || [];
+    return `
+    <div class="flex-between mb-md">
+      <button class="primary" onclick="MayaApp._createProject()">+ New Project</button>
+    </div>
+    <div class="card">
+      ${projects.length ? `<div class="table-wrap"><table>
+      <tr><th>Name</th><th>Goal</th><th>Status</th><th>Actions</th></tr>
+      ${projects.map(p => `<tr>
+        <td>${esc(p.name || '')}</td>
+        <td class="text-sm truncate">${esc((p.goal || p.kwargs?.goal || '').slice(0, 60))}</td>
+        <td><span class="tag ${p.enabled ? 'tag-success' : 'tag-disabled'}">${p.enabled ? 'Running' : 'Paused'}</span></td>
+        <td class="flex">
+          <button onclick="MayaAPI.projects.progress('${p.id}').then(r=>MayaApp.openModal('<pre>'+MayaApp.esc(JSON.stringify(r.data,null,2))+'</pre>'))">Progress</button>
+          <button class="danger" onclick="MayaAPI.projects.delete('${p.id}').then(()=>{MayaStore.loadProjects();MayaApp.navigate('projects')})">Stop</button>
+        </td>
+      </tr>`).join('\n')}
+      </table></div>` : '<div class="empty">No standing goals. Create a project for Maya to work toward autonomously.</div>'}
+    </div>`;
+  });
+  App._createProject = function () {
+    openModal(`<h2>🎯 New Standing Goal</h2>
+    <p class="mb-md text-sm">Maya will work toward this goal autonomously on a schedule.</p>
+    <div class="form-group"><label>Name</label><input id="projName" placeholder="Weekly brief"></div>
+    <div class="form-group"><label>Goal</label><textarea id="projGoal" rows="3" placeholder="e.g. Summarize the top AI news every week..."></textarea></div>
+    <div class="form-group"><label>Cron (optional, default hourly)</label><input id="projCron" value="@hourly" class="text-mono" placeholder="0 9 * * 1"></div>
+    <div class="modal-actions">
+      <button onclick="MayaApp.closeModal()">Cancel</button>
+      <button class="primary" onclick="MayaApp._doCreateProject()">Start</button>
+    </div>
+    <div id="projResult" class="mt-sm text-sm"></div>`);
+  };
+  App._doCreateProject = async function () {
+    const name = document.getElementById('projName').value.trim();
+    const goal = document.getElementById('projGoal').value.trim();
+    if (!name || !goal) { toast('Name and goal required', 'warning'); return; }
+    document.getElementById('projResult').innerHTML = '<span class="spinner"></span>';
+    await MayaAPI.projects.create(name, goal, document.getElementById('projCron').value || '@hourly');
+    document.getElementById('projResult').innerHTML = '<span class="tag tag-success">Project created</span>';
+    setTimeout(() => { closeModal(); MayaStore.loadProjects(); ROUTES.projects.screen(); }, 1000);
+  };
+
+  // Logs
+  ROUTES.logs.screen = async function () {
+    const main = document.getElementById('main');
+    main.innerHTML = `<h2 style="margin-bottom:16px">📜 Logs</h2>${loadingSpinner('Loading logs...')}`;
+    await Promise.all([MayaStore.loadLogs(), MayaStore.loadMetrics()]);
+    const logs = MayaStore.get('logs') || {};
+    const metrics = MayaStore.get('metrics');
+    main.innerHTML = safeRender(() => `
+    <div class="card">
+      <div class="card-header"><h3>LLM Calls (${(logs.llm || []).length})</h3></div>
+      ${(logs.llm || []).length ? `<pre>${esc(JSON.stringify(logs.llm.slice(-10), null, 2))}</pre>` : '<div class="empty">No LLM logs yet</div>'}
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>Tool Calls (${(logs.tools || []).length})</h3></div>
+      ${(logs.tools || []).length ? `<pre>${esc(JSON.stringify(logs.tools.slice(-10), null, 2))}</pre>` : '<div class="empty">No tool logs yet</div>'}
+    </div>
+    ${metrics ? `<div class="card"><div class="card-header"><h3>Server Metrics</h3></div><pre>${esc(JSON.stringify(metrics, null, 2))}</pre></div>` : ''}
+    <div class="flex"><button onclick="MayaApp.navigate('logs')">🔄 Refresh</button></div>`, `<div class="empty">⚠️ Error loading logs</div>`);
   };
 
   // Schedules

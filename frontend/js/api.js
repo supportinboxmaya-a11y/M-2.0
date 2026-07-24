@@ -122,6 +122,31 @@
   };
 
   /* ════════════════════════════════════════════
+     LOGS
+  ════════════════════════════════════════════ */
+  Api.logs = {
+    llm:   (limit) => _get('/logs/llm' + _q({ limit })),
+    tools: (limit) => _get('/logs/tools' + _q({ limit })),
+  };
+
+  /* ════════════════════════════════════════════
+     METRICS
+  ════════════════════════════════════════════ */
+  Api.metrics = {
+    get: () => _get('/metrics'),
+  };
+
+  /* ════════════════════════════════════════════
+     PROJECTS (Standing Goals)
+  ════════════════════════════════════════════ */
+  Api.projects = {
+    list:     ()                   => _get('/projects'),
+    create:   (name, goal, cron)   => _post('/projects', { name, goal, cron }),
+    progress: (scheduleId)         => _get('/projects/' + scheduleId + '/progress'),
+    delete:   (scheduleId)         => _del('/projects/' + scheduleId),
+  };
+
+  /* ════════════════════════════════════════════
      MEMORY
   ════════════════════════════════════════════ */
   Api.memory = {
@@ -168,6 +193,13 @@
     daily:    (days)    => _get('/analytics/daily' + _q({ days })),
     providers:()        => _get('/analytics/providers'),
     tools:    ()        => _get('/analytics/tools'),
+  };
+
+  /* ════════════════════════════════════════════
+     AUTONOMOUS
+  ════════════════════════════════════════════ */
+  Api.autonomous = {
+    run: (goal, approveDangerous) => _post('/autonomous/run', { goal, approve_dangerous: approveDangerous }),
   };
 
   /* ════════════════════════════════════════════
