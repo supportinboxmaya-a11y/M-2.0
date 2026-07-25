@@ -117,6 +117,24 @@
 <div class="sheet-overlay" id="sheetOverlay"></div>
 <div class="sheet" id="sheet"><div class="sheet-handle"></div><div id="sheetContent"></div></div>
 
+<script>
+// Safety timeout: if app.js never runs, kill the loading spinner after 8s
+(function() {
+  var ws = document.getElementById('workspaceContent');
+  if (!ws) return;
+  setTimeout(function() {
+    // If still showing loading screen, replace it
+    if (ws.querySelector('.loading-screen') || ws.textContent.trim() === '') {
+      ws.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column;gap:12px;padding:24px;color:#8b949e">' +
+        '<div style="font-size:40px">🧠</div>' +
+        '<h1 style="font-size:24px;color:#e6edf3;margin:0">Maya 2.0</h1>' +
+        '<p>Could not load the application. Check your connection.</p>' +
+        '<button onclick="location.reload()" style="padding:8px 24px;cursor:pointer;border:1px solid #30363d;border-radius:8px;background:#1f6feb;color:#fff;font:inherit;font-size:14px">Retry</button></div>';
+    }
+  }, 8000);
+})();
+</script>
 <script src="js/api.js"></script>
 <script src="js/store.js"></script>
 <script src="js/hardware.js"></script>

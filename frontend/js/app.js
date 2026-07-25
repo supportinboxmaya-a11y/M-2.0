@@ -16,44 +16,89 @@
 
   /* ── Init ── */
 
+  // Fallback login renderer when MayaLayout is unavailable (JS load failure)
+  function _renderFallback(msg) {
+    var el = document.getElementById('workspaceContent');
+    if (!el) el = document.getElementById('main');
+    if (!el) return;
+    el.innerHTML = '<div class="fade-in" style="display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column;gap:12px;padding:24px;color:var(--text-secondary)">' +
+      '<div style="font-size:40px">🧠</div>' +
+      '<h1 style="font-size:24px;color:var(--text-primary);margin:0">Maya 2.0</h1>' +
+      (msg ? '<p>' + msg + '</p>' : '') +
+      '<button onclick="location.reload()" style="padding:8px 24px;cursor:pointer;border:1px solid var(--border-primary);border-radius:8px;background:var(--accent-blue-bg, #1f6feb);color:#fff;font:inherit">Retry</button></div>';
+  }
+
   async function init() {
-    const token = MayaAPI.getToken();
-    if (token) {
-      const res = await MayaAPI.auth.me();
-      if (res.ok) {
-        MayaStore._set('user', res.data);
-        boot(res.data);
-        return;
+    try {
+      const token = MayaAPI && MayaAPI.getToken ? MayaAPI.getToken() : null;
+      if (token) {
+        var lay = L();
+        if (lay && lay.showLoading) lay.showLoading('Connecting to Maya...');
+        var result;
+        var timeoutId;
+        try {
+          result = await Promise.race([
+            MayaAPI.auth.me({ signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined }),
+            new Promise(function (_, reject) {
+              timeoutId = setTimeout(function () { reject(new Error('timeout')); }, 15000);
+            }),
+          ]);
+          clearTimeout(timeoutId);
+        } catch (e) {
+          clearTimeout(timeoutId);
+          MayaAPI.setToken(null);
+          if (MayaStore && MayaStore._set) MayaStore._set('token', null);
+          showLogin();
+          return;
+        }
+        if (result && result.ok) {
+          if (MayaStore && MayaStore._set) MayaStore._set('user', result.data);
+          boot(result.data);
+          return;
+        }
       }
+      showLogin();
+    } catch (e) {
+      console.error('Fatal init error:', e);
+      _renderFallback('Connection failed. Tap to retry.');
     }
-    showLogin();
   }
 
   function boot(user) {
-    // Set up layout
-    L().init('chat');
-    L().setUser(user);
+    try {
+      var _lay = L();
+      var _router = R();
+      if (!_lay || !_router) { showLogin(); return; }
+      // Set up layout
+      _lay.init('chat');
+      _lay.setUser(user);
 
-    // Set up router with login guard
-    R().setBeforeNavigate(function (route) {
-      const token = MayaAPI.getToken();
-      if (!token) {
-        showLogin();
-        return false;
-      }
-    });
+      // Set up router with login guard
+      _router.setBeforeNavigate(function (route) {
+        const token = MayaAPI.getToken();
+        if (!token) {
+          showLogin();
+          return false;
+        }
+      });
 
-    // Start router
-    R().init();
+      // Start router
+      _router.init();
 
-    // Global listeners
-    bindGlobalListeners();
+      // Global listeners
+      bindGlobalListeners();
+    } catch (e) {
+      console.error('Boot error:', e);
+      _renderFallback('Could not initialize UI.');
+    }
   }
 
   /* ── Login Screen ── */
 
   function showLogin() {
-    L().render(`
+    var _lay = L();
+    if (!_lay) { _renderFallback('Initializing...'); return; }
+    _lay.render(`
     <div class="fade-in" style="display:flex;align-items:center;justify-content:center;min-height:100%;padding:24px">
       <div style="background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:var(--radius-xl);padding:40px;width:400px;max-width:100%">
         <h1 style="font-size:24px;margin-bottom:4px">🧠 Maya 2.0</h1>

@@ -4,7 +4,7 @@
  * Provides offline fallback and PWA installability.
  * Cache-first for static assets, network-first for API calls.
  */
-const CACHE = 'maya-v1';
+const CACHE = 'maya-v2';
 const STATIC = [
   '/',
   '/index.html',
