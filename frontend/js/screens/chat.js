@@ -22,10 +22,11 @@
   let _lastUserMsg = '';
 
   /* ── Register screen ── */
-  MayaRouter.registerScreen('chat', function () {
+  function _renderChat() {
     L().showLoading('Loading chats...');
     loadConversations();
-  });
+  }
+  MayaRouter.registerScreen('chat', _renderChat);
 
   /* ── Conversations (localStorage) ── */
   function loadConversations() {
@@ -874,42 +875,25 @@
   }
 
   /* ── Export API ── */
-  MayaScreens.chat = {
-    sendMessage: sendMessage,
-    stopGeneration: stopGeneration,
-    continueMessage: continueMessage,
-    regenerateMessage: regenerateMessage,
-    copyMessage: copyMessage,
-    retryMessage: retryMessage,
-    editMessageInline: editMessageInline,
-    saveEdit: saveEdit,
-    cancelEdit: cancelEdit,
-    deleteMessage: deleteMessage,
-    pinMessage: pinMessage,
-    shareMessage: shareMessage,
-    previewImage: previewImage,
-    toggleMultiSelect: toggleMultiSelect,
-    toggleSelect: toggleSelect,
-    batchCopy: batchCopy,
-    batchExport: batchExport,
-    batchDelete: batchDelete,
-    newChat: newChat,
-    deleteConv: deleteConv,
-    renameConv: renameConv,
-    pinConv: pinConv,
-    archiveConv: archiveConv,
-    duplicateConv: duplicateConv,
-    voiceInput: voiceInput,
-    cameraInput: cameraInput,
-    fileInput: fileInput,
-    addAttachment: addAttachment,
-    removeAttachment: removeAttachment,
-    speakText: speakText,
-    toggleHistory: toggleHistory,
-    switchTo: switchTo,
-    filterHistory: filterHistory,
-    searchConv: searchConv,
-    exportChat: exportChat,
-    exportMenu: exportMenu,
-  };
+  // Attach actions to MayaScreens.chat (which is already the render function from registerScreen)
+  var _chatActions = MayaScreens.chat || {};
+  _chatActions.sendMessage = sendMessage; _chatActions.stopGeneration = stopGeneration;
+  _chatActions.continueMessage = continueMessage; _chatActions.regenerateMessage = regenerateMessage;
+  _chatActions.copyMessage = copyMessage; _chatActions.retryMessage = retryMessage;
+  _chatActions.editMessageInline = editMessageInline; _chatActions.saveEdit = saveEdit;
+  _chatActions.cancelEdit = cancelEdit; _chatActions.deleteMessage = deleteMessage;
+  _chatActions.pinMessage = pinMessage; _chatActions.shareMessage = shareMessage;
+  _chatActions.previewImage = previewImage; _chatActions.toggleMultiSelect = toggleMultiSelect;
+  _chatActions.toggleSelect = toggleSelect; _chatActions.batchCopy = batchCopy;
+  _chatActions.batchExport = batchExport; _chatActions.batchDelete = batchDelete;
+  _chatActions.newChat = newChat; _chatActions.deleteConv = deleteConv;
+  _chatActions.renameConv = renameConv; _chatActions.pinConv = pinConv;
+  _chatActions.archiveConv = archiveConv; _chatActions.duplicateConv = duplicateConv;
+  _chatActions.voiceInput = voiceInput; _chatActions.cameraInput = cameraInput;
+  _chatActions.fileInput = fileInput; _chatActions.addAttachment = addAttachment;
+  _chatActions.removeAttachment = removeAttachment; _chatActions.speakText = speakText;
+  _chatActions.toggleHistory = toggleHistory; _chatActions.switchTo = switchTo;
+  _chatActions.filterHistory = filterHistory; _chatActions.searchConv = searchConv;
+  _chatActions.exportChat = exportChat; _chatActions.exportMenu = exportMenu;
+  MayaScreens.chat = _chatActions;
 })();
