@@ -481,4 +481,7 @@
   Store.isLoading = (key) => !!_state._loading[key];
   Store.error = (key) => _state._errors[key];
   Store.clearError = (key) => { _error(key, null); _emit('_errors', { ..._state._errors }); };
+
+  // Export internal _set for app.js init()
+  Store._set = _set;
 })();
