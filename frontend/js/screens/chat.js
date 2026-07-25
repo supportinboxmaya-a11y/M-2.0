@@ -57,12 +57,12 @@
 
     // Header
     html += `<div style="display:flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-2);border-bottom:1px solid var(--border-secondary);flex-shrink:0;min-height:36px">
-      <button class="btn btn-ghost btn-sm" onclick="MayaScreens.chat.toggleHistory()" title="Conversations" style="font-size:18px;padding:2px 6px;min-height:28px">☰</button>
+      <button class="btn btn-ghost btn-sm" onclick="MayaScreens.chat.toggleHistory()" title="Conversations" style="padding:2px 6px;min-height:28px">${MayaIcons.render('menu', 18)}</button>
       <span style="font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="chatTitle">${ESC(conv.title)}</span>
-      <button class="action-btn" onclick="MayaScreens.chat.newChat()" title="New chat">➕</button>
-      <button class="action-btn" onclick="MayaScreens.chat.renameConv()" title="Rename">✏️</button>
-      <button class="action-btn" onclick="MayaScreens.chat.toggleMultiSelect()" title="Select">☑️</button>
-      <button class="action-btn" onclick="MayaScreens.chat.exportMenu()" title="Export">📤</button>
+      <button class="action-btn" onclick="MayaScreens.chat.newChat()" title="New chat">${MayaIcons.render('plus')}</button>
+      <button class="action-btn" onclick="MayaScreens.chat.renameConv()" title="Rename">${MayaIcons.render('edit')}</button>
+      <button class="action-btn" onclick="MayaScreens.chat.toggleMultiSelect()" title="Select">${MayaIcons.render('select')}</button>
+      <button class="action-btn" onclick="MayaScreens.chat.exportMenu()" title="Export">${MayaIcons.render('export')}</button>
     </div>
     <div style="display:flex;gap:var(--space-1);padding:2px var(--space-2);border-bottom:1px solid var(--border-secondary);overflow-x:auto;flex-shrink:0;scrollbar-width:none">
       <button class="btn btn-ghost btn-sm" onclick="window.MayaRouter.navigate('research')" style="font-size:var(--font-size-xs);padding:2px 6px;white-space:nowrap">🔬 Research</button>
@@ -93,9 +93,9 @@
     if (_multiSelect) {
       html += `<div class="action-bar fade-in">
         <span class="count">${_selectedMessages.length} selected</span>
-        <button class="btn btn-sm btn-ghost" onclick="MayaScreens.chat.batchCopy()">📋 Copy</button>
-        <button class="btn btn-sm btn-ghost" onclick="MayaScreens.chat.batchExport()">📤 Export</button>
-        <button class="btn btn-sm btn-danger" onclick="MayaScreens.chat.batchDelete()">🗑 Delete</button>
+        <button class="btn btn-sm btn-ghost" onclick="MayaScreens.chat.batchCopy()">${MayaIcons.render('copy')} Copy</button>
+        <button class="btn btn-sm btn-ghost" onclick="MayaScreens.chat.batchExport()">${MayaIcons.render('export')} Export</button>
+        <button class="btn btn-sm btn-danger" onclick="MayaScreens.chat.batchDelete()">${MayaIcons.render('trash')} Delete</button>
         <button class="btn btn-sm btn-ghost" onclick="MayaScreens.chat.toggleMultiSelect()">Cancel</button>
       </div>`;
     }
@@ -105,8 +105,8 @@
       html += `<div style="display:flex;gap:var(--space-1);padding:var(--space-1) var(--space-2);overflow-x:auto;flex-shrink:0;background:var(--bg-secondary);border-top:1px solid var(--border-secondary)">`;
       _attachments.forEach(function (a, i) {
         html += `<div style="display:flex;align-items:center;gap:var(--space-1);background:var(--bg-primary);border:1px solid var(--border-primary);border-radius:var(--radius-md);padding:2px var(--space-2);font-size:var(--font-size-xs);flex-shrink:0;max-width:180px">
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.type === 'image' ? '🖼' : '📎'} ${ESC(a.name)}</span>
-          <button class="action-btn" onclick="MayaScreens.chat.removeAttachment(${i})" style="width:18px;height:18px;font-size:12px">✕</button>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.type === 'image' ? MayaIcons.render('image', 14) : MayaIcons.render('attach', 14)} ${ESC(a.name)}</span>
+          <button class="action-btn" onclick="MayaScreens.chat.removeAttachment(${i})" style="width:18px;height:18px">${MayaIcons.render('close', 12)}</button>
         </div>`;
       });
       html += `</div>`;
@@ -116,12 +116,12 @@
     html += `<div class="chat-input-bar" style="flex-shrink:0">
       <div style="display:flex;align-items:flex-end;gap:var(--space-1);width:100%">
         <div style="display:flex;gap:1px;flex-shrink:0">
-          <button class="action-btn" onclick="MayaScreens.chat.voiceInput()" title="Voice input">🎤</button>
-          <button class="action-btn" onclick="MayaScreens.chat.cameraInput()" title="Camera">📷</button>
-          <button class="action-btn" onclick="MayaScreens.chat.fileInput()" title="Attach file">📎</button>
+          <button class="action-btn" onclick="MayaScreens.chat.voiceInput()" title="Voice input">${MayaIcons.render('mic')}</button>
+          <button class="action-btn" onclick="MayaScreens.chat.cameraInput()" title="Camera">${MayaIcons.render('camera')}</button>
+          <button class="action-btn" onclick="MayaScreens.chat.fileInput()" title="Attach file">${MayaIcons.render('attach')}</button>
         </div>
         <textarea id="chatInput" rows="1" placeholder="Type / for commands..." aria-label="Chat input" style="flex:1;resize:none;border-radius:var(--radius-lg);padding:var(--space-2) var(--space-3);font-size:var(--font-size-base);line-height:1.4;min-height:40px;max-height:120px;background:var(--bg-primary);border:1px solid var(--border-primary);color:var(--text-primary);outline:none;font-family:var(--font-sans)"></textarea>
-        <button class="btn btn-primary" onclick="MayaScreens.chat.sendMessage()" title="Send" id="chatSendBtn" style="min-height:40px;width:40px;padding:0;border-radius:var(--radius-lg);flex-shrink:0">📤</button>
+        <button class="btn btn-primary" onclick="MayaScreens.chat.sendMessage()" title="Send" id="chatSendBtn" style="min-height:40px;width:40px;padding:0;border-radius:var(--radius-lg);flex-shrink:0">${MayaIcons.render('send')}</button>
       </div>
       <div style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-1) 0 0 0;width:100%">
         <span style="font-size:var(--font-size-xs);color:var(--text-tertiary);flex-shrink:0">🤖 ${getCurrentModel()}</span>
@@ -281,22 +281,22 @@
     }
 
     if (msg.status === 'streaming') {
-      html += `<div style="margin-top:var(--space-2);display:flex;gap:var(--space-1)"><button class="btn btn-sm btn-danger" onclick="MayaScreens.chat.stopGeneration()">⏹ Stop</button></div>`;
+      html += `<div style="margin-top:var(--space-2);display:flex;gap:var(--space-1)"><button class="btn btn-sm btn-danger" onclick="MayaScreens.chat.stopGeneration()">${MayaIcons.render('stop')} Stop</button></div>`;
     }
     if (msg.status !== 'streaming') {
       html += `<div class="msg-actions visible">`;
-      html += `<button class="action-btn" onclick="MayaScreens.chat.copyMessage(${idx})" title="Copy">📋</button>`;
+      html += `<button class="action-btn" onclick="MayaScreens.chat.copyMessage(${idx})" title="Copy">${MayaIcons.render('copy')}</button>`;
       if (!isUser) {
-        html += `<button class="action-btn" onclick="MayaScreens.chat.retryMessage(${idx})" title="Retry">↻</button>`;
-        html += `<button class="action-btn" onclick="MayaScreens.chat.regenerateMessage(${idx})" title="Regenerate">🔄</button>`;
-        html += `<button class="action-btn" onclick="MayaScreens.chat.continueMessage(${idx})" title="Continue">▶▶</button>`;
+        html += `<button class="action-btn" onclick="MayaScreens.chat.retryMessage(${idx})" title="Retry">${MayaIcons.render('retry')}</button>`;
+        html += `<button class="action-btn" onclick="MayaScreens.chat.regenerateMessage(${idx})" title="Regenerate">${MayaIcons.render('regenerate')}</button>`;
+        html += `<button class="action-btn" onclick="MayaScreens.chat.continueMessage(${idx})" title="Continue">${MayaIcons.render('continue_play')}</button>`;
       }
       if (isUser) {
-        html += `<button class="action-btn" onclick="MayaScreens.chat.editMessageInline(${idx})" title="Edit">✏️</button>`;
+        html += `<button class="action-btn" onclick="MayaScreens.chat.editMessageInline(${idx})" title="Edit">${MayaIcons.render('edit')}</button>`;
       }
-      html += `<button class="action-btn" onclick="MayaScreens.chat.deleteMessage(${idx})" title="Delete">🗑</button>`;
-      html += `<button class="action-btn" onclick="MayaScreens.chat.pinMessage(${idx})" title="Pin">📌</button>`;
-      html += `<button class="action-btn" onclick="MayaScreens.chat.shareMessage(${idx})" title="Share">📤</button>`;
+      html += `<button class="action-btn" onclick="MayaScreens.chat.deleteMessage(${idx})" title="Delete">${MayaIcons.render('trash')}</button>`;
+      html += `<button class="action-btn" onclick="MayaScreens.chat.pinMessage(${idx})" title="Pin">${MayaIcons.render('pin')}</button>`;
+      html += `<button class="action-btn" onclick="MayaScreens.chat.shareMessage(${idx})" title="Share">${MayaIcons.render('share')}</button>`;
       html += `</div>`;
     }
 
