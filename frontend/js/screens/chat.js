@@ -314,7 +314,7 @@
     // Code blocks with copy button
     text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, function (_, lang, code) {
       var trimmed = ESC(code.trim());
-      return '<div style="position:relative;margin:8px 0"><button class="action-btn" onclick="MayaHardware.clipboard.copy(document.querySelector(this.nextElementSibling).textContent);L().toast(\'Copied\',\'success\')" style="position:absolute;top:4px;right:4px;z-index:1;background:var(--bg-tertiary);width:24px;height:24px;font-size:12px;border-radius:var(--radius-sm)">📋</button><pre><code>' + trimmed + '</code></pre></div>';
+      return '<div style="position:relative;margin:8px 0"><button class="action-btn" onclick="MayaHardware.clipboard.copy(document.querySelector(this.nextElementSibling).textContent);L().toast(\'Copied\',\'success\')" style="position:absolute;top:4px;right:4px;z-index:1;background:var(--bg-tertiary);width:24px;height:24px;border-radius:var(--radius-sm)">' + MayaIcons.render('copy', 14) + '</button><pre><code>' + trimmed + '</code></pre></div>';
     });
 
     // Inline code
@@ -750,7 +750,7 @@
   function buildHistoryHtml() {
     let html = `<div class="drawer-header">
       <strong style="font-size:var(--font-size-sm)">Conversations</strong>
-      <button class="action-btn" onclick="MayaScreens.chat.newChat();MayaLayout.closeDrawer()">➕</button>
+      <button class="action-btn" onclick="MayaScreens.chat.newChat();MayaLayout.closeDrawer()" title="New chat">${MayaIcons.render('plus')}</button>
     </div>
     <div style="padding:var(--space-2)">
       <input class="input" type="text" placeholder="Search conversations..." oninput="MayaScreens.chat.filterHistory(this.value)" style="font-size:var(--font-size-sm)">
@@ -768,11 +768,11 @@
             <div class="preview">${ESC(lastMsg)}</div>
           </div>
           <div style="display:flex;gap:2px;flex-shrink:0">
-            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.renameConv('${conv.id}')" title="Rename">✏️</button>
-            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.pinConv('${conv.id}')" title="Pin">📌</button>
-            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.archiveConv('${conv.id}')" title="Archive">📦</button>
-            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.duplicateConv('${conv.id}')" title="Duplicate">📋</button>
-            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.deleteConv('${conv.id}')" title="Delete">🗑</button>
+            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.renameConv('${conv.id}')" title="Rename">${MayaIcons.render('edit')}</button>
+            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.pinConv('${conv.id}')" title="Pin">${MayaIcons.render('pin')}</button>
+            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.archiveConv('${conv.id}')" title="Archive">${MayaIcons.render('folder')}</button>
+            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.duplicateConv('${conv.id}')" title="Duplicate">${MayaIcons.render('copy')}</button>
+            <button class="action-btn" onclick="event.stopPropagation();MayaScreens.chat.deleteConv('${conv.id}')" title="Delete">${MayaIcons.render('trash')}</button>
           </div>
         </div>`;
       });
