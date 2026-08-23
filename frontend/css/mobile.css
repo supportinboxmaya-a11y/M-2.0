@@ -1,0 +1,505 @@
+/* Maya 2.0 ULTRA - Mobile Specific */
+@media (max-width: 768px) {
+  /* Hide desktop sidebar by default */
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+    z-index: 60;
+  }
+  
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+    width: var(--sidebar-width);
+  }
+  
+  .sidebar.collapsed.mobile-open {
+    transform: translateX(0);
+  }
+  
+  /* Mobile bottom navigation */
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--mobile-tab-height);
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    z-index: 50;
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius);
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    min-height: 44px;
+  }
+  
+  .mobile-nav-item:hover,
+  .mobile-nav-item.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  
+  .mobile-nav-item .icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .mobile-nav-item span {
+    display: block;
+  }
+  
+  /* Adjust main content for mobile nav */
+  .main-content {
+    padding-bottom: calc(var(--mobile-tab-height) + var(--space-4));
+  }
+  
+  .view-container {
+    padding-bottom: calc(var(--mobile-tab-height) + var(--space-6));
+  }
+  
+  /* Header adjustments */
+  .header {
+    left: 0;
+    padding: 0 var(--space-3);
+  }
+  
+  .sidebar.collapsed ~ .main-content .header {
+    left: 0;
+  }
+  
+  .view-title {
+    font-size: var(--text-lg);
+  }
+  
+  .header-right .icon-btn:not(#notificationsBtn):not(#themeToggle):not(.user-menu-btn) {
+    display: none;
+  }
+  
+  .user-menu-btn .user-name {
+    display: none;
+  }
+  
+  /* Modal adjustments */
+  .modal {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    top: 0;
+    left: 0;
+    transform: none;
+    border-radius: 0;
+    animation: slideUp var(--transition) ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  .modal.small,
+  .modal.medium,
+  .modal.large,
+  .modal.full {
+    width: 100vw;
+    max-width: 100vw;
+  }
+  
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    z-index: 1;
+  }
+  
+  .modal-body {
+    max-height: calc(100vh - 120px);
+  }
+  
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    padding: var(--space-3) var(--space-4);
+    flex-wrap: wrap;
+  }
+  
+  .modal-footer .btn {
+    flex: 1;
+  }
+  
+  /* Drawer adjustments */
+  .memory-detail,
+  .task-detail,
+  .tool-tester,
+  .app-detail,
+  .objective-detail {
+    width: 100vw;
+    max-width: 100vw;
+    right: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: slideUp var(--transition) ease-out;
+  }
+  
+  /* Toast adjustments */
+  .toast-container {
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: calc(var(--mobile-tab-height) + var(--space-3));
+    max-width: none;
+  }
+  
+  .toast {
+    min-width: 0;
+  }
+  
+  /* Form adjustments */
+  .form-input,
+  .form-select,
+  .form-textarea,
+  .chat-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Table responsive */
+  .table-container {
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 0 var(--space-4);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+  
+  /* Card stacking */
+  .apps-grid,
+  .tools-grid,
+  .providers-grid,
+  .flags-grid,
+  .comm-config-grid,
+  .budget-summary,
+  .system-info-grid,
+  .admin-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Pipeline form */
+  .pipeline-form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Strategy selector */
+  .strategy-btn {
+    min-width: calc(50% - var(--space-1));
+  }
+  
+  /* Kanban stacking */
+  .tasks-kanban {
+    flex-direction: column;
+  }
+  
+  .kanban-column {
+    min-width: 100%;
+    max-width: none;
+  }
+  
+  /* Footer stacking */
+  .card-footer,
+  .modal-footer,
+  .task-detail-footer,
+  .app-card-footer,
+  .mission-footer {
+    flex-direction: column;
+  }
+  
+  .card-footer .btn,
+  .modal-footer .btn,
+  .task-detail-footer .btn,
+  .app-card-footer .btn,
+  .mission-footer .btn {
+    width: 100%;
+  }
+  
+  /* Search inputs full width */
+  .memory-search,
+  .tools-search,
+  .chat-input-wrapper {
+    width: 100%;
+  }
+  
+  /* Chat input */
+  .chat-input-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  
+  .chat-input-hints {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  /* Notifications dropdown */
+  .user-dropdown {
+    right: -var(--space-3);
+    left: auto;
+    min-width: 280px;
+    width: calc(100vw - var(--space-3) * 2);
+    max-width: 280px;
+  }
+  
+  /* Tabs scrollable */
+  .tabs,
+  .memory-tabs,
+  .tools-category-filter,
+  .hosting-tabs,
+  .cognition-tabs,
+  .admin-tabs,
+  .settings-section-header {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .tabs::-webkit-scrollbar,
+  .memory-tabs::-webkit-scrollbar,
+  .tools-category-filter::-webkit-scrollbar,
+  .hosting-tabs::-webkit-scrollbar,
+  .cognition-tabs::-webkit-scrollbar,
+  .admin-tabs::-webkit-scrollbar,
+  .settings-section-header::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Mission card */
+  .mission-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .mission-actions {
+    justify-content: flex-start;
+  }
+  
+  /* Objective item */
+  .objective-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .objective-actions {
+    opacity: 1;
+    justify-content: flex-end;
+  }
+  
+  /* Stats */
+  .memory-stats,
+  .cognition-status {
+    flex-wrap: wrap;
+  }
+  
+  .cognition-status-divider {
+    display: none;
+  }
+  
+  /* User menu */
+  .user-menu-btn {
+    padding: var(--space-1);
+  }
+  
+  /* Button groups */
+  .provider-actions,
+  .comm-config-actions,
+  .pipeline-wizard .modal-footer {
+    flex-wrap: wrap;
+  }
+  
+  .provider-actions .btn,
+  .comm-config-actions .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  /* Pipeline progress */
+  .pipeline-progress {
+    flex-wrap: wrap;
+  }
+  
+  .pipeline-step-line {
+    display: none;
+  }
+  
+  /* Usage charts */
+  .usage-chart {
+    height: 200px;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+  }
+  
+  .chart-bar::before {
+    bottom: -18px;
+    font-size: 10px;
+  }
+  
+  /* Touch targets */
+  button,
+  .btn,
+  .nav-item,
+  .tab-btn,
+  .filter-btn,
+  .category-filter-btn,
+  .mobile-nav-item,
+  .dropdown-item,
+  .task-action-btn,
+  .memory-action-btn,
+  .message-action-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Reduce padding on mobile */
+  .view-container {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  
+  .card-body,
+  .card-header,
+  .card-footer,
+  .modal-body,
+  .modal-header,
+  .modal-footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  
+  /* Full screen modals on very small screens */
+  @media (max-width: 480px) {
+    .memory-search,
+    .tools-search {
+      max-width: none;
+    }
+    
+    .strategy-btn {
+      min-width: 100%;
+    }
+    
+    .pipeline-step-indicator {
+      flex-wrap: wrap;
+    }
+    
+    .pipeline-step-label {
+      min-width: calc(50% - var(--space-2));
+    }
+  }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .mobile-nav {
+    height: 56px;
+  }
+  
+  .main-content {
+    padding-bottom: calc(56px + var(--space-4));
+  }
+  
+  .view-container {
+    padding-bottom: calc(56px + var(--space-6));
+  }
+  
+  .toast-container {
+    bottom: calc(56px + var(--space-3));
+  }
+  
+  .modal {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .modal-body {
+    max-height: calc(100vh - 140px);
+  }
+}
+
+/* iOS safe area */
+@supports (padding: max(0px)) {
+  .mobile-nav {
+    padding-bottom: max(var(--space-1), env(safe-area-inset-bottom));
+    height: calc(var(--mobile-tab-height) + env(safe-area-inset-bottom));
+  }
+  
+  .modal {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .toast-container {
+    bottom: calc(var(--mobile-tab-height) + var(--space-3) + env(safe-area-inset-bottom));
+  }
+  
+  .memory-detail,
+  .task-detail,
+  .tool-tester,
+  .app-detail,
+  .objective-detail {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Android back button handling */
+@media (max-width: 768px) {
+  .sidebar-overlay.visible {
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* PWA standalone mode */
+@media (display-mode: standalone) {
+  .mobile-nav {
+    padding-bottom: max(var(--space-1), env(safe-area-inset-bottom));
+  }
+  
+  .header {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Print */
+@media print {
+  .mobile-nav,
+  .sidebar,
+  .header,
+  .modals-container,
+  .toast-container {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin-left: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .view-container {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+}

@@ -41,6 +41,7 @@ class _StubProvider:
 # ── Per-provider metadata (label + env-var key) ───────────────────────────
 
 PROVIDER_INFO: Dict[str, dict] = {
+    "omniroute":  {"label": "OmniRoute",   "env_key": "OMNIROUTE_API_KEY"},
     "groq":       {"label": "Groq",        "env_key": "GROQ_KEY"},
     "cerebras":   {"label": "Cerebras",    "env_key": "CEREBRAS_KEY"},
     "openrouter": {"label": "OpenRouter",  "env_key": "OPENROUTER_KEY"},
@@ -59,6 +60,15 @@ PROVIDER_STATE_FILE: str = str(STORAGE_DIR / "provider_state.json")
 # Each provider file does a "from <sdk> import …" at module level.  If the
 # SDK is missing that raises ImportError, which we catch here and substitute
 # a stub that still looks like the real class to the rest of the code.
+
+try:
+    from llm.providers.omniroute import OmniRouteProvider as _RealOmniRoute
+    OmniRouteProvider = _RealOmniRoute
+except ImportError:
+    print("WARNING: OmniRoute SDK (httpx) not installed – OmniRouteProvider will use a stub.")
+    class OmniRouteProvider(_StubProvider):                      # type: ignore
+        def __init__(self):
+            super().__init__("OmniRoute", "httpx")
 
 try:
     from llm.providers.groq import GroqProvider as _RealGroq
@@ -145,6 +155,7 @@ except ImportError:
 # ── Name → class mapping (used by router.set_key for hot-reload) ──────────
 
 PROVIDER_CLASSES: Dict[str, Type] = {
+    "omniroute": OmniRouteProvider,
     "groq": GroqProvider,
     "cerebras": CerebrasProvider,
     "openrouter": OpenRouterProvider,

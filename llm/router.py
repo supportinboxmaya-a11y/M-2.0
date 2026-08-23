@@ -17,6 +17,7 @@ from config.settings import (
 )
 
 from llm.providers import (
+    OmniRouteProvider,
     GroqProvider, CerebrasProvider, OpenRouterProvider, 
     GeminiProvider, OpenAIProvider, AnthropicProvider, 
     DeepSeekProvider, NvidiaNimProvider, LocalLLMProvider,
@@ -24,10 +25,11 @@ from llm.providers import (
 )
 
 class LLMRouter:
-    DEFAULT_PRIORITY = ["nvidia_nim", "groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude", "local"]
+    DEFAULT_PRIORITY = ["omniroute", "nvidia_nim", "groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude", "local"]
 
     def __init__(self):
         self.providers = {
+            "omniroute": OmniRouteProvider(),
             "nvidia_nim": NvidiaNimProvider(),
             "groq": GroqProvider(),
             "cerebras": CerebrasProvider(),

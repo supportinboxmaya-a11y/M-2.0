@@ -63,6 +63,9 @@ DEEPSEEK_KEY = env_first("DEEPSEEK_API_KEY", "DEEPSEEK_KEY")
 OPENROUTER_KEY = env_first("OPENROUTER_API_KEY", "OPENROUTER_KEY")
 CEREBRAS_KEY = env_first("CEREBRAS_API_KEY", "CEREBRAS_KEY")
 NVIDIA_NIM_KEY = _m1_fetch_key("nim", env_first("NVIDIA_NIM_API_KEY", "NVIDIA_NIM_KEY"))
+OMNIROUTE_API_KEY = env_first("OMNIROUTE_API_KEY", "OMNIROUTE_KEY")
+OMNIROUTE_BASE_URL = env_first("OMNIROUTE_BASE_URL", "http://localhost:3000/api/v1")
+OMNIROUTE_MODEL = env_first("OMNIROUTE_MODEL", "nvidia/nemotron-3-ultra-550b-a55b")
 
 # Models
 PRIMARY_MODEL = os.environ.get("PRIMARY_MODEL", "openai/gpt-oss-120b")
@@ -120,6 +123,7 @@ def validate():
         OPENROUTER_KEY,
         CEREBRAS_KEY,
         NVIDIA_NIM_KEY,
+        OMNIROUTE_API_KEY,
     ]
     if not any(keys):
         print("WARNING: No API keys found! Set at least one in .env file.")

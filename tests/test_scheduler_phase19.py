@@ -2,6 +2,7 @@
 Offline, real SQLite temp dir, real asyncio, deterministic clock."""
 import asyncio, os, shutil, sys, tempfile, types
 from datetime import datetime
+import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 for _name in ("loguru", "dotenv"):
@@ -23,7 +24,13 @@ from infrastructure.cron import CronExpression
 from infrastructure.scheduler import Scheduler
 from infrastructure.task_queue import TaskQueue
 
-_tmp = tempfile.mkdtemp(prefix="maya_sched19_")
+
+@pytest.fixture
+def temp_dir():
+    """Create a fresh temp directory for each test."""
+    _tmp = tempfile.mkdtemp(prefix="maya_sched19_")
+    yield _tmp
+    shutil.rmtree(_tmp, ignore_errors=True)
 
 
 # ── cron parser ───────────────────────────────────────────────────
@@ -72,16 +79,16 @@ def test_cron_next_after():
 
 
 # ── scheduler ─────────────────────────────────────────────────────
-def _stack(tag):
-    q = TaskQueue(workers=1, db_path=os.path.join(_tmp, f"q_{tag}.db"),
+def _stack(tag, tmp_dir):
+    q = TaskQueue(workers=1, db_path=os.path.join(tmp_dir, f"q_{tag}.db"),
                   persist=True)
-    s = Scheduler(q, db_path=os.path.join(_tmp, f"s_{tag}.db"))
+    s = Scheduler(q, db_path=os.path.join(tmp_dir, f"s_{tag}.db"))
     return q, s
 
 
-def test_add_validates_job_and_cron():
+def test_add_validates_job_and_cron(temp_dir):
     async def go():
-        q, s = _stack("v")
+        q, s = _stack("v", temp_dir)
         try:
             s.add("bad", "* * * * *", "nonexistent_job")
             assert False
@@ -96,12 +103,11 @@ def test_add_validates_job_and_cron():
         rec = s.add("good", "@daily", "noop")
         assert rec["enabled"] and rec["next_run"] is not None
     asyncio.run(go())
-    print("PASS scheduler add validates job + cron")
 
 
-def test_tick_fires_due_schedule():
+def test_tick_fires_due_schedule(temp_dir):
     async def go():
-        q, s = _stack("fire")
+        q, s = _stack("fire", temp_dir)
         fired = []
         async def handler(msg="x"):
             fired.append(msg)
@@ -119,12 +125,11 @@ def test_tick_fires_due_schedule():
         # queue task recorded as done
         assert q.status(ids[0])["state"] == "done"
     asyncio.run(go())
-    print("PASS scheduler tick fires due schedule via queue")
 
 
-def test_disabled_schedule_does_not_fire():
+def test_disabled_schedule_does_not_fire(temp_dir):
     async def go():
-        q, s = _stack("dis")
+        q, s = _stack("dis", temp_dir)
         q.register("noop", lambda: asyncio.sleep(0))
         rec = s.add("off", "* * * * *", "noop")
         s.set_enabled(rec["id"], False)
@@ -132,13 +137,12 @@ def test_disabled_schedule_does_not_fire():
         fire_at = datetime.fromtimestamp(rec["next_run"]) + timedelta(seconds=1)
         ids = await s.tick(now=fire_at)
         assert ids == []
-        print("PASS disabled schedule does not fire")
     asyncio.run(go())
 
 
-def test_no_catchup_burst_and_advances():
+def test_no_catchup_burst_and_advances(temp_dir):
     async def go():
-        q, s = _stack("catch")
+        q, s = _stack("catch", temp_dir)
         q.register("noop", lambda: asyncio.sleep(0))
         await q.start()
         rec = s.add("noon", "0 12 * * *", "noop")
@@ -154,13 +158,12 @@ def test_no_catchup_burst_and_advances():
         ids2 = await s.tick(now=fire_at + timedelta(minutes=1))
         assert ids2 == []
     asyncio.run(go())
-    print("PASS no catch-up burst; next_run advances")
 
 
-def test_persistence_across_instances():
+def test_persistence_across_instances(temp_dir):
     async def go():
-        db = os.path.join(_tmp, "persist_s.db")
-        q = TaskQueue(workers=1, db_path=os.path.join(_tmp, "persist_q.db"),
+        db = os.path.join(temp_dir, "persist_s.db")
+        q = TaskQueue(workers=1, db_path=os.path.join(temp_dir, "persist_q.db"),
                       persist=True)
         q.register("noop", lambda: asyncio.sleep(0))
         s1 = Scheduler(q, db_path=db)
@@ -171,20 +174,22 @@ def test_persistence_across_instances():
         assert got and got["name"] == "keep"
         assert s2.remove(rec["id"]) and s2.get(rec["id"]) is None
     asyncio.run(go())
-    print("PASS schedules persist across instances")
 
 
-try:
-    test_cron_basic_matching()
-    test_cron_ranges_lists_steps()
-    test_cron_aliases_and_dow()
-    test_cron_validation()
-    test_cron_next_after()
-    test_add_validates_job_and_cron()
-    test_tick_fires_due_schedule()
-    test_disabled_schedule_does_not_fire()
-    test_no_catchup_burst_and_advances()
-    test_persistence_across_instances()
-    print("\nAll scheduler tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    import tempfile, shutil
+    _tmp = tempfile.mkdtemp(prefix="maya_sched19_")
+    try:
+        test_cron_basic_matching()
+        test_cron_ranges_lists_steps()
+        test_cron_aliases_and_dow()
+        test_cron_validation()
+        test_cron_next_after()
+        test_add_validates_job_and_cron(_tmp)
+        test_tick_fires_due_schedule(_tmp)
+        test_disabled_schedule_does_not_fire(_tmp)
+        test_no_catchup_burst_and_advances(_tmp)
+        test_persistence_across_instances(_tmp)
+        print("\nAll scheduler tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)

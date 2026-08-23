@@ -1,155 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<meta name="description" content="Maya 2.0 — Autonomous AI Agent">
-<meta name="theme-color" content="#161b22">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Maya AI">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="Maya AI">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
-<link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
-
-<link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/responsive.css">
-
-<title>Maya 2.0</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Maya 2.0 ULTRA - Autonomous AI Agent">
+  <meta name="theme-color" content="#8b6f47">
+  <title>Maya 2.0 ULTRA</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/memory.css">
+  <link rel="stylesheet" href="/css/tools.css">
+  <link rel="stylesheet" href="/css/tasks.css">
+  <link rel="stylesheet" href="/css/hosting.css">
+  <link rel="stylesheet" href="/css/cognition.css">
+  <link rel="stylesheet" href="/css/settings.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/mobile.css">
 </head>
 <body>
-
-<div class="app-shell" id="app">
-
-  <!-- ═══ TOP BAR ═══ -->
-  <header class="topbar" id="topbar">
-    <div class="topbar-left">
-      <button class="topbar-btn" id="sidebarToggle" title="Toggle sidebar">☰</button>
-      <span class="topbar-brand">Maya AI</span>
-    </div>
-    <div class="topbar-center">
-      <div class="topbar-search">
-        <span>🔍</span>
-        <input type="text" id="globalSearch" placeholder="Search anything..." aria-label="Global search">
-      </div>
-      <select class="topbar-model" id="modelSelector" aria-label="Select AI model">
-        <option>Claude 5</option>
-        <option>GPT-5.4</option>
-        <option>Gemini 3.6</option>
-        <option>DeepSeek V4</option>
-      </select>
-    </div>
-    <div class="topbar-right">
-      <button class="topbar-btn notif-btn" id="notifBtn" title="Notifications">
-        🔔
-        <span class="notif-badge hidden" id="notifBadge">0</span>
-      </button>
-      <div class="user-avatar" id="userAvatar" title="User menu">M</div>
-    </div>
-  </header>
-
-  <!-- ═══ BODY (sidebar + workspace + right panel) ═══ -->
-  <div class="app-body">
-
-    <!-- Sidebar (desktop) -->
-    <nav class="sidebar" id="sidebar">
-      <div class="sidebar-section" id="primaryNav"></div>
-      <div class="sidebar-separator"></div>
-      <div class="sidebar-section" id="secondaryNav"></div>
-      <div class="sidebar-separator"></div>
-      <div class="sidebar-section" id="tertiaryNav"></div>
-      <div style="flex:1"></div>
-      <div class="sidebar-separator"></div>
-      <div class="sidebar-section">
-        <button class="sidebar-item" id="userMenuItem">
-          <span class="sidebar-item-icon">👤</span>
-          <span id="userNameLabel">User</span>
-        </button>
-      </div>
+  <div id="app" class="app">
+    <!-- Mobile bottom navigation -->
+    <nav id="mobileNav" class="mobile-nav" role="navigation" aria-label="Primary navigation">
+      <a href="#chat" class="mobile-nav-item" data-view="chat" aria-label="Chat">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span>Chat</span>
+      </a>
+      <a href="#memory" class="mobile-nav-item" data-view="memory" aria-label="Memory">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h12"></path><path d="M6 2h12"></path><path d="M16 2v14"></path></svg>
+        <span>Memory</span>
+      </a>
+      <a href="#tools" class="mobile-nav-item" data-view="tools" aria-label="Tools">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+        <span>Tools</span>
+      </a>
+      <a href="#tasks" class="mobile-nav-item" data-view="tasks" aria-label="Tasks">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path></svg>
+        <span>Tasks</span>
+      </a>
+      <a href="#settings" class="mobile-nav-item" data-view="settings" aria-label="Settings">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Settings</span>
+      </a>
     </nav>
 
-    <!-- Main workspace -->
-    <main class="workspace" id="workspace">
-      <div class="workspace-content" id="workspaceContent">
-        <div class="loading-screen" id="loadingScreen">
-          <span class="spinner spinner-lg"></span>
-          <span>Loading...</span>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-header">
+        <a href="#chat" class="sidebar-brand" aria-label="Maya Home">
+          <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+            <path d="M16 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z" fill="currentColor"/>
+          </svg>
+          <span class="brand-text">Maya 2.0</span>
+        </a>
+        <button id="sidebarToggle" class="sidebar-toggle" aria-label="Collapse sidebar" aria-expanded="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <!-- Navigation items injected by JS -->
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user" id="sidebarUser">
+          <!-- User info injected by JS -->
         </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar overlay for mobile -->
+    <div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- Main content -->
+    <main id="mainContent" class="main-content" role="main">
+      <!-- Header -->
+      <header id="header" class="header" role="banner">
+        <div class="header-left">
+          <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <h1 id="viewTitle" class="view-title">Chat</h1>
+        </div>
+        <div class="header-right">
+          <!-- Status indicators -->
+          <div class="header-status" id="headerStatus">
+            <span class="status-pill" id="cognitionStatus" title="Cognition loop">◐</span>
+            <span class="status-pill" id="approvalStatus" title="Pending approvals" style="display:none">⚠</span>
+          </div>
+          <!-- Notifications bell -->
+          <button id="notificationsBtn" class="icon-btn header-icon-btn" aria-label="Notifications" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="badge" id="notificationBadge" style="display:none">0</span>
+          </button>
+          <!-- Theme toggle -->
+          <button id="themeToggle" class="icon-btn header-icon-btn" aria-label="Toggle theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+          <!-- User menu -->
+          <div class="user-menu" id="userMenu">
+            <button id="userMenuBtn" class="user-menu-btn" aria-label="User menu" aria-expanded="false" aria-haspopup="true">
+              <div class="user-avatar" id="userAvatar">M</div>
+              <span class="user-name" id="userName">Admin</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+            <div class="user-dropdown" id="userDropdown" role="menu" aria-orientation="vertical" style="display:none">
+              <div class="dropdown-header">
+                <span id="dropdownEmail">admin@maya.ai</span>
+                <span id="dropdownRole" class="role-badge">Admin</span>
+              </div>
+              <a href="#settings" class="dropdown-item" role="menuitem" data-view="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Settings
+              </a>
+              <a href="#approvals" class="dropdown-item" role="menuitem" data-view="approvals">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Approvals
+              </a>
+              <hr class="dropdown-divider">
+              <button id="logoutBtn" class="dropdown-item dropdown-danger" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- View container -->
+      <div id="viewContainer" class="view-container">
+        <!-- Views rendered here -->
       </div>
     </main>
 
-    <!-- Right panel (desktop context) -->
-    <aside class="right-panel" id="rightPanel">
-      <div id="rightPanelContent"></div>
-    </aside>
+    <!-- Global modals container -->
+    <div id="modalsContainer" class="modals-container"></div>
 
+    <!-- Toast container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
   </div>
 
-  <!-- ═══ BOTTOM BAR (mobile) ═══ -->
-  <nav class="bottombar" id="bottombar"></nav>
-
-  <!-- ═══ STATUS BAR ═══ -->
-  <div class="statusbar" id="statusbar">
-    <span class="connection-dot online" id="connDot"></span>
-    <span id="connLabel">Connected</span>
-    <span id="taskCountLabel" style="flex:1;text-align:center"></span>
-    <span id="costLabel"></span>
-  </div>
-
-</div>
-
-<!-- ═══ OVERLAYS ═══ -->
-
-<!-- Modal -->
-<div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
-
-<!-- Toast container -->
-<div class="toast-container" id="toasts"></div>
-
-<!-- Side drawer (mobile: history, file tree) -->
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<div class="drawer" id="drawer"><div id="drawerContent"></div></div>
-
-<!-- Bottom sheet (mobile: overflow) -->
-<div class="sheet-overlay" id="sheetOverlay"></div>
-<div class="sheet" id="sheet"><div class="sheet-handle"></div><div id="sheetContent"></div></div>
-
-<script>
-// Safety timeout: if app.js never runs, kill the loading spinner after 8s
-(function() {
-  var ws = document.getElementById('workspaceContent');
-  if (!ws) return;
-  setTimeout(function() {
-    // If still showing loading screen, replace it
-    if (ws.querySelector('.loading-screen') || ws.textContent.trim() === '') {
-      ws.innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column;gap:12px;padding:24px;color:#8b949e">' +
-        '<div style="font-size:40px">🧠</div>' +
-        '<h1 style="font-size:24px;color:#e6edf3;margin:0">Maya 2.0</h1>' +
-        '<p>Could not load the application. Check your connection.</p>' +
-        '<button onclick="location.reload()" style="padding:8px 24px;cursor:pointer;border:1px solid #30363d;border-radius:8px;background:#1f6feb;color:#fff;font:inherit;font-size:14px">Retry</button></div>';
-    }
-  }, 8000);
-})();
-</script>
-<script src="js/api.js"></script>
-<script src="js/store.js"></script>
-<script src="js/hardware.js"></script>
-<script src="js/icons.js"></script>
-<script src="js/layout.js"></script>
-<script src="js/router.js"></script>
-<script src="js/app.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').then(function(reg) {
-    console.log('SW registered:', reg.scope);
-  }).catch(function(err) {
-    console.log('SW registration failed:', err);
-  });
-}
-</script>
+  <script type="module" src="/js/app.js"></script>
 </body>
 </html>

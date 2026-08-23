@@ -1,204 +1,341 @@
-/**
- * Maya 2.0 — Application Core
- *
- * Auth, initialization, WebSocket, and login screen only.
- * All workspace screens moved to js/screens/*.js
- */
-(function () {
-  'use strict';
+// Maya 2.0 ULTRA - Main Application
+import { auth } from './auth.js';
+import { api } from './api.js';
+import { ws } from './ws.js';
+import { sse } from './sse.js';
+import { sync } from './sync.js';
+import { Sidebar } from './components/Sidebar.js';
+import { Header } from './components/Header.js';
+import { Modal } from './components/Modal.js';
+import { toast } from './components/Toast.js';
+import { ConfirmDialog } from './components/ConfirmDialog.js';
+import { MarkdownRenderer } from './components/MarkdownRenderer.js';
 
-  const App = {};
-  window.MayaApp = App;
+// View imports
+import { ChatView } from './views/ChatView.js';
+import { MemoryView } from './views/MemoryView.js';
+import { ToolsView } from './views/ToolsView.js';
+import { TasksView } from './views/TasksView.js';
+import { RAGView } from './views/RAGView.js';
+import { WorkflowsView } from './views/WorkflowsView.js';
+import { HostingView } from './views/HostingView.js';
+import { CognitionView } from './views/CognitionView.js';
+import { SettingsView } from './views/SettingsView.js';
+import { AdminView } from './views/AdminView.js';
+import { LearningView } from './views/LearningView.js';
+import { PromptsView } from './views/PromptsView.js';
+import { WebhooksView } from './views/WebhooksView.js';
+import { TranslateView } from './views/TranslateView.js';
+import { AnalyticsView } from './views/AnalyticsView.js';
+import { LogsView } from './views/LogsView.js';
+import { DocsView } from './views/DocsView.js';
+import { AgentsView } from './views/AgentsView.js';
+import { InstancesView } from './views/InstancesView.js';
+import { DevicesView } from './views/DevicesView.js';
+import { WorkspaceView } from './views/WorkspaceView.js';
+import { BackupsView } from './views/BackupsView.js';
+import { SecurityView } from './views/SecurityView.js';
+import { ApprovalsView } from './views/ApprovalsView.js';
 
-  const $ = (sel) => document.querySelector(sel);
-  const L = () => window.MayaLayout;
-  const R = () => window.MayaRouter;
+// Generic views
+import { RAGView as GenericRAGView } from './views/GenericViews.js';
+import { WorkflowsView as GenericWorkflowsView } from './views/GenericViews.js';
+import { LearningView as GenericLearningView } from './views/GenericViews.js';
+import { PromptsView as GenericPromptsView } from './views/GenericViews.js';
+import { WebhooksView as GenericWebhooksView } from './views/GenericViews.js';
+import { TranslateView as GenericTranslateView } from './views/GenericViews.js';
+import { AnalyticsView as GenericAnalyticsView } from './views/GenericViews.js';
+import { LogsView as GenericLogsView } from './views/GenericViews.js';
+import { DocsView as GenericDocsView } from './views/GenericViews.js';
+import { AgentsView as GenericAgentsView } from './views/GenericViews.js';
+import { InstancesView as GenericInstancesView } from './views/GenericViews.js';
+import { DevicesView as GenericDevicesView } from './views/GenericViews.js';
+import { WorkspaceView as GenericWorkspaceView } from './views/GenericViews.js';
+import { BackupsView as GenericBackupsView } from './views/GenericViews.js';
+import { SecurityView as GenericSecurityView } from './views/GenericViews.js';
+import { ApprovalsView as GenericApprovalsView } from './views/GenericViews.js';
 
-  /* ── Init ── */
-
-  // Fallback login renderer when MayaLayout is unavailable (JS load failure)
-  function _renderFallback(msg) {
-    var el = document.getElementById('workspaceContent');
-    if (!el) el = document.getElementById('main');
-    if (!el) return;
-    el.innerHTML = '<div class="fade-in" style="display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column;gap:12px;padding:24px;color:var(--text-secondary)">' +
-      '<div style="font-size:40px">🧠</div>' +
-      '<h1 style="font-size:24px;color:var(--text-primary);margin:0">Maya 2.0</h1>' +
-      (msg ? '<p>' + msg + '</p>' : '') +
-      '<button onclick="location.reload()" style="padding:8px 24px;cursor:pointer;border:1px solid var(--border-primary);border-radius:8px;background:var(--accent-blue-bg, #1f6feb);color:#fff;font:inherit">Retry</button></div>';
+class App {
+  constructor() {
+    this.views = new Map();
+    this.currentView = null;
+    this.sidebar = null;
+    this.header = null;
+    this.viewContainer = null;
+    this.modalsContainer = null;
+    this.init();
   }
-
-  async function init() {
-    try {
-      const token = MayaAPI && MayaAPI.getToken ? MayaAPI.getToken() : null;
-      if (token) {
-        var lay = L();
-        if (lay && lay.showLoading) lay.showLoading('Connecting to Maya...');
-        var result;
-        var timeoutId;
-        try {
-          result = await Promise.race([
-            MayaAPI.auth.me({ signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined }),
-            new Promise(function (_, reject) {
-              timeoutId = setTimeout(function () { reject(new Error('timeout')); }, 15000);
-            }),
-          ]);
-          clearTimeout(timeoutId);
-        } catch (e) {
-          clearTimeout(timeoutId);
-          MayaAPI.setToken(null);
-          if (MayaStore && MayaStore._set) MayaStore._set('token', null);
-          showLogin();
-          return;
-        }
-        if (result && result.ok) {
-          if (MayaStore && MayaStore._set) MayaStore._set('user', result.data);
-          boot(result.data);
-          return;
-        }
-      }
-      showLogin();
-    } catch (e) {
-      console.error('Fatal init error:', e);
-      _renderFallback('Connection failed. Tap to retry.');
+  
+  async init() {
+    // Initialize auth
+    const hasAuth = auth.init();
+    
+    // Get DOM elements
+    this.viewContainer = document.getElementById('viewContainer');
+    this.modalsContainer = document.getElementById('modalsContainer');
+    
+    // Initialize components
+    this.sidebar = new Sidebar(document.getElementById('sidebarNav'));
+    this.header = new Header(document.getElementById('header'));
+    
+    // Initialize views
+    this.registerViews();
+    
+    // Setup routing
+    this.setupRouting();
+    
+    // Setup WebSocket
+    if (hasAuth && auth.getToken()) {
+      this.connectWebSocket();
     }
-  }
-
-  function boot(user) {
-    try {
-      var _lay = L();
-      var _router = R();
-      if (!_lay || !_router) { showLogin(); return; }
-      // Set up layout
-      _lay.init('chat');
-      _lay.setUser(user);
-
-      // Set up router with login guard
-      _router.setBeforeNavigate(function (route) {
-        const token = MayaAPI.getToken();
-        if (!token) {
-          showLogin();
-          return false;
-        }
-      });
-
-      // Start router
-      _router.init();
-
-      // Global listeners
-      bindGlobalListeners();
-    } catch (e) {
-      console.error('Boot error:', e);
-      _renderFallback('Could not initialize UI.');
-    }
-  }
-
-  /* ── Login Screen ── */
-
-  function showLogin() {
-    var _lay = L();
-    if (!_lay) { _renderFallback('Initializing...'); return; }
-    _lay.render(`
-    <div class="fade-in" style="display:flex;align-items:center;justify-content:center;min-height:100%;padding:24px">
-      <div style="background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:var(--radius-xl);padding:40px;width:400px;max-width:100%">
-        <h1 style="font-size:24px;margin-bottom:4px">🧠 Maya 2.0</h1>
-        <p style="color:var(--text-secondary);margin-bottom:24px;font-size:13px">Autonomous AI Operating System</p>
-        <div style="display:flex;margin-bottom:24px;border-bottom:1px solid var(--border-primary)">
-          <button class="btn btn-ghost active" id="loginTab" style="flex:1;border-radius:0;border-bottom:2px solid var(--accent-blue);color:var(--text-primary)">Sign In</button>
-          <button class="btn btn-ghost" id="registerTab" style="flex:1;border-radius:0">Register</button>
-        </div>
-        <form id="loginForm">
-          <div class="form-group"><label>Email</label><input class="input" type="email" id="loginEmail" placeholder="admin@maya.ai" required autofocus></div>
-          <div class="form-group"><label>Password</label><input class="input" type="password" id="loginPassword" placeholder="••••••••" required></div>
-          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-        </form>
-        <form id="registerForm" style="display:none">
-          <div class="form-group"><label>Name</label><input class="input" type="text" id="regName" placeholder="Your name"></div>
-          <div class="form-group"><label>Email</label><input class="input" type="email" id="regEmail" placeholder="you@example.com" required></div>
-          <div class="form-group"><label>Password</label><input class="input" type="password" id="regPassword" placeholder="••••••••" required></div>
-          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
-        </form>
-      </div>
-    </div>`);
-
-    document.getElementById('loginForm').addEventListener('submit', App._login);
-    document.getElementById('registerForm').addEventListener('submit', App._register);
-    document.getElementById('loginTab').addEventListener('click', function () {
-      document.getElementById('loginTab').classList.add('active');
-      document.getElementById('registerTab').classList.remove('active');
-      document.getElementById('loginForm').style.display = '';
-      document.getElementById('registerForm').style.display = 'none';
-    });
-    document.getElementById('registerTab').addEventListener('click', function () {
-      document.getElementById('registerTab').classList.add('active');
-      document.getElementById('loginTab').classList.remove('active');
-      document.getElementById('registerForm').style.display = '';
-      document.getElementById('loginForm').style.display = 'none';
-    });
-  }
-
-  App._login = async function (e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type=submit]');
-    btn.disabled = true; btn.textContent = 'Signing in...';
-    const res = await MayaStore.auth.login(
-      document.getElementById('loginEmail').value,
-      document.getElementById('loginPassword').value
-    );
-    if (res.ok) {
-      L().toast('Welcome back!', 'success');
-      boot(res.data);
-    } else {
-      L().toast(res.error || 'Login failed', 'error');
-      btn.disabled = false; btn.textContent = 'Sign In';
-    }
-  };
-
-  App._register = async function (e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type=submit]');
-    btn.disabled = true; btn.textContent = 'Creating...';
-    const res = await MayaStore.auth.register(
-      document.getElementById('regName').value,
-      document.getElementById('regEmail').value,
-      document.getElementById('regPassword').value
-    );
-    if (res.ok) {
-      L().toast('Account created!', 'success');
-      boot(res.data);
-    } else {
-      L().toast(res.error || 'Registration failed', 'error');
-      btn.disabled = false; btn.textContent = 'Create Account';
-    }
-  };
-
-  /* ── Global Event Bindings ── */
-
-  function bindGlobalListeners() {
-    // Auth: unauthorized redirect
-    MayaAPI.onUnauthorized(function () {
-      MayaStore.auth.logout();
-      showLogin();
-      L().toast('Session expired — please sign in again', 'warning');
-    });
-
-    // WebSocket for live task updates
-    MayaAPI.subscribe(function (msg) {
-      if (msg.type === 'task_progress') {
-        const route = R().getCurrentRoute();
-        if (route === 'agents') {
-          // Refresh agent task list if on agents page
-          const screen = window.MayaScreens && window.MayaScreens.agents;
-          if (screen) screen();
-        }
-      }
-      if (msg.type === 'task_done') {
-        L().toast('Task completed: ' + ((msg.task && msg.task.goal) || '').slice(0, 50), 'success');
+    
+    // Initialize sync
+    await sync.init();
+    
+    // Register service worker
+    this.registerServiceWorker();
+    
+    // Handle initial route
+    this.handleRoute(window.location.hash || '#chat');
+    
+    // Listen for auth changes
+    auth.subscribe((event) => {
+      if (event === 'login') {
+        this.connectWebSocket();
+        this.header.render();
+        this.sidebar.render();
+      } else if (event === 'logout') {
+        this.disconnectWebSocket();
+        this.header.render();
+        this.sidebar.render();
       }
     });
+    
+    // Listen for route changes
+    window.addEventListener('hashchange', () => {
+      this.handleRoute(window.location.hash);
+    });
+    
+    // Mobile sidebar overlay
+    const overlay = document.getElementById('sidebarOverlay');
+    if (overlay) {
+      overlay.addEventListener('click', () => this.sidebar.closeMobile());
+    }
+    
+    console.log('Maya 2.0 ULTRA initialized');
   }
+  
+  registerViews() {
+    const viewClasses = {
+      chat: ChatView,
+      memory: MemoryView,
+      tools: ToolsView,
+      tasks: TasksView,
+      rag: RAGView,
+      workflows: WorkflowsView,
+      hosting: HostingView,
+      cognition: CognitionView,
+      settings: SettingsView,
+      admin: AdminView,
+      learning: LearningView,
+      prompts: PromptsView,
+      webhooks: WebhooksView,
+      translate: TranslateView,
+      analytics: AnalyticsView,
+      logs: LogsView,
+      docs: DocsView,
+      agents: AgentsView,
+      instances: InstancesView,
+      devices: DevicesView,
+      workspace: WorkspaceView,
+      backups: BackupsView,
+      security: SecurityView,
+      approvals: ApprovalsView
+    };
+    
+    // Use generic views for views that don't have custom implementations
+    const genericViews = {
+      rag: GenericRAGView,
+      workflows: GenericWorkflowsView,
+      learning: GenericLearningView,
+      prompts: GenericPromptsView,
+      webhooks: GenericWebhooksView,
+      translate: GenericTranslateView,
+      analytics: GenericAnalyticsView,
+      logs: GenericLogsView,
+      docs: GenericDocsView,
+      agents: GenericAgentsView,
+      instances: GenericInstancesView,
+      devices: GenericDevicesView,
+      workspace: GenericWorkspaceView,
+      backups: GenericBackupsView,
+      security: GenericSecurityView,
+      approvals: GenericApprovalsView
+    };
+    
+    // Prefer custom views, fall back to generic
+    for (const [name, ViewClass] of Object.entries({ ...genericViews, ...viewClasses })) {
+      this.views.set(name, new ViewClass(this));
+    }
+  }
+  
+  setupRouting() {
+    // View title mapping
+    this.viewTitles = {
+      chat: 'Chat',
+      memory: 'Memory',
+      tools: 'Tools',
+      tasks: 'Tasks',
+      rag: 'RAG / Knowledge Base',
+      workflows: 'Workflows',
+      hosting: 'Hosting',
+      cognition: 'Cognition',
+      settings: 'Settings',
+      admin: 'Admin',
+      learning: 'Learning',
+      prompts: 'Prompt Library',
+      webhooks: 'Webhooks',
+      translate: 'Translate',
+      analytics: 'Analytics',
+      logs: 'Logs',
+      docs: 'Documentation',
+      agents: 'Agents',
+      instances: 'Instances',
+      devices: 'Devices',
+      workspace: 'Workspace',
+      backups: 'Backups',
+      security: 'Security',
+      approvals: 'Approvals'
+    };
+  }
+  
+  handleRoute(hash) {
+    const viewName = hash.replace('#', '').split('/')[0] || 'chat';
+    
+    // Check admin access
+    if (viewName === 'admin' && !auth.isAdmin()) {
+      window.location.hash = '#chat';
+      return;
+    }
+    
+    const view = this.views.get(viewName);
+    if (!view) {
+      console.warn(`View not found: ${viewName}`);
+      window.location.hash = '#chat';
+      return;
+    }
+    
+    // Hide current view
+    if (this.currentView && this.currentView !== view) {
+      this.currentView.hide();
+    }
+    
+    // Show new view
+    this.currentView = view;
+    this.currentView.show();
+    
+    // Update UI
+    this.header.setViewTitle(this.viewTitles[viewName] || viewName);
+    this.sidebar.setActiveView(viewName);
+    
+    // Update mobile nav
+    document.querySelectorAll('.mobile-nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.view === viewName);
+    });
+    
+    // Scroll to top
+    this.viewContainer.scrollTop = 0;
+  }
+  
+  connectWebSocket() {
+    const token = auth.getToken();
+    if (token) {
+      ws.connect(token);
+      
+      ws.on('task_started', (task) => this.handleTaskEvent('started', task));
+      ws.on('task_progress', (data) => this.handleTaskEvent('progress', data));
+      ws.on('task_done', (task) => this.handleTaskEvent('done', task));
+      ws.on('approval_requested', (approval) => this.handleApprovalRequested(approval));
+    }
+  }
+  
+  disconnectWebSocket() {
+    ws.disconnect();
+  }
+  
+  handleTaskEvent(type, data) {
+    if (this.currentView && this.currentView.onTaskEvent) {
+      this.currentView.onTaskEvent(type, data);
+    }
+    
+    // Update notifications
+    if (type === 'done' && data.status === 'done') {
+      toast.success(`Task completed: ${data.goal?.slice(0, 50)}...`);
+    } else if (type === 'done' && data.status === 'failed') {
+      toast.error(`Task failed: ${data.error || 'Unknown error'}`);
+    }
+  }
+  
+  handleApprovalRequested(approval) {
+    this.header.updateApprovalStatus(1); // Would count actual pending
+    toast.warning('Approval Required', approval.action, {
+      action: {
+        label: 'Review',
+        onClick: () => {
+          window.location.hash = '#approvals';
+          if (this.currentView && this.currentView.onApprovalRequested) {
+            this.currentView.onApprovalRequested(approval);
+          }
+        }
+      }
+    });
+  }
+  
+  async registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker registered');
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+      }
+    }
+  }
+  
+  // Global utilities
+  showModal(options) {
+    return new Modal(options).open();
+  }
+  
+  showToast(message, type, title, options) {
+    return toast.show(message, type, title, options);
+  }
+  
+  confirm(message, title) {
+    return ConfirmDialog.confirm({ title, message });
+  }
+  
+  confirmDelete(itemName) {
+    return ConfirmDialog.destructive('item', itemName);
+  }
+}
 
-  /* ── Boot ── */
+// Initialize app when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  window.app = new App();
+  
+  // Expose global utilities
+  window.toast = toast;
+  window.confirm = ConfirmDialog.confirm;
+  window.confirmDelete = ConfirmDialog.destructive;
+  window.api = api;
+  window.auth = auth;
+  window.ws = ws;
+  window.sync = sync;
+});
 
-  init();
-})();
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled rejection:', event.reason);
+  toast.error(event.reason?.message || 'An unexpected error occurred');
+});

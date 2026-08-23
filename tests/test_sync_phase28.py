@@ -1,6 +1,7 @@
 """Phase 28 tests — offline sync engine (idempotent action replay).
 Offline, real SQLite temp dir."""
 import os, shutil, sys, tempfile, types
+import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 for _name in ("loguru", "dotenv"):
@@ -20,15 +21,21 @@ for _name in ("loguru", "dotenv"):
 
 from infrastructure.sync_engine import SyncEngine
 
-_tmp = tempfile.mkdtemp(prefix="maya_sync28_")
+
+@pytest.fixture
+def temp_dir():
+    """Create a fresh temp directory for each test."""
+    _tmp = tempfile.mkdtemp(prefix="maya_sync28_")
+    yield _tmp
+    shutil.rmtree(_tmp, ignore_errors=True)
 
 
-def _engine(tag):
-    return SyncEngine(db_path=os.path.join(_tmp, f"s_{tag}.db"))
+def _engine(tag, tmp_dir):
+    return SyncEngine(db_path=os.path.join(tmp_dir, f"s_{tag}.db"))
 
 
-def test_applies_known_actions():
-    eng = _engine("apply")
+def test_applies_known_actions(temp_dir):
+    eng = _engine("apply", temp_dir)
     stored = []
     eng.register("add_note", lambda payload, user: stored.append(payload["text"]) or {"ok": True})
     batch = [
@@ -38,11 +45,10 @@ def test_applies_known_actions():
     res = eng.apply_batch(batch, user="u@x.com")
     assert res["summary"]["applied"] == 2
     assert stored == ["a", "b"]
-    print("PASS applies known actions")
 
 
-def test_idempotent_replay_dedupes():
-    eng = _engine("idem")
+def test_idempotent_replay_dedupes(temp_dir):
+    eng = _engine("idem", temp_dir)
     calls = []
     eng.register("act", lambda p, u: calls.append(1) or {"n": len(calls)})
     batch = [{"op_id": "same", "type": "act", "payload": {}}]
@@ -51,30 +57,27 @@ def test_idempotent_replay_dedupes():
     assert r1["summary"]["applied"] == 1
     assert r2["summary"]["skipped"] == 1 and r2["summary"]["applied"] == 0
     assert len(calls) == 1               # handler ran only ONCE
-    print("PASS idempotent replay dedupes")
 
 
-def test_unknown_type_rejected():
-    eng = _engine("unknown")
+def test_unknown_type_rejected(temp_dir):
+    eng = _engine("unknown", temp_dir)
     res = eng.apply_batch([{"op_id": "x", "type": "mystery", "payload": {}}])
     assert res["summary"]["rejected"] == 1
     assert res["results"][0]["status"] == "rejected"
     # rejected op is recorded so a replay is also skipped, not retried
     res2 = eng.apply_batch([{"op_id": "x", "type": "mystery", "payload": {}}])
     assert res2["summary"]["skipped"] == 1
-    print("PASS unknown type rejected + recorded")
 
 
-def test_missing_op_id_rejected():
-    eng = _engine("noid")
+def test_missing_op_id_rejected(temp_dir):
+    eng = _engine("noid", temp_dir)
     res = eng.apply_batch([{"type": "act", "payload": {}}])
     assert res["summary"]["rejected"] == 1
     assert res["results"][0]["error"] == "missing op_id"
-    print("PASS missing op_id rejected")
 
 
-def test_handler_failure_isolated():
-    eng = _engine("fail")
+def test_handler_failure_isolated(temp_dir):
+    eng = _engine("fail", temp_dir)
     ran = []
     def boom(p, u):
         raise RuntimeError("handler exploded")
@@ -89,11 +92,10 @@ def test_handler_failure_isolated():
     assert ran == [1]                    # good op still ran after bad one
     # a failed op is recorded (won't silently retry-loop on next push)
     assert eng.status("b1")["status"] == "failed"
-    print("PASS handler failure isolated + recorded")
 
 
-def test_status_and_recent():
-    eng = _engine("status")
+def test_status_and_recent(temp_dir):
+    eng = _engine("status", temp_dir)
     eng.register("act", lambda p, u: {"echo": p.get("v")})
     eng.apply_batch([{"op_id": "s1", "type": "act", "payload": {"v": 42}}],
                     user="me@x.com")
@@ -102,19 +104,17 @@ def test_status_and_recent():
     recent = eng.recent("me@x.com")
     assert len(recent) == 1 and recent[0]["op_id"] == "s1"
     assert eng.status("nope") is None
-    print("PASS status + recent")
 
 
-def test_known_types():
-    eng = _engine("types")
+def test_known_types(temp_dir):
+    eng = _engine("types", temp_dir)
     eng.register("a", lambda p, u: None)
     eng.register("b", lambda p, u: None)
     assert eng.known_types() == ["a", "b"]
-    print("PASS known types")
 
 
-def test_persistence_across_instances():
-    db = os.path.join(_tmp, "persist.db")
+def test_persistence_across_instances(temp_dir):
+    db = os.path.join(temp_dir, "persist.db")
     e1 = SyncEngine(db_path=db)
     e1.register("act", lambda p, u: {"ok": True})
     e1.apply_batch([{"op_id": "keep", "type": "act", "payload": {}}])
@@ -123,18 +123,20 @@ def test_persistence_across_instances():
     e2.register("act", lambda p, u: {"ok": True})
     res = e2.apply_batch([{"op_id": "keep", "type": "act", "payload": {}}])
     assert res["summary"]["skipped"] == 1
-    print("PASS persistence across instances (dedupe survives restart)")
 
 
-try:
-    test_applies_known_actions()
-    test_idempotent_replay_dedupes()
-    test_unknown_type_rejected()
-    test_missing_op_id_rejected()
-    test_handler_failure_isolated()
-    test_status_and_recent()
-    test_known_types()
-    test_persistence_across_instances()
-    print("\nAll sync-engine tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    import tempfile, shutil
+    _tmp = tempfile.mkdtemp(prefix="maya_sync28_")
+    try:
+        test_applies_known_actions(_tmp)
+        test_idempotent_replay_dedupes(_tmp)
+        test_unknown_type_rejected(_tmp)
+        test_missing_op_id_rejected(_tmp)
+        test_handler_failure_isolated(_tmp)
+        test_status_and_recent(_tmp)
+        test_known_types(_tmp)
+        test_persistence_across_instances(_tmp)
+        print("\nAll sync-engine tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)
