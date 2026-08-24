@@ -131,17 +131,18 @@ def test_persistence_across_instances():
     print("PASS prompts persist across instances")
 
 
-try:
-    test_variable_extraction()
-    test_create_derives_variables()
-    test_create_with_defaults()
-    test_render_fills_and_counts()
-    test_render_missing_required_raises()
-    test_render_uses_defaults()
-    test_update_versions_body()
-    test_update_metadata_only_no_version_bump()
-    test_list_search_categories_delete()
-    test_persistence_across_instances()
-    print("\nAll prompt-library tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    try:
+        test_variable_extraction()
+        test_create_derives_variables()
+        test_create_with_defaults()
+        test_render_fills_and_counts()
+        test_render_missing_required_raises()
+        test_render_uses_defaults()
+        test_update_versions_body()
+        test_update_metadata_only_no_version_bump()
+        test_list_search_categories_delete()
+        test_persistence_across_instances()
+        print("\nAll prompt-library tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)

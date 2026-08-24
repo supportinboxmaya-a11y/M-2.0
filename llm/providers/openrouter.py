@@ -10,8 +10,9 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 
 class OpenRouterProvider:
-    def __init__(self):
+    def __init__(self, http_fn=None):
         self.client = None
+        self._http_fn = http_fn
         key = env_first("OPENROUTER_KEY", "OPENROUTER_API_KEY")
         if key:
             try:
@@ -36,6 +37,14 @@ class OpenRouterProvider:
         if not self.client:
             raise Exception("OpenRouter error: OPENROUTER_KEY not configured")
         try:
+            if self._http_fn:
+                # Use injected HTTP function for testing
+                response = self._http_fn(
+                    f"{OPENROUTER_BASE_URL}/chat/completions",
+                    {"model": model or self.default_model, "messages": messages, "max_tokens": max_tokens},
+                    key=env_first("OPENROUTER_KEY", "OPENROUTER_API_KEY") or "",
+                )
+                return response["choices"][0]["message"]["content"]
             response = self.client.chat.completions.create(
                 model=model or self.default_model,
                 messages=messages,

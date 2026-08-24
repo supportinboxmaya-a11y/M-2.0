@@ -96,9 +96,9 @@ def test_fallback_chain():
 
 def test_openrouter():
     os.environ.pop("OPENROUTER_KEY", None); os.environ.pop("OPENROUTER_API_KEY", None)
-    assert OpenRouterProvider.available() is False
+    assert OpenRouterProvider().is_available() is False
     os.environ["OPENROUTER_API_KEY"] = "sk-or-test"
-    assert OpenRouterProvider.available() is True
+    assert OpenRouterProvider().is_available() is True
     captured = {}
     def fake_http(url, payload, key):
         captured.update(url=url, payload=payload, key=key)
@@ -107,7 +107,7 @@ def test_openrouter():
     out = p.chat([{"role": "user", "content": "hello"}])
     assert out == "hi from openrouter"
     assert captured["key"] == "sk-or-test"
-    assert captured["payload"]["model"] == "openrouter/auto"
+    assert captured["payload"]["model"] == "meta-llama/llama-3.3-70b-instruct:free"
     assert "openrouter" in PROVIDER_TABLE
     os.environ.pop("OPENROUTER_API_KEY", None)
     print("PASS openrouter")

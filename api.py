@@ -2,6 +2,11 @@
 Maya 2.0 ULTRA - FastAPI Server
 Connects Maya core to the React frontend
 """
+# Force-load requests.exceptions before any other imports
+# Workaround for google.api_core/retry_base.py importing requests.exceptions
+import requests
+import requests.exceptions  # noqa: F401
+
 import os, uuid, asyncio, time
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict

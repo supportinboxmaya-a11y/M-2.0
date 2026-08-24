@@ -184,16 +184,17 @@ def test_persistence_across_instances():
     print("PASS workflows persist across instances")
 
 
-try:
-    test_validation_rules()
-    test_cycle_detection()
-    test_crud()
-    test_linear_run_with_templating()
-    test_condition_skips_step()
-    test_condition_runs_when_true()
-    test_parallel_independent_steps()
-    test_tool_action_and_failure_skips_dependents()
-    test_persistence_across_instances()
-    print("\nAll workflow-builder tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    try:
+        test_validation_rules()
+        test_cycle_detection()
+        test_crud()
+        test_linear_run_with_templating()
+        test_condition_skips_step()
+        test_condition_runs_when_true()
+        test_parallel_independent_steps()
+        test_tool_action_and_failure_skips_dependents()
+        test_persistence_across_instances()
+        print("\nAll workflow-builder tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)

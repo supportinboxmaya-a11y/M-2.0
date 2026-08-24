@@ -7,6 +7,44 @@ is absent the registry substitutes a stub that reports *is_available()=False*
 and raises a clear "pip install …" message only when the user actually calls
 chat() or stream_chat().
 """
+# Force-load all requests submodules to avoid lazy-loading issues
+import requests
+import requests.exceptions as _req_exc
+import requests.adapters as _req_adapters
+import requests.auth as _req_auth
+import requests.cookies as _req_cookies
+import requests.models as _req_models
+import requests.sessions as _req_sessions
+import requests.status_codes as _req_status_codes
+import requests.structures as _req_structures
+import requests.utils as _req_utils
+# Force-load by explicit assignment (bypasses lazy loading)
+requests.exceptions = _req_exc
+requests.adapters = _req_adapters
+requests.auth = _req_auth
+requests.cookies = _req_cookies
+requests.models = _req_models
+requests.sessions = _req_sessions
+requests.status_codes = _req_status_codes
+requests.structures = _req_structures
+requests.utils = _req_utils
+# Also ensure exceptions module has all needed attributes
+_ = _req_exc.RequestException
+_ = _req_exc.ConnectionError
+_ = _req_exc.ChunkedEncodingError
+_ = _req_exc.Timeout
+_ = _req_exc.HTTPError
+_ = _req_exc.URLRequired
+_ = _req_exc.TooManyRedirects
+_ = _req_exc.MissingSchema
+_ = _req_exc.InvalidSchema
+_ = _req_exc.InvalidURL
+_ = _req_exc.InvalidHeader
+_ = _req_exc.InvalidProxyURL
+_ = _req_exc.ProxyError
+_ = _req_exc.SSLError
+_ = _req_exc.ReadTimeout
+_ = _req_exc.ConnectTimeout
 
 import os
 from typing import Dict, Type

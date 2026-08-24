@@ -113,14 +113,15 @@ def test_persistence_across_instances():
     print("PASS triggers persist across instances")
 
 
-try:
-    test_create_returns_secret_once()
-    test_create_validation()
-    test_hmac_signature_verification()
-    test_template_rendering()
-    test_enable_delete_and_fire_count()
-    test_unsigned_trigger_flow()
-    test_persistence_across_instances()
-    print("\nAll webhook-trigger tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    try:
+        test_create_returns_secret_once()
+        test_create_validation()
+        test_hmac_signature_verification()
+        test_template_rendering()
+        test_enable_delete_and_fire_count()
+        test_unsigned_trigger_flow()
+        test_persistence_across_instances()
+        print("\nAll webhook-trigger tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)

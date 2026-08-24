@@ -120,14 +120,15 @@ def test_stats_expose_engine():
     print("PASS stats expose engine")
 
 
-try:
-    test_persistence_contract()
-    test_fallback_semantic_scoring()
-    test_delete_removes_ghost_results()
-    test_update_reembeds_and_keeps_versions()
-    test_compress_syncs_vectors()
-    test_cleanup_prunes_orphans()
-    test_stats_expose_engine()
-    print("\nAll vector-memory tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    try:
+        test_persistence_contract()
+        test_fallback_semantic_scoring()
+        test_delete_removes_ghost_results()
+        test_update_reembeds_and_keeps_versions()
+        test_compress_syncs_vectors()
+        test_cleanup_prunes_orphans()
+        test_stats_expose_engine()
+        print("\nAll vector-memory tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)

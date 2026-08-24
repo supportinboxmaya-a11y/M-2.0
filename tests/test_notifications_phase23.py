@@ -144,14 +144,15 @@ def test_send_requires_nothing_extra_and_persists():
     print("PASS notifications persist across instances")
 
 
-try:
-    test_in_app_store_and_list()
-    test_unread_and_mark_read()
-    test_email_skipped_when_unconfigured()
-    test_email_sent_when_configured()
-    test_webhook_channel()
-    test_multi_channel_fanout()
-    test_send_requires_nothing_extra_and_persists()
-    print("\nAll notification tests passed")
-finally:
-    shutil.rmtree(_tmp, ignore_errors=True)
+if __name__ == "__main__":
+    try:
+        test_in_app_store_and_list()
+        test_unread_and_mark_read()
+        test_email_skipped_when_unconfigured()
+        test_email_sent_when_configured()
+        test_webhook_channel()
+        test_multi_channel_fanout()
+        test_send_requires_nothing_extra_and_persists()
+        print("\nAll notification tests passed")
+    finally:
+        shutil.rmtree(_tmp, ignore_errors=True)

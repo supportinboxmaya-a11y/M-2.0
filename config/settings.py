@@ -19,9 +19,24 @@ def env_first(*names: str, default: str = "") -> str:
     """Return first non-empty env var among names (supports *_KEY and *_API_KEY)."""
     for name in names:
         value = os.environ.get(name, "")
-        if value:
+        if value and not _is_placeholder(value):
             return value
     return default
+
+
+def _is_placeholder(value: str) -> bool:
+    """Check if a value is a placeholder/template."""
+    if not value:
+        return True
+    value_lower = value.lower().strip()
+    placeholders = {
+        "your_", "change-this", "your_email", "your_app_password",
+        "your_service_role_key", "your-project", "your_cse_id",
+        "omniroute-local-key", "your_nvidia_nim_key", "your_gemini_key",
+        "your_openai_key", "your_anthropic_key", "your_deepseek_key",
+        "your_google_key", "your_groq_key"
+    }
+    return any(p in value_lower for p in placeholders)
 
 
 def _m1_fetch_key(provider: str, fallback: str) -> str:
