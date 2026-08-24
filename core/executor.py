@@ -31,7 +31,7 @@ class Executor:
         self.execution_history: List[Dict] = []
         self.max_retries = 3
 
-    def execute_step(self, step: Dict, context: str = "", previous_results: List[Dict] = None) -> Dict:
+    def execute_step(self, step: Dict, context: str = "", previous_results: List[Dict] = None, stream_emitter=None) -> Dict:
         """
         একটা step execute করে। Tool বা LLM যেটা দরকার সেটা use করে।
         """
@@ -55,7 +55,16 @@ class Executor:
         for attempt in range(self.max_retries):
             try:
                 if tool_name and self.tools.has(tool_name):
+                    if stream_emitter and attempt == 0:
+                        import asyncio
+                        asyncio.run(stream_emitter.tool_started(tool_name, tool_input))
                     result = self._execute_tool(tool_name, tool_input, step_num, attempt)
+                    if stream_emitter:
+                        import asyncio
+                        if result.get("success"):
+                            asyncio.run(stream_emitter.tool_completed(tool_name, tool_input, result.get("result")))
+                        else:
+                            asyncio.run(stream_emitter.tool_failed(tool_name, tool_input, result.get("error", "Unknown error")))
                 else:
                     result = self._execute_with_llm(description, prev_context, step_num)
 
@@ -65,6 +74,9 @@ class Executor:
                     last_error = result.get("error", "Unknown error")
                     if attempt < self.max_retries - 1:
                         print(f"     ⚠️ Attempt {attempt+1} failed, retrying...")
+                        if stream_emitter:
+                            import asyncio
+                            asyncio.run(stream_emitter.step_retrying(step, attempt + 1))
                         time.sleep(1)
 
             except Exception as e:

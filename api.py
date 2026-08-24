@@ -105,6 +105,17 @@ def require_admin(user: dict = Depends(get_current_user)) -> dict:
 
 # ── In-memory task store ────────────────────────
 tasks_db: dict = {}
+
+# ── Streaming Infrastructure ────────────────────
+from infrastructure.streaming import (
+    get_stream_manager, StreamEventType, StreamEmitter,
+    sse_generator, websocket_handler, set_stream_manager
+)
+
+# Initialize stream manager
+stream_manager = get_stream_manager()
+stream_manager.set_storage_path("storage/streaming_sessions")
+
 ws_clients: List[WebSocket] = []
 
 async def broadcast(data: dict):
@@ -260,20 +271,23 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
             _run_goal = f"[Instance: {_run_instance['name']}] Persona: {p}\n\n{_run_goal}"
 
     task_id = str(uuid.uuid4())
+    session = await stream_manager.create_session(_run_goal, user.get("uid", "anonymous"))
+    # Link session to task
+    await stream_manager.update_session(session.task_id, status="running")
+    
     task = {
         "id": task_id, "goal": req.goal, "status": "running",
         "steps": [], "current_phase": "starting", "created_at": datetime.utcnow().isoformat(),
         "provider_used": None, "cost_usd": 0, "tokens_used": 0,
         "instance_id": req.instance_id,
+        "session_id": session.session_id,
     }
     tasks_db[task_id] = task
     await broadcast({"type": "task_started", "task": task})
     await fire_webhooks("task.started", task)
 
     def on_progress(payload: dict):
-        """Called from Maya's worker thread as it plans/executes/verifies —
-        this is what makes 'what is Maya doing right now' actually visible
-        instead of the UI only finding out after the whole task finishes."""
+        """Called from Maya's worker thread as it plans/executes/verifies."""
         if task_id not in tasks_db:
             return
         phase = payload.get("phase")
@@ -297,10 +311,14 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
                     })
                     break
 
+        # Emit to stream manager
         if MAIN_EVENT_LOOP:
             try:
                 asyncio.run_coroutine_threadsafe(
-                    broadcast({"type": "task_progress", "task_id": task_id, "task": tasks_db[task_id]}),
+                    stream_manager.emit_event(
+                        StreamEventType.PROGRESS, task_id, session.session_id,
+                        {"phase": phase, "data": payload}
+                    ),
                     MAIN_EVENT_LOOP,
                 )
             except Exception:
@@ -308,10 +326,14 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
 
     async def run_task():
         try:
+            # Create stream emitter for this task
+            emitter = StreamEmitter(stream_manager, task_id, session.session_id)
+            
+            # Wrap the run to emit streaming events
             result = await asyncio.get_event_loop().run_in_executor(
                 None, lambda: maya_instance.run(_run_goal, task_id=task_id,
                                                 progress_callback=on_progress,
-                                                scope=_run_scope)
+                                                scope=_run_scope, stream_emitter=emitter)
             )
             raw_steps = result.get("steps", []) or []
             normalized_steps = [{
@@ -332,8 +354,19 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
                 "cost_usd": result.get("cost_usd", 0),
                 "tokens_used": result.get("tokens_used", 0),
             })
+            await stream_manager.update_session(task_id, status="completed" if result.get("success") else "failed")
+            await stream_manager.emit_event(
+                StreamEventType.TASK_COMPLETED if result.get("success") else StreamEventType.TASK_FAILED,
+                task_id, session.session_id,
+                {"result": result.get("result", ""), "error": result.get("error")}
+            )
         except Exception as e:
             tasks_db[task_id].update({"status": "failed", "error": str(e)})
+            await stream_manager.update_session(task_id, status="failed")
+            await stream_manager.emit_event(
+                StreamEventType.TASK_FAILED, task_id, session.session_id,
+                {"error": str(e)}
+            )
         await broadcast({"type": "task_done", "task": tasks_db[task_id]})
         final = tasks_db[task_id]
         if supabase_store.enabled and user.get("uid") and final.get("cost_usd"):
@@ -341,7 +374,7 @@ async def agent_run(req: AgentRunRequest, user: dict = Depends(get_current_user)
         await fire_webhooks("task.done" if final.get("status") == "done" else "task.failed", final)
 
     asyncio.create_task(run_task())
-    return task
+    return {"task": task, "session_id": session.session_id}
 
 CHAT_MESSAGE_FLAT_COST_USD = 0.01  # rough per-call estimate until real token costs are wired in
 
@@ -1193,7 +1226,7 @@ async def fire_webhooks(event: str, payload: dict):
     await asyncio.get_event_loop().run_in_executor(None, _fire_webhooks_sync, event, payload)
 
 # ══════════════════════════════════════════════
-# WEBSOCKET
+# WEBSOCKET (Enhanced with Streaming)
 # ══════════════════════════════════════════════
 @app.websocket("/ws/agent")
 async def websocket_endpoint(ws: WebSocket):
@@ -1215,8 +1248,28 @@ async def websocket_endpoint(ws: WebSocket):
             elif data.get("type") == "run":
                 goal = data.get("goal", "")
                 await ws.send_json({"type": "task_started", "goal": goal})
+            elif data.get("type") == "stream_connect":
+                # Connect to existing task stream
+                task_id = data.get("task_id")
+                if task_id:
+                    await websocket_handler(ws, task_id, stream_manager)
+                    return  # Handler takes over the connection
     except WebSocketDisconnect:
         ws_clients.remove(ws) if ws in ws_clients else None
+
+# New WebSocket endpoint for streaming
+@app.websocket("/ws/stream/{task_id}")
+async def websocket_stream_endpoint(ws: WebSocket, task_id: str):
+    """WebSocket endpoint for real-time task streaming with reconnect support."""
+    token = ws.query_params.get("token")
+    if token:
+        try:
+            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        except Exception:
+            await ws.close(code=4401)
+            return
+    await ws.accept()
+    await websocket_handler(ws, task_id, stream_manager)
 
 # ══════════════════════════════════════════════
 # HEALTH
@@ -2158,6 +2211,108 @@ try:
 except Exception as _sp2_err:
     print(f"WARNING: Superpower 2 streaming not loaded: {_sp2_err}")
 # ══════════════ End Superpower 2 ══════════════
+
+# ══════════════ Task Execution Streaming (SSE + WebSocket) ══════════════
+try:
+    from fastapi.responses import StreamingResponse as _TaskStream
+    import json as _task_json
+
+    @app.get("/api/v1/agent/tasks/{task_id}/stream")
+    async def task_stream_sse(task_id: str, user=Depends(get_current_user)):
+        """Stream task execution events as Server-Sent Events.
+        
+        Supports reconnect with Last-Event-ID header for resume capability.
+        """
+        session = await stream_manager.get_session(task_id)
+        if not session:
+            # Try to load from disk
+            session = await stream_manager.load_session(task_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Task session not found")
+        
+        # Register SSE queue
+        queue = await stream_manager.register_sse(session.session_id)
+        
+        async def _generate():
+            # Send initial state on connect/reconnect
+            yield f"data: {_task_json.dumps({'type': 'connected', 'task_id': task_id, 'session_id': session.session_id, 'status': session.status, 'current_step': session.current_step, 'goal': session.goal})}\n\n"
+            
+            # If reconnecting, send missed events summary
+            last_event_id = None
+            # Check for Last-Event-ID header (not directly accessible in FastAPI, but we can use query param)
+            
+            try:
+                while True:
+                    try:
+                        event_json = await asyncio.wait_for(queue.get(), timeout=30.0)
+                        yield f"data: {event_json}\n\n"
+                    except asyncio.TimeoutError:
+                        # Heartbeat
+                        yield f"data: {_task_json.dumps({'type': 'heartbeat', 'timestamp': time.time()})}\n\n"
+            except asyncio.CancelledError:
+                pass
+            except Exception:
+                pass
+            finally:
+                await stream_manager.unregister_sse(session.session_id)
+        
+        return _TaskStream(_generate(), media_type="text/event-stream",
+                          headers={"Cache-Control": "no-cache",
+                                   "X-Accel-Buffering": "no",
+                                   "Connection": "keep-alive"})
+
+    @app.post("/api/v1/agent/tasks/{task_id}/cancel")
+    async def cancel_task(task_id: str, user=Depends(get_current_user)):
+        """Cancel a running task."""
+        ok = await stream_manager.cancel_task(task_id)
+        if not ok:
+            raise HTTPException(status_code=400, detail="Task not found or not cancellable")
+        return {"cancelled": True, "task_id": task_id}
+
+    @app.post("/api/v1/agent/tasks/{task_id}/pause")
+    async def pause_task(task_id: str, user=Depends(get_current_user)):
+        """Pause a running task."""
+        ok = await stream_manager.pause_task(task_id)
+        if not ok:
+            raise HTTPException(status_code=400, detail="Task not found or not pausable")
+        return {"paused": True, "task_id": task_id}
+
+    @app.post("/api/v1/agent/tasks/{task_id}/resume")
+    async def resume_task(task_id: str, user=Depends(get_current_user)):
+        """Resume a paused task."""
+        ok = await stream_manager.resume_task(task_id)
+        if not ok:
+            raise HTTPException(status_code=400, detail="Task not found or not resumable")
+        return {"resumed": True, "task_id": task_id}
+
+    @app.get("/api/v1/agent/tasks/{task_id}/status")
+    async def task_status(task_id: str, user=Depends(get_current_user)):
+        """Get task status with session info."""
+        session = await stream_manager.get_session(task_id)
+        if not session:
+            session = await stream_manager.load_session(task_id)
+        if not session:
+            # Check in-memory tasks_db
+            if task_id in tasks_db:
+                return tasks_db[task_id]
+            raise HTTPException(status_code=404, detail="Task not found")
+        return {
+            "task_id": session.task_id,
+            "session_id": session.session_id,
+            "goal": session.goal,
+            "status": session.status,
+            "current_step": session.current_step,
+            "completed_steps": len(session.completed_steps),
+            "tools_used": session.tools_used,
+            "errors": session.errors,
+            "created_at": session.created_at,
+            "updated_at": session.updated_at,
+        }
+
+    print("Task execution streaming active: SSE at /api/v1/agent/tasks/{id}/stream, WebSocket at /ws/stream/{id}")
+except Exception as _task_stream_err:
+    print(f"WARNING: Task execution streaming not loaded: {_task_stream_err}")
+# ══════════════ End Task Execution Streaming ══════════════
 
 
 # ══════════════ Superpower 5: Multi-user Workspaces ══════════════

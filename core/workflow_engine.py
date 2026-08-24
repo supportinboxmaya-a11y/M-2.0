@@ -5,6 +5,7 @@ Maya 2.0 - Ultra Workflow Engine
 Orchestrates the Plan -> Execute -> Verify -> Learn workflow.
 """
 
+import asyncio
 from typing import Dict, List, Optional
 from config.constants import TASK_RUNNING, TASK_DONE, TASK_FAILED, TASK_RETRYING
 from maya_logging.logger import get_logger
@@ -31,12 +32,13 @@ class WorkflowEngine:
         self.memory = memory_manager
         self.learning = learning_engine
 
-    def run(self, goal: str, max_retries: int = 3, progress_callback=None) -> Dict:
+    def run(self, goal: str, max_retries: int = 3, progress_callback=None, stream_emitter=None) -> Dict:
         """`progress_callback(dict)` — if given, called live as the workflow
         moves through phases and steps (planning -> executing each step with
         its tool -> verifying), instead of the caller only finding out what
         happened after everything finishes. Never lets a callback error break
-        the actual task."""
+        the actual task.
+        `stream_emitter` — if given, emits structured streaming events for real-time UI."""
         def notify(payload: Dict):
             if progress_callback:
                 try:
@@ -58,6 +60,9 @@ class WorkflowEngine:
             print(f"\nPlanning... (attempt {attempt+1}/{max_retries})")
             self.task_manager.update_status(task.id, TASK_RUNNING)
             notify({"phase": "planning", "attempt": attempt + 1})
+            if stream_emitter:
+                import asyncio
+                asyncio.run(stream_emitter.planning_started())
 
             # Memory context inject করি
             context = self._get_context(goal)
@@ -76,6 +81,8 @@ class WorkflowEngine:
             log.info(f"Plan created: {len(steps)} steps, complexity={complexity}")
             print(f"Steps: {len(steps)} | Complexity: {complexity}")
             notify({"phase": "planned", "total_steps": len(steps), "complexity": complexity})
+            if stream_emitter:
+                asyncio.run(stream_emitter.plan_created(plan))
 
             if not steps:
                 errors.append("Planner returned no steps")
@@ -88,13 +95,20 @@ class WorkflowEngine:
             for step in steps:
                 notify({"phase": "step_start", "step": step.get("step"),
                         "description": step.get("description", ""), "tool": step.get("tool")})
-                result = self.executor.execute_step(step, context=context, previous_results=results)
+                if stream_emitter:
+                    asyncio.run(stream_emitter.step_started(step))
+                result = self.executor.execute_step(step, context=context, previous_results=results, stream_emitter=stream_emitter)
                 results.append(result)
                 all_results.append(result)
                 notify({"phase": "step_done", "step": result.get("step"),
                         "description": result.get("description", ""),
                         "tool": result.get("tool_used"), "success": result.get("success"),
                         "result": result.get("result")})
+                if stream_emitter:
+                    if result.get("success"):
+                        asyncio.run(stream_emitter.step_completed(step, result))
+                    else:
+                        asyncio.run(stream_emitter.step_failed(step, result.get("error", "Unknown error")))
 
                 # Track tools used
                 tool = result.get("tool_used")
@@ -114,6 +128,8 @@ class WorkflowEngine:
                     # Fallback
                     if self.fallback:
                         recovery = self.fallback.recover(goal, error, results, step, context)
+                        if stream_emitter:
+                            asyncio.run(stream_emitter.recovery_action(recovery.get("recovery_strategy", ""), recovery))
                         if recovery.get("should_abort"):
                             log.error(f"Aborting: {recovery.get('reason')}")
                             break
@@ -122,6 +138,8 @@ class WorkflowEngine:
             # Verify
             final_result = self._combine_results(results)
             notify({"phase": "verifying"})
+            if stream_emitter:
+                asyncio.run(stream_emitter.verification_started())
             verification = self.verifier.verify(goal, final_result, context=context)
             verdict = verification.get("verdict", "failure")
             quality = verification.get("quality_score", 0)
@@ -146,6 +164,10 @@ class WorkflowEngine:
                 if self.memory:
                     self.memory.remember_task(goal, results, final_result, True, tools_used, errors)
 
+                if stream_emitter:
+                    asyncio.run(stream_emitter.verification_completed(verification))
+                    asyncio.run(stream_emitter.task_completed(final_result, quality))
+
                 print(f"\nTask completed successfully!")
                 return {
                     "success": True,
@@ -160,6 +182,9 @@ class WorkflowEngine:
             # Partial success হলেও কিছু return করি
             missing = verification.get("what_is_missing", "")
             print(f"\nVerification failed: {missing[:100]}")
+
+            if stream_emitter:
+                asyncio.run(stream_emitter.task_failed(missing))
 
             if attempt < max_retries - 1:
                 self.task_manager.increment_retry(task.id)
@@ -181,6 +206,9 @@ class WorkflowEngine:
 
         if self.memory:
             self.memory.remember_task(goal, all_results, "", False, tools_used, errors)
+
+        if stream_emitter:
+            asyncio.run(stream_emitter.task_failed("Max retries reached"))
 
         print(f"\nTask failed after {max_retries} attempts.")
         return {

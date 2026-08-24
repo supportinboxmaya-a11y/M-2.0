@@ -6,6 +6,7 @@ Autonomous AI Agent that plans, executes, verifies, and learns.
 
 import os
 import sys
+import asyncio
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
@@ -29,6 +30,20 @@ from security.permissions import PermissionManager
 from skills.plugin_loader import PluginLoader
 from utils.cost_tracker import CostTracker
 from maya_logging.logger import get_logger
+
+# Phase 18: AGI Cognitive Architecture
+from infrastructure.cognitive_kernel import CognitiveKernel, get_cognitive_kernel
+from infrastructure.capability_registry import CapabilityRegistry, get_capability_registry
+from infrastructure.tool_synthesizer import ToolSynthesizer, get_tool_synthesizer
+from infrastructure.world_models import create_world_models
+from infrastructure.hierarchical_planner import HierarchicalPlanner, get_hierarchical_planner
+from infrastructure.metacognitive import MetacognitiveMonitor, get_metacognitive_monitor
+from infrastructure.agent_society import AgentSociety, get_agent_society
+from infrastructure.procedural_memory import (
+    get_episodic_memory, get_procedural_memory, 
+    get_experience_distiller, get_experience_replay
+)
+from infrastructure.streaming import get_stream_manager, StreamEmitter
 
 log = get_logger("maya")
 
@@ -134,6 +149,9 @@ class Maya:
             learning_engine=self.learning,
         )
 
+        # Phase 18: AGI Cognitive Architecture
+        self._init_cognitive_architecture()
+
         # Status report
         providers = self.router.available_providers()
         tools = self.tool_manager.get_registry().tool_names()
@@ -147,6 +165,117 @@ class Maya:
         print(f"  Plugins   : {plugin_count}")
         print(f"  Budget    : ${self.cost.budget_usd:.2f}")
         print(f"{'='*50}\n")
+
+    def _init_cognitive_architecture(self):
+        """Initialize Phase 18 cognitive architecture components."""
+        try:
+            # LLM function for cognitive components
+            def llm_fn(prompt: str) -> str:
+                return self.router.chat([{"role": "user", "content": prompt}])
+
+            # Stream manager for real-time events
+            self.stream_manager = get_stream_manager()
+            self.stream_manager.set_storage_path("storage/streaming_sessions")
+
+            # Cognitive Kernel - persistent cognitive process
+            self.cognitive_kernel = get_cognitive_kernel(
+                llm_fn=llm_fn,
+                capability_registry=None,  # Will be set after registry init
+                world_models=None,  # Will be set after world models init
+                approval_manager=self.approval,
+            )
+
+            # Capability Registry - dynamic tool/agent/skill registration
+            self.capability_registry = get_capability_registry(
+                tool_registry=self.tool_manager.get_registry()
+            )
+            # Link registry to cognitive kernel
+            self.cognitive_kernel.capability_registry = self.capability_registry
+
+            # World Models - symbolic simulators for environments
+            remote_deployer = None
+            try:
+                from infrastructure.remote_deploy import remote_deployer as _rd
+                remote_deployer = _rd
+            except Exception:
+                pass
+            self.world_models = create_world_models(remote_deployer)
+            self.cognitive_kernel.world_models = self.world_models
+
+            # Hierarchical Planner - HTN + MCTS
+            self.hierarchical_planner = get_hierarchical_planner(
+                kernel=self.cognitive_kernel,
+                world_models=self.world_models,
+                capability_registry=self.capability_registry,
+            )
+
+            # Metacognitive Monitor - confidence, surprise, recovery
+            self.metacognitive_monitor = get_metacognitive_monitor(
+                kernel=self.cognitive_kernel,
+                world_models=self.world_models,
+                hierarchical_planner=self.hierarchical_planner,
+                capability_registry=self.capability_registry,
+                approval_manager=self.approval,
+            )
+
+            # Agent Society - dynamic agent spawning and coordination
+            self.agent_society = get_agent_society(
+                kernel=self.cognitive_kernel,
+                capability_registry=self.capability_registry,
+                llm_fn=llm_fn,
+                approval_manager=self.approval,
+            )
+
+            # Procedural Memory - episodic + procedural with distillation
+            self.episodic_memory = get_episodic_memory()
+            self.procedural_memory = get_procedural_memory()
+            self.experience_distiller = get_experience_distiller(
+                llm_fn=llm_fn,
+                capability_registry=self.capability_registry,
+            )
+            self.experience_replay = get_experience_replay(
+                kernel=self.cognitive_kernel,
+            )
+
+            # Tool Synthesizer - autonomous skill acquisition
+            self.tool_synthesizer = get_tool_synthesizer(
+                llm_fn=llm_fn,
+                capability_registry=self.capability_registry,
+                approval_manager=self.approval,
+            )
+
+            # Link tool registry to capability registry for dynamic tools
+            self.tool_manager.get_registry().register(
+                "synthesize_tool", self.tool_synthesizer.synthesize,
+                "Autonomously research, experiment, and synthesize a new tool from a goal. "
+                "Args: goal (str), requirements (dict, optional), async (bool, default true). "
+                "Returns job_id. Goes through safety scan, sandbox testing, verification, and approval.",
+                category="meta",
+            )
+
+            # Start cognitive kernel background threads
+            self.cognitive_kernel.start()
+
+            # Start agent society
+            self.agent_society.start()
+
+            log.info("Phase 18 Cognitive Architecture initialized")
+            print(f"\n{'='*50}")
+            print(f"  Phase 18: AGI Cognitive Architecture Active")
+            print(f"{'='*50}")
+            print(f"  Cognitive Kernel    : Running (background threads)")
+            print(f"  Capability Registry : {len(self.capability_registry._capabilities)} capabilities")
+            print(f"  World Models        : {len(self.world_models)} domains")
+            print(f"  Hierarchical Planner: HTN + MCTS")
+            print(f"  Metacognitive Monitor: Confidence/Surprise/Recovery")
+            print(f"  Agent Society       : Dynamic spawning + blackboard")
+            print(f"  Procedural Memory   : Episodic + Skill distillation")
+            print(f"  Tool Synthesizer    : Research -> Experiment -> Verify -> Register")
+            print(f"{'='*50}\n")
+
+        except Exception as e:
+            log.warning(f"Phase 18 initialization partial: {e}")
+            print(f"Warning: Phase 18 partial initialization: {e}")
 
     # ── scoped memory helper ────────────────────────────────────────
     _scoped_memory_instance = None
@@ -186,13 +315,15 @@ class Maya:
             pass
 
     def run(self, goal: str, max_retries: int = 3, task_id: str = None,
-            progress_callback=None, scope: str = "") -> dict:
+            progress_callback=None, scope: str = "", stream_emitter=None) -> dict:
         """
         Goal achieve করার জন্য full autonomous workflow run করে.
         `progress_callback`, if given, is called live as planning/execution/
         verification happen — see WorkflowEngine.run() for the payload shapes.
         *scope* — when non-empty, routes memory reads/writes through the
         per-scope ScopedMemory store instead of the global MemoryManager.
+        *stream_emitter* — if given, emits structured streaming events for
+        real-time UI updates (WebSocket/SSE).
         """
         log.info(f"New goal: {goal}")
 
@@ -214,6 +345,9 @@ class Maya:
             )
             if not approved:
                 return {"success": False, "result": "User denied approval"}
+            if stream_emitter:
+                import asyncio
+                asyncio.run(stream_emitter.approval_result(True))
 
         # Memory context — use scoped store when scope is set
         self.memory.set_goal(goal)
@@ -226,7 +360,9 @@ class Maya:
             past_tips = self.memory.get_tips_for_goal(goal)
 
         # Run workflow
-        result = self.workflow.run(goal, max_retries=max_retries, progress_callback=progress_callback)
+        result = self.workflow.run(goal, max_retries=max_retries, 
+                                   progress_callback=progress_callback,
+                                   stream_emitter=stream_emitter)
 
         # Persist result to scoped memory if scope is set
         if scope and result.get("success"):
