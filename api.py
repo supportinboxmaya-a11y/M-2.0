@@ -4162,6 +4162,522 @@ except Exception as _p32_err:
     print(f"WARNING: Phase 32 research engine not loaded: {_p32_err}")
 # ══════════════ End Phase 32 integration ══════════════
 
+# ══════════════ Phase 18: AGI Cognitive Architecture ══════════════
+# Cognitive Kernel, Capability Registry, Tool Synthesizer, World Models,
+# Hierarchical Planner, Metacognitive Monitor, Agent Society, Procedural Memory
+try:
+    from infrastructure.cognitive_kernel import (
+        get_cognitive_kernel as _p18_get_kernel,
+        CognitiveKernel as _P18Kernel,
+    )
+    from infrastructure.capability_registry import (
+        get_capability_registry as _p18_get_registry,
+        CapabilityRegistry as _P18Registry,
+        CapabilityType as _P18CapType,
+        CapabilityStatus as _P18CapStatus,
+    )
+    from infrastructure.tool_synthesizer import (
+        get_tool_synthesizer as _p18_get_synthesizer,
+        ToolSynthesizer as _P18Synthesizer,
+    )
+    from infrastructure.world_models import create_world_models as _p18_create_models
+    from infrastructure.hierarchical_planner import (
+        get_hierarchical_planner as _p18_get_planner,
+        HierarchicalPlanner as _P18Planner,
+    )
+    from infrastructure.metacognitive import (
+        get_metacognitive_monitor as _p18_get_monitor,
+        MetacognitiveMonitor as _P18Monitor,
+    )
+    from infrastructure.agent_society import (
+        get_agent_society as _p18_get_society,
+        AgentSociety as _P18Society,
+    )
+    from infrastructure.procedural_memory import (
+        get_episodic_memory as _p18_get_episodic,
+        get_procedural_memory as _p18_get_procedural,
+        get_experience_distiller as _p18_get_distiller,
+        get_experience_replay as _p18_get_replay,
+    )
+    from enterprise.rbac import RBAC as _P18RBAC
+    from human.approval import ApprovalManager as _P18Approval
+    from human.intervention import InterventionHandler as _P18Intervention
+
+    _p18_rbac = _P18RBAC()
+    _p18_approval = _P18Approval(mode=os.environ.get("APPROVAL_MODE", "auto"))
+    _p18_intervention = _P18Intervention()
+
+    def _p18_check_execute(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p18_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(status_code=403, detail="execute permission required (admin or developer role)")
+
+    def _p18_require_enabled():
+        if not os.environ.get("COGNITION_ENABLED", "false").lower() == "true":
+            raise HTTPException(status_code=503, detail="Cognition kernel requires COGNITION_ENABLED=true")
+
+    # Initialize core components
+    try:
+        _p18_llm_fn = None
+        if maya_instance and hasattr(maya_instance, "router"):
+            def _p18_llm(prompt: str) -> str:
+                return maya_instance.router.chat([{"role": "user", "content": prompt}])
+            _p18_llm_fn = _p18_llm
+    except Exception:
+        pass
+
+    _p18_world_models = _p18_create_models(
+        getattr(maya_instance, "remote_deployer", None) if maya_instance else None
+    ) if "_p18_create_models" in dir() else {}
+
+    # Cognitive Kernel
+    _p18_kernel = _p18_get_kernel(
+        llm_fn=_p18_llm_fn,
+        world_models=_p18_world_models,
+        approval_manager=_p18_approval,
+        intervention_handler=_p18_intervention,
+    )
+
+    # Capability Registry
+    _p18_registry = _p18_get_registry(
+        getattr(maya_instance, "tool_manager", None).get_registry() if maya_instance and hasattr(maya_instance, "tool_manager") else None
+    )
+
+    # Tool Synthesizer
+    _p18_synthesizer = _p18_get_synthesizer(
+        llm_fn=_p18_llm_fn,
+        capability_registry=_p18_registry,
+        approval_manager=_p18_approval,
+    )
+
+    # Hierarchical Planner
+    _p18_planner = _p18_get_planner(
+        kernel=_p18_kernel,
+        world_models=_p18_world_models,
+        capability_registry=_p18_registry,
+    )
+
+    # Metacognitive Monitor
+    _p18_monitor = _p18_get_monitor(
+        kernel=_p18_kernel,
+        world_models=_p18_world_models,
+        hierarchical_planner=_p18_planner,
+        capability_registry=_p18_registry,
+        approval_manager=_p18_approval,
+        intervention_handler=_p18_intervention,
+    )
+
+    # Agent Society
+    _p18_society = _p18_get_society(
+        kernel=_p18_kernel,
+        capability_registry=_p18_registry,
+        llm_fn=_p18_llm_fn,
+        approval_manager=_p18_approval,
+    )
+
+    # Procedural Memory
+    _p18_episodic = _p18_get_episodic()
+    _p18_procedural = _p18_get_procedural()
+    _p18_distiller = _p18_get_distiller(llm_fn=_p18_llm_fn, capability_registry=_p18_registry)
+    _p18_replay = _p18_get_replay(kernel=_p18_kernel)
+
+    # Start background processes
+    _p18_kernel.start()
+    _p18_society.start()
+    _p18_monitor._running = True  # Monitor runs inline
+
+    print("Phase 18 active: AGI Cognitive Architecture (kernel, registry, synthesizer, planner, monitor, society, memory)")
+
+    # ── Cognitive Kernel Routes ──────────────────────────────────────
+    @app.get("/api/v1/cognitive/kernel/status")
+    async def _p18_kernel_status(user=Depends(get_current_user)):
+        return _p18_kernel.status()
+
+    @app.post("/api/v1/cognitive/kernel/checkpoint")
+    async def _p18_kernel_checkpoint(user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        cid = _p18_kernel.checkpoint()
+        return {"checkpoint_id": cid}
+
+    @app.get("/api/v1/cognitive/kernel/checkpoints")
+    async def _p18_kernel_checkpoints(user=Depends(get_current_user)):
+        return {"checkpoints": _p18_kernel.list_checkpoints()}
+
+    @app.post("/api/v1/cognitive/kernel/restore")
+    async def _p18_kernel_restore(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        cid = body.get("checkpoint_id", "")
+        if not cid:
+            raise HTTPException(status_code=400, detail="checkpoint_id required")
+        ok = _p18_kernel.restore_checkpoint(cid)
+        return {"restored": ok}
+
+    # Working Memory
+    @app.post("/api/v1/cognitive/memory/working/add")
+    async def _p18_wm_add(body: dict, user=Depends(get_current_user)):
+        content = body.get("content", "")
+        slot_type = body.get("type", "fact")
+        attention = body.get("attention", 1.0)
+        sid = _p18_kernel.wm_add(content, slot_type, attention, body.get("metadata"), body.get("bindings"))
+        return {"slot_id": sid}
+
+    @app.get("/api/v1/cognitive/memory/working/search")
+    async def _p18_wm_search(q: str, limit: int = 10, type: str = None, user=Depends(get_current_user)):
+        results = _p18_kernel.wm_search(q, limit, type)
+        return {"results": [{"id": k, **v.__dict__} for k, v in _p18_kernel.working_memory.items() if v.content.lower().find(q.lower()) >= 0][:limit]}
+
+    @app.get("/api/v1/cognitive/memory/working/capacity")
+    async def _p18_wm_capacity(user=Depends(get_current_user)):
+        return _p18_kernel.wm_capacity()
+
+    # Goals
+    @app.post("/api/v1/cognitive/goals")
+    async def _p18_create_goal(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        goal = _p18_kernel.create_goal(
+            description=body.get("description", ""),
+            parent_id=body.get("parent_id"),
+            priority=body.get("priority", 50.0),
+            success_criteria=body.get("success_criteria"),
+            constraints=body.get("constraints"),
+            required_capabilities=body.get("required_capabilities"),
+        )
+        return {"goal_id": goal.id, **goal.__dict__}
+
+    @app.get("/api/v1/cognitive/goals")
+    async def _p18_list_goals(status: str = None, user=Depends(get_current_user)):
+        goals = _p18_kernel.get_active_goals()
+        if status:
+            goals = [g for g in goals if g.status.value == status]
+        return {"goals": [g.__dict__ for g in goals]}
+
+    @app.get("/api/v1/cognitive/goals/{goal_id}")
+    async def _p18_get_goal(goal_id: str, user=Depends(get_current_user)):
+        goal = _p18_kernel.get_goal(goal_id)
+        if not goal:
+            raise HTTPException(status_code=404, detail="Goal not found")
+        return goal.__dict__
+
+    @app.post("/api/v1/cognitive/goals/{goal_id}/decompose")
+    async def _p18_decompose_goal(goal_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        subgoals = _p18_kernel.decompose_goal(goal_id, body.get("num_subgoals", 5))
+        return {"subgoals": [g.__dict__ for g in subgoals]}
+
+    @app.patch("/api/v1/cognitive/goals/{goal_id}")
+    async def _p18_update_goal(goal_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        goal = _p18_kernel.update_goal(goal_id, **body)
+        if not goal:
+            raise HTTPException(status_code=404, detail="Goal not found")
+        return goal.__dict__
+
+    # Beliefs
+    @app.post("/api/v1/cognitive/beliefs")
+    async def _p18_add_belief(body: dict, user=Depends(get_current_user)):
+        belief = _p18_kernel.add_belief(
+            proposition=body.get("proposition", ""),
+            confidence=body.get("confidence", 0.5),
+            evidence=body.get("evidence"),
+            source=body.get("source", "observation"),
+            domain=body.get("domain", "general"),
+        )
+        return belief.__dict__
+
+    @app.get("/api/v1/cognitive/beliefs")
+    async def _p18_query_beliefs(domain: str = None, min_conf: float = 0.0, user=Depends(get_current_user)):
+        beliefs = _p18_kernel.query_beliefs(domain, min_conf)
+        return {"beliefs": [b.__dict__ for b in beliefs]}
+
+    # Simulation
+    @app.post("/api/v1/cognitive/simulate")
+    async def _p18_simulate(body: dict, user=Depends(get_current_user)):
+        action = Action(
+            action_type=body.get("action_type", ""),
+            parameters=body.get("parameters", {}),
+            domain=body.get("domain", "general"),
+        )
+        result = _p18_kernel.simulate(action, body.get("domain", "general"))
+        return {"success": result.success, "effects": result.effects, "reward": result.reward, "confidence": result.confidence, "error": result.error}
+
+    # ── Capability Registry Routes ──────────────────────────────────
+    @app.get("/api/v1/capabilities")
+    async def _p18_list_capabilities(type: str = None, tag: str = None, status: str = None, limit: int = 50, user=Depends(get_current_user)):
+        cap_type = _P18CapType(type) if type else None
+        cap_status = _P18CapStatus(status) if status else None
+        caps = _p18_registry.list_capabilities(cap_type, tag, cap_status, limit)
+        return {"capabilities": [c.to_dict() for c in caps]}
+
+    @app.get("/api/v1/capabilities/search")
+    async def _p18_search_capabilities(q: str, limit: int = 20, user=Depends(get_current_user)):
+        caps = _p18_registry.search(q, limit)
+        return {"capabilities": [c.to_dict() for c in caps]}
+
+    @app.get("/api/v1/capabilities/{cap_id}")
+    async def _p18_get_capability(cap_id: str, user=Depends(get_current_user)):
+        cap = _p18_registry.get(cap_id)
+        if not cap:
+            raise HTTPException(status_code=404, detail="Capability not found")
+        return cap.to_dict()
+
+    @app.post("/api/v1/capabilities/{cap_id}/verify")
+    async def _p18_verify_capability(cap_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        result = _p18_registry.verify(cap_id, body.get("test_cases"))
+        return result
+
+    @app.get("/api/v1/capabilities/{cap_id}/composable")
+    async def _p18_composable(cap_id: str, limit: int = 10, user=Depends(get_current_user)):
+        caps = _p18_registry.find_composable(cap_id, limit)
+        return {"capabilities": [c.to_dict() for c in caps]}
+
+    @app.get("/api/v1/capabilities/{cap_id}/relations")
+    async def _p18_relations(cap_id: str, user=Depends(get_current_user)):
+        return _p18_registry.get_relations(cap_id)
+
+    @app.post("/api/v1/capabilities/{cap_id}/relations")
+    async def _p18_add_relation(cap_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        ok = _p18_registry.add_relation(cap_id, body.get("target_id"), body.get("relation_type"))
+        return {"added": ok}
+
+    @app.get("/api/v1/capabilities/stats")
+    async def _p18_capability_stats(user=Depends(get_current_user)):
+        return _p18_registry.stats()
+
+    # ── Tool Synthesizer Routes ─────────────────────────────────────
+    @app.post("/api/v1/cognitive/synthesize")
+    async def _p18_synthesize(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        job_id = _p18_synthesizer.synthesize(
+            goal=body.get("goal", ""),
+            requirements=body.get("requirements"),
+            async_mode=body.get("async", True),
+        )
+        return {"job_id": job_id}
+
+    @app.get("/api/v1/cognitive/synthesize/{job_id}")
+    async def _p18_synthesis_status(job_id: str, user=Depends(get_current_user)):
+        job = _p18_synthesizer.get_job(job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail="Job not found")
+        return job.__dict__
+
+    @app.get("/api/v1/cognitive/synthesize")
+    async def _p18_list_synthesis(status: str = None, limit: int = 50, user=Depends(get_current_user)):
+        jobs = _p18_synthesizer.list_jobs(status, limit)
+        return {"jobs": [j.__dict__ for j in jobs]}
+
+    @app.get("/api/v1/cognitive/synthesize/stats")
+    async def _p18_synthesis_stats(user=Depends(get_current_user)):
+        return _p18_synthesizer.get_status()
+
+    # ── Hierarchical Planner Routes ─────────────────────────────────
+    @app.post("/api/v1/cognitive/plan")
+    async def _p18_create_plan(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        goal_id = body.get("goal_id", "")
+        goal = _p18_kernel.get_goal(goal_id)
+        if not goal:
+            raise HTTPException(status_code=404, detail="Goal not found")
+        plan = _p18_planner.plan_for_goal(goal)
+        return {"plan_id": plan.id, "status": plan.status.value, "steps": len(plan.steps)}
+
+    @app.get("/api/v1/cognitive/plan/{plan_id}")
+    async def _p18_plan_status(plan_id: str, user=Depends(get_current_user)):
+        status = _p18_planner.get_plan_status(plan_id)
+        if not status:
+            raise HTTPException(status_code=404, detail="Plan not found")
+        return status
+
+    @app.post("/api/v1/cognitive/plan/{plan_id}/execute")
+    async def _p18_execute_plan(plan_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        # Execute with a simple executor that uses tool registry
+        def executor(step):
+            # Simple execution - in production would use actual tool calls
+            return {"success": True, "output": f"Executed {step.name}"}
+        
+        result = _p18_planner.execute_plan(plan_id, executor)
+        return result
+
+    @app.post("/api/v1/cognitive/plan/{plan_id}/replan")
+    async def _p18_replan(plan_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        from_step = body.get("from_step")
+        reason = body.get("reason", "")
+        plan = _p18_planner.replan(plan_id, from_step, reason)
+        return {"plan_id": plan.id, "steps": len(plan.steps)}
+
+    # ── Metacognitive Monitor Routes ────────────────────────────────
+    @app.get("/api/v1/cognitive/metacognitive/status")
+    async def _p18_meta_status(user=Depends(get_current_user)):
+        return _p18_monitor.get_status()
+
+    @app.post("/api/v1/cognitive/metacognitive/monitor")
+    async def _p18_meta_monitor(body: dict, user=Depends(get_current_user)):
+        events = _p18_monitor.monitor(body.get("context", {}))
+        return {"events": [e.__dict__ for e in events]}
+
+    @app.post("/api/v1/cognitive/metacognitive/step_result")
+    async def _p18_meta_step_result(body: dict, user=Depends(get_current_user)):
+        event = _p18_monitor.record_step_result(
+            body.get("context", {}),
+            body.get("expected"),
+            body.get("actual"),
+            body.get("verified", False),
+        )
+        return event.__dict__ if event else {"monitored": False}
+
+    @app.get("/api/v1/cognitive/metacognitive/events")
+    async def _p18_meta_events(type: str = None, limit: int = 50, user=Depends(get_current_user)):
+        from infrastructure.metacognitive import MetacognitiveEventType
+        evt_type = MetacognitiveEventType(type) if type else None
+        events = _p18_monitor.get_events(evt_type, limit)
+        return {"events": [e.__dict__ for e in events]}
+
+    # ── Agent Society Routes ────────────────────────────────────────
+    @app.get("/api/v1/cognitive/society/status")
+    async def _p18_society_status(user=Depends(get_current_user)):
+        return _p18_society.get_society_status()
+
+    @app.post("/api/v1/cognitive/society/spawn")
+    async def _p18_spawn_agent(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        agent = _p18_society.spawn_agent(body.get("role", ""), body.get("spec"))
+        return agent.__dict__
+
+    @app.get("/api/v1/cognitive/society/agents")
+    async def _p18_list_agents(role: str = None, status: str = None, user=Depends(get_current_user)):
+        status_enum = AgentStatus(status) if status else None
+        agents = _p18_society.list_agents(role, status_enum)
+        return {"agents": [a.__dict__ for a in agents]}
+
+    @app.post("/api/v1/cognitive/society/agents/{agent_id}/task")
+    async def _p18_assign_task(agent_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        ok = _p18_society.assign_task(agent_id, body)
+        return {"assigned": ok}
+
+    @app.post("/api/v1/cognitive/society/tasks/tender")
+    async def _p18_tender_task(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        task_id = _p18_society.request_bids(
+            body.get("task_spec", {}),
+            body.get("deadline"),
+            body.get("eligible_roles"),
+        )
+        return {"task_id": task_id}
+
+    @app.post("/api/v1/cognitive/society/tasks/{task_id}/bid")
+    async def _p18_submit_bid(task_id: str, body: dict, user=Depends(get_current_user)):
+        from infrastructure.agent_society import TaskBid
+        bid = TaskBid(
+            task_id=task_id,
+            agent_id=body.get("agent_id", ""),
+            estimated_cost=body.get("estimated_cost", 1.0),
+            estimated_duration=body.get("estimated_duration", 60.0),
+            confidence=body.get("confidence", 0.8),
+            proposed_approach=body.get("proposed_approach", ""),
+        )
+        ok = _p18_society.submit_bid(bid.agent_id, task_id, bid)
+        return {"submitted": ok}
+
+    @app.post("/api/v1/cognitive/society/tasks/{task_id}/award")
+    async def _p18_award_task(task_id: str, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        winner = _p18_society.award_task(task_id)
+        return {"awarded_to": winner}
+
+    @app.post("/api/v1/cognitive/society/blackboard/write")
+    async def _p18_bb_write(body: dict, user=Depends(get_current_user)):
+        entry = _p18_society.share_info(
+            body.get("agent_id", user.get("email", "anonymous")),
+            body.get("key", ""),
+            body.get("value"),
+            body.get("tags"),
+            body.get("ttl", 3600),
+        )
+        return entry.__dict__
+
+    @app.get("/api/v1/cognitive/society/blackboard/read")
+    async def _p18_bb_read(key: str, user=Depends(get_current_user)):
+        value = _p18_society.get_info(user.get("email", ""), key)
+        return {"value": value}
+
+    @app.get("/api/v1/cognitive/society/blackboard/query")
+    async def _p18_bb_query(tags: str = "", author: str = "", pattern: str = "", user=Depends(get_current_user)):
+        entries = _p18_society.blackboard.query(
+            tags=tags.split(",") if tags else None,
+            author=author or None,
+            pattern=pattern or None,
+        )
+        return {"entries": [e.__dict__ for e in entries]}
+
+    # ── Procedural Memory Routes ────────────────────────────────────
+    @app.get("/api/v1/cognitive/memory/episodic")
+    async def _p18_episodic_list(limit: int = 50, outcome: str = None, user=Depends(get_current_user)):
+        if outcome:
+            eps = _p18_episodic.get_by_outcome(outcome, limit)
+        else:
+            eps = _p18_episodic.get_recent(limit)
+        return {"episodes": [e.__dict__ for e in eps]}
+
+    @app.get("/api/v1/cognitive/memory/episodic/search")
+    async def _p18_episodic_search(goal: str, limit: int = 10, user=Depends(get_current_user)):
+        eps = _p18_episodic.get_similar(goal, limit)
+        return {"episodes": [e.__dict__ for e in eps]}
+
+    @app.get("/api/v1/cognitive/memory/episodic/stats")
+    async def _p18_episodic_stats(user=Depends(get_current_user)):
+        return _p18_episodic.stats()
+
+    @app.get("/api/v1/cognitive/memory/procedural")
+    async def _p18_procedural_list(verified: bool = False, limit: int = 100, user=Depends(get_current_user)):
+        skills = _p18_procedural.list_skills(verified, limit)
+        return {"skills": [s.__dict__ for s in skills]}
+
+    @app.get("/api/v1/cognitive/memory/procedural/applicable")
+    async def _p18_procedural_applicable(goal: str, context: str = "{}", user=Depends(get_current_user)):
+        ctx = json.loads(context)
+        skills = _p18_procedural.find_applicable_skills(ctx, goal)
+        return {"skills": [s.__dict__ for s in skills]}
+
+    @app.post("/api/v1/cognitive/memory/procedural/{skill_id}/use")
+    async def _p18_procedural_use(skill_id: str, body: dict, user=Depends(get_current_user)):
+        _p18_procedural.record_usage(skill_id, body.get("success", False), body.get("reward", 0.0))
+        return {"recorded": True}
+
+    @app.get("/api/v1/cognitive/memory/procedural/stats")
+    async def _p18_procedural_stats(user=Depends(get_current_user)):
+        return _p18_procedural.stats()
+
+    @app.post("/api/v1/cognitive/memory/distill")
+    async def _p18_distill(body: dict, user=Depends(get_current_user)):
+        _p18_check_execute(user)
+        goal = body.get("goal", "")
+        if goal:
+            skills = _p18_distiller.distill_from_goal(goal)
+        else:
+            skills = _p18_distiller.distill_episodes(
+                _p18_episodic.get_successful(limit=20)
+            )
+        return {"skills_created": len(skills), "skills": [s.__dict__ for s in skills]}
+
+    @app.post("/api/v1/cognitive/memory/replay")
+    async def _p18_replay(body: dict, user=Depends(get_current_user)):
+        result = _p18_replay.replay_batch(body.get("batch_size", 32))
+        return result
+
+    @app.get("/api/v1/cognitive/memory/replay/stats")
+    async def _p18_replay_stats(user=Depends(get_current_user)):
+        return _p18_replay.get_replay_stats()
+
+except Exception as _p18_err:
+    print(f"WARNING: Phase 18 AGI architecture not loaded: {_p18_err}")
+# ══════════════ End Phase 18 integration ══════════════
+
 # ── SPA fallback: serve index.html for any non-API path ──────────
 import os as _fe_os
 import pathlib as _fe_path
