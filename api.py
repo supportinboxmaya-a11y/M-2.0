@@ -4454,6 +4454,33 @@ try:
     async def _p18_kernel_status(user=Depends(get_current_user)):
         return _p18_kernel.status()
 
+    # ── Phase 34: Unified Cognitive Loop ─────────────────────────────
+    @app.post("/api/v1/cognitive/kernel/process-goal")
+    async def _p34_process_goal(body: dict, user=Depends(get_current_user)):
+        """
+        THE single control entry for goals.
+
+        Body: {description: str, priority?: float, execute?: bool}
+
+        execute defaults to FALSE (propose-only: goal + plan + memory
+        grounding, zero world side effects). When execute=true the kernel
+        delegates to Maya's own pipeline, which keeps risk checking and
+        approval gates. Requires COGNITION_ENABLED=true + RBAC execute.
+        """
+        _p18_require_enabled()
+        description = (body.get("description") or "").strip()
+        if not description:
+            raise HTTPException(status_code=400, detail="description required")
+        execute = bool(body.get("execute", False))
+        if execute:
+            _p18_check_execute(user)
+        priority = float(body.get("priority", 50.0))
+        result = await asyncio.to_thread(
+            _p18_kernel.process_goal, description, priority,
+            body.get("metadata") or {}, execute,
+        )
+        return result
+
     @app.post("/api/v1/cognitive/kernel/checkpoint")
     async def _p18_kernel_checkpoint(user=Depends(get_current_user)):
         _p18_check_execute(user)

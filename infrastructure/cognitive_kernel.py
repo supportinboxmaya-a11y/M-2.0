@@ -170,6 +170,13 @@ class CognitiveKernel:
         self.attention_budget = 100.0
         self.allocated_attention: Dict[str, float] = {}
 
+        # Phase 34 — Unified control loop.
+        # The kernel is Maya's single central controller. Exactly ONE execution
+        # backend (Maya's own pipeline) may be registered; models, agents,
+        # tools and workflows are capabilities this loop uses — never controllers.
+        self._executor: Optional[Callable] = None
+        self.unified_loop_enabled: bool = False
+
         self._init_db()
         self._load_state()
 
@@ -1187,6 +1194,140 @@ Return ONLY the JSON array.
         }
 
     # =========================================================================
+    # Phase 34 — Unified Cognitive Loop (single central control path)
+    # =========================================================================
+
+    def register_executor(self, fn: Callable) -> None:
+        """Register the ONE execution backend (Maya's own pipeline).
+
+        The backend contract: fn(description, cognitive_context) -> dict with
+        at least {"success": bool, "result": str}.  Everything the backend
+        uses internally (LLM providers, workflow engine, agents, tools) is a
+        capability of Maya — none of them may register themselves as a second
+        controller.  Calling this again REPLACES the previous backend.
+        """
+        self._executor = fn
+
+    @property
+    def has_executor(self) -> bool:
+        return self._executor is not None
+
+    def _gather_cognitive_context(self, description: str) -> Dict:
+        """Collect what Maya already knows relevant to this goal."""
+        wm_hits = [
+            {"content": s.content, "slot_type": s.slot_type, "attention": s.attention}
+            for s in self.wm_search(description, limit=5)
+        ]
+        tokens = set(description.lower().split())
+        relevant_beliefs = [
+            {"proposition": b.proposition, "confidence": b.confidence,
+             "domain": b.domain}
+            for b in self.query_beliefs(min_confidence=0.4)
+            if len(tokens & set(b.proposition.lower().split())) >= 1
+        ][:10]
+        return {
+            "working_memory": wm_hits,
+            "beliefs": relevant_beliefs,
+            "overall_confidence": self.assess_confidence(),
+        }
+
+    def process_goal(self, description: str,
+                     priority: float = GoalPriority.NORMAL.value,
+                     metadata: Dict = None,
+                     execute: bool = True) -> Dict:
+        """THE single control entry for goals.
+
+        Creates a persistent kernel goal, grounds it in memory and beliefs,
+        then either delegates execution to the registered backend (Maya's
+        pipeline — which keeps its own risk/approval gates) or, when execution
+        is not requested/backend missing, returns a propose-only plan.
+        """
+        description = (description or "").strip()
+        if not description:
+            return {"success": False, "error": "empty goal description"}
+
+        goal = self.create_goal(description, priority=priority)
+        if metadata:
+            self.update_goal(goal.id, metadata=dict(metadata))
+        self.wm_add(f"GOAL: {description}", slot_type="goal")
+        ctx = self._gather_cognitive_context(description)
+        self._audit("unified_goal_start", f"[{goal.id}] {description[:120]}")
+
+        result: Dict = {
+            "goal_id": goal.id,
+            "description": description,
+            "cognitive_context": ctx,
+        }
+
+        executor = self._executor
+        if not execute or executor is None:
+            # Propose-only: build a plan, do NOT act on the world.
+            plan = self.create_plan(goal.id)
+            self.update_goal(goal.id, status=GoalStatus.SUSPENDED.value)
+            result.update({
+                "mode": "propose_only" if executor is not None else "no_executor",
+                "success": True,
+                "plan_id": plan.id,
+                "plan_steps": plan.steps,
+                "executed": False,
+            })
+            self._audit("unified_goal_proposed", f"[{goal.id}] plan {plan.id}")
+            return result
+
+        start_time = time.time()
+        try:
+            outcome = executor(description, ctx)
+        except Exception as e:
+            outcome = {"success": False, "result": f"executor exception: {e}"}
+        duration = time.time() - start_time
+
+        success = bool(outcome.get("success"))
+        if success:
+            self.update_goal(goal.id, status=GoalStatus.COMPLETED.value,
+                             progress=1.0, completed_at=time.time())
+        else:
+            self.update_goal(goal.id, status=GoalStatus.BLOCKED.value)
+
+        # Learn: record outcome as a performance data point and a belief.
+        self.performance_history.append({
+            "goal_id": goal.id, "success": success,
+            "duration": duration, "timestamp": time.time(),
+        })
+        proposition = f"Goal pattern '{description[:80]}' -> {'success' if success else 'failure'}"
+        self.add_belief(
+            proposition,
+            confidence=0.85 if success else 0.3,
+            evidence=[f"goal:{goal.id}"],
+            source="observation",
+        )
+        self.wm_add(
+            f"OUTCOME({'ok' if success else 'fail'}): {description[:100]}",
+            slot_type="observation",
+        )
+        self._audit(
+            "unified_goal_done",
+            f"[{goal.id}] success={success} duration={duration:.1f}s",
+        )
+
+        result.update({
+            "executed": True,
+            "success": success,
+            "outcome": {
+                k: v for k, v in outcome.items()
+                if k in ("success", "result", "error", "task_id", "quality_score")
+            },
+            "duration": duration,
+        })
+        return result
+
+    def controller_status(self) -> Dict:
+        """Expose unified-loop wiring state for /status routes."""
+        return {
+            "unified_loop_enabled": self.unified_loop_enabled,
+            "has_executor": self._executor is not None,
+        }
+
+    # =========================================================================
     # Status & Control
     # =========================================================================
 
@@ -1210,6 +1351,7 @@ Return ONLY the JSON array.
                     "active": len([p for p in self.plans.values() if p.status == "active"]),
                 },
                 "active_plan_id": self.active_plan_id,
+                "controller": self.controller_status(),
                 "metacognitive": self.get_metacognitive_state(),
                 "threads": {name: t.is_alive() for name, t in self._threads.items()},
                 "last_checkpoint": self.last_checkpoint,

@@ -261,6 +261,13 @@ class Maya:
             # Start cognitive kernel background threads
             self.cognitive_kernel.start()
 
+            # Phase 34: register this Maya instance's pipeline as the ONE
+            # execution backend of the unified control loop.
+            self.cognitive_kernel.register_executor(self._unified_executor)
+            self.cognitive_kernel.unified_loop_enabled = (
+                os.getenv("MAYA_UNIFIED_LOOP", "false").lower() == "true"
+            )
+
             # Start agent society
             self.agent_society.start()
 
@@ -417,6 +424,69 @@ class Maya:
 
     def run(self, goal: str, max_retries: int = 3, task_id: str = None,
             progress_callback=None, scope: str = "", stream_emitter=None) -> dict:
+        """
+        Single control entry for goals (Phase 34).
+
+        When MAYA_UNIFIED_LOOP=true and the cognitive kernel is available,
+        every goal goes through the kernel's unified cognitive loop
+        (persistent goal -> memory/belief grounding -> execution -> learning).
+        The kernel delegates actual work back to this Maya instance's
+        pipeline — the workflow engine, agents and tools are capabilities,
+        never controllers.
+
+        Otherwise falls through to the direct pipeline (legacy behavior).
+        """
+        kernel = getattr(self, "cognitive_kernel", None)
+        if (
+            os.getenv("MAYA_UNIFIED_LOOP", "false").lower() == "true"
+            and kernel is not None
+            and hasattr(kernel, "process_goal")
+            and getattr(kernel, "has_executor", False)
+        ):
+            log.info(f"Unified loop: goal via kernel | {goal[:80]}")
+            return self._kernel_process(goal)
+        return self._run_pipeline(
+            goal, max_retries=max_retries, task_id=task_id,
+            progress_callback=progress_callback, scope=scope,
+            stream_emitter=stream_emitter,
+        )
+
+    def _unified_executor(self, description: str, cognitive_context: dict) -> dict:
+        """Execution backend called BY the kernel's unified loop.
+
+        This is the inverse of run(): the kernel controls, the pipeline
+        executes. Risk checking, approval gates and memory all stay inside
+        the pipeline, so every safety property of a direct run() is preserved.
+        """
+        result = self._run_pipeline(description)
+        return {
+            "success": bool(result.get("success")),
+            "result": str(result.get("result", "")),
+            "task_id": result.get("task_id"),
+            "quality_score": result.get("quality_score"),
+        }
+
+    def _kernel_process(self, goal: str) -> dict:
+        """Run a goal through the kernel's unified loop."""
+        try:
+            kr = self.cognitive_kernel.process_goal(goal, execute=True)
+        except Exception as e:
+            log.warning(f"Unified loop failed, falling back to pipeline: {e}")
+            return self._run_pipeline(goal)
+
+        outcome = kr.get("outcome", {})
+        result = {
+            "success": bool(kr.get("success")),
+            "result": str(outcome.get("result", "")),
+            "goal_id": kr.get("goal_id"),
+            "unified_loop": True,
+        }
+        if not kr.get("success") and outcome.get("error"):
+            result["error"] = outcome["error"]
+        return result
+
+    def _run_pipeline(self, goal: str, max_retries: int = 3, task_id: str = None,
+                      progress_callback=None, scope: str = "", stream_emitter=None) -> dict:
         """
         Goal achieve করার জন্য full autonomous workflow run করে.
         `progress_callback`, if given, is called live as planning/execution/
