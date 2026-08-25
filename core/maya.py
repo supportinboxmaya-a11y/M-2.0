@@ -73,6 +73,13 @@ class Maya:
         self.router = LLMRouter()
         self.memory = MemoryManager()
         self.cost = CostTracker(budget_usd=budget_usd or float(os.environ.get("BUDGET_USD", "1.0")))
+        # Production budget enforcement: every provider reports token usage
+        # through this listener so is_over_budget() reflects real usage.
+        try:
+            from llm.providers.base import set_usage_listener
+            set_usage_listener(self.cost.track)
+        except Exception:
+            pass
 
         # Tools
         self.tool_manager = ToolManager()

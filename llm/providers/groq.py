@@ -44,6 +44,7 @@ class GroqProvider(BaseProvider):
             max_tokens=max_tokens,
             temperature=0.7,
         )
+        self._report_usage(use_model, response)
         return response.choices[0].message.content
 
     def _stream_chat_impl(self, messages: List[Dict], model: Optional[str], max_tokens: int) -> Generator[str, None, None]:

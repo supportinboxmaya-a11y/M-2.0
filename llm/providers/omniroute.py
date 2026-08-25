@@ -40,6 +40,8 @@ class OmniRouteProvider(BaseProvider):
         )
         response.raise_for_status()
         data = response.json()
+        _u = data.get("usage") or {}
+        self._report_usage_json(use_model if "use_model" in dir() else data.get("model", ""), _u)
         return data["choices"][0]["message"]["content"]
 
     def _stream_chat_impl(self, messages: List[Dict], model: Optional[str], max_tokens: int) -> Generator[str, None, None]:

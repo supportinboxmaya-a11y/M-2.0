@@ -16,7 +16,7 @@ class NvidiaNimProvider(BaseProvider):
             api_key_env="NVIDIA_NIM_KEY",
             default_model=os.environ.get("NVIDIA_NIM_MODEL", "meta/llama-3.3-70b-instruct"),
             retry_config=RetryConfig(max_retries=3, base_delay=1.0, max_delay=30.0),
-            timeout=60.0,
+            timeout=float(os.environ.get("NVIDIA_NIM_TIMEOUT", "180")),
         )
 
     def _initialize_client(self):
@@ -42,6 +42,8 @@ class NvidiaNimProvider(BaseProvider):
         )
         response.raise_for_status()
         data = response.json()
+        _u = data.get("usage") or {}
+        self._report_usage_json(use_model if "use_model" in dir() else data.get("model", ""), _u)
         return data["choices"][0]["message"]["content"]
 
     def _stream_chat_impl(self, messages: List[Dict], model: Optional[str], max_tokens: int) -> Generator[str, None, None]:

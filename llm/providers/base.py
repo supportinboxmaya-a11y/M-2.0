@@ -54,6 +54,41 @@ class BaseProvider(ABC):
         self.client = None
         self._initialize_client()
 
+    # ── usage reporting (production budget enforcement) ──────────────
+    # A single listener (Maya's CostTracker) is registered at boot; every
+    # provider reports token usage through report_usage() after each call.
+
+    def _report_usage(self, model: str, response) -> None:
+        """Extract usage from an OpenAI-compatible response, if present."""
+        try:
+            usage = getattr(response, "usage", None)
+            if usage is None:
+                return
+            from llm.providers.base import report_usage
+            report_usage(
+                self.api_key_env or self.__class__.__name__,
+                model,
+                getattr(usage, "prompt_tokens", 0) or 0,
+                getattr(usage, "completion_tokens", 0) or 0,
+            )
+        except Exception:
+            pass
+
+    def _report_usage_json(self, model: str, usage: dict) -> None:
+        """Report usage from a raw JSON usage dict (httpx-based providers)."""
+        if not isinstance(usage, dict):
+            return
+        try:
+            from llm.providers.base import report_usage
+            report_usage(
+                self.api_key_env or self.__class__.__name__,
+                model,
+                usage.get("prompt_tokens", 0) or 0,
+                usage.get("completion_tokens", 0) or 0,
+            )
+        except Exception:
+            pass
+
     def _initialize_client(self):
         """Initialize the client. Override in subclasses."""
         pass
@@ -157,3 +192,22 @@ class BaseProvider(ABC):
 
     def _get_model(self, model: Optional[str]) -> str:
         return model or self.default_model
+
+# ── module-level usage listener ──────────────────────────────────────────
+_usage_listener = None
+
+
+def set_usage_listener(fn) -> None:
+    """Register the single usage listener (Maya's CostTracker)."""
+    global _usage_listener
+    _usage_listener = fn
+
+
+def report_usage(provider: str, model: str, input_tokens: int,
+                 output_tokens: int) -> None:
+    if _usage_listener is None:
+        return
+    try:
+        _usage_listener(provider, model, input_tokens, output_tokens)
+    except Exception:
+        pass

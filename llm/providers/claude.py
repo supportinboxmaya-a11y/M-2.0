@@ -42,6 +42,11 @@ class ClaudeProvider(BaseProvider):
             system=system,
             messages=filtered,
         )
+        try:
+            from llm.providers.base import report_usage as _ru
+            _ru('claude', getattr(response, 'model', ''), getattr(getattr(response, 'usage', None), 'input_tokens', 0) or 0, getattr(getattr(response, 'usage', None), 'output_tokens', 0) or 0)
+        except Exception:
+            pass
         return response.content[0].text
 
     def _stream_chat_impl(self, messages: List[Dict], model: Optional[str], max_tokens: int) -> Generator[str, None, None]:
