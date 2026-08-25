@@ -1250,12 +1250,51 @@ Return ONLY the JSON array.
         if metadata:
             self.update_goal(goal.id, metadata=dict(metadata))
         self.wm_add(f"GOAL: {description}", slot_type="goal")
-        ctx = self._gather_cognitive_context(description)
-        self._audit("unified_goal_start", f"[{goal.id}] {description[:120]}")
+        return self._drive_goal(goal, execute=execute, resumed=False)
+
+    # ── Phase 35: persistent goal pursuit ────────────────────────────
+
+    def get_incomplete_goals(self) -> List[Goal]:
+        """Goals that survived a restart but were never finished."""
+        with self._lock:
+            incomplete = [
+                g for g in self.goals.values()
+                if g.status in (GoalStatus.ACTIVE, GoalStatus.SUSPENDED,
+                                GoalStatus.BLOCKED)
+                and g.progress < 1.0
+            ]
+        incomplete.sort(key=lambda g: g.priority, reverse=True)
+        return incomplete
+
+    def resume_goal(self, goal_id: str, execute: bool = False) -> Dict:
+        """Continue an incomplete goal through the unified loop.
+
+        Propose-only by default even for previously-executing goals —
+        resumption that acts on the world is always explicit.
+        """
+        goal = self.get_goal(goal_id)
+        if not goal:
+            return {"success": False, "error": f"goal not found: {goal_id}"}
+        if goal.status in (GoalStatus.COMPLETED, GoalStatus.ABANDONED):
+            return {"success": False,
+                    "error": f"goal already {goal.status.value}: {goal_id}"}
+        self.wm_add(f"RESUME: {goal.description[:100]}", slot_type="goal")
+        result = self._drive_goal(goal, execute=execute, resumed=True)
+        result["resumed"] = True
+        return result
+
+    def _drive_goal(self, goal: Goal, execute: bool, resumed: bool) -> Dict:
+        """Run one goal through the unified loop (shared by new + resumed)."""
+        ctx = self._gather_cognitive_context(goal.description)
+        self._audit(
+            "unified_goal_start",
+            f"[{goal.id}] {'resume' if resumed else 'new'} "
+            f"{goal.description[:120]}",
+        )
 
         result: Dict = {
             "goal_id": goal.id,
-            "description": description,
+            "description": goal.description,
             "cognitive_context": ctx,
         }
 
@@ -1276,7 +1315,7 @@ Return ONLY the JSON array.
 
         start_time = time.time()
         try:
-            outcome = executor(description, ctx)
+            outcome = executor(goal.description, ctx)
         except Exception as e:
             outcome = {"success": False, "result": f"executor exception: {e}"}
         duration = time.time() - start_time
@@ -1293,7 +1332,7 @@ Return ONLY the JSON array.
             "goal_id": goal.id, "success": success,
             "duration": duration, "timestamp": time.time(),
         })
-        proposition = f"Goal pattern '{description[:80]}' -> {'success' if success else 'failure'}"
+        proposition = f"Goal pattern '{goal.description[:80]}' -> {'success' if success else 'failure'}"
         self.add_belief(
             proposition,
             confidence=0.85 if success else 0.3,
@@ -1301,7 +1340,7 @@ Return ONLY the JSON array.
             source="observation",
         )
         self.wm_add(
-            f"OUTCOME({'ok' if success else 'fail'}): {description[:100]}",
+            f"OUTCOME({'ok' if success else 'fail'}): {goal.description[:100]}",
             slot_type="observation",
         )
         self._audit(

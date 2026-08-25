@@ -4519,6 +4519,37 @@ try:
         return _p18_kernel.wm_capacity()
 
     # Goals
+    # ── Phase 35: persistent goal pursuit ────────────────────────────
+    @app.get("/api/v1/cognitive/kernel/goals/incomplete")
+    async def _p35_incomplete_goals(user=Depends(get_current_user)):
+        goals = _p18_kernel.get_incomplete_goals()
+        return {"goals": [{
+            "id": g.id, "description": g.description, "status": g.status.value,
+            "priority": g.priority, "progress": g.progress,
+            "created_at": g.created_at, "updated_at": g.updated_at,
+            "metadata": g.metadata,
+        } for g in goals]}
+
+    @app.post("/api/v1/cognitive/kernel/goals/{goal_id}/resume")
+    async def _p35_resume_goal(goal_id: str, body: dict, user=Depends(get_current_user)):
+        """
+        Continue an incomplete goal through the unified loop.
+
+        Body: {execute?: bool} — default FALSE (propose-only: fresh plan +
+        memory grounding, no world side effects). execute=true requires
+        RBAC execute and runs Maya's gated pipeline.
+        """
+        _p18_require_enabled()
+        execute = bool(body.get("execute", False))
+        if execute:
+            _p18_check_execute(user)
+        result = await asyncio.to_thread(
+            _p18_kernel.resume_goal, goal_id, execute,
+        )
+        if not result.get("success") and "not found" in result.get("error", ""):
+            raise HTTPException(status_code=404, detail=result["error"])
+        return result
+
     @app.post("/api/v1/cognitive/goals")
     async def _p18_create_goal(body: dict, user=Depends(get_current_user)):
         _p18_check_execute(user)

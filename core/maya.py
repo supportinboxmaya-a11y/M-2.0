@@ -268,6 +268,24 @@ class Maya:
                 os.getenv("MAYA_UNIFIED_LOOP", "false").lower() == "true"
             )
 
+            # Phase 35: surface goals left incomplete by a previous run.
+            # Log/audit ONLY — resumption is explicit via the resume API
+            # (propose-only default), never auto-executed at boot.
+            try:
+                _incomplete = self.cognitive_kernel.get_incomplete_goals()
+                if _incomplete:
+                    log.info(
+                        f"{len(_incomplete)} incomplete goal(s) from previous "
+                        f"runs awaiting explicit resume"
+                    )
+                    self.cognitive_kernel._audit(
+                        "incomplete_goals_on_boot",
+                        "; ".join(g.description[:60] for g in _incomplete[:5]),
+                    )
+                    print(f"  Incomplete goals    : {len(_incomplete)} (resume via /cognitive/kernel/goals)")
+            except Exception as e:
+                log.debug(f"incomplete-goal scan skipped: {e}")
+
             # Start agent society
             self.agent_society.start()
 
