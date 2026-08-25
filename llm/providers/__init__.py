@@ -48,17 +48,58 @@ from typing import Dict, Type
 
 from config.settings import STORAGE_DIR
 
-# Import all providers directly - they handle missing SDKs gracefully
-from llm.providers.omniroute import OmniRouteProvider
-from llm.providers.groq import GroqProvider
-from llm.providers.cerebras import CerebrasProvider
-from llm.providers.openrouter import OpenRouterProvider
-from llm.providers.gemini import GeminiProvider
-from llm.providers.openai import OpenAIProvider
-from llm.providers.claude import ClaudeProvider as AnthropicProvider
-from llm.providers.deepseek import DeepSeekProvider
-from llm.providers.nvidia_nim import NvidiaNimProvider
-from llm.providers.local_llm import LocalLLMProvider
+
+class _UnavailableProvider:
+    """Stand-in for a provider whose SDK is not installed on this host.
+
+    Model-agnostic resilience: a missing package must never crash the
+    import chain (providers -> router -> Maya -> API). The stub reports
+    is_available()=False and raises only if actually invoked.
+    """
+
+    def __init__(self, provider_name: str, sdk_package: str):
+        self._name = provider_name
+        self._sdk = sdk_package
+
+    def is_available(self) -> bool:
+        return False
+
+    def chat(self, *args, **kwargs) -> str:
+        raise Exception(
+            f"{self._name} is not available: the '{self._sdk}' package is "
+            f"not installed.  Run: pip install {self._sdk}"
+        )
+
+    def stream_chat(self, *args, **kwargs):
+        raise Exception(
+            f"{self._name} is not available: the '{self._sdk}' package is "
+            f"not installed.  Run: pip install {self._sdk}"
+        )
+
+
+def _load(provider_name: str, module: str, cls: str, sdk: str) -> Type:
+    try:
+        mod = __import__(f"llm.providers.{module}", fromlist=[cls])
+        return getattr(mod, cls)
+    except ImportError as e:
+        print(f"WARNING: {provider_name} SDK ({sdk}) not installed – "
+              f"{provider_name}Provider will use a disabled stub ({e})")
+        return type(f"{cls} (stub)", (_UnavailableProvider,),
+                    {"__init__": lambda self, _n=provider_name, _s=sdk:
+                     _UnavailableProvider.__init__(self, _n, _s)})
+
+
+# Resilient per-provider loading — one missing SDK never takes Maya down.
+OmniRouteProvider = _load("OmniRoute", "omniroute", "OmniRouteProvider", "httpx")
+GroqProvider = _load("Groq", "groq", "GroqProvider", "openai")
+CerebrasProvider = _load("Cerebras", "cerebras", "CerebrasProvider", "openai")
+OpenRouterProvider = _load("OpenRouter", "openrouter", "OpenRouterProvider", "openai")
+GeminiProvider = _load("Gemini", "gemini", "GeminiProvider", "google-genai")
+OpenAIProvider = _load("OpenAI", "openai", "OpenAIProvider", "openai")
+AnthropicProvider = _load("Anthropic", "claude", "ClaudeProvider", "anthropic")
+DeepSeekProvider = _load("DeepSeek", "deepseek", "DeepSeekProvider", "openai")
+NvidiaNimProvider = _load("NVIDIA NIM", "nvidia_nim", "NvidiaNimProvider", "openai")
+LocalLLMProvider = _load("Local LLM", "local_llm", "LocalLLMProvider", "requests")
 
 
 # Per-provider metadata (label + env-var key)

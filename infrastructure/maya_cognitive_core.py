@@ -1193,96 +1193,54 @@ class MayaCognitiveCore:
         }
     
     def _phase_act(self, decide_result: Dict) -> Dict[str, Any]:
-        """ACT: Execute the decided action using tools, agents, or models."""
+        """ACT: Execute the decided action.
+
+        ARCHITECTURE INVARIANT (Phase 34+): the CognitiveKernel is Maya's
+        ONLY control loop. This method MUST NOT execute anything itself —
+        no direct capability code-run, no direct tool calls, no treating
+        model output as execution. All world-facing action is delegated
+        through the kernel's single registered backend (Maya's own gated
+        pipeline) via process_goal(). If no backend is registered, this
+        phase is propose-only by construction.
+        """
         if decide_result.get("action") != "execute_step":
             return {"executed": False, "reason": decide_result.get("reason"), "timestamp": time.time()}
-        
-        step = decide_result.get("step", {})
+
+        step = decide_result.get("step", {}) or {}
         goal_id = decide_result.get("goal_id")
-        plan_id = decide_result.get("plan_id")
-        
-        # Determine how to execute
-        required_capability = step.get("required_capability", "")
-        action = step.get("action", {})
-        
-        result = {"executed": False, "output": "", "success": False, "error": ""}
-        
-        # Try capability registry first
-        if required_capability and self.capability_registry:
-            cap = self.capability_registry.get(required_capability)
-            if cap and cap.metadata.verification_status == CapabilityStatus.VERIFIED:
-                try:
-                    start = time.time()
-                    # Execute the capability
-                    namespace = {}
-                    exec(cap.implementation, namespace)
-                    func = namespace.get(cap.entry_point)
-                    if func:
-                        # Prepare input from action parameters
-                        input_data = action.get("parameters", {})
-                        output = func(**input_data) if isinstance(input_data, dict) else func(input_data)
-                        
-                        latency = (time.time() - start) * 1000
-                        self.capability_registry.record_usage(cap.id, True, latency)
-                        
-                        result = {"executed": True, "output": str(output), "success": True, "latency_ms": latency}
-                    else:
-                        result = {"executed": False, "error": "Entry point not found"}
-                except Exception as e:
-                    latency = (time.time() - start) * 1000
-                    self.capability_registry.record_usage(cap.id, False, latency, str(e))
-                    result = {"executed": False, "error": str(e)}
-        
-        # Fallback to tool registry
-        if not result.get("success") and self.tool_registry:
-            # Find matching tool
-            tool_name = action.get("tool") or step.get("tool")
-            if tool_name:
-                tool = self.tool_registry.get(tool_name)
-                if tool:
-                    try:
-                        start = time.time()
-                        output = tool(**action.get("parameters", {}))
-                        latency = (time.time() - start) * 1000
-                        result = {"executed": True, "output": str(output), "success": True, "latency_ms": latency}
-                    except Exception as e:
-                        result = {"executed": False, "error": str(e)}
-        
-        # Fallback to model for reasoning/planning tasks
-        if not result.get("success") and self.llm_fn:
-            prompt = f"""
-            Goal: {self.cognitive_kernel.get_goal(goal_id).description if goal_id else 'unknown'}
-            Step: {step.get('description', 'unknown')}
-            Action: {json.dumps(action)}
-            
-            Execute this step or provide the reasoning/code needed.
-            Return JSON with: {{"output": "...", "success": true/false}}
-            """
-            model_result = self.model_interface.invoke(prompt, task_type="reasoning")
-            self._log_model_invocation(self.self_state.active_model_id or "unknown", prompt, model_result)
-            
-            if model_result["success"]:
-                result = {"executed": True, "output": model_result["output"], "success": True, "via_model": True}
-        
-        # Update cognitive kernel plan
-        if self.cognitive_kernel.active_plan_id:
-            step_index = self.cognitive_kernel.plans[self.cognitive_kernel.active_plan_id].steps.index(
-                next((s for s in self.cognitive_kernel.plans[self.cognitive_kernel.active_plan_id].steps 
-                      if s.get("id") == step.get("id") or s.get("id") == getattr(step, 'id', None)), {})
-            )
-            self.cognitive_kernel.execute_plan_step(
-                self.cognitive_kernel.active_plan_id,
-                step_index,
-                lambda s: result
-            )
-        
+
+        kernel = self.cognitive_kernel
+        if kernel is None or not getattr(kernel, "has_executor", False):
+            self._audit("act_delegated_none",
+                        "no controller executor registered — step not executed")
+            return {"executed": False,
+                    "reason": "no_controller_executor",
+                    "step_description": step.get("description", "unknown")
+                    if isinstance(step, dict) else str(step),
+                    "timestamp": time.time()}
+
+        # Delegate: the kernel grounds + drives the goal through Maya's
+        # pipeline (risk check, approval gates, verification all inside).
+        step_desc = (step.get("description") if isinstance(step, dict)
+                     else None) or json.dumps(step.get("action", {}))[:200]
+        parent_desc = ""
+        if goal_id:
+            g = kernel.get_goal(goal_id)
+            parent_desc = g.description[:120] if g else ""
+        full_desc = (f"{parent_desc} :: {step_desc}"
+                     if parent_desc else step_desc)
+
+        kr = kernel.process_goal(full_desc, execute=True)
+
         return {
-            **result,
+            "executed": bool(kr.get("executed")),
+            "success": bool(kr.get("success")),
+            "output": str((kr.get("outcome") or {}).get("result", "")),
+            "error": str((kr.get("outcome") or {}).get("error", "")),
+            "delegated_goal_id": kr.get("goal_id"),
             "goal_id": goal_id,
-            "plan_id": plan_id,
-            "step_id": step.get("id") if isinstance(step, dict) else getattr(step, 'id', None),
-            "step_description": step.get("description", "unknown") if isinstance(step, dict) else getattr(step, 'description', 'unknown'),
-            "timestamp": time.time()
+            "via_controller": True,
+            "timestamp": time.time(),
         }
     
     def _phase_observe_result(self, act_result: Dict) -> Dict[str, Any]:
@@ -1481,29 +1439,28 @@ class MayaCognitiveCore:
     # HIGH-LEVEL INTERFACE
     # =========================================================================
     
-    def run_mission(self, mission_description: str, mission_type: str = "general", 
+    def run_mission(self, mission_description: str, mission_type: str = "general",
                     self_gen: bool = True) -> Dict[str, Any]:
-        """Run a complete mission through the cognitive loop."""
-        # Create mission
-        mission = self.cognitive_kernel.create_mission(
-            name=mission_description[:100],
-            description=mission_description,
-            self_gen=self_gen,
-            mission_type=mission_type,
+        """Register a mission as a persistent kernel goal.
+
+        Does NOT start any loop and does NOT execute anything — the goal
+        enters the single controller (CognitiveKernel) where it can be
+        proposed or explicitly executed like any other goal.
+        """
+        if not self.cognitive_kernel:
+            self.initialize()
+        goal = self.cognitive_kernel.create_goal(
+            mission_description,
+            metadata={"kind": "mission", "mission_type": mission_type,
+                      "self_gen": bool(self_gen)},
         )
-        
-        # Generate objectives
-        objectives = self.cognitive_kernel.generate_objectives(mission["id"])
-        
-        # Start cognitive loop if not running
-        if not self._running:
-            self.start_cognitive_loop()
-        
+        self._audit("mission_registered", f"[{goal.id}] {mission_description[:120]}")
         return {
-            "mission_id": mission["id"],
-            "objectives_created": len(objectives),
-            "objectives": objectives,
-            "status": "started",
+            "goal_id": goal.id,
+            "description": mission_description,
+            "status": "registered",
+            "note": ("delegated to the CognitiveKernel; execution requires "
+                     "an explicit process_goal/resume call"),
         }
     
     def execute_single_goal(self, goal_description: str, max_steps: int = 10) -> Dict[str, Any]:

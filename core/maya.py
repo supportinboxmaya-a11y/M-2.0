@@ -485,21 +485,39 @@ class Maya:
             and getattr(kernel, "has_executor", False)
         ):
             log.info(f"Unified loop: goal via kernel | {goal[:80]}")
-            return self._kernel_process(goal)
+            options = {
+                "max_retries": max_retries,
+                "task_id": task_id,
+                "progress_callback": progress_callback,
+                "scope": scope,
+                "stream_emitter": stream_emitter,
+            }
+            options = {k: v for k, v in options.items() if v is not None}
+            return self._kernel_process(goal, executor_options=options)
         return self._run_pipeline(
             goal, max_retries=max_retries, task_id=task_id,
             progress_callback=progress_callback, scope=scope,
             stream_emitter=stream_emitter,
         )
 
-    def _unified_executor(self, description: str, cognitive_context: dict) -> dict:
+    def _unified_executor(self, description: str, cognitive_context: dict,
+                          **options) -> dict:
         """Execution backend called BY the kernel's unified loop.
 
         This is the inverse of run(): the kernel controls, the pipeline
         executes. Risk checking, approval gates and memory all stay inside
         the pipeline, so every safety property of a direct run() is preserved.
+        *options* carries per-call context (stream_emitter, progress_callback,
+        scope, task_id, max_retries) forwarded from the original caller.
         """
-        result = self._run_pipeline(description)
+        result = self._run_pipeline(
+            description,
+            max_retries=options.get("max_retries", 3),
+            task_id=options.get("task_id"),
+            progress_callback=options.get("progress_callback"),
+            scope=options.get("scope", ""),
+            stream_emitter=options.get("stream_emitter"),
+        )
         return {
             "success": bool(result.get("success")),
             "result": str(result.get("result", "")),
@@ -507,10 +525,12 @@ class Maya:
             "quality_score": result.get("quality_score"),
         }
 
-    def _kernel_process(self, goal: str) -> dict:
+    def _kernel_process(self, goal: str,
+                        executor_options: dict = None) -> dict:
         """Run a goal through the kernel's unified loop."""
         try:
-            kr = self.cognitive_kernel.process_goal(goal, execute=True)
+            kr = self.cognitive_kernel.process_goal(
+                goal, execute=True, executor_options=executor_options)
         except Exception as e:
             log.warning(f"Unified loop failed, falling back to pipeline: {e}")
             return self._run_pipeline(goal)

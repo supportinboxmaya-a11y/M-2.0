@@ -1264,13 +1264,17 @@ Return ONLY the JSON array.
     def process_goal(self, description: str,
                      priority: float = GoalPriority.NORMAL.value,
                      metadata: Dict = None,
-                     execute: bool = True) -> Dict:
+                     execute: bool = True,
+                     executor_options: Dict = None) -> Dict:
         """THE single control entry for goals.
 
         Creates a persistent kernel goal, grounds it in memory and beliefs,
         then either delegates execution to the registered backend (Maya's
         pipeline — which keeps its own risk/approval gates) or, when execution
         is not requested/backend missing, returns a propose-only plan.
+        *executor_options* are forwarded verbatim to the backend (e.g.
+        stream_emitter / progress_callback / scope) so features like
+        streaming survive the unified path.
         """
         description = (description or "").strip()
         if not description:
@@ -1279,8 +1283,13 @@ Return ONLY the JSON array.
         goal = self.create_goal(description, priority=priority)
         if metadata:
             self.update_goal(goal.id, metadata=dict(metadata))
+        if executor_options:
+            # keep a JSON-safe trace of execution context on the goal
+            safe = {k: str(type(v).__name__) for k, v in executor_options.items()}
+            self.update_goal(goal.id, metadata={"executor_options": safe})
         self.wm_add(f"GOAL: {description}", slot_type="goal")
-        return self._drive_goal(goal, execute=execute, resumed=False)
+        return self._drive_goal(goal, execute=execute, resumed=False,
+                                executor_options=executor_options)
 
     # ── Phase 35: persistent goal pursuit ────────────────────────────
 
@@ -1313,7 +1322,8 @@ Return ONLY the JSON array.
         result["resumed"] = True
         return result
 
-    def _drive_goal(self, goal: Goal, execute: bool, resumed: bool) -> Dict:
+    def _drive_goal(self, goal: Goal, execute: bool, resumed: bool,
+                    executor_options: Dict = None) -> Dict:
         """Run one goal through the unified loop (shared by new + resumed)."""
         ctx = self._gather_cognitive_context(goal.description)
         self._audit(
@@ -1345,7 +1355,9 @@ Return ONLY the JSON array.
 
         start_time = time.time()
         try:
-            outcome = executor(goal.description, ctx)
+            opts = dict(executor_options or {})
+            outcome = (executor(goal.description, ctx, **opts)
+                       if opts else executor(goal.description, ctx))
         except Exception as e:
             outcome = {"success": False, "result": f"executor exception: {e}"}
         duration = time.time() - start_time
