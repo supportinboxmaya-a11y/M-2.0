@@ -433,7 +433,7 @@ class StreamManager:
         await self._persist_session(session)
         await self.emit_event(StreamEventType.TASK_RESUMED, task_id, session.session_id, {})
         return True
-    
+     
     def get_active_sessions(self) -> List[TaskSession]:
         return list(self._sessions.values())
     
@@ -443,6 +443,42 @@ class StreamManager:
             return self._sessions.get(task_id)
         return None
 
+    async def get_events(self, task_id: str, session_id: str, 
+                         last_event_id: Optional[str] = None) -> List[StreamEvent]:
+        """Get events for a session, optionally after a specific event ID."""
+        # This is a simplified implementation - in production, events would be
+        # stored in a persistent event log. For now, we return events from
+        # the session's event history if available.
+        session = await self.get_session(task_id)
+        if not session or session.session_id != session_id:
+            return []
+        
+        # Load events from session file if it exists
+        events = []
+        if self._storage_path:
+            import os
+            events_file = os.path.join(self._storage_path, f"events_{task_id}.json")
+            if os.path.exists(events_file):
+                try:
+                    with open(events_file, 'r') as f:
+                        events_data = json.load(f)
+                        for ev_data in events_data:
+                            events.append(StreamEvent(
+                                event_type=StreamEventType(ev_data["type"]),
+                                task_id=ev_data["task_id"],
+                                session_id=ev_data["session_id"],
+                                timestamp=ev_data["timestamp"],
+                                data=ev_data["data"],
+                                sequence=ev_data["sequence"],
+                            ))
+                except Exception:
+                    pass
+        
+        # Filter by last_event_id if provided
+        if last_event_id:
+            events = [e for e in events if str(e.sequence) > last_event_id]
+        
+        return events
 
 # Global stream manager instance
 _stream_manager: Optional[StreamManager] = None

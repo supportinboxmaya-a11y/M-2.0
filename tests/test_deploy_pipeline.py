@@ -54,6 +54,10 @@ def _fake_ssh(cmd: str) -> str:
         return "-- No entries --\n"
     if "rm -rf" in cmd:
         return ""
+    if "find " in cmd and "-type f" in cmd:
+        return "/tmp/deploy-test-app-123/Dockerfile\n/tmp/deploy-test-app-123/index.html\n"
+    if "ls " in cmd:
+        return "Dockerfile\nindex.html\n"
     return cmd
 
 

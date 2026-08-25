@@ -7,6 +7,7 @@ Autonomous AI Agent that plans, executes, verifies, and learns.
 import os
 import sys
 import asyncio
+from typing import List, Dict, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
@@ -44,6 +45,7 @@ from infrastructure.procedural_memory import (
     get_experience_distiller, get_experience_replay
 )
 from infrastructure.streaming import get_stream_manager, StreamEmitter
+from infrastructure.unified_checkpoint import get_checkpoint_manager, CheckpointManager
 
 log = get_logger("maya")
 
@@ -148,6 +150,9 @@ class Maya:
             memory_manager=self.memory,
             learning_engine=self.learning,
         )
+
+        # Unified Checkpoint/Recovery System
+        self._init_checkpoint_system()
 
         # Phase 18: AGI Cognitive Architecture
         self._init_cognitive_architecture()
@@ -276,6 +281,102 @@ class Maya:
         except Exception as e:
             log.warning(f"Phase 18 initialization partial: {e}")
             print(f"Warning: Phase 18 partial initialization: {e}")
+
+    def _init_checkpoint_system(self):
+        """Initialize the unified checkpoint/recovery system."""
+        try:
+            self.checkpoint_manager = get_checkpoint_manager()
+            
+            # Register core subsystems
+            self.checkpoint_manager.register_subsystem(
+                "memory",
+                self.memory,
+                self.memory.get_state if hasattr(self.memory, 'get_state') else lambda: {},
+                self.memory.restore_state if hasattr(self.memory, 'restore_state') else lambda s: None,
+                version="1.0",
+            )
+            
+            self.checkpoint_manager.register_subsystem(
+                "learning",
+                self.learning,
+                self.learning.get_state if hasattr(self.learning, 'get_state') else lambda: {},
+                self.learning.restore_state if hasattr(self.learning, 'restore_state') else lambda s: None,
+                version="1.0",
+            )
+            
+            self.checkpoint_manager.register_subsystem(
+                "task_manager",
+                self.task_manager,
+                self.task_manager.get_state if hasattr(self.task_manager, 'get_state') else lambda: {},
+                self.task_manager.restore_state if hasattr(self.task_manager, 'restore_state') else lambda s: None,
+                version="1.0",
+            )
+            
+            # Register Phase 18 subsystems if available
+            if hasattr(self, 'cognitive_kernel') and self.cognitive_kernel:
+                self.checkpoint_manager.register_subsystem(
+                    "cognitive_kernel",
+                    self.cognitive_kernel,
+                    self.cognitive_kernel.get_state,
+                    self.cognitive_kernel.restore_state,
+                    version="1.0",
+                )
+            
+            if hasattr(self, 'agent_society') and self.agent_society:
+                self.checkpoint_manager.register_subsystem(
+                    "agent_society",
+                    self.agent_society,
+                    self.agent_society.get_state,
+                    self.agent_society.restore_state,
+                    version="1.0",
+                )
+            
+            if hasattr(self, 'tool_synthesizer') and self.tool_synthesizer:
+                self.checkpoint_manager.register_subsystem(
+                    "tool_synthesizer",
+                    self.tool_synthesizer,
+                    self.tool_synthesizer.get_state if hasattr(self.tool_synthesizer, 'get_state') else lambda: {},
+                    self.tool_synthesizer.restore_state if hasattr(self.tool_synthesizer, 'restore_state') else lambda s: None,
+                    version="1.0",
+                )
+            
+            # Start auto-checkpoint thread (every 5 minutes)
+            self.checkpoint_manager.auto_checkpoint_loop(interval_seconds=300)
+            
+            log.info("Unified checkpoint system initialized")
+            
+        except Exception as e:
+            log.warning(f"Checkpoint system initialization partial: {e}")
+            print(f"Warning: Checkpoint system partial initialization: {e}")
+
+    def create_checkpoint(self, metadata: Dict = None) -> str:
+        """Create a unified checkpoint of all subsystems. Returns checkpoint ID."""
+        if hasattr(self, 'checkpoint_manager'):
+            checkpoint = self.checkpoint_manager.create_checkpoint(metadata)
+            return checkpoint.id
+        return ""
+
+    def list_checkpoints(self, status: str = None, limit: int = 20) -> List[Dict]:
+        """List available checkpoints."""
+        if hasattr(self, 'checkpoint_manager'):
+            from infrastructure.unified_checkpoint import CheckpointStatus
+            status_enum = CheckpointStatus(status) if status else None
+            checkpoints = self.checkpoint_manager.list_checkpoints(status_enum, limit)
+            return [cp.to_dict() for cp in checkpoints]
+        return []
+
+    def recover_from_checkpoint(self, checkpoint_id: str) -> bool:
+        """Recover all subsystems from a checkpoint."""
+        if hasattr(self, 'checkpoint_manager'):
+            return self.checkpoint_manager.recover_from_checkpoint(checkpoint_id)
+        return False
+
+    def get_latest_checkpoint(self) -> Optional[Dict]:
+        """Get the most recent completed checkpoint."""
+        if hasattr(self, 'checkpoint_manager'):
+            cp = self.checkpoint_manager.get_latest_checkpoint()
+            return cp.to_dict() if cp else None
+        return None
 
     # ── scoped memory helper ────────────────────────────────────────
     _scoped_memory_instance = None

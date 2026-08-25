@@ -373,6 +373,10 @@ class MetacognitiveMonitor:
         self._recovery_handlers: Dict[RecoveryAction, Callable] = {}
         self._register_default_handlers()
         
+        # Event ID counter for uniqueness
+        self._event_counter = 0
+        self._event_counter_lock = threading.Lock()
+        
         # Thresholds
         self.thresholds = {
             "low_confidence": 0.4,
@@ -495,6 +499,7 @@ class MetacognitiveMonitor:
         # Process events and trigger recoveries
         for event in events:
             self._process_event(event)
+            self._save_event(event)
         
         return events
     
@@ -519,6 +524,7 @@ class MetacognitiveMonitor:
                 {"surprise": surprise_event.__dict__}
             )
             self._process_event(meta_event)
+            self._save_event(meta_event)
             return meta_event
         
         return None
@@ -555,8 +561,11 @@ class MetacognitiveMonitor:
     def _create_event(self, event_type: MetacognitiveEventType, context: Dict,
                       confidence: float, surprise: float, uncertainty: float,
                       trigger_details: Dict) -> MetacognitiveEvent:
+        with self._event_counter_lock:
+            self._event_counter += 1
+            counter = self._event_counter
         event = MetacognitiveEvent(
-            id=uuid.uuid4().hex[:12],
+            id=f"{int(time.time()*1000000)}_{counter:06d}_{uuid.uuid4().hex[:6]}",
             event_type=event_type,
             timestamp=time.time(),
             context=context,
@@ -566,7 +575,7 @@ class MetacognitiveMonitor:
             trigger_details=trigger_details,
         )
         self._event_log.append(event)
-        self._save_event(event)
+        # Don't save here - will be saved in _process_event
         return event
     
     def _save_event(self, event: MetacognitiveEvent) -> None:
@@ -598,13 +607,11 @@ class MetacognitiveMonitor:
                     result = handler(event)
                     event.action_result = result
                     event.resolved = result.get("success", False)
-                    self._save_event(event)
                     
                     # Log recovery
                     self._log_recovery(event)
                 except Exception as e:
                     event.action_result = {"error": str(e), "success": False}
-                    self._save_event(event)
     
     def _select_recovery_action(self, event: MetacognitiveEvent) -> Optional[RecoveryAction]:
         """Select appropriate recovery action based on event."""

@@ -539,8 +539,12 @@ class CognitiveKernel:
                 if hasattr(goal, key):
                     setattr(goal, key, value)
             goal.updated_at = time.time()
-            if "status" in kwargs and isinstance(value, str):
-                goal.status = GoalStatus(value)
+            if "status" in kwargs:
+                status_val = kwargs["status"]
+                if isinstance(status_val, str):
+                    goal.status = GoalStatus(status_val)
+                elif isinstance(status_val, GoalStatus):
+                    goal.status = status_val
             self._save_goal(goal)
             if goal.status == GoalStatus.ACTIVE and goal_id not in self.goal_stack:
                 self.goal_stack.append(goal_id)

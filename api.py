@@ -4838,6 +4838,193 @@ except Exception as _p18_err:
     print(f"WARNING: Phase 18 AGI architecture not loaded: {_p18_err}")
 # ══════════════ End Phase 18 integration ══════════════
 
+# ══════════════ Maya Cognitive Core (Phase 19) ══════════════
+try:
+    from infrastructure.maya_cognitive_core import (
+        get_maya_cognitive_core as _p19_get_core,
+        MayaCognitiveCore as _P19Core,
+    )
+    from enterprise.rbac import RBAC as _P19RBAC
+
+    _p19_rbac = _P19RBAC()
+
+    def _p19_check_execute(user: dict):
+        if not supabase_store.enabled:
+            return
+        if not _p19_rbac.can(user.get("role", ""), "execute"):
+            raise HTTPException(status_code=403,
+                                detail="execute permission required (admin or developer role)")
+
+    def _p19_require_core():
+        core = _p19_get_core()
+        if not core or not core.cognitive_kernel:
+            raise HTTPException(status_code=503, detail="Maya Cognitive Core not initialized")
+
+    @app.get("/api/v1/maya/core/status")
+    async def _p19_status(user=Depends(get_current_user)):
+        """Get comprehensive status of the Maya Cognitive Core."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        return core.get_status()
+
+    @app.post("/api/v1/maya/core/initialize")
+    async def _p19_initialize(user=Depends(get_current_user)):
+        """Initialize the Maya Cognitive Core and all subsystems."""
+        _p19_check_execute(user)
+        core = _p19_get_core(
+            router=maya_instance.router if maya_instance else None,
+            tool_registry=maya_instance.tool_manager.get_registry() if maya_instance else None,
+            approval_manager=maya_instance.approval if maya_instance else None,
+            intervention_handler=maya_instance.intervention if maya_instance else None,
+            risk_checker=maya_instance.risk if maya_instance else None,
+            permission_manager=maya_instance.permissions if maya_instance else None,
+            memory_manager=maya_instance.memory if maya_instance else None,
+        )
+        success = core.initialize()
+        return {"success": success, "message": "Cognitive core initialized" if success else "Initialization failed"}
+
+    @app.post("/api/v1/maya/core/loop/start")
+    async def _p19_loop_start(interval: float = 30.0, user=Depends(get_current_user)):
+        """Start the continuous cognitive loop."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        success = core.start_cognitive_loop(interval)
+        return {"success": success, "interval": interval}
+
+    @app.post("/api/v1/maya/core/loop/pause")
+    async def _p19_loop_pause(user=Depends(get_current_user)):
+        """Pause the cognitive loop."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        success = core.pause_cognitive_loop()
+        return {"success": success}
+
+    @app.post("/api/v1/maya/core/loop/resume")
+    async def _p19_loop_resume(user=Depends(get_current_user)):
+        """Resume the cognitive loop."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        success = core.resume_cognitive_loop()
+        return {"success": success}
+
+    @app.post("/api/v1/maya/core/loop/stop")
+    async def _p19_loop_stop(user=Depends(get_current_user)):
+        """Stop the cognitive loop."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        success = core.stop_cognitive_loop()
+        return {"success": success}
+
+    @app.post("/api/v1/maya/core/mission")
+    async def _p19_run_mission(body: dict, user=Depends(get_current_user)):
+        """Run a mission through the cognitive loop."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        mission_desc = body.get("description", "")
+        mission_type = body.get("mission_type", "general")
+        self_gen = body.get("self_gen", True)
+        if not mission_desc:
+            raise HTTPException(400, "Mission description required")
+        result = core.run_mission(mission_desc, mission_type, self_gen)
+        return result
+
+    @app.post("/api/v1/maya/core/goal/execute")
+    async def _p19_execute_goal(body: dict, user=Depends(get_current_user)):
+        """Execute a single goal synchronously."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        goal_desc = body.get("goal", "")
+        max_steps = body.get("max_steps", 10)
+        if not goal_desc:
+            raise HTTPException(400, "Goal description required")
+        result = core.execute_single_goal(goal_desc, max_steps)
+        return result
+
+    @app.get("/api/v1/maya/core/identity")
+    async def _p19_identity(user=Depends(get_current_user)):
+        """Get Maya's persistent identity."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        return core.identity.to_dict()
+
+    @app.get("/api/v1/maya/core/models")
+    async def _p19_models(user=Depends(get_current_user)):
+        """Get model status and available models."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        return core.get_model_status()
+
+    @app.post("/api/v1/maya/core/models/switch")
+    async def _p19_switch_model(body: dict, user=Depends(get_current_user)):
+        """Switch the active model."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        model_id = body.get("model_id", "")
+        if not model_id:
+            raise HTTPException(400, "model_id required")
+        success = core.switch_model(model_id)
+        return {"success": success, "active_model": core.self_state.active_model_id}
+
+    @app.post("/api/v1/maya/core/models/invoke")
+    async def _p19_invoke_model(body: dict, user=Depends(get_current_user)):
+        """Directly invoke a model (Maya controls the invocation)."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        prompt = body.get("prompt", "")
+        model_id = body.get("model_id")
+        task_type = body.get("task_type", "general")
+        max_tokens = body.get("max_tokens", 4000)
+        if not prompt:
+            raise HTTPException(400, "prompt required")
+        result = core.model_interface.invoke(prompt, model_id=model_id, task_type=task_type, max_tokens=max_tokens)
+        return result
+
+    @app.post("/api/v1/maya/core/checkpoint")
+    async def _p19_checkpoint(user=Depends(get_current_user)):
+        """Create a full checkpoint of all cognitive state."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        checkpoint_id = core.checkpoint()
+        return {"checkpoint_id": checkpoint_id}
+
+    @app.post("/api/v1/maya/core/checkpoint/restore")
+    async def _p19_restore_checkpoint(body: dict, user=Depends(get_current_user)):
+        """Restore cognitive state from checkpoint."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        checkpoint_id = body.get("checkpoint_id", "")
+        if not checkpoint_id:
+            raise HTTPException(400, "checkpoint_id required")
+        success = core.restore_checkpoint(checkpoint_id)
+        return {"success": success}
+
+    @app.get("/api/v1/maya/core/checkpoints")
+    async def _p19_list_checkpoints(user=Depends(get_current_user)):
+        """List available checkpoints."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        return {"checkpoints": core.list_checkpoints()}
+
+    @app.get("/api/v1/maya/core/audit")
+    async def _p19_audit(limit: int = 50, user=Depends(get_current_user)):
+        """Get recent cognitive loop audit log."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        return {"audit": core.get_recent_audit(limit)}
+
+    @app.post("/api/v1/maya/core/shutdown")
+    async def _p19_shutdown(user=Depends(get_current_user)):
+        """Shutdown the cognitive core and persist all state."""
+        _p19_check_execute(user)
+        core = _p19_get_core()
+        core.shutdown()
+        return {"success": True, "message": "Cognitive core shutdown complete"}
+
+    print("Phase 19 active: Maya Cognitive Core (central controller)")
+except Exception as _p19_err:
+    print(f"WARNING: Phase 19 Maya Cognitive Core not loaded: {_p19_err}")
+# ══════════════ End Phase 19 integration ══════════════
+
 # ── SPA fallback: serve index.html for any non-API path ──────────
 import os as _fe_os
 import pathlib as _fe_path
