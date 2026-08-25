@@ -136,7 +136,12 @@ def test_image_gen_saves_file():
             assert f.read()[:4] == b"\x89PNG"
         os.remove(path)
     finally:
-        del sys.modules["requests"]
+        # Purge requests AND its cached submodules: deleting only "requests"
+        # leaves stale requests.* entries, so the next `import requests`
+        # rebuilds a parent missing the `exceptions` attribute.
+        for _k in [k for k in sys.modules
+                   if k == "requests" or k.startswith("requests.")]:
+            del sys.modules[_k]
     print("PASS image gen saves file")
 
 

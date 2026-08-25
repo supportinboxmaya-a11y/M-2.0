@@ -118,7 +118,12 @@ def test_webhook_channel():
         if old is not None:
             sys.modules["requests"] = old
         else:
-            del sys.modules["requests"]
+            # Purge requests AND its cached submodules: deleting only
+            # "requests" leaves stale requests.* entries, so the next
+            # import rebuilds a parent missing the `exceptions` attribute.
+            for _k in [k for k in sys.modules
+                       if k == "requests" or k.startswith("requests.")]:
+                del sys.modules[_k]
     # no url -> graceful failure
     n2 = _notifier("wh2")
     r2 = n2.notify("e", "t", channels=["webhook"])

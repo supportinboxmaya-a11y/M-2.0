@@ -116,7 +116,12 @@ def _with_fake_requests(resp_or_exc, fn):
         if old is not None:
             sys.modules["requests"] = old
         else:
-            del sys.modules["requests"]
+            # Purge requests AND its cached submodules: deleting only
+            # "requests" leaves stale requests.* entries, so the next
+            # import rebuilds a parent missing the `exceptions` attribute.
+            for k in [k for k in sys.modules
+                      if k == "requests" or k.startswith("requests.")]:
+                del sys.modules[k]
 
 
 def test_graphql_success_and_errors():
