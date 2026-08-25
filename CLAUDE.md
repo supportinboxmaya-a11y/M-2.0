@@ -55,6 +55,27 @@ for goal execution.
 **Next candidates:** flip `MAYA_UNIFIED_LOOP=true` after watching propose-only
 behavior; vector-based skill/belief retrieval (upgrade lexical scoring);
 auto-resume policy for incomplete goals (still explicit-only by design).
+
+---
+
+## ⚡ PRODUCTION PROVIDER — 2026-08-25 (later session)
+
+- **NVIDIA NIM is LIVE with a working inference key** (owner rotated it after
+  the old key turned out 403-on-inference; old default model had been retired).
+- Default model: `meta/llama-3.3-70b-instruct`; override via `NVIDIA_NIM_MODEL`.
+  Timeout tunable via `NVIDIA_NIM_TIMEOUT` (default 180s — planning calls can
+  take 1-3 min on free tier).
+- **Cost tracking now real**: every provider reports token usage through
+  `llm/providers/base.py::report_usage` -> Maya's CostTracker, so budget
+  gating works. Verified live (13 calls / 10,932 tokens captured).
+- **Known NIM behavior**: free tier throttles hard under burst load (429s,
+  read timeouts). Pipeline degrades gracefully (blocked goal, no state loss,
+  audit intact); operator-level retry with exponential backoff succeeds when
+  the window passes. RECOMMENDATION: add one Groq or OpenRouter free key as
+  router fallback so verification calls survive NIM throttle windows.
+- Live E2E harness: `validate_live.py` (real inference end-to-end).
+- SECURITY: the rotated key was pasted into chat once — rotate again after
+  testing stabilizes (Safety Rule 6).
 - `DEPLOY_PIPELINE_ENABLED=false` — pipeline routes return 503.
 - `APP_MONITOR_ENABLED=false` — Phase 30 health monitor off.
 
