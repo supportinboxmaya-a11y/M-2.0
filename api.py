@@ -4917,6 +4917,30 @@ try:
     async def _p18_procedural_stats(user=Depends(get_current_user)):
         return _p18_procedural.stats()
 
+    # ── Phase 37: skill generalization ───────────────────────────────
+    @app.get("/api/v1/cognitive/memory/procedural/search")
+    async def _p37_skill_search(q: str, limit: int = 5, user=Depends(get_current_user)):
+        """Ranked skill retrieval — same call planning itself uses."""
+        return {"results": _p18_procedural.search_skills(
+            q, limit=max(1, min(limit, 25)),
+        )}
+
+    @app.post("/api/v1/cognitive/memory/procedural/compose")
+    async def _p37_compose_skills(body: dict, user=Depends(get_current_user)):
+        """Compose existing skills into a new higher-order skill."""
+        _p18_check_execute(user)
+        skill_ids = body.get("skill_ids") or []
+        name = (body.get("name") or "").strip()
+        if not skill_ids or not name:
+            raise HTTPException(status_code=400,
+                                detail="skill_ids and name required")
+        skill = _p18_procedural.compose_skills(
+            skill_ids, name, description=body.get("description", ""),
+        )
+        if skill is None:
+            raise HTTPException(status_code=404, detail="unknown skill_id")
+        return {"skill_id": skill.id, "confidence": skill.confidence}
+
     @app.post("/api/v1/cognitive/memory/distill")
     async def _p18_distill(body: dict, user=Depends(get_current_user)):
         _p18_check_execute(user)

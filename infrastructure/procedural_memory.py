@@ -359,13 +359,89 @@ class ProceduralMemory:
         skill = self.get_skill(skill_id)
         if not skill:
             return
-        
+
         skill.usage_count += 1
         skill.success_rate = ((skill.usage_count - 1) * skill.success_rate + (1 if success else 0)) / skill.usage_count
         skill.avg_reward = ((skill.usage_count - 1) * skill.avg_reward + reward) / skill.usage_count
         skill.updated_at = time.time()
         self.store_skill(skill)
-    
+
+    # ── Phase 37: generalization — retrieval + composition ───────────
+
+    @staticmethod
+    def _relevance(query_tokens: set, text: str) -> float:
+        t = set(text.lower().split())
+        if not query_tokens or not t:
+            return 0.0
+        return len(query_tokens & t) / max(1, min(len(query_tokens), len(t)))
+
+    def search_skills(self, query: str, limit: int = 5) -> List[Dict]:
+        """Ranked skill retrieval by relevance x reliability.
+
+        This is what lets a distilled skill generalize: a skill learned
+        from past episodes surfaces for any goal lexically similar to what
+        it knows how to do.
+        """
+        query = (query or "").strip()
+        if not query:
+            return []
+        q = set(query.lower().split())
+        scored = []
+        for skill in self._skills.values():
+            if not skill.verified and skill.confidence < 0.3:
+                continue
+            texts = [skill.name, skill.description] + list(skill.trigger_conditions)
+            rel = max((self._relevance(q, t) for t in texts), default=0.0)
+            if rel <= 0:
+                continue
+            reliability = skill.confidence * max(skill.success_rate, 0.1) + 0.1
+            scored.append((rel * 0.7 + reliability * 0.3, skill))
+        scored.sort(key=lambda sb: sb[0], reverse=True)
+        return [{
+            "skill_id": s.id,
+            "name": s.name,
+            "description": s.description,
+            "confidence": round(s.confidence, 3),
+            "success_rate": round(s.success_rate, 3),
+            "usage_count": s.usage_count,
+            "score": round(score, 3),
+        } for score, s in scored[:limit]]
+
+    def compose_skills(self, skill_ids: List[str], name: str,
+                       description: str = "") -> Optional[Skill]:
+        """Compose existing skills into a new higher-order skill.
+
+        The composite's procedure chains its components; it starts
+        unverified with conservative confidence and earns reliability
+        through record_usage() like any other skill.
+        """
+        parts = []
+        for sid in skill_ids:
+            s = self.get_skill(sid)
+            if s is None:
+                return None
+            parts.append(s)
+        if not parts:
+            return None
+        composite = Skill(
+            id=uuid.uuid4().hex[:12],
+            name=name,
+            description=description or f"Composite of: {', '.join(p.name for p in parts)}",
+            trigger_conditions=[],
+            preconditions=[p for s in parts[:1] for p in s.preconditions],
+            procedure=[
+                {"step": i + 1, "type": "skill_call", "skill_id": p.id,
+                 "skill_name": p.name}
+                for i, p in enumerate(parts)
+            ],
+            parameters={},
+            success_rate=0.0,
+            confidence=round(min(p.confidence for p in parts) * 0.8, 3),
+            source_episodes=[ep for s in parts for ep in s.source_episodes][:20],
+        )
+        self.store_skill(composite)
+        return composite
+
     def stats(self) -> Dict:
         verified = sum(1 for s in self._skills.values() if s.verified)
         total_usage = sum(s.usage_count for s in self._skills.values())

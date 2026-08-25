@@ -234,6 +234,8 @@ class Maya:
             # Procedural Memory - episodic + procedural with distillation
             self.episodic_memory = get_episodic_memory()
             self.procedural_memory = get_procedural_memory()
+            # Phase 37: kernel consults learned skills during goal grounding
+            self.cognitive_kernel.procedural_memory = self.procedural_memory
             self.experience_distiller = get_experience_distiller(
                 llm_fn=llm_fn,
                 capability_registry=self.capability_registry,
@@ -562,6 +564,26 @@ class Maya:
                     memory_hints = (
                         (memory_hints + "\n" if memory_hints else "")
                         + "Relevant knowledge:\n" + k_lines
+                    )
+            except Exception:
+                pass
+
+        # Skill hints (Phase 37): learned skills relevant to this goal are
+        # surfaced to the planner so distilled experience generalizes to
+        # new but similar situations.
+        _pm = getattr(self, "procedural_memory", None)
+        if _pm is not None and hasattr(_pm, "search_skills"):
+            try:
+                skill_hits = _pm.search_skills(goal, limit=2)
+                if skill_hits:
+                    s_lines = "\n".join(
+                        f"- {h['name']}: {h['description']} "
+                        f"(success rate {h['success_rate']})"
+                        for h in skill_hits
+                    )
+                    memory_hints = (
+                        (memory_hints + "\n" if memory_hints else "")
+                        + "Applicable learned skills:\n" + s_lines
                     )
             except Exception:
                 pass

@@ -177,6 +177,10 @@ class CognitiveKernel:
         self._executor: Optional[Callable] = None
         self.unified_loop_enabled: bool = False
 
+        # Phase 37: procedural memory reference (set by Maya after init)
+        # so goal grounding can surface learned, reusable skills.
+        self.procedural_memory = None
+
         self._init_db()
         self._load_state()
 
@@ -1239,8 +1243,19 @@ Return ONLY the JSON array.
         return {
             "working_memory": wm_hits,
             "beliefs": relevant_beliefs,
+            "skills": self._relevant_skills(description),
             "overall_confidence": self.assess_confidence(),
         }
+
+    def _relevant_skills(self, description: str) -> List[Dict]:
+        """Learned skills applicable to this goal (Phase 37)."""
+        pm = self.procedural_memory
+        if pm is None or not hasattr(pm, "search_skills"):
+            return []
+        try:
+            return pm.search_skills(description, limit=3)
+        except Exception:
+            return []
 
     def process_goal(self, description: str,
                      priority: float = GoalPriority.NORMAL.value,
