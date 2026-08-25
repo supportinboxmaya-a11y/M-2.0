@@ -188,6 +188,13 @@ class CognitiveKernel:
         self._init_db()
         self._load_state()
 
+        # Phase 40: semantic index over beliefs (vector retrieval upgrade).
+        # Skills are indexed inside ProceduralMemory itself.
+        from infrastructure.semantic_index import SemanticIndex
+        self._belief_index = SemanticIndex()
+        for b in self.beliefs.values():
+            self._belief_index.add(b.id, b.proposition)
+
     # =========================================================================
     # Database & Persistence
     # =========================================================================
@@ -644,6 +651,7 @@ Return ONLY a JSON array of strings, no other text:
         with self._lock:
             self.beliefs[belief_id] = belief
             self._save_belief(belief)
+        self._belief_index.add(belief.id, belief.proposition)
         return belief
 
     def update_belief(self, belief_id: str, confidence: float = None,
@@ -663,6 +671,8 @@ Return ONLY a JSON array of strings, no other text:
                 belief.source = source
             belief.updated_at = time.time()
             self._save_belief(belief)
+        if proposition is not None:
+            self._belief_index.add(belief_id, belief.proposition)
         return belief
 
     def query_beliefs(self, domain: str = None, min_confidence: float = 0.0) -> List[Belief]:
@@ -1237,13 +1247,14 @@ Return ONLY the JSON array.
             {"content": s.content, "slot_type": s.slot_type, "attention": s.attention}
             for s in self.wm_search(description, limit=5)
         ]
-        tokens = set(description.lower().split())
+        # Phase 40: belief grounding now runs through the semantic index
+        # (was: raw token overlap, which missed paraphrased knowledge).
         relevant_beliefs = [
-            {"proposition": b.proposition, "confidence": b.confidence,
-             "domain": b.domain}
-            for b in self.query_beliefs(min_confidence=0.4)
-            if len(tokens & set(b.proposition.lower().split())) >= 1
-        ][:10]
+            {"proposition": hit["proposition"], "confidence": hit["confidence"],
+             "domain": hit["domain"]}
+            for hit in self.knowledge_query(description, min_confidence=0.4,
+                                            limit=10)
+        ]
         return {
             "working_memory": wm_hits,
             "beliefs": relevant_beliefs,
@@ -1436,17 +1447,24 @@ Return ONLY the JSON array.
             raise ValueError("empty proposition")
         confidence = max(0.01, min(0.99, float(confidence)))
 
+        # Phase 40: nearest belief via the semantic index. Merging stays
+        # conservative — on the TF-IDF fallback a candidate must still
+        # pass the exact token-overlap check (a conflicting near-duplicate
+        # like "succeeds"->"fails" must REVISE, not duplicate, and cosine
+        # alone is too loose to guarantee that); with real embeddings the
+        # vector score itself decides.
         match = None
-        best = 0.0
-        with self._lock:
-            candidates = list(self.beliefs.values())
-        for b in candidates:
-            sim = self._token_overlap(proposition, b.proposition)
-            if sim > best:
-                best = sim
-                match = b
+        best_hit = self._belief_index.best_match(proposition, min_score=0.05)
+        if best_hit is not None:
+            candidate = self.beliefs.get(best_hit[0])
+            if candidate is not None:
+                if self._belief_index.engine == "embeddings":
+                    if best_hit[1] >= 0.85:
+                        match = candidate
+                elif self._token_overlap(proposition, candidate.proposition) >= 0.8:
+                    match = candidate
 
-        if best >= 0.8 and match is not None:
+        if match is not None:
             p_old, p_new = match.confidence, confidence
             denom = p_old * p_new + (1 - p_old) * (1 - p_new)
             fused = (p_old * p_new / denom) if denom > 0 else 0.5
@@ -1467,25 +1485,28 @@ Return ONLY the JSON array.
                         limit: int = 5, min_confidence: float = 0.2) -> List[Dict]:
         """Ranked knowledge retrieval feeding planning.
 
-        Score = lexical relevance * 0.7 + confidence * 0.3, with a small
-        recency bonus so freshly learned facts surface first.
+        Phase 40: relevance comes from the SemanticIndex (TF-IDF cosine,
+        or real embeddings when SEMANTIC_EMBEDDINGS=true) instead of raw
+        token overlap. Score = semantic similarity * 0.7 + confidence
+        * 0.3, with a small recency bonus so fresh facts surface first.
         """
         query = (query or "").strip()
         if not query:
             return []
         now = time.time()
-        scored = []
         with self._lock:
-            beliefs = [b for b in self.beliefs.values()
-                       if b.confidence >= min_confidence]
-        for b in beliefs:
+            beliefs = {b.id: b for b in self.beliefs.values()
+                       if b.confidence >= min_confidence}
+        scored = []
+        for belief_id, sim in self._belief_index.search(
+                query, limit=len(beliefs) or 1):
+            b = beliefs.get(belief_id)
+            if b is None:
+                continue
             if domain and b.domain != domain:
                 continue
-            rel = self._token_overlap(query, b.proposition)
-            if rel <= 0:
-                continue
             recency = max(0.0, 1.0 - (now - b.updated_at) / (30 * 86400))
-            score = rel * 0.7 + b.confidence * 0.3 + 0.05 * recency
+            score = sim * 0.7 + b.confidence * 0.3 + 0.05 * recency
             scored.append((score, b))
         scored.sort(key=lambda sb: sb[0], reverse=True)
         return [{
@@ -1529,6 +1550,7 @@ Return ONLY the JSON array.
                     c.execute("DELETE FROM beliefs WHERE id=?", (belief_id,))
             except Exception:
                 pass
+        self._belief_index.remove(belief_id)
 
     def knowledge_stats(self) -> Dict:
         with self._lock:
@@ -1539,6 +1561,7 @@ Return ONLY the JSON array.
         return {
             "total": len(beliefs),
             "domains": domains,
+            "retrieval_engine": self._belief_index.engine,
             "avg_confidence": (
                 round(sum(b.confidence for b in beliefs) / len(beliefs), 3)
                 if beliefs else 0.0

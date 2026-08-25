@@ -208,6 +208,11 @@ class ProceduralMemory:
         self._init_db()
         self._skills: Dict[str, Skill] = {}
         self._load_skills()
+        # Phase 40: semantic index over skills (vector retrieval upgrade)
+        from infrastructure.semantic_index import SemanticIndex
+        self._index = SemanticIndex()
+        for s in self._skills.values():
+            self._index.add(s.id, self._skill_text(s))
     
     def _init_db(self) -> None:
         with self._conn() as c:
@@ -293,6 +298,7 @@ class ProceduralMemory:
                 int(skill.verified), skill.confidence
             ))
         self._skills[skill.id] = skill
+        self._index.add(skill.id, self._skill_text(skill))
         return skill.id
     
     def get_skill(self, skill_id: str) -> Optional[Skill]:
@@ -369,33 +375,39 @@ class ProceduralMemory:
     # ── Phase 37: generalization — retrieval + composition ───────────
 
     @staticmethod
-    def _relevance(query_tokens: set, text: str) -> float:
-        t = set(text.lower().split())
-        if not query_tokens or not t:
-            return 0.0
-        return len(query_tokens & t) / max(1, min(len(query_tokens), len(t)))
+    def _skill_text(skill: Skill) -> str:
+        """Everything retrieval should match against, flattened."""
+        return " ".join(
+            [skill.name, skill.description] + list(skill.trigger_conditions)
+        )
 
     def search_skills(self, query: str, limit: int = 5) -> List[Dict]:
-        """Ranked skill retrieval by relevance x reliability.
+        """Ranked skill retrieval by semantic relevance x reliability.
 
-        This is what lets a distilled skill generalize: a skill learned
-        from past episodes surfaces for any goal lexically similar to what
-        it knows how to do.
+        Phase 40: ranking runs through the SemanticIndex (TF-IDF cosine,
+        or real embeddings when SEMANTIC_EMBEDDINGS=true) instead of raw
+        token overlap, so a distilled skill surfaces for novel-but-
+        similar goals even without shared keywords.
         """
         query = (query or "").strip()
         if not query:
             return []
-        q = set(query.lower().split())
+        candidates = {}
+        for s in self._skills.values():
+            if not s.verified and s.confidence < 0.3:
+                continue
+            reliability = s.confidence * max(s.success_rate, 0.1) + 0.1
+            candidates[s.id] = (s, reliability)
+        if not candidates:
+            return []
+
         scored = []
-        for skill in self._skills.values():
-            if not skill.verified and skill.confidence < 0.3:
+        for doc_id, sim in self._index.search(query, limit=len(candidates)):
+            hit = candidates.get(doc_id)
+            if hit is None:
                 continue
-            texts = [skill.name, skill.description] + list(skill.trigger_conditions)
-            rel = max((self._relevance(q, t) for t in texts), default=0.0)
-            if rel <= 0:
-                continue
-            reliability = skill.confidence * max(skill.success_rate, 0.1) + 0.1
-            scored.append((rel * 0.7 + reliability * 0.3, skill))
+            s, reliability = hit
+            scored.append((sim * 0.7 + reliability * 0.3, s))
         scored.sort(key=lambda sb: sb[0], reverse=True)
         return [{
             "skill_id": s.id,
@@ -449,6 +461,7 @@ class ProceduralMemory:
             "total_skills": len(self._skills),
             "verified": verified,
             "total_usage": total_usage,
+            "retrieval_engine": self._index.engine,
             "avg_confidence": sum(s.confidence for s in self._skills.values()) / max(1, len(self._skills)),
         }
 
