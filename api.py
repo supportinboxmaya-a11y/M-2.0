@@ -4293,6 +4293,23 @@ try:
             urls=body.get("urls"),
             max_sources=body.get("max_sources", 5),
         )
+        # Phase 36: research findings become knowledge — the report summary
+        # is learned as a sourced belief so future planning can consult it.
+        if result.get("success") and result.get("report"):
+            try:
+                rep = result["report"]
+                summary = str(rep.get("summary", ""))[:500]
+                if summary:
+                    for para in [p.strip() for p in summary.split(". ") if len(p.strip()) > 30][:5]:
+                        _p18_kernel.learn(
+                            proposition=para if para.endswith(".") else para + ".",
+                            confidence=0.6,
+                            source="research",
+                            domain="research",
+                            evidence=[f"report:{rep.get('id', '?')}"],
+                        )
+            except Exception as _p36_err:
+                print(f"WARNING: knowledge learn from research skipped: {_p36_err}")
         return result
 
     # ── List reports ────────────────────────────────────────────
@@ -4591,11 +4608,40 @@ try:
             raise HTTPException(status_code=404, detail="Goal not found")
         return goal.__dict__
 
+    # ── Phase 36: knowledge engine ───────────────────────────────────
+    @app.get("/api/v1/cognitive/knowledge/query")
+    async def _p36_knowledge_query(q: str = "", domain: str = None,
+                                   limit: int = 5, user=Depends(get_current_user)):
+        """Ranked knowledge retrieval — what planning itself consults."""
+        return {"results": _p18_kernel.knowledge_query(
+            q, domain=domain, limit=max(1, min(limit, 25)),
+        )}
+
+    @app.get("/api/v1/cognitive/knowledge/stats")
+    async def _p36_knowledge_stats(user=Depends(get_current_user)):
+        return _p18_kernel.knowledge_stats()
+
+    @app.post("/api/v1/cognitive/knowledge/learn")
+    async def _p36_knowledge_learn(body: dict, user=Depends(get_current_user)):
+        """Teach Maya a fact with a source. Belief revision merges it with
+        existing knowledge (agreeing evidence strengthens, conflicting
+        evidence weakens) instead of duplicating."""
+        proposition = (body.get("proposition") or "").strip()
+        if not proposition:
+            raise HTTPException(status_code=400, detail="proposition required")
+        belief = _p18_kernel.learn(
+            proposition,
+            confidence=float(body.get("confidence", 0.6)),
+            source=str(body.get("source", "testimony")),
+            domain=str(body.get("domain", "general")),
+            evidence=body.get("evidence"),
+        )
+        return {"belief_id": belief.id, "confidence": belief.confidence}
+
     # Beliefs
     @app.post("/api/v1/cognitive/beliefs")
     async def _p18_add_belief(body: dict, user=Depends(get_current_user)):
-        belief = _p18_kernel.add_belief(
-            proposition=body.get("proposition", ""),
+        belief = _p18_kernel.add_belief(            proposition=body.get("proposition", ""),
             confidence=body.get("confidence", 0.5),
             evidence=body.get("evidence"),
             source=body.get("source", "observation"),

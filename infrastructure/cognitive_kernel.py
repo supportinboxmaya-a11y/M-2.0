@@ -639,7 +639,8 @@ Return ONLY a JSON array of strings, no other text:
         return belief
 
     def update_belief(self, belief_id: str, confidence: float = None,
-                      evidence: List[str] = None, proposition: str = None) -> Optional[Belief]:
+                      evidence: List[str] = None, proposition: str = None,
+                      source: str = None) -> Optional[Belief]:
         with self._lock:
             belief = self.beliefs.get(belief_id)
             if not belief:
@@ -650,6 +651,8 @@ Return ONLY a JSON array of strings, no other text:
                 belief.evidence = evidence
             if proposition is not None:
                 belief.proposition = proposition
+            if source is not None:
+                belief.source = source
             belief.updated_at = time.time()
             self._save_belief(belief)
         return belief
@@ -947,6 +950,14 @@ Return ONLY the JSON array.
 
             # Decay all
             self.wm_decay_all(0.02)
+
+        # Phase 36: knowledge maintenance — stale beliefs weaken and fade,
+        # keeping the knowledge base from ossifying around outdated facts.
+        try:
+            self.decay_beliefs()
+            self.forget_low_confidence()
+        except Exception as e:
+            self._audit("knowledge_maintenance_error", str(e))
 
         # Episode distillation (if we have episodic memory)
         if self.memory_manager and hasattr(self.memory_manager, 'episodic'):
@@ -1358,6 +1369,139 @@ Return ONLY the JSON array.
             "duration": duration,
         })
         return result
+
+    # ── Phase 36: knowledge engine (belief revision + retrieval) ─────
+
+    @staticmethod
+    def _token_overlap(a: str, b: str) -> float:
+        ta = set(a.lower().split())
+        tb = set(b.lower().split())
+        if not ta or not tb:
+            return 0.0
+        return len(ta & tb) / max(1, min(len(ta), len(tb)))
+
+    def learn(self, proposition: str, confidence: float = 0.5,
+              source: str = "observation", domain: str = "general",
+              evidence: List[str] = None) -> Belief:
+        """Acquire or revise knowledge with belief revision.
+
+        If a closely-matching belief exists, the new evidence is fused via an
+        odds-form Bayesian update — agreeing evidence strengthens, conflicting
+        evidence weakens — instead of creating duplicate rows.
+        """
+        proposition = (proposition or "").strip()
+        if not proposition:
+            raise ValueError("empty proposition")
+        confidence = max(0.01, min(0.99, float(confidence)))
+
+        match = None
+        best = 0.0
+        with self._lock:
+            candidates = list(self.beliefs.values())
+        for b in candidates:
+            sim = self._token_overlap(proposition, b.proposition)
+            if sim > best:
+                best = sim
+                match = b
+
+        if best >= 0.8 and match is not None:
+            p_old, p_new = match.confidence, confidence
+            denom = p_old * p_new + (1 - p_old) * (1 - p_new)
+            fused = (p_old * p_new / denom) if denom > 0 else 0.5
+            merged_ev = list(match.evidence) + (evidence or [])
+            return self.update_belief(
+                match.id,
+                confidence=max(0.01, min(0.99, fused)),
+                evidence=merged_ev[-10:],
+                source=source,
+            )
+
+        return self.add_belief(
+            proposition, confidence=confidence, evidence=evidence,
+            source=source, domain=domain,
+        )
+
+    def knowledge_query(self, query: str, domain: str = None,
+                        limit: int = 5, min_confidence: float = 0.2) -> List[Dict]:
+        """Ranked knowledge retrieval feeding planning.
+
+        Score = lexical relevance * 0.7 + confidence * 0.3, with a small
+        recency bonus so freshly learned facts surface first.
+        """
+        query = (query or "").strip()
+        if not query:
+            return []
+        now = time.time()
+        scored = []
+        with self._lock:
+            beliefs = [b for b in self.beliefs.values()
+                       if b.confidence >= min_confidence]
+        for b in beliefs:
+            if domain and b.domain != domain:
+                continue
+            rel = self._token_overlap(query, b.proposition)
+            if rel <= 0:
+                continue
+            recency = max(0.0, 1.0 - (now - b.updated_at) / (30 * 86400))
+            score = rel * 0.7 + b.confidence * 0.3 + 0.05 * recency
+            scored.append((score, b))
+        scored.sort(key=lambda sb: sb[0], reverse=True)
+        return [{
+            "proposition": b.proposition,
+            "confidence": round(b.confidence, 3),
+            "domain": b.domain,
+            "source": b.source,
+            "score": round(score, 3),
+        } for score, b in scored[:limit]]
+
+    def decay_beliefs(self, stale_after_days: float = 7.0,
+                      factor: float = 0.95) -> int:
+        """Weaken beliefs not touched recently (called from consolidation)."""
+        cutoff = time.time() - stale_after_days * 86400
+        n = 0
+        with self._lock:
+            targets = [b for b in self.beliefs.values() if b.updated_at < cutoff]
+        for b in targets:
+            new_c = b.confidence * factor
+            if new_c < 0.02:
+                self._delete_belief(b.id)
+            else:
+                self.update_belief(b.id, confidence=new_c)
+            n += 1
+        return n
+
+    def forget_low_confidence(self, threshold: float = 0.05) -> int:
+        """Prune beliefs that have decayed into noise."""
+        with self._lock:
+            doomed = [b.id for b in self.beliefs.values()
+                      if b.confidence < threshold]
+        for bid in doomed:
+            self._delete_belief(bid)
+        return len(doomed)
+
+    def _delete_belief(self, belief_id: str) -> None:
+        with self._lock:
+            self.beliefs.pop(belief_id, None)
+            try:
+                with self._conn() as c:
+                    c.execute("DELETE FROM beliefs WHERE id=?", (belief_id,))
+            except Exception:
+                pass
+
+    def knowledge_stats(self) -> Dict:
+        with self._lock:
+            beliefs = list(self.beliefs.values())
+        domains: Dict[str, int] = {}
+        for b in beliefs:
+            domains[b.domain] = domains.get(b.domain, 0) + 1
+        return {
+            "total": len(beliefs),
+            "domains": domains,
+            "avg_confidence": (
+                round(sum(b.confidence for b in beliefs) / len(beliefs), 3)
+                if beliefs else 0.0
+            ),
+        }
 
     def controller_status(self) -> Dict:
         """Expose unified-loop wiring state for /status routes."""

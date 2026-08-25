@@ -548,6 +548,24 @@ class Maya:
             memory_hints = self.memory.get_relevant_memories(goal)
             past_tips = self.memory.get_tips_for_goal(goal)
 
+        # Knowledge hints (Phase 36): what Maya already knows relevant to
+        # this goal, from its own belief store — consulted during planning.
+        _kernel = getattr(self, "cognitive_kernel", None)
+        if _kernel is not None and hasattr(_kernel, "knowledge_query"):
+            try:
+                hits = _kernel.knowledge_query(goal, limit=3)
+                if hits:
+                    k_lines = "\n".join(
+                        f"- {h['proposition']} (confidence {h['confidence']})"
+                        for h in hits
+                    )
+                    memory_hints = (
+                        (memory_hints + "\n" if memory_hints else "")
+                        + "Relevant knowledge:\n" + k_lines
+                    )
+            except Exception:
+                pass
+
         # Run workflow
         result = self.workflow.run(goal, max_retries=max_retries, 
                                    progress_callback=progress_callback,
