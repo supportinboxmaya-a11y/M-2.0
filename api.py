@@ -4966,6 +4966,85 @@ except Exception as _p18_err:
     print(f"WARNING: Phase 18 AGI architecture not loaded: {_p18_err}")
 # ══════════════ End Phase 18 integration ══════════════
 
+# ══════════════ Phase 38: MCP client (host) ══════════════
+try:
+    from infrastructure.mcp_client import get_mcp_manager as _p38_get_manager, MCPError as _P38Error
+    from enterprise.rbac import RBAC as _P38RBAC
+
+    _p38_rbac = _P38RBAC()
+
+    def _p38_require_enabled():
+        if os.getenv("MCP_ENABLED", "false").lower() != "true":
+            raise HTTPException(status_code=503,
+                                detail="MCP requires MCP_ENABLED=true")
+
+    def _p38_check_execute(user: dict):
+        if supabase_store.enabled:
+            if not _p38_rbac.can(user.get("role", ""), "execute"):
+                raise HTTPException(status_code=403,
+                                    detail="execute permission required")
+
+    @app.get("/api/v1/mcp/status")
+    async def _p38_status(user=Depends(get_current_user)):
+        mgr = _p38_get_manager()
+        st = mgr.status()
+        st["enabled"] = os.getenv("MCP_ENABLED", "false").lower() == "true"
+        return st
+
+    @app.post("/api/v1/mcp/connect")
+    async def _p38_connect(body: dict, user=Depends(get_current_user)):
+        """Connect one MCP server and register its tools into the registry.
+
+        Body: {name, command:[...] | url, tools_allow?: [], tools_deny?: []}
+        Requires RBAC execute + MCP_ENABLED=true.
+        """
+        _p38_require_enabled()
+        _p38_check_execute(user)
+        if not maya_instance:
+            raise HTTPException(status_code=503, detail="Maya not initialized")
+        name = (body.get("name") or "").strip()
+        if not name or not (body.get("command") or body.get("url")):
+            raise HTTPException(status_code=400,
+                                detail="name + (command|url) required")
+        count = await asyncio.to_thread(
+            _p38_get_manager().connect_server, body,
+            maya_instance.tool_manager.get_registry(),
+        )
+        return {"server": name, "tools_registered": count}
+
+    @app.post("/api/v1/mcp/disconnect")
+    async def _p38_disconnect(user=Depends(get_current_user)):
+        _p38_require_enabled()
+        _p38_check_execute(user)
+        if not maya_instance:
+            raise HTTPException(status_code=503, detail="Maya not initialized")
+        _p38_get_manager().disconnect_all()
+        # retract registered mcp_* tools from the registry
+        reg = maya_instance.tool_manager.get_registry()
+        removed = [n for n in list(reg._tools) if n.startswith("mcp_")]
+        for n in removed:
+            reg.unregister(n)
+        return {"disconnected": True, "tools_removed": len(removed)}
+
+    @app.post("/api/v1/mcp/call/{server}/{tool}")
+    async def _p38_call(server: str, tool: str, body: dict,
+                        user=Depends(get_current_user)):
+        """Direct tool call — normally Maya's planner calls MCP tools via
+        the registry; this exists for debugging/admin."""
+        _p38_require_enabled()
+        _p38_check_execute(user)
+        try:
+            result = await asyncio.to_thread(
+                _p38_get_manager().call_tool, server, tool, body or {})
+        except _P38Error as e:
+            raise HTTPException(status_code=502, detail=str(e))
+        return {"result": result}
+
+    print("Phase 38 active: MCP client (host)")
+except Exception as _p38_err:
+    print(f"WARNING: Phase 38 MCP not loaded: {_p38_err}")
+# ══════════════ End Phase 38 ══════════════
+
 # ══════════════ Maya Cognitive Core (Phase 19) ══════════════
 try:
     from infrastructure.maya_cognitive_core import (

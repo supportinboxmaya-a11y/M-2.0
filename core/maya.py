@@ -77,6 +77,22 @@ class Maya:
         # Tools
         self.tool_manager = ToolManager()
 
+        # Phase 38: MCP servers as capabilities (ships OFF — MCP_ENABLED).
+        # External MCP tools register as ordinary registry entries prefixed
+        # mcp_<server>_; Maya uses them, they never control Maya.
+        self.mcp_manager = None
+        if os.getenv("MCP_ENABLED", "false").lower() == "true":
+            try:
+                from infrastructure.mcp_client import get_mcp_manager
+                self.mcp_manager = get_mcp_manager()
+                _mcp_count = self.mcp_manager.connect_all_and_register(
+                    self.tool_manager.get_registry())
+                if _mcp_count:
+                    print(f"  MCP servers         : {_mcp_count} tools registered")
+            except Exception as e:
+                log.warning(f"MCP init skipped: {e}")
+                print(f"Warning: MCP init partial: {e}")
+
         # Plugins
         self.plugins = PluginLoader(tool_registry=self.tool_manager.get_registry())
         plugin_count = self.plugins.load_all()
