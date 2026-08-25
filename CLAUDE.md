@@ -10,6 +10,28 @@
 
 ## ⚡ ACTIVE — 2026-08-25
 
+**Highest completed phase: 41** (AGI roadmap Phases 34–41).
+
+**Latest session (2026-08-25, final) — end-to-end completion push:**
+- **Phase 40 vector retrieval** (`c422cc1`) — `SemanticIndex` (TF-IDF cosine
+  fallback always on; optional ONNX MiniLM embeddings behind
+  `SEMANTIC_EMBEDDINGS=false`) wired into skills, knowledge_query,
+  learn-dedup, goal grounding.
+- **Phase 41 auto-resume across restarts** — `kernel.resume_incomplete()`:
+  ACTIVE goals re-execute when `MAYA_AUTO_RESUME=true` (default false);
+  SUSPENDED/BLOCKED goals ALWAYS propose-only; boot hook runs it in a
+  daemon thread (never blocks startup); audit row per goal.
+- **Single-controller hardening** — closed the two latent parallel loops:
+  - Phase 17 `CognitionEngine` AUTORUN path now delegates through
+    `kernel.process_goal` when the kernel is attached + unified loop on
+    (`cognitive_kernel=` ctor arg; wired in api.py Phase 18 block).
+  - Phase 7 `POST /autonomous/run` routes through the kernel first;
+    standalone `AutonomousMaya.run()` only a legacy fallback (flag-gated).
+  - Locked by new `tests/test_delegation_invariants.py`.
+- **MAYA_UNIFIED_LOOP=true live in .env** — production runs through the kernel.
+- Full suite: **333 tests pass**; validate_final.py 32/32; stress_test mock
+  10/10; unseen-tasks & e2e-autonomous suites pass; boot 330 routes.
+
 **Highest completed phase: 40** (AGI roadmap Phases 34–40, all committed).
 
 **Latest session (2026-08-25, later) — Phase 40 vector retrieval (`c422cc1`):**

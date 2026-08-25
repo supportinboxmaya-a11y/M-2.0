@@ -7,6 +7,7 @@ Autonomous AI Agent that plans, executes, verifies, and learns.
 import os
 import sys
 import asyncio
+import threading
 from typing import List, Dict, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -299,8 +300,13 @@ class Maya:
             )
 
             # Phase 35: surface goals left incomplete by a previous run.
-            # Log/audit ONLY — resumption is explicit via the resume API
-            # (propose-only default), never auto-executed at boot.
+            # Log/audit ONLY by default — resumption is explicit via the
+            # resume API (propose-only default), never auto-executed at boot.
+            # Phase 41: with MAYA_AUTO_RESUME=true, previously-ACTIVE goals
+            # are re-driven through the unified loop (still behind all
+            # pipeline risk/approval gates); SUSPENDED/BLOCKED goals always
+            # get propose-only treatment. Runs in a daemon thread so boot
+            # never blocks on long-running goals.
             try:
                 _incomplete = self.cognitive_kernel.get_incomplete_goals()
                 if _incomplete:
@@ -313,6 +319,27 @@ class Maya:
                         "; ".join(g.description[:60] for g in _incomplete[:5]),
                     )
                     print(f"  Incomplete goals    : {len(_incomplete)} (resume via /cognitive/kernel/goals)")
+                if os.getenv("MAYA_AUTO_RESUME", "").strip().lower() in (
+                        "1", "true", "yes") and _incomplete:
+                    _kernel = self.cognitive_kernel
+
+                    def _auto_resume():
+                        try:
+                            results = _kernel.resume_incomplete()
+                            done = sum(1 for r in results if r.get("success"))
+                            log.info(
+                                f"auto-resume finished: {done}/{len(results)} "
+                                f"incomplete goal(s) resumed"
+                            )
+                        except Exception as e:
+                            log.warning(f"auto-resume failed cleanly: {e}")
+
+                    threading.Thread(target=_auto_resume, daemon=True,
+                                     name="maya-auto-resume").start()
+                    log.info(
+                        "MAYA_AUTO_RESUME=true — re-driving ACTIVE goals; "
+                        "SUSPENDED/BLOCKED stay propose-only"
+                    )
             except Exception as e:
                 log.debug(f"incomplete-goal scan skipped: {e}")
 
@@ -718,7 +745,6 @@ class Maya:
     def _augment_with_knowledge(self, message: str):
         """Return (system_addon, citations) from the knowledge base, or
         ("", []) when RAG auto-connect is off or nothing relevant is found."""
-        import os
         if os.getenv("RAG_AUTOCONNECT", "true").lower() == "false":
             return "", []
         try:

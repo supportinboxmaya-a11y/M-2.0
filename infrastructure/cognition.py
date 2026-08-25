@@ -66,6 +66,7 @@ class CognitionEngine:
         scheduler: Optional[Any] = None,
         task_queue: Optional[Any] = None,
         llm_fn: Optional[Callable] = None,
+        cognitive_kernel: Optional[Any] = None,
     ) -> None:
         self._lock = threading.Lock()
 
@@ -79,6 +80,10 @@ class CognitionEngine:
         self.scheduler = scheduler
         self.task_queue = task_queue
         self.llm_fn = llm_fn
+        # Architecture invariant: when the kernel (the ONE controller) is
+        # attached and its unified loop is on, objective execution MUST
+        # delegate through it — never through a parallel loop.
+        self.cognitive_kernel = cognitive_kernel
 
         # Scheduler schedule id (populated on register)
         self._schedule_id: Optional[str] = None
@@ -588,7 +593,45 @@ class CognitionEngine:
         error_msg = ""
         output = ""
         try:
-            if self.auto_maya is not None:
+            _kernel = self.cognitive_kernel
+            _via_kernel = (
+                _kernel is not None
+                and getattr(_kernel, "has_executor", False)
+                and getattr(_kernel, "unified_loop_enabled", False)
+            )
+            if _via_kernel:
+                # SINGLE CONTROLLER: delegate through the kernel's unified
+                # loop (which owns risk/approval gates via its executor).
+                self._audit(mission_id, objective_id, description, "run",
+                            "Delegating through cognitive kernel (unified loop)")
+                run_result = await asyncio.to_thread(
+                    _kernel.process_goal, description, execute=True
+                )
+                success = bool(run_result.get("success"))
+                output = str((run_result.get("outcome") or {})
+                             .get("result", ""))
+                # Reflect on the result
+                acceptable = success
+                if acceptable and self.reflector is not None:
+                    try:
+                        critique = self.reflector.critique(description, output)
+                        acceptable = critique.get("acceptable", True)
+                    except Exception:
+                        acceptable = True
+                if acceptable:
+                    self.update_objective_status(objective_id, "done")
+                    result["action"] = "done"
+                    result["detail"] = (
+                        "Objective completed via kernel unified loop")
+                else:
+                    self.update_objective_status(
+                        objective_id, "failed", "Reflection failed"
+                    )
+                    success = False
+                    error_msg = "Output did not pass reflection"
+                    result["action"] = "failed"
+                    result["detail"] = error_msg
+            elif self.auto_maya is not None:
                 run_result = await self.auto_maya.run(description)
                 output = run_result.get("output", "")
                 # Reflect on the result

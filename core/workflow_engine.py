@@ -178,7 +178,12 @@ class WorkflowEngine:
             notify({"phase": "verifying"})
             if stream_emitter:
                 asyncio.run(stream_emitter.verification_started())
-            verification = self.verifier.verify(goal, final_result, context=context)
+            # Verification sees structured per-step EVIDENCE (what ran, via
+            # which tool, its output) — not just the combined answer text,
+            # which would hide side effects like files written.
+            verification = self.verifier.verify(
+                goal, self._verification_evidence(results) or final_result,
+                context=context)
             verdict = verification.get("verdict", "failure")
             quality = verification.get("quality_score", 0)
 
@@ -292,6 +297,39 @@ class WorkflowEngine:
             if content and content.strip():
                 parts.append(content.strip())
         return "\n\n".join(parts)
+
+    def _verification_evidence(self, results: List[Dict]) -> str:
+        """Structured evidence of what actually ran, for the verifier.
+
+        The combined answer text alone hides successful side effects
+        (e.g. a file written inside a run_code step), which made the
+        strict verifier reject genuinely-complete goals (live bug,
+        2026-08-25). Each step is reported with its tool, status and
+        cleaned output instead.
+        """
+        lines = []
+        ok = 0
+        for r in results or []:
+            if r.get("skipped"):
+                continue
+            success = bool(r.get("success"))
+            ok += 1 if success else 0
+            desc = str(r.get("description", ""))[:200]
+            tool = r.get("tool_used", "llm")
+            line = f"- Step [{('SUCCESS' if success else 'FAILED')} via {tool}]: {desc}"
+            if success:
+                output = self._clean_text(r.get("result", "")).strip()
+                if output:
+                    line += f"\n  Output: {output[:500]}"
+            else:
+                err = str(r.get("error", ""))[:200]
+                if err:
+                    line += f"\n  Error: {err}"
+            lines.append(line)
+        if not lines:
+            return ""
+        return (f"{ok}/{len(lines)} planned steps executed successfully.\n"
+                + "\n".join(lines))
 
     @staticmethod
     def _clean_text(value) -> str:

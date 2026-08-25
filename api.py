@@ -1780,6 +1780,22 @@ try:
             _fw = _p5_fw            # Phase 5 framework with adopted tools
         except NameError:
             _fw = None
+
+        # Architecture invariant: when the cognitive kernel's unified loop
+        # is live, this endpoint MUST delegate through it — Maya's kernel is
+        # the only control loop. The standalone AutonomousMaya loop is only a
+        # legacy fallback for deployments without the kernel.
+        _kernel = getattr(maya_instance, "cognitive_kernel", None) \
+            if maya_instance is not None else None
+        if (_kernel is not None and getattr(_kernel, "has_executor", False)
+                and getattr(_kernel, "unified_loop_enabled", False)):
+            result = await asyncio.to_thread(
+                _kernel.process_goal, goal,
+                **{"execute": True, "executor_options": {
+                    "max_retries": int(payload.get("max_retries", 3))}}
+            )
+            return result
+
         maya_auto = _P7Auto(framework=_fw, llm_fn=_p7_llm,
                             approve_dangerous=bool(payload.get("approve_dangerous", False)))
         result = await maya_auto.run(goal)
@@ -4463,6 +4479,14 @@ try:
     _p18_kernel.start()
     _p18_society.start()
     _p18_monitor._running = True  # Monitor runs inline
+
+    # Architecture invariant: attach the ONE controller to the Phase 17
+    # cognition engine so its AUTORUN path delegates through the kernel
+    # instead of any parallel execution loop.
+    try:
+        _p17_cog.cognitive_kernel = _p18_kernel
+    except Exception:
+        pass
 
     print("Phase 18 active: AGI Cognitive Architecture (kernel, registry, synthesizer, planner, monitor, society, memory)")
 

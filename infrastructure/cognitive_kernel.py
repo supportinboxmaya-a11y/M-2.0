@@ -1333,6 +1333,47 @@ Return ONLY the JSON array.
         result["resumed"] = True
         return result
 
+    # ── Phase 41: automatic resume across restarts ───────────────────
+
+    def resume_incomplete(self, execute: bool = None,
+                          max_goals: int = 5) -> List[Dict]:
+        """Resume goals left incomplete by a previous run (restart recovery).
+
+        Policy:
+          - ACTIVE goals (mid-execution when the process died) are resumed
+            and, when *execute* is true, re-driven through the registered
+            executor — they already hold execution authorization from
+            before the restart, through all pipeline risk/approval gates.
+          - SUSPENDED / BLOCKED goals are NEVER auto-executed here: they
+            were paused deliberately or failed. They receive propose-only
+            plans and stay awaiting explicit operator resume.
+          - *execute* defaults to the MAYA_AUTO_RESUME env flag (false).
+
+        Returns one result dict per goal; never raises.
+        """
+        if execute is None:
+            execute = os.getenv("MAYA_AUTO_RESUME", "").strip().lower() in (
+                "1", "true", "yes")
+        results = []
+        for goal in self.get_incomplete_goals()[:max(0, max_goals)]:
+            was_active = goal.status == GoalStatus.ACTIVE
+            do_exec = bool(execute and was_active)
+            try:
+                r = self.resume_goal(goal.id, execute=do_exec)
+            except Exception as e:
+                r = {"success": False, "error": str(e)}
+            r["goal_id"] = goal.id
+            r["auto_executed"] = do_exec
+            r["prior_status"] = goal.status.value if hasattr(
+                goal.status, "value") else str(goal.status)
+            self._audit(
+                "auto_resume",
+                f"[{goal.id}] prior={r['prior_status']} "
+                f"executed={do_exec} success={r.get('success')}",
+            )
+            results.append(r)
+        return results
+
     def _drive_goal(self, goal: Goal, execute: bool, resumed: bool,
                     executor_options: Dict = None) -> Dict:
         """Run one goal through the unified loop (shared by new + resumed)."""

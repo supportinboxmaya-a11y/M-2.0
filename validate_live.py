@@ -181,6 +181,113 @@ check("L5 proposal created, nothing executed",
 g = kernel.get_goal(pr["goal_id"])
 check("L5 proposed goal suspended", g.status.value == "suspended")
 
+# ── L6: autonomous skill acquisition with REAL model + vector retrieval ──
+print(f"\n=== [{t()}] L6: skill distillation (real llm_fn) ===")
+from infrastructure.procedural_memory import (  # noqa: E402
+    Episode, get_episodic_memory,
+)
+_ep_mem = get_episodic_memory()
+for i in range(3):
+    _ep_mem.add_episode(Episode(
+        id=f"live-ep-{i}",
+        goal=f"deploy docker container number {i} to the production vps",
+        steps=[
+            {"step": 1, "action": "scp project to server", "success": True},
+            {"step": 2, "action": "docker build image on server", "success": True},
+            {"step": 3, "action": "docker run container", "success": True},
+        ],
+        outcome="success", success=True, reward=0.9, duration=120.0,
+    ))
+skills_before = len(maya.procedural_memory._skills)
+distilled = maya.experience_distiller.distill_from_goal(
+    "deploy docker container to the production vps")
+check("L6 real-model distillation produced a skill",
+      len(maya.procedural_memory._skills) > skills_before or bool(distilled),
+      str(distilled)[:150])
+# Phase 40: vector retrieval must surface it for NOVEL phrasing
+hits = maya.procedural_memory.search_skills(
+    "ship my containerized app to my remote linux machine")
+check("L6 semantic skill retrieval for novel phrasing",
+      any(h["name"] == distilled[0].name for h in hits) if distilled else hits,
+      str(hits[:2])[:150])
+
+# ── L7: MCP host capability through Maya's own registry ─────────────────
+print(f"\n=== [{t()}] L7: MCP tools as capabilities ===")
+import tempfile as _tf  # noqa: E402
+from infrastructure.mcp_client import MCPManager  # noqa: E402
+
+_ECHO = r'''
+import json, sys
+while True:
+    line = sys.stdin.readline()
+    if not line:
+        break
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        msg = json.loads(line)
+    except json.JSONDecodeError:
+        continue
+    rid = msg.get("id")
+    method = msg.get("method", "")
+    if rid is None:
+        continue
+    if method == "initialize":
+        result = {"protocolVersion": "2024-11-05",
+                  "capabilities": {"tools": {}},
+                  "serverInfo": {"name": "liveecho", "version": "0.1"}}
+    elif method == "tools/list":
+        result = {"tools": [
+            {"name": "echo", "description": "Echo input text",
+             "inputSchema": {"type": "object",
+                             "properties": {"text": {"type": "string"}}}}]}
+    elif method == "tools/call":
+        args = msg.get("params", {}).get("arguments", {})
+        result = {"content": [{"type": "text",
+                               "text": f"echo: {args.get('text', '')}"}]}
+    else:
+        result = {}
+    print(json.dumps({"jsonrpc": "2.0", "id": rid, "result": result}),
+          flush=True)
+'''
+_d = _tf.mkdtemp(prefix="live_mcp_")
+_srv = os.path.join(_d, "echo_mcp_server.py")
+with open(_srv, "w") as f:
+    f.write(_ECHO)
+_mcp_mgr = MCPManager()
+_reg = maya.tool_manager.get_registry()
+_n = _mcp_mgr.connect_server(
+    {"name": "live.echo", "command": [sys.executable, _srv]},
+    registry=_reg)
+check("L7 MCP server connected, tools registered", _n == 1, f"n={_n}")
+_tool_name = "mcp_live_echo_echo"
+check("L7 MCP tool registered under mcp_ prefix in Maya registry",
+      _reg.has(_tool_name))
+_out = _reg.run(_tool_name, {"text": "through maya registry"})
+check("L7 MCP tool executes through Maya's registry",
+      _out == "echo: through maya registry", str(_out)[:100])
+_mcp_mgr.disconnect_all()
+
+# ── L8: persistent self-model + semantic knowledge ───────────────────────
+print(f"\n=== [{t()}] L8: self-model & knowledge engine ===")
+sm_profile = maya.self_model.profile()
+check("L8 self-model has real outcome history",
+      sm_profile.get("total_outcomes") >= 2,
+      str(sm_profile)[:150])
+assessment = maya.self_model.assess(
+    "deploy another docker container to the vps")
+check("L8 self-model assess() returns grounded recommendation",
+      isinstance(assessment, dict) and assessment.get("task_type"),
+      str(assessment)[:150])
+line = maya.self_model.summary_line("write some flask code")
+check("L8 planner-hint summary line generated", bool(line), str(line)[:100])
+kernel.learn("the live validation vps ssh port is 20045", confidence=0.9,
+             domain="server")
+kq = kernel.knowledge_query("which port reaches the live vps")
+check("L8 semantic knowledge query ranks learned fact",
+      kq and "20045" in kq[0]["proposition"], str(kq[:1])[:150])
+
 # ── Summary ───────────────────────────────────────────────────────────────
 print(f"\n{'='*58}")
 print(f"LIVE VALIDATION: {len(PASS)} passed, {len(FAIL)} failed")
