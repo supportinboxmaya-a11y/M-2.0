@@ -273,6 +273,29 @@ class Maya:
                 kernel=self.cognitive_kernel,
             )
 
+            # Phase 42: self-improvement loop (flag OFF by default).
+            # Detects capability gaps from the self-model, drafts skill /
+            # tool proposals, and distills repeated successes into skills
+            # via the kernel's episode hook. Tool loading stays behind
+            # ToolCreator's AST scan + human approval gate.
+            if os.getenv("SELF_IMPROVE_ENABLED", "").strip().lower() in (
+                    "1", "true", "yes"):
+                try:
+                    from infrastructure.self_improvement import (
+                        get_self_improvement_engine,
+                    )
+                    _sie = get_self_improvement_engine(
+                        self_model=self.self_model,
+                        procedural_memory=self.procedural_memory,
+                        llm_fn=llm_fn,
+                        tool_creator=self.tool_creator,
+                    )
+                    self.cognitive_kernel.attach_self_improvement(_sie)
+                    self.self_improvement = _sie
+                    log.info("Phase 42 self-improvement engine attached")
+                except Exception as e:
+                    log.warning(f"self-improvement init skipped: {e}")
+
             # Tool Synthesizer - autonomous skill acquisition
             self.tool_synthesizer = get_tool_synthesizer(
                 llm_fn=llm_fn,

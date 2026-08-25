@@ -4488,6 +4488,70 @@ try:
     except Exception:
         pass
 
+    # ── Phase 42: self-improvement engine (flag OFF) ────────────────
+    # Maya.__init__ (lifespan) attaches it to the kernel singleton when
+    # SELF_IMPROVE_ENABLED=true. Resolve lazily per-request: at import
+    # time maya_instance does not exist yet.
+    def _p42_engine():
+        return getattr(_p18_kernel, "self_improvement", None)
+
+    def _p42_require_enabled():
+        if _p42_engine() is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Self-improvement requires SELF_IMPROVE_ENABLED=true",
+            )
+
+    @app.get("/api/v1/cognitive/self-improve/status")
+    async def _p42_status(user=Depends(get_current_user)):
+        eng = _p42_engine()
+        if eng is None:
+            return {"enabled": False}
+        return eng.stats()
+
+    @app.get("/api/v1/cognitive/self-improve/gaps")
+    async def _p42_gaps(user=Depends(get_current_user)):
+        _p42_require_enabled()
+        return {"gaps": await asyncio.to_thread(_p42_engine().analyze_gaps)}
+
+    @app.post("/api/v1/cognitive/self-improve/propose")
+    async def _p42_propose(body: dict, user=Depends(get_current_user)):
+        """Propose-only: draft an improvement proposal for the top gap.
+        Zero side effects — execution is a separate explicit call."""
+        _p42_require_enabled()
+        _p18_check_execute(user)
+        gap = body.get("gap") if isinstance(body, dict) else None
+        hint = str((body or {}).get("goal_hint", ""))
+        proposal = await asyncio.to_thread(
+            _p42_engine().propose, gap=gap if gap else None, goal_hint=hint,
+        )
+        return proposal
+
+    @app.get("/api/v1/cognitive/self-improve/proposals")
+    async def _p42_proposals(status: str = None,
+                             user=Depends(get_current_user)):
+        _p42_require_enabled()
+        return {"proposals": _p42_engine().list_proposals(status)}
+
+    @app.post("/api/v1/cognitive/self-improve/proposals/{pid}/decide")
+    async def _p42_decide(pid: str, body: dict,
+                          user=Depends(get_current_user)):
+        """Owner decision: approve or reject a proposal (bookkeeping)."""
+        _p42_require_enabled()
+        _p18_check_execute(user)
+        approved = bool((body or {}).get("approved", False))
+        return await asyncio.to_thread(
+            _p42_engine().approve_proposal, pid, approved)
+
+    @app.post("/api/v1/cognitive/self-improve/proposals/{pid}/execute")
+    async def _p42_execute(pid: str, user=Depends(get_current_user)):
+        """Execute an APPROVED proposal. Skill proposals distill episodes;
+        tool proposals pass through ToolCreator's AST scan + approval gate."""
+        _p42_require_enabled()
+        _p18_check_execute(user)
+        return await asyncio.to_thread(_p42_engine().execute_proposal, pid)
+
+
     print("Phase 18 active: AGI Cognitive Architecture (kernel, registry, synthesizer, planner, monitor, society, memory)")
 
     # ── Cognitive Kernel Routes ──────────────────────────────────────

@@ -10,6 +10,35 @@
 
 ## ⚡ ACTIVE — 2026-08-25
 
+**Highest completed phase: 42** (AGI roadmap Phases 34–42).
+
+**Latest session (2026-08-25, later) — Phase 42 self-improvement loop (`530e74e` + this):**
+- `infrastructure/self_improvement.py` — `SelfImprovementEngine`:
+  - **Gap analysis**: ranks task types from `SelfModel.weaknesses()`;
+    priority = attempts × failure-rate, +1 when no stored skill covers
+    the type; suggests reinforce_skill vs create_skill_or_tool.
+  - **Proposals** (propose-only): drafted to
+    `storage/self_improve/proposals.json`; tool proposals get an LLM
+    code draft at propose time but NOTHING loads then.
+  - **Execution is explicit-only** (`POST .../proposals/{pid}/execute`,
+    requires prior owner approval via `/decide`):
+    skill → distills buffered episodes into a Skill; tool → through
+    ToolCreator's AST scan + high-risk human approval gate.
+  - **Kernel `_distill_episode` stub implemented** — successful goals
+    feed the engine's episode buffer; ≥3 similar successes auto-distill
+    a skill (group key ignores digits/stopwords; coverage check prevents
+    duplicates). Knowledge-level only — NOT a second controller.
+- Routes under `/api/v1/cognitive/self-improve/*` (6); flag OFF → clean
+  503. RBAC execute on all mutations.
+- Flag: `SELF_IMPROVE_ENABLED=false` (default OFF per Safety Rule 3).
+- Live-tested against the real self-model DB (gap found: "code" tasks,
+  47 attempts / 6.4% success) — propose returned a proper proposal.
+- **Lesson:** api.py phase blocks run at IMPORT time but `maya_instance`
+  is created in the FastAPI LIFESPAN — never capture maya attributes in
+  module-level vars; resolve lazily per-request (here: via the kernel
+  singleton `_p18_kernel.self_improvement`).
+- Full suite: **350 tests pass** (was 333).
+
 **Highest completed phase: 41** (AGI roadmap Phases 34–41).
 
 **Latest session (2026-08-25, final) — end-to-end completion push:**

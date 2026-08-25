@@ -185,6 +185,12 @@ class CognitiveKernel:
         # unified-loop outcome updates Maya's persistent model of itself.
         self.self_model = None
 
+        # Phase 42: self-improvement engine (set by Maya after init, only
+        # when SELF_IMPROVE_ENABLED=true). Receives successful-episode
+        # notifications and drafts capability-gap proposals — it is a
+        # knowledge-level capability, never a second controller.
+        self.self_improvement = None
+
         self._init_db()
         self._load_state()
 
@@ -989,10 +995,25 @@ Return ONLY the JSON array.
                 pass
 
     def _distill_episode(self, episode: Dict) -> None:
-        """Distill a successful episode into a reusable skill pattern."""
-        # This would create a skill in the capability registry
-        if self.capability_registry:
-            pass  # Implementation depends on capability registry design
+        """Distill a successful episode into a reusable skill pattern.
+
+        Phase 42: delegates to the attached self-improvement engine
+        (flag-gated; absent engine -> no-op, exactly as before).
+        """
+        sie = getattr(self, "self_improvement", None)
+        if sie is None:
+            return
+        try:
+            sie.observe_episode(episode)
+        except Exception as e:
+            self._audit("self_improve_error", str(e))
+
+    def attach_self_improvement(self, engine) -> None:
+        """Attach the Phase 42 self-improvement engine (knowledge-level
+        capability only — it never executes goals or tools on its own)."""
+        self.self_improvement = engine
+        if engine is not None and hasattr(engine, "kernel"):
+            engine.kernel = self
 
     def _planning_loop(self) -> None:
         """Maintain and update plans for active goals."""
