@@ -8,41 +8,53 @@
 
 ---
 
-## ⚡ ACTIVE — 2026-07-24
+## ⚡ ACTIVE — 2026-08-25
 
-**Highest completed phase: 33** (APIKeyProvisioner + Communication overhaul).
+**Highest completed phase: 39** (AGI roadmap Phases 34–39, all committed).
 
-**Latest session (2026-07-24):**
-- Built `APIKeyProvisioner` — autonomous LLM API key signup with vision-guided
-  browser automation, critical-risk approval gate, CAPTCHA/OTP pause/resume,
-  M1 keystore integration (`tools/infrastructure/api_key_provisioner.py`).
-- Completed communication system: fixed `EmailTool` (env_first, SMTP_FROM),
-  built `WebhookTool` for Slack/Discord/generic webhooks, added SMTP/webhook/FCM
-  vars to `.env.example` and `config/settings.py`.
-- Fixed `brain/brain_engine.py` — was accidentally a broken copy of
-  `core/workflow_engine.py` with a self-import (circular). Rewrote as the proper
-  `BrainEngine` class orchestrating GoalAnalyzer, TaskGraph, ConfidenceScorer,
-  Reflector.
-- Fixed `security/sandbox.py` — `RLIMIT_AS` causes SIGABRT on Android/Termux;
-  now skipped when `TERMUX_VERSION` or `ANDROID_ROOT` is set.
-- Fixed `workflows/engine.py` — retry budget now uses `min()` instead of `max()`
-  so `retry_failed=0` actually means no retries.
-- Fixed `brain/reflection.py` — "output too short for the goal" and "doesn't
-  address the goal" heuristics now only fire for substantive outputs (>100 chars).
-  `record()` uses `verified` from the executor as the primary ok/not-ok gate.
-- **All 35 tests pass, 0 failures.**
+**Latest session (2026-08-25) — AGI evolution, Phases 34→39:**
+- Committed the leftover Phase 18 hardening working tree first (`ecbba53`),
+  then implemented six AGI phases sequentially, full suite green after each:
+  - **Phase 34 Unified Cognitive Loop** (`644bf2f`) — `CognitiveKernel` is now
+    THE single central controller. `kernel.process_goal()` = one control entry
+    (persistent goal → memory/belief grounding → execution → learning).
+    Exactly ONE executor backend (Maya's own `_run_pipeline`) registered via
+    `register_executor()`; models/agents/tools/workflows stay capabilities.
+    `Maya.run()` delegates through the kernel when `MAYA_UNIFIED_LOOP=true`.
+  - **Phase 35 Persistent goal pursuit** (`5b876ce`) — goals survive restarts;
+    `get_incomplete_goals()` + `resume_goal(id, execute=False)` (propose-only
+    by default). Boot only logs incomplete goals, never auto-executes.
+  - **Phase 36 Knowledge engine** (`76a99bc`) — `kernel.learn()` with odds-form
+    Bayesian belief revision (agreeing evidence strengthens, conflicting
+    weakens), `knowledge_query()` ranked retrieval feeding planning,
+    decay+prune hooked into consolidation, research reports auto-learned.
+  - **Phase 37 Skill generalization** (`e87d360`) — `search_skills()` ranked
+    retrieval (skills generalize to novel-but-similar goals),
+    `compose_skills()` builds higher-order skills; kernel goal grounding and
+    planner hints now include learned skills.
+  - **Phase 38 MCP client** (`d32fd98`) — Maya as MCP HOST, zero-dependency
+    JSON-RPC client (stdio + Streamable HTTP), MCP tools register as ordinary
+    registry capabilities (`mcp_<server>_<tool>`); OFF behind `MCP_ENABLED`.
+  - **Phase 39 Self-model** (`7cf7c5e`) — persistent SQLite self-model: task-
+    type track record, strengths/weaknesses, `assess()` pre-planning check;
+    every unified-loop outcome updates it; one-line self-assessment injected
+    into planner hints.
+- **All 301 tests pass** (was 270 at session start).
 
-**What works:**
-- Cognition propose-only (Phase 17) — `POST /api/v1/cognitive/cycle` proposes
-  objectives from the VPS Health mission; AUTORUN=false so nothing auto-executes.
-- Approved one-shot execution via `POST /api/v1/cognitive/execute-objective`
-  (read-only whitelist: docker ps/info/logs, journalctl, systemctl status, etc.).
-- Build→Deploy pipeline (Phase 31) — verified live end-to-end: SCP local source
-  to VPS → docker build → docker run → auto-register in Phase 30 AppRegistry.
+**Critical architecture invariant (do not regress):**
+Maya/CognitiveKernel is the ONLY control loop. Models, agents, tools, MCPs,
+workflow engines are capabilities the kernel uses via its single registered
+executor. Never add a second controller or bypass `process_goal`/`_drive_goal`
+for goal execution.
 
-**Flag state (all safe defaults):**
-- `COGNITION_ENABLED=true` — cognition loop enabled, but propos-only.
-- `COGNITION_AUTORUN=false` — Maya never auto-executes; proposes only.
+**New flag state:**
+- `MAYA_UNIFIED_LOOP=false` — flip to route `maya.run()` through the kernel.
+- `MCP_ENABLED=false` + `MCP_SERVERS=[...]` — MCP host support.
+- All prior flags unchanged.
+
+**Next candidates:** flip `MAYA_UNIFIED_LOOP=true` after watching propose-only
+behavior; vector-based skill/belief retrieval (upgrade lexical scoring);
+auto-resume policy for incomplete goals (still explicit-only by design).
 - `DEPLOY_PIPELINE_ENABLED=false` — pipeline routes return 503.
 - `APP_MONITOR_ENABLED=false` — Phase 30 health monitor off.
 
