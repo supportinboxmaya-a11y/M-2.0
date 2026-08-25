@@ -10,9 +10,23 @@
 
 ## ⚡ ACTIVE — 2026-08-25
 
-**Highest completed phase: 39** (AGI roadmap Phases 34–39, all committed).
+**Highest completed phase: 40** (AGI roadmap Phases 34–40, all committed).
 
-**Latest session (2026-08-25) — AGI evolution, Phases 34→39:**
+**Latest session (2026-08-25, later) — Phase 40 vector retrieval (`c422cc1`):**
+- `infrastructure/semantic_index.py` — `SemanticIndex`: TF-IDF cosine engine
+  (zero deps, always on), optional real embeddings (chromadb ONNX MiniLM)
+  behind `SEMANTIC_EMBEDDINGS=false` (default OFF; first use downloads a model).
+- Wired into: `ProceduralMemory.search_skills`, `kernel.knowledge_query`,
+  `kernel.learn()` nearest-belief lookup, `_gather_cognitive_context`
+  belief grounding, belief/skill index sync on add/update/delete.
+- Belief-revision dedup stays CONSERVATIVE on the fallback: cosine finds the
+  nearest candidate but token-overlap >= 0.8 must still confirm the merge
+  (a "succeeds"->"fails" conflict must revise, not duplicate); with real
+  embeddings the vector score (>= 0.85) decides.
+- `knowledge_stats()` / procedural `stats()` now expose `retrieval_engine`.
+- **All 321 tests pass** (was 301). Boot smoke-tested (330 routes).
+
+**Previous session (2026-08-25) — AGI evolution, Phases 34→39:**
 - Committed the leftover Phase 18 hardening working tree first (`ecbba53`),
   then implemented six AGI phases sequentially, full suite green after each:
   - **Phase 34 Unified Cognitive Loop** (`644bf2f`) — `CognitiveKernel` is now
@@ -48,13 +62,21 @@ executor. Never add a second controller or bypass `process_goal`/`_drive_goal`
 for goal execution.
 
 **New flag state:**
+- `SEMANTIC_EMBEDDINGS=false` — flip to use real ONNX MiniLM embeddings in
+  `SemanticIndex` (downloads a local model on first use; TF-IDF fallback
+  otherwise).
 - `MAYA_UNIFIED_LOOP=false` — flip to route `maya.run()` through the kernel.
 - `MCP_ENABLED=false` + `MCP_SERVERS=[...]` — MCP host support.
 - All prior flags unchanged.
 
 **Next candidates:** flip `MAYA_UNIFIED_LOOP=true` after watching propose-only
-behavior; vector-based skill/belief retrieval (upgrade lexical scoring);
-auto-resume policy for incomplete goals (still explicit-only by design).
+behavior; auto-resume policy for incomplete goals (still explicit-only by
+design); add one Groq/OpenRouter key as router fallback vs NIM throttling.
+
+**Lesson (Phase 40):** TF-IDF cosine cannot bridge zero-overlap paraphrase on
+short texts (~0.05 similarity) — that is what the embeddings engine is for;
+the fallback upgrades RANKING (IDF weighting), not vocabulary gap. Keep
+belief-revision dedup conservative on the fallback (token-overlap confirm).
 
 ---
 
