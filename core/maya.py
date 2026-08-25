@@ -641,10 +641,13 @@ class Maya:
             except Exception:
                 pass
 
-        # Run workflow
-        result = self.workflow.run(goal, max_retries=max_retries, 
+        # Run workflow — the enriched memory_hints (knowledge, skills,
+        # self-model) MUST reach the planner; the engine merges them with
+        # its own memory hints.
+        result = self.workflow.run(goal, max_retries=max_retries,
                                    progress_callback=progress_callback,
-                                   stream_emitter=stream_emitter)
+                                   stream_emitter=stream_emitter,
+                                   memory_hints=memory_hints)
 
         # Persist result to scoped memory if scope is set
         if scope and result.get("success"):

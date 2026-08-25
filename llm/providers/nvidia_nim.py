@@ -14,7 +14,7 @@ class NvidiaNimProvider(BaseProvider):
     def __init__(self):
         super().__init__(
             api_key_env="NVIDIA_NIM_KEY",
-            default_model=os.environ.get("NVIDIA_NIM_MODEL", "deepseek-ai/deepseek-v4-pro"),
+            default_model=os.environ.get("NVIDIA_NIM_MODEL", "meta/llama-3.3-70b-instruct"),
             retry_config=RetryConfig(max_retries=3, base_delay=1.0, max_delay=30.0),
             timeout=60.0,
         )

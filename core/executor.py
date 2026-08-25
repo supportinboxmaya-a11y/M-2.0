@@ -134,6 +134,27 @@ class Executor:
         try:
             print(f"     🔧 Using tool: {tool_name}" + (f" (attempt {attempt+1})" if attempt > 0 else ""))
             output = self.tools.run(tool_name, tool_input)
+            # Many Maya tools report failures by RETURNING an error payload
+            # instead of raising (e.g. read_file -> "Error: File not found",
+            # writer -> {'success': False}). Treat those as step failures so
+            # retry/recovery actually engages.
+            failed = False
+            err_text = None
+            if isinstance(output, dict):
+                if output.get("success") is False:
+                    failed = True
+                    err_text = str(output.get("error") or output)[:300]
+            elif isinstance(output, str) and output.lstrip()[:6].lower() == "error:":
+                failed = True
+                err_text = output.strip()[:300]
+            if failed:
+                return {
+                    "success": False,
+                    "result": None,
+                    "error": err_text or f"Tool '{tool_name}' reported failure",
+                    "raw_output": output,
+                    "tool_used": tool_name
+                }
             return {
                 "success": True,
                 "result": str(output)[:3000] if output else "Done",

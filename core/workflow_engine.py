@@ -32,7 +32,8 @@ class WorkflowEngine:
         self.memory = memory_manager
         self.learning = learning_engine
 
-    def run(self, goal: str, max_retries: int = 3, progress_callback=None, stream_emitter=None) -> Dict:
+    def run(self, goal: str, max_retries: int = 3, progress_callback=None,
+            stream_emitter=None, memory_hints: str = "") -> Dict:
         """`progress_callback(dict)` — if given, called live as the workflow
         moves through phases and steps (planning -> executing each step with
         its tool -> verifying), instead of the caller only finding out what
@@ -66,14 +67,19 @@ class WorkflowEngine:
 
             # Memory context inject করি
             context = self._get_context(goal)
-            memory_hints = self._get_memory_hints(goal)
+            # Caller-provided hints (kernel knowledge/skills/self-model)
+            # are merged with Maya's own memory hints — neither is dropped.
+            own_hints = self._get_memory_hints(goal)
+            merged_hints = (
+                memory_hints + "\n" if memory_hints else ""
+            ) + own_hints
             past_tips = self._get_past_tips(goal)
 
             # Plan
             plan = self.planner.plan(
                 goal,
                 context=context,
-                memory_hints=memory_hints,
+                memory_hints=merged_hints,
                 past_failures="\n".join(errors[-3:]) if errors else ""
             )
             steps = plan.get("steps", [])
@@ -133,6 +139,38 @@ class WorkflowEngine:
                         if recovery.get("should_abort"):
                             log.error(f"Aborting: {recovery.get('reason')}")
                             break
+
+                        # Execute the recovery steps (switch_tool / replan /
+                        # simplify all produce concrete new_steps). Without
+                        # this, recovery was computed then silently dropped.
+                        recovered = False
+                        for new_step in recovery.get("new_steps", [])[:3]:
+                            if stream_emitter:
+                                asyncio.run(stream_emitter.step_started(new_step))
+                            rec_result = self.executor.execute_step(
+                                new_step, context=context,
+                                previous_results=results,
+                                stream_emitter=stream_emitter)
+                            all_results.append(rec_result)
+                            if stream_emitter:
+                                if rec_result.get("success"):
+                                    asyncio.run(stream_emitter.step_completed(new_step, rec_result))
+                                else:
+                                    asyncio.run(stream_emitter.step_failed(
+                                        new_step, rec_result.get("error", "Unknown error")))
+                            if rec_result.get("success"):
+                                recovered = True
+                                errors.pop()  # the failure was repaired
+                                results.append(rec_result)
+                                break
+
+                        # record outcome on the strategy history
+                        try:
+                            self.fallback.recovery_history[-1]["success"] = recovered
+                        except Exception:
+                            pass
+                        if not recovered:
+                            errors.append(f"recovery ({recovery.get('recovery_strategy')}) did not repair the failure")
                     break
 
             # Verify
