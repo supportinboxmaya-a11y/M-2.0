@@ -5045,6 +5045,37 @@ except Exception as _p38_err:
     print(f"WARNING: Phase 38 MCP not loaded: {_p38_err}")
 # ══════════════ End Phase 38 ══════════════
 
+# ══════════════ Phase 39: Self-model ══════════════
+try:
+    from infrastructure.self_model import get_self_model as _p39_get_self
+
+    @app.get("/api/v1/cognitive/self/profile")
+    async def _p39_profile(user=Depends(get_current_user)):
+        """Maya's persistent self-description: capabilities track record,
+        strengths, weaknesses, traits."""
+        return _p39_get_self().profile()
+
+    @app.get("/api/v1/cognitive/self/assess")
+    async def _p39_assess(q: str, user=Depends(get_current_user)):
+        """Pre-planning self-check for a hypothetical goal."""
+        if not q.strip():
+            raise HTTPException(status_code=400, detail="q required")
+        return _p39_get_self().assess(q)
+
+    @app.post("/api/v1/cognitive/self/traits")
+    async def _p39_set_trait(body: dict, user=Depends(get_current_user)):
+        key = (body.get("key") or "").strip()
+        if not key or "value" not in body:
+            raise HTTPException(status_code=400,
+                                detail="key and value required")
+        _p39_get_self().set_trait(key, body["value"])
+        return {"recorded": True}
+
+    print("Phase 39 active: Self-model")
+except Exception as _p39_err:
+    print(f"WARNING: Phase 39 self-model not loaded: {_p39_err}")
+# ══════════════ End Phase 39 ══════════════
+
 # ══════════════ Maya Cognitive Core (Phase 19) ══════════════
 try:
     from infrastructure.maya_cognitive_core import (

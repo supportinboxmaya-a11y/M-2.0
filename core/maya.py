@@ -252,6 +252,11 @@ class Maya:
             self.procedural_memory = get_procedural_memory()
             # Phase 37: kernel consults learned skills during goal grounding
             self.cognitive_kernel.procedural_memory = self.procedural_memory
+
+            # Phase 39: kernel outcomes feed Maya's persistent self-model
+            from infrastructure.self_model import get_self_model
+            self.self_model = get_self_model()
+            self.cognitive_kernel.self_model = self.self_model
             self.experience_distiller = get_experience_distiller(
                 llm_fn=llm_fn,
                 capability_registry=self.capability_registry,
@@ -601,6 +606,18 @@ class Maya:
                         (memory_hints + "\n" if memory_hints else "")
                         + "Applicable learned skills:\n" + s_lines
                     )
+            except Exception:
+                pass
+
+        # Self-model hint (Phase 39): Maya checks its own track record for
+        # this kind of task before choosing an approach.
+        _sm = getattr(self, "self_model", None)
+        if _sm is not None and hasattr(_sm, "summary_line"):
+            try:
+                memory_hints = (
+                    (memory_hints + "\n" if memory_hints else "")
+                    + _sm.summary_line(goal)
+                )
             except Exception:
                 pass
 

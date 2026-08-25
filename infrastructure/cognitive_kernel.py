@@ -181,6 +181,10 @@ class CognitiveKernel:
         # so goal grounding can surface learned, reusable skills.
         self.procedural_memory = None
 
+        # Phase 39: self-model reference (set by Maya after init) so every
+        # unified-loop outcome updates Maya's persistent model of itself.
+        self.self_model = None
+
         self._init_db()
         self._load_state()
 
@@ -1373,6 +1377,17 @@ Return ONLY the JSON array.
             "unified_goal_done",
             f"[{goal.id}] success={success} duration={duration:.1f}s",
         )
+
+        # Phase 39: every outcome updates Maya's model of itself.
+        sm = self.self_model
+        if sm is not None and hasattr(sm, "record_outcome"):
+            try:
+                quality = outcome.get("quality_score")
+                sm.record_outcome(goal.description, success, duration,
+                                  quality=float(quality)
+                                  if isinstance(quality, (int, float)) else None)
+            except Exception as e:
+                self._audit("self_model_error", str(e))
 
         result.update({
             "executed": True,
