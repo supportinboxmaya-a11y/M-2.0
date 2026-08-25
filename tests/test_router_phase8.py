@@ -107,7 +107,9 @@ def test_openrouter():
     out = p.chat([{"role": "user", "content": "hello"}])
     assert out == "hi from openrouter"
     assert captured["key"] == "sk-or-test"
-    assert captured["payload"]["model"] == "meta-llama/llama-3.3-70b-instruct:free"
+    # Default free-tier model (llama-3.3 :free was retired by OpenRouter;
+    # nemotron-3-super verified live 2026-08). Must stay a :free slug.
+    assert captured["payload"]["model"].endswith(":free")
     assert "openrouter" in PROVIDER_TABLE
     os.environ.pop("OPENROUTER_API_KEY", None)
     print("PASS openrouter")

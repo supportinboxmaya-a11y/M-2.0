@@ -13,7 +13,10 @@ class OpenRouterProvider(BaseProvider):
     def __init__(self, http_fn: Optional[Callable] = None):
         super().__init__(
             api_key_env="OPENROUTER_KEY",
-            default_model=os.environ.get("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"),
+            # meta-llama/llama-3.3-70b-instruct:free was retired from the
+            # free tier (404, 2026-08); nemotron-3-super-120b verified live.
+            default_model=os.environ.get(
+                "OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free"),
             retry_config=RetryConfig(max_retries=3, base_delay=1.0, max_delay=30.0),
             timeout=60.0,
         )

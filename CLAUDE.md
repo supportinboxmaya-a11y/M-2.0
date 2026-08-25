@@ -144,8 +144,16 @@ belief-revision dedup conservative on the fallback (token-overlap confirm).
 - **Known NIM behavior**: free tier throttles hard under burst load (429s,
   read timeouts). Pipeline degrades gracefully (blocked goal, no state loss,
   audit intact); operator-level retry with exponential backoff succeeds when
-  the window passes. RECOMMENDATION: add one Groq or OpenRouter free key as
-  router fallback so verification calls survive NIM throttle windows.
+  the window passes.
+- **OpenRouter fallback LIVE (2026-08-25)** — `OPENROUTER_KEY` in `.env`;
+  default model now `nvidia/nemotron-3-super-120b-a12b:free`
+  (`meta-llama/llama-3.3-70b-instruct:free` was retired from the free tier,
+  404). Verified live: direct provider call + router `provider='openrouter'`.
+  Router priority: omniroute → nvidia_nim → groq → cerebras → openrouter → ...
+- Lesson: OpenRouter rotates `:free` slugs — if a 404 "unavailable for free"
+  appears, re-query https://openrouter.ai/api/v1/models for current free ids.
+- SECURITY: the OpenRouter key was pasted into chat once (2026-08-25) —
+  rotate it once testing stabilizes (Safety Rule 6).
 - Live E2E harness: `validate_live.py` (real inference end-to-end).
 - SECURITY: the rotated key was pasted into chat once — rotate again after
   testing stabilizes (Safety Rule 6).
