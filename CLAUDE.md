@@ -10,6 +10,34 @@
 
 ## ⚡ ACTIVE — 2026-08-25
 
+**Session (2026-08-26) — router resilience + push-validation hardening:**
+- **NIM default model rotated AGAIN**: `meta/llama-3.3-70b-instruct` retired
+  from NIM (410 Gone). New default `minimaxai/minimax-m3` (verified live,
+  ~1.4s latency). Lesson repeats: free model slugs rotate — check
+  `/v1/models` and re-probe before assuming code bugs.
+- **Router resilience (2 real gaps found by live validation):**
+  1. `set_key()` hardcoded `available=False` forever — after any key
+     rotation the provider stayed dead → fixed: fresh availability probe,
+     error_count reset.
+  2. No time-based recovery: 5 rapid errors permanently disabled a
+     provider for the whole process life (backoffs couldn't help) → fixed:
+     cooldown recovery in `_is_healthy` (`LLM_PROVIDER_COOLDOWN`, default
+     120s since last error ⇒ re-probe + fresh start).
+- **Phase 41 `resume_incomplete` scan mode**: new `plan_proposals=False`
+  param = cheap policy scan of the WHOLE backlog with zero LLM calls.
+  Needed because stale goals accumulate oldest-first and a small
+  `max_goals` cap silently hides fresh goals behind them (found live:
+  106-goal backlog).
+- `validate_push.py` (NEW): long-horizon multi-goal, restart-recovery
+  policy, Phase 42 propose-only — all against REAL providers;
+  `PUSH_SECTIONS=H1,H2b` env gates sections for throttle-window re-runs.
+  Status: **15/19 checks PASS**; remaining 4 blocked ONLY by provider
+  quota exhaustion (NIM sustained 429 + OpenRouter free-models-per-day
+  cap hit) — environmental, re-run when quota resets.
+- OpenRouter lesson: free tier has a DAILY request cap
+  ("free-models-per-day"); burst retries burn it fast — gate validations.
+- Full suite: **353 tests pass** (was 350).
+
 **Highest completed phase: 42** (AGI roadmap Phases 34–42).
 
 **Latest session (2026-08-25, later) — Phase 42 self-improvement loop (`530e74e` + this):**

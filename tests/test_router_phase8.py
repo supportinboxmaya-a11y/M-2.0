@@ -33,6 +33,55 @@ from llm.router_plus import ProviderStats, SmartSelector, RouterPlus, PROVIDER_T
 from llm.providers.openrouter import OpenRouterProvider
 
 
+def test_set_key_revives_provider():
+    """Regression (live validation, 2026-08): set_key hardcoded
+    health['available']=False and nothing ever reset it, so after a
+    key rotation the provider stayed unhealthy forever and the router
+    could report 'No LLM provider available' with valid keys restored."""
+    from llm.router import LLMRouter
+    r = LLMRouter()
+    prov = "openrouter"
+    assert prov in r.providers
+    # Simulate an unhealthy provider (as after repeated failures).
+    r.health[prov]["error_count"] = 9
+    assert not r._is_healthy(prov)
+    # Rotating the key must fully revive it: fresh availability,
+    # error_count reset.
+    ok = r.set_key(prov, "sk-or-test-key")
+    assert ok is True
+    assert r.health[prov]["error_count"] == 0
+    assert r._is_healthy(prov) is True
+    print("PASS set_key revival")
+
+
+def test_cooldown_revives_throttled_provider():
+    """Regression (live push validation, 2026-08): 5 rapid 429s set
+    health['available']=False permanently — no time-based recovery — so
+    even long operator backoffs couldn't revive a throttled free tier
+    mid-process. After PROVIDER_COOLDOWN since the last error, the
+    provider must get a fresh start."""
+    import time as _time
+    from llm.router import LLMRouter
+    r = LLMRouter()
+    prov = "openrouter"
+    assert prov in r.health
+    # Simulate a 429 burst that tripped the circuit breaker.
+    for _ in range(5):
+        r._update_health(prov, success=False, error="429 rate limited")
+    assert r.health[prov]["available"] is False
+    assert not r._is_healthy(prov)
+    # Within the cooldown window: still unhealthy.
+    r.health[prov]["last_error_ts"] = _time.time() - (
+        r.PROVIDER_COOLDOWN / 2)
+    assert not r._is_healthy(prov)
+    # After the cooldown window: revived (error_count reset).
+    r.health[prov]["last_error_ts"] = _time.time() - (
+        r.PROVIDER_COOLDOWN + 1)
+    assert r._is_healthy(prov) is True
+    assert r.health[prov]["error_count"] == 0
+    print("PASS cooldown revival")
+
+
 def test_stats():
     s = ProviderStats(alpha=0.5)
     s.record("groq", 1.0, True); s.record("groq", 2.0, True)
@@ -117,5 +166,6 @@ def test_openrouter():
 
 if __name__ == "__main__":
     test_stats(); test_selector_strategies(); test_selector_skips_unhealthy()
-    test_fallback_chain(); test_openrouter()
+    test_fallback_chain(); test_openrouter(); test_set_key_revival()
+    test_cooldown_revives_throttled_provider()
     print("\nAll Phase 8 router tests passed!")

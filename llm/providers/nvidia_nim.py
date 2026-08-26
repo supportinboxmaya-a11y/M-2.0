@@ -14,7 +14,9 @@ class NvidiaNimProvider(BaseProvider):
     def __init__(self):
         super().__init__(
             api_key_env="NVIDIA_NIM_KEY",
-            default_model=os.environ.get("NVIDIA_NIM_MODEL", "meta/llama-3.3-70b-instruct"),
+            # meta/llama-3.3-70b-instruct was retired from NIM (410 Gone,
+            # 2026-08) — same rotation pattern as OpenRouter :free slugs.
+            default_model=os.environ.get("NVIDIA_NIM_MODEL", "minimaxai/minimax-m3"),
             retry_config=RetryConfig(max_retries=3, base_delay=1.0, max_delay=30.0),
             timeout=float(os.environ.get("NVIDIA_NIM_TIMEOUT", "180")),
         )

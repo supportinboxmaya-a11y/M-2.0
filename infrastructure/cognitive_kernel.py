@@ -1357,7 +1357,8 @@ Return ONLY the JSON array.
     # ── Phase 41: automatic resume across restarts ───────────────────
 
     def resume_incomplete(self, execute: bool = None,
-                          max_goals: int = 5) -> List[Dict]:
+                          max_goals: int = 5,
+                          plan_proposals: bool = True) -> List[Dict]:
         """Resume goals left incomplete by a previous run (restart recovery).
 
         Policy:
@@ -1369,6 +1370,9 @@ Return ONLY the JSON array.
             were paused deliberately or failed. They receive propose-only
             plans and stay awaiting explicit operator resume.
           - *execute* defaults to the MAYA_AUTO_RESUME env flag (false).
+          - *plan_proposals=False* turns the pass into a cheap SCAN: every
+            goal is reported with auto_executed=False but no propose-only
+            planning call is made (useful for large backlogs / dry audits).
 
         Returns one result dict per goal; never raises.
         """
@@ -1379,10 +1383,14 @@ Return ONLY the JSON array.
         for goal in self.get_incomplete_goals()[:max(0, max_goals)]:
             was_active = goal.status == GoalStatus.ACTIVE
             do_exec = bool(execute and was_active)
-            try:
-                r = self.resume_goal(goal.id, execute=do_exec)
-            except Exception as e:
-                r = {"success": False, "error": str(e)}
+            if not do_exec and not plan_proposals:
+                r = {"success": True, "mode": "scan_only",
+                     "description": goal.description}
+            else:
+                try:
+                    r = self.resume_goal(goal.id, execute=do_exec)
+                except Exception as e:
+                    r = {"success": False, "error": str(e)}
             r["goal_id"] = goal.id
             r["auto_executed"] = do_exec
             r["prior_status"] = goal.status.value if hasattr(

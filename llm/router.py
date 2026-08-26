@@ -27,6 +27,12 @@ from llm.providers import (
 class LLMRouter:
     DEFAULT_PRIORITY = ["omniroute", "nvidia_nim", "groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude", "local"]
 
+    # Seconds after which a provider disabled by repeated errors gets a
+    # second chance (free tiers throttle in bursts; without cooldown
+    # recovery one bad minute permanently killed the provider for the
+    # whole process lifetime).
+    PROVIDER_COOLDOWN = float(os.environ.get("LLM_PROVIDER_COOLDOWN", "120"))
+
     def __init__(self):
         self.providers = {
             "omniroute": OmniRouteProvider(),
@@ -233,7 +239,19 @@ class LLMRouter:
             self.providers[provider] = PROVIDER_CLASSES[provider]()
         except Exception:
             return False
-        self.health[provider] = {"available": False, "error_count": 0, "last_error": None, "avg_response_time": 0.0}
+        # Re-evaluate availability from the FRESH provider instance.
+        # Previously this hardcoded available=False and nothing ever
+        # flipped it back, so after any key rotation (e.g. restoring a
+        # key after an outage) the provider stayed unhealthy forever and
+        # the whole router could report "No LLM provider available".
+        # error_count is also reset: a new key is a fresh start.
+        try:
+            _available = bool(self.providers[provider].is_available())
+        except Exception:
+            _available = False
+        self.health[provider] = {"available": _available, "error_count": 0,
+                                 "last_error": None,
+                                 "avg_response_time": 0.0}
         return True
 
     def _load_enabled_state(self) -> Dict[str, bool]:
@@ -278,7 +296,22 @@ class LLMRouter:
         if not self._enabled_state.get(provider, True):
             return False
         h = self.health[provider]
-        return h["available"] and h["error_count"] < 5
+        if not h["available"]:
+            # Cooldown recovery: the provider was disabled by repeated
+            # errors (e.g. a 429 burst). After PROVIDER_COOLDOWN seconds
+            # since its last error, re-probe it and give it a fresh start.
+            last_err_ts = h.get("last_error_ts", 0) or 0
+            if last_err_ts and (time.time() - last_err_ts) >= self.PROVIDER_COOLDOWN:
+                try:
+                    h["available"] = bool(
+                        self.providers[provider].is_available())
+                except Exception:
+                    h["available"] = False
+                h["error_count"] = 0
+                h["last_error_ts"] = time.time()   # probe itself is an event
+            if not h["available"]:
+                return False
+        return h["error_count"] < 5
 
     def _check_all_providers(self):
         """Iterates internal check methods on backend client instances."""
@@ -300,6 +333,7 @@ class LLMRouter:
         else:
             h["error_count"] += 1
             h["last_error"] = error
+            h["last_error_ts"] = time.time()
             if h["error_count"] >= 5:
                 h["available"] = False
 

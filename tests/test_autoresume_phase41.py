@@ -116,3 +116,39 @@ def test_env_flag_drives_execute_default():
         assert len(k._executed) == 1
     finally:
         os.environ.pop("MAYA_AUTO_RESUME", None)
+
+
+def test_scan_mode_covers_backlog_without_planning():
+    """Regression (live push validation, 2026-08): get_incomplete_goals
+    returns stale goals oldest-first, so a fixed max_goals cap hides
+    freshly-created goals behind a big backlog; and re-planning every
+    stale goal costs one LLM call each. plan_proposals=False is the
+    cheap scan: full backlog visible, zero planning calls, statuses
+    untouched, auto-execution policy unchanged."""
+    old = os.environ.pop("MAYA_AUTO_RESUME", None)
+    try:
+        k = _fresh_kernel()
+        # 60 stale suspended goals, then one fresh suspended goal LAST.
+        for i in range(60):
+            g = k.create_goal(f"stale backlog filler {i}")
+            g.status = GoalStatus.SUSPENDED
+            k._save_goal(g)
+            k.goals[g.id] = g
+        fresh = k.create_goal("fresh proposal created just now")
+        fresh.status = GoalStatus.SUSPENDED
+        k._save_goal(fresh)
+        k.goals[fresh.id] = fresh
+
+        results = k.resume_incomplete(execute=False,
+                                      max_goals=len(k.goals) + 10,
+                                      plan_proposals=False)
+        by_id = {r["goal_id"]: r for r in results}
+        assert len(results) == 61
+        assert fresh.id in by_id, "fresh goal hidden behind stale backlog"
+        assert by_id[fresh.id]["auto_executed"] is False
+        # Scan touches nothing: no execution, status still suspended.
+        assert k._executed == []
+        assert k.get_goal(fresh.id).status == GoalStatus.SUSPENDED
+    finally:
+        if old is not None:
+            os.environ["MAYA_AUTO_RESUME"] = old
