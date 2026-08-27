@@ -9,6 +9,8 @@ class WSManager {
     this.listeners = new Map();
     this.isConnected = false;
     this.authToken = null;
+    // Cloudflare tunnel for WebSocket (Vercel static doesn't proxy WS)
+    this.wsBackend = 'wss://gzip-separately-competition-democratic.trycloudflare.com';
   }
   
   connect(token) {
@@ -17,8 +19,7 @@ class WSManager {
     }
     
     this.authToken = token;
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    this.url = `${protocol}//${window.location.host}/ws/agent?token=${encodeURIComponent(token)}`;
+    this.url = `${this.wsBackend}/ws/agent?token=${encodeURIComponent(token)}`;
     
     this.ws = new WebSocket(this.url);
     

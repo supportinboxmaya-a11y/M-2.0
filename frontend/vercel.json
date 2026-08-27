@@ -2,33 +2,37 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "name": "maya-frontend",
   "framework": null,
-  "buildCommand": "echo 'No build step required - vanilla JS'",
+  "buildCommand": "mkdir -p dist && cp -r index.html js css assets manifest.json sw.js dist/",
   "devCommand": "echo 'Use vercel dev for local testing'",
   "installCommand": "echo 'No install required'",
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "public": true,
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/api/(.*)",
-      "destination": "http://130.210.46.182:8622/api/$1"
+      "destination": "https://gzip-separately-competition-democratic.trycloudflare.com/api/$1"
     },
     {
       "source": "/health/(.*)",
-      "destination": "http://130.210.46.182:8622/health/$1"
+      "destination": "https://gzip-separately-competition-democratic.trycloudflare.com/health/$1"
     },
     {
       "source": "/health",
-      "destination": "http://130.210.46.182:8622/health"
+      "destination": "https://gzip-separately-competition-democratic.trycloudflare.com/health"
     },
     {
       "source": "/ws/(.*)",
-      "destination": "ws://130.210.46.182:8622/ws/$1"
+      "destination": "wss://gzip-separately-competition-democratic.trycloudflare.com/ws/$1"
     },
     {
       "source": "/sse/(.*)",
-      "destination": "http://130.210.46.182:8622/sse/$1"
+      "destination": "https://gzip-separately-competition-democratic.trycloudflare.com/sse/$1"
     }
   ],
   "headers": [
