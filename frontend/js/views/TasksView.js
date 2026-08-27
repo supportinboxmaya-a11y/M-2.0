@@ -7,6 +7,7 @@ export class TasksView {
     this.currentFilter = 'all';
     this.selectedTask = null;
     this.detailOpen = false;
+    this.eventSource = null;
   }
   
   show() {
@@ -25,6 +26,10 @@ export class TasksView {
       this.container.parentNode.removeChild(this.container);
     }
     this.closeDetail();
+  }
+
+  destroy() {
+    if (this.eventSource) { this.eventSource.close(); this.eventSource = null; }
   }
   
   render() {
@@ -366,15 +371,106 @@ export class TasksView {
           <div class="task-reflection-content">${this.escapeHtml(task.reflection)}</div>
         </div>
       ` : ''}
+
+      ${(task.status === 'running' || task.status === 'pending' || task.status === 'paused') ? `
+      <div class="task-detail-section">
+        <div class="task-detail-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Live execution
+        </div>
+        <div class="row-actions" style="margin-bottom:var(--space-2)">
+          ${task.status === 'running' ? `<button class="btn btn-secondary btn-sm" data-tact="pause">Pause</button>` : ''}
+          ${task.status === 'paused' ? `<button class="btn btn-secondary btn-sm" data-tact="resume">Resume</button>` : ''}
+          ${task.status !== 'done' && task.status !== 'failed' ? `<button class="btn btn-danger btn-sm" data-tact="cancel">Cancel</button>` : ''}
+          <span id="streamState" class="muted small"></span>
+        </div>
+        <div id="liveEventLog" class="live-event-log"><p class="muted small">Connecting to event stream…</p></div>
+      </div>` : ''}
     `;
-    
+
     detail.style.display = 'block';
     document.body.style.overflow = 'hidden';
+
+    body.querySelectorAll('[data-tact]').forEach(btn => btn.addEventListener('click', async () => {
+      const act = btn.dataset.tact;
+      try {
+        if (act === 'pause') await this.app.api.pauseTask(taskId);
+        if (act === 'resume') await this.app.api.resumeTask(taskId);
+        if (act === 'cancel') {
+          const ok = await this.app.confirm('Cancel this running task?', 'Cancel task');
+          if (!ok) return;
+          await this.app.api.cancelTask(taskId);
+        }
+        this.loadTasks();
+        setTimeout(() => this.openDetail(taskId), 400);
+      } catch (err) { this.app.toast.error(`${act} failed`, err.message); }
+    }));
+
+    if (task.status === 'running' || task.status === 'pending' || task.status === 'paused') {
+      this.attachStream(taskId);
+    }
+  }
+
+  attachStream(taskId) {
+    this.detachStream();
+    const log = this.container.querySelector('#liveEventLog');
+    const state = this.container.querySelector('#streamState');
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const token = this.app.auth.getToken();
+    this.wsStream = new WebSocket(`${protocol}//${window.location.host}/ws/stream/${taskId}?token=${encodeURIComponent(token)}`);
+    
+    this.wsStream.onopen = () => { if (state) state.textContent = '● live'; };
+    this.wsStream.onmessage = (event) => {
+      let data;
+      try { data = JSON.parse(event.data); } catch { return; }
+      if (!log) return;
+      if (data.type === 'heartbeat') return;
+      if (data.type === 'connected' || data.type === 'reconnect') {
+        log.innerHTML = '';
+        const status = data.status || 'connected';
+        const step = data.current_step ? ` · step: ${data.current_step}` : '';
+        this.appendEvent(log, 'connected', `status=${status}${step}`);
+        return;
+      }
+      const summary = data.tool_name || data.step_title || data.message || data.event_type || data.type;
+      this.appendEvent(log, data.type, typeof summary === 'string' ? summary : JSON.stringify(summary));
+      if (data.type === 'task_completed' || data.type === 'task_failed' || data.status === 'completed' || data.status === 'failed') {
+        this.detachStream();
+        this.loadTasks();
+      }
+    };
+    this.wsStream.onerror = () => {
+      if (state) state.textContent = '○ stream disconnected';
+    };
+    this.wsStream.onclose = () => {
+      if (state) state.textContent = '○ stream closed';
+    };
+  }
+
+  appendEvent(log, type, text) {
+    const row = document.createElement('div');
+    row.className = 'live-event-row';
+    const t = new Date().toLocaleTimeString();
+    row.innerHTML = `<span class="evt-time">${t}</span><span class="badge badge-neutral">${this.escapeHtml(String(type))}</span> <span>${this.escapeHtml(text)}</span>`;
+    log.appendChild(row);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  detachStream() {
+    if (this.wsStream) {
+      this.wsStream.close();
+      this.wsStream = null;
+    }
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
   }
   
   closeDetail() {
     this.detailOpen = false;
     this.selectedTask = null;
+    this.detachStream();
     this.container.querySelector('#taskDetail').style.display = 'none';
     document.body.style.overflow = '';
   }

@@ -521,6 +521,21 @@ async def delete_memory(memory_id: str, user=Depends(get_current_user)):
         maya_instance.memory.delete(memory_id)
     return {"message": "Deleted"}
 
+class MemoryUpdateRequest(BaseModel):
+    content: str
+
+@app.put("/api/v1/memory/{memory_id}")
+async def update_memory(memory_id: str, req: MemoryUpdateRequest, user=Depends(get_current_user)):
+    """Update a memory's content (old content is versioned by MemoryManager)."""
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    if not hasattr(maya_instance.memory, "update"):
+        raise HTTPException(status_code=501, detail="Memory updates not supported")
+    updated = maya_instance.memory.update(memory_id, req.content)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Memory not found")
+    return {"id": memory_id, "content": req.content, "updated": True}
+
 @app.get("/api/v1/memory/stats")
 async def memory_stats(user=Depends(get_current_user)):
     if not maya_instance:
@@ -4596,6 +4611,12 @@ try:
     async def _p18_kernel_checkpoints(user=Depends(get_current_user)):
         return {"checkpoints": _p18_kernel.list_checkpoints()}
 
+    @app.get("/api/v1/cognitive/kernel/audit")
+    async def _p18_kernel_audit(limit: int = 50, user=Depends(get_current_user)):
+        """Recent cognition audit rows — every kernel step is logged."""
+        limit = max(1, min(limit, 200))
+        return {"audit": _p18_kernel.get_recent_audit(limit)}
+
     @app.post("/api/v1/cognitive/kernel/restore")
     async def _p18_kernel_restore(body: dict, user=Depends(get_current_user)):
         _p18_check_execute(user)
@@ -4655,6 +4676,30 @@ try:
             raise HTTPException(status_code=404, detail=result["error"])
         return result
 
+    @app.post("/api/v1/cognitive/kernel/resume-incomplete")
+    async def _p41_resume_incomplete(body: dict, user=Depends(get_current_user)):
+        """
+        Batch resume of incomplete goals across restarts (Phase 41).
+
+        Body: {execute?: bool, max_goals?: int, plan_proposals?: bool}
+        - plan_proposals=true (default): cheap policy scan of the WHOLE
+          backlog with zero LLM calls — what should be resumed and how.
+        - execute=true: re-execute only previously-ACTIVE goals through
+          the gated unified loop (requires RBAC execute). SUSPENDED/BLOCKED
+          goals always stay propose-only.
+        """
+        _p18_require_enabled()
+        execute = bool(body.get("execute", False))
+        if execute:
+            _p18_check_execute(user)
+        results = await asyncio.to_thread(
+            _p18_kernel.resume_incomplete,
+            execute,
+            int(body.get("max_goals", 5)),
+            bool(body.get("plan_proposals", not execute)),
+        )
+        return {"results": results}
+
     @app.post("/api/v1/cognitive/goals")
     async def _p18_create_goal(body: dict, user=Depends(get_current_user)):
         _p18_check_execute(user)
@@ -4670,10 +4715,13 @@ try:
 
     @app.get("/api/v1/cognitive/goals")
     async def _p18_list_goals(status: str = None, user=Depends(get_current_user)):
-        goals = _p18_kernel.get_active_goals()
+        # Full picture for the UI: every goal the kernel currently knows
+        # (active, suspended, blocked), optionally filtered by status.
+        all_goals = list(getattr(_p18_kernel, "goals", {}).values()) or _p18_kernel.get_active_goals()
         if status:
-            goals = [g for g in goals if g.status.value == status]
-        return {"goals": [g.__dict__ for g in goals]}
+            all_goals = [g for g in all_goals if g.status.value == status]
+        all_goals.sort(key=lambda g: g.updated_at, reverse=True)
+        return {"goals": [g.__dict__ for g in all_goals]}
 
     @app.get("/api/v1/cognitive/goals/{goal_id}")
     async def _p18_get_goal(goal_id: str, user=Depends(get_current_user)):
@@ -4766,6 +4814,10 @@ try:
         caps = _p18_registry.search(q, limit)
         return {"capabilities": [c.to_dict() for c in caps]}
 
+    @app.get("/api/v1/capabilities/stats")
+    async def _p18_capability_stats(user=Depends(get_current_user)):
+        return _p18_registry.stats()
+
     @app.get("/api/v1/capabilities/{cap_id}")
     async def _p18_get_capability(cap_id: str, user=Depends(get_current_user)):
         cap = _p18_registry.get(cap_id)
@@ -4793,10 +4845,6 @@ try:
         _p18_check_execute(user)
         ok = _p18_registry.add_relation(cap_id, body.get("target_id"), body.get("relation_type"))
         return {"added": ok}
-
-    @app.get("/api/v1/capabilities/stats")
-    async def _p18_capability_stats(user=Depends(get_current_user)):
-        return _p18_registry.stats()
 
     # ── Tool Synthesizer Routes ─────────────────────────────────────
     @app.post("/api/v1/cognitive/synthesize")

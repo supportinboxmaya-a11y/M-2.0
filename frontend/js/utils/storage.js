@@ -27,7 +27,7 @@ function getDB() {
       for (const [storeName, config] of Object.entries(STORES)) {
         if (!db.objectStoreNames.contains(storeName)) {
           const store = db.createObjectStore(storeName, { keyPath: config.keyPath });
-          for (const indexName of config.indexes) {
+          for (const indexName of config.indexes || []) {
             store.createIndex(indexName, indexName, { unique: false });
           }
         }
@@ -195,7 +195,7 @@ export async function clearExpiredCache() {
   const db = await getDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction('cache', 'readwrite');
-    const store = tx.objectStore(cache);
+    const store = tx.objectStore('cache');
     const index = store.index('expires');
     const range = IDBKeyRange.upperBound(Date.now());
     const request = index.openCursor(range);

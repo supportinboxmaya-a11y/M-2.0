@@ -1,31 +1,53 @@
 // Maya 2.0 ULTRA - Sidebar Component
 import { auth } from '../auth.js';
 
-const NAV_ITEMS = [
-  { id: 'chat', label: 'Chat', icon: 'chat', href: '#chat' },
-  { id: 'memory', label: 'Memory', icon: 'database', href: '#memory' },
-  { id: 'tools', label: 'Tools', icon: 'tool', href: '#tools' },
-  { id: 'tasks', label: 'Tasks', icon: 'check-square', href: '#tasks' },
-  { id: 'rag', label: 'RAG / KB', icon: 'book-open', href: '#rag' },
-  { id: 'workflows', label: 'Workflows', icon: 'git-branch', href: '#workflows' },
-  { id: 'hosting', label: 'Hosting', icon: 'server', href: '#hosting' },
-  { id: 'cognition', label: 'Cognition', icon: 'brain', href: '#cognition' },
-  { id: 'settings', label: 'Settings', icon: 'settings', href: '#settings' },
-  { id: 'admin', label: 'Admin', icon: 'shield', href: '#admin', admin: true },
-  { id: 'learning', label: 'Learning', icon: 'lightbulb', href: '#learning' },
-  { id: 'prompts', label: 'Prompts', icon: 'file-text', href: '#prompts' },
-  { id: 'webhooks', label: 'Webhooks', icon: 'webhook', href: '#webhooks' },
-  { id: 'translate', label: 'Translate', icon: 'globe', href: '#translate' },
-  { id: 'analytics', label: 'Analytics', icon: 'bar-chart', href: '#analytics' },
-  { id: 'logs', label: 'Logs', icon: 'file-text', href: '#logs' },
-  { id: 'docs', label: 'Docs', icon: 'book', href: '#docs' },
-  { id: 'agents', label: 'Agents', icon: 'users', href: '#agents' },
-  { id: 'instances', label: 'Instances', icon: 'user-plus', href: '#instances' },
-  { id: 'devices', label: 'Devices', icon: 'smartphone', href: '#devices' },
-  { id: 'workspace', label: 'Workspace', icon: 'folder', href: '#workspace' },
-  { id: 'backups', label: 'Backups', icon: 'archive', href: '#backups' },
-  { id: 'security', label: 'Security', icon: 'lock', href: '#security' },
-  { id: 'approvals', label: 'Approvals', icon: 'alert-triangle', href: '#approvals' }
+const NAV_GROUPS = [
+  { label: null, items: [
+    { id: 'chat', label: 'Chat', icon: 'chat', href: '#chat' },
+    { id: 'goals', label: 'Goals', icon: 'target', href: '#goals' },
+    { id: 'tasks', label: 'Tasks', icon: 'check-square', href: '#tasks' },
+  ]},
+  { label: 'Mind', items: [
+    { id: 'kernel', label: 'Cognitive Kernel', icon: 'brain', href: '#kernel' },
+    { id: 'cognition', label: 'Cognition Loop', icon: 'activity', href: '#cognition' },
+    { id: 'coreloop', label: 'Core Loop', icon: 'cpu', href: '#coreloop' },
+    { id: 'metacognition', label: 'Metacognition', icon: 'compass', href: '#metacognition' },
+    { id: 'selfmodel', label: 'Self-Model', icon: 'eye', href: '#selfmodel' },
+    { id: 'skills', label: 'Skills', icon: 'zap', href: '#skills' },
+    { id: 'society', label: 'Agent Society', icon: 'users', href: '#society' },
+    { id: 'capabilities', label: 'Capabilities', icon: 'layers', href: '#capabilities' },
+    { id: 'mcp', label: 'MCP Servers', icon: 'plug', href: '#mcp' },
+  ]},
+  { label: 'Memory & Knowledge', items: [
+    { id: 'memory', label: 'Memory', icon: 'database', href: '#memory' },
+    { id: 'rag', label: 'RAG / KB', icon: 'book-open', href: '#rag' },
+    { id: 'learning', label: 'Learning', icon: 'lightbulb', href: '#learning' },
+  ]},
+  { label: 'Capabilities', items: [
+    { id: 'tools', label: 'Tools', icon: 'tool', href: '#tools' },
+    { id: 'agents', label: 'Agents', icon: 'user-check', href: '#agents' },
+    { id: 'workflows', label: 'Workflows', icon: 'git-branch', href: '#workflows' },
+    { id: 'prompts', label: 'Prompts', icon: 'file-text', href: '#prompts' },
+    { id: 'hosting', label: 'Hosting', icon: 'server', href: '#hosting' },
+    { id: 'research', label: 'Research & Publish', icon: 'file-text', href: '#research' },
+  ]},
+  { label: 'Safety & Ops', items: [
+    { id: 'approvals', label: 'Approvals', icon: 'alert-triangle', href: '#approvals' },
+    { id: 'security', label: 'Security', icon: 'lock', href: '#security' },
+    { id: 'analytics', label: 'Analytics', icon: 'bar-chart', href: '#analytics' },
+    { id: 'logs', label: 'Logs', icon: 'list', href: '#logs' },
+  ]},
+  { label: 'System', items: [
+    { id: 'workspace', label: 'Workspace', icon: 'folder', href: '#workspace' },
+    { id: 'backups', label: 'Backups', icon: 'archive', href: '#backups' },
+    { id: 'devices', label: 'Devices', icon: 'smartphone', href: '#devices' },
+    { id: 'instances', label: 'Instances', icon: 'user-plus', href: '#instances' },
+    { id: 'webhooks', label: 'Webhooks', icon: 'webhook', href: '#webhooks' },
+    { id: 'translate', label: 'Translate', icon: 'globe', href: '#translate' },
+    { id: 'docs', label: 'Docs', icon: 'book', href: '#docs' },
+    { id: 'settings', label: 'Settings', icon: 'settings', href: '#settings' },
+    { id: 'admin', label: 'Admin', icon: 'shield', href: '#admin', admin: true },
+  ]},
 ];
 
 const ICONS = {
@@ -45,6 +67,16 @@ const ICONS = {
   globe: '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
   'bar-chart': '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>',
   users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>',
+  'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline>',
+  target: '<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>',
+  activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>',
+  cpu: '<rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line>',
+  compass: '<circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>',
+  eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>',
+  zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>',
+  layers: '<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>',
+  plug: '<path d="M12 22v-5"></path><path d="M9 8V2"></path><path d="M15 8V2"></path><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8z"></path>',
+  list: '<line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>',
   'user-plus': '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line>',
   smartphone: '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>',
   folder: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>',
@@ -73,14 +105,16 @@ export class Sidebar {
   
   render() {
     const isAdmin = auth.isAdmin();
-    const filteredItems = NAV_ITEMS.filter(item => !item.admin || isAdmin);
-    
-    const navHtml = filteredItems.map(item => `
-      <a href="${item.href}" class="nav-item" data-view="${item.id}" data-active="${item.id === this.currentView ? 'true' : 'false'}">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${ICONS[item.icon]}</svg>
-        <span class="label">${item.label}</span>
-      </a>
-    `).join('');
+    const groupHtml = NAV_GROUPS.map(group => {
+      const items = group.items.filter(item => !item.admin || isAdmin);
+      if (!items.length) return '';
+      return `${group.label ? `<div class="nav-group-label">${group.label}</div>` : ''}` +
+        items.map(item => `
+        <a href="${item.href}" class="nav-item" data-view="${item.id}" data-active="${item.id === this.currentView ? 'true' : 'false'}">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${ICONS[item.icon] || ICONS.tool}</svg>
+          <span class="label">${item.label}</span>
+        </a>`).join('');
+    }).join('');
     
     const user = auth.getUser();
     const userName = user?.email?.split('@')[0] || 'User';
@@ -100,7 +134,7 @@ export class Sidebar {
         </button>
       </div>
       <nav class="sidebar-nav">
-        ${navHtml}
+        ${groupHtml}
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user">
@@ -112,15 +146,16 @@ export class Sidebar {
         </div>
       </div>
     `;
+    this.bindEvents();
   }
-  
+
   bindEvents() {
     // Toggle collapse
     const toggleBtn = this.container.querySelector('#sidebarToggle');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => this.toggleCollapse());
     }
-    
+
     // Navigation clicks
     this.container.querySelectorAll('.nav-item').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -128,16 +163,19 @@ export class Sidebar {
         const view = link.dataset.view;
         this.setActiveView(view);
         window.location.hash = link.getAttribute('href');
-        
+
         // Close mobile sidebar on navigation
         if (window.innerWidth <= 768) {
           this.closeMobile();
         }
       });
     });
-    
-    // Mobile menu button (handled by Header)
-    window.addEventListener('sidebar:toggle', () => this.toggleMobile());
+
+    // Global listeners must be registered exactly once, not per re-render.
+    if (!this._globalBound) {
+      this._globalBound = true;
+      window.addEventListener('sidebar:toggle', () => this.toggleMobile());
+    }
   }
   
   toggleCollapse() {

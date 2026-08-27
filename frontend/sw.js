@@ -1,5 +1,5 @@
 // Maya 2.0 ULTRA - Service Worker
-const CACHE_NAME = 'maya-v1';
+const CACHE_NAME = 'maya-v2';
 const OFFLINE_CACHE = 'maya-offline-v1';
 const API_CACHE = 'maya-api-v1';
 
@@ -19,10 +19,12 @@ const STATIC_ASSETS = [
   '/css/cognition.css',
   '/css/settings.css',
   '/css/admin.css',
+  '/css/cognitive.css',
   '/css/mobile.css',
   '/js/app.js',
   '/js/api.js',
   '/js/auth.js',
+  '/js/BaseView.js',
   '/js/ws.js',
   '/js/sse.js',
   '/js/sync.js',
@@ -36,9 +38,21 @@ const STATIC_ASSETS = [
   '/js/components/MarkdownRenderer.js',
   '/js/components/Chart.js',
   '/js/views/ChatView.js',
+  '/js/views/LoginView.js',
   '/js/views/MemoryView.js',
   '/js/views/ToolsView.js',
   '/js/views/TasksView.js',
+  '/js/views/GenericViews.js',
+  '/js/views/KernelView.js',
+  '/js/views/GoalsView.js',
+  '/js/views/SkillsView.js',
+  '/js/views/SelfModelView.js',
+  '/js/views/CapabilitiesView.js',
+  '/js/views/MetacognitionView.js',
+  '/js/views/SocietyView.js',
+  '/js/views/MCPView.js',
+  '/js/views/CoreLoopView.js',
+  '/js/views/ResearchView.js',
   '/js/views/RAGView.js',
   '/js/views/WorkflowsView.js',
   '/js/views/HostingView.js',

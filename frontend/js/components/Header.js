@@ -89,9 +89,15 @@ export class Header {
         </div>
       </div>
     `;
+    this.bindEvents();
   }
-  
+
   bindEvents() {
+    // Re-bind safely after re-render: drop the previous document listener.
+    if (this._documentClickHandler) {
+      document.removeEventListener('click', this._documentClickHandler);
+    }
+
     // Mobile menu toggle
     const mobileMenuBtn = this.container.querySelector('#mobileMenuBtn');
     if (mobileMenuBtn) {
@@ -126,14 +132,15 @@ export class Header {
     }
     
     // Close dropdowns on outside click
-    document.addEventListener('click', (e) => {
+    this._documentClickHandler = (e) => {
       if (this.notificationsDropdownOpen && !e.target.closest('#notificationsBtn') && !e.target.closest('.notifications-dropdown')) {
         this.closeNotifications();
       }
       if (this.userMenuOpen && !e.target.closest('.user-menu')) {
         this.closeUserMenu();
       }
-    });
+    };
+    document.addEventListener('click', this._documentClickHandler);
     
     // Logout
     const logoutBtn = this.container.querySelector('#logoutBtn');
@@ -173,10 +180,70 @@ export class Header {
     this.notificationsDropdownOpen = !this.notificationsDropdownOpen;
     this.renderNotificationsDropdown();
   }
-  
+
   closeNotifications() {
     this.notificationsDropdownOpen = false;
-    // Would render dropdown here if implemented
+    const panel = this.container.querySelector('.notifications-dropdown');
+    if (panel) panel.remove();
+  }
+
+  async renderNotificationsDropdown() {
+    const existing = this.container.querySelector('.notifications-dropdown');
+    if (!this.notificationsDropdownOpen) {
+      if (existing) existing.remove();
+      return;
+    }
+    // Render the panel immediately; fill it in when data arrives.
+    const host = this.container.querySelector('.header-right');
+    if (!host) return;
+    if (existing) existing.remove();
+    const panel = document.createElement('div');
+    panel.className = 'notifications-dropdown';
+    panel.innerHTML = `
+      <div class="notifications-header"><span>Notifications</span></div>
+      <div class="notifications-list"><div class="empty-state" style="padding:var(--space-4)"><div class="desc">Loading…</div></div></div>`;
+    host.appendChild(panel);
+
+    let items = [];
+    try {
+      const res = await window.api?.getNotifications(false, 15);
+      items = Array.isArray(res) ? res : (res?.notifications || []);
+    } catch { /* offline: show empty panel */ }
+    if (!this.notificationsDropdownOpen) return; // closed while loading
+
+    panel.innerHTML = `
+      <div class="notifications-header">
+        <span>Notifications</span>
+        <button class="dropdown-item" id="markAllReadBtn" style="border:0;background:none;cursor:pointer;color:var(--text-secondary);font-size:var(--text-xs)">Mark all read</button>
+      </div>
+      <div class="notifications-list">
+        ${items.length ? items.map(n => `
+          <div class="notification-item ${n.read ? 'read' : 'unread'}" data-nid="${n.id || ''}">
+            <div class="notification-title">${n.title || n.type || 'Notification'}</div>
+            <div class="notification-body">${n.body || n.message || ''}</div>
+          </div>`).join('')
+        : '<div class="empty-state" style="padding:var(--space-4)"><div class="desc">No notifications</div></div>'}
+      </div>`;
+
+    panel.querySelector('#markAllReadBtn')?.addEventListener('click', async () => {
+      try {
+        await window.api?.markAllNotificationsRead();
+        this.unreadCount = 0;
+        this.updateNotificationBadge();
+        this.closeNotifications();
+      } catch { /* non-fatal */ }
+    });
+    panel.querySelectorAll('.notification-item[data-nid]').forEach(item => {
+      item.addEventListener('click', async () => {
+        try {
+          await window.api?.markNotificationRead(item.dataset.nid);
+          item.classList.remove('unread');
+          item.classList.add('read');
+          this.unreadCount = Math.max(0, this.unreadCount - 1);
+          this.updateNotificationBadge();
+        } catch { /* non-fatal */ }
+      });
+    });
   }
   
   toggleUserMenu() {
@@ -225,11 +292,7 @@ export class Header {
       badge.style.display = this.unreadCount > 0 ? 'flex' : 'none';
     }
   }
-  
-  renderNotificationsDropdown() {
-    // Would implement dropdown rendering here
-  }
-  
+
   setViewTitle(title) {
     const titleEl = this.container.querySelector('#viewTitle');
     if (titleEl) {

@@ -38,6 +38,7 @@ export class ToolsView {
         <div class="tools-category-filter" id="categoryFilter">
           <button class="category-filter-btn active" data-category="all">All</button>
         </div>
+        <button class="btn btn-secondary btn-sm" id="frameworkBtn" title="Managed framework tools and policies">Framework</button>
       </div>
       
       <div class="tools-grid" id="toolsGrid">
@@ -98,6 +99,35 @@ export class ToolsView {
       e.preventDefault();
       this.runTester();
     });
+
+    // Managed framework info
+    const fwBtn = this.container.querySelector('#frameworkBtn');
+    if (fwBtn) fwBtn.addEventListener('click', () => this.showFramework());
+  }
+
+  async showFramework() {
+    let tools = [];
+    try {
+      const res = await this.app.api.getToolFramework();
+      tools = res?.tools || [];
+    } catch (err) {
+      this.app.toast.error('Framework unavailable', err.message);
+      return;
+    }
+    const modal = this.app.showModal({ title: `Managed Framework (${tools.length})` });
+    modal.setContent(tools.length ? `
+      <div class="table-container"><table class="data-table">
+        <thead><tr><th>Name</th><th>Permission</th><th>Timeout</th><th>Retry</th><th>Dangerous</th></tr></thead>
+        <tbody>${tools.map(t => `
+          <tr>
+            <td>${this.escapeHtml(t.name)}</td>
+            <td>${this.escapeHtml(t.permission || '—')}</td>
+            <td>${t.timeout_s != null ? t.timeout_s + 's' : '—'}</td>
+            <td>${t.max_retries != null ? t.max_retries : '—'}</td>
+            <td>${t.dangerous ? '⚠️ yes' : 'no'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>` : '<div class="empty-state"><div class="desc">No tools adopted into the managed framework yet.</div></div>');
   }
   
   async loadTools() {

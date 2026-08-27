@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="/css/cognition.css">
   <link rel="stylesheet" href="/css/settings.css">
   <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/cognitive.css">
   <link rel="stylesheet" href="/css/mobile.css">
 </head>
 <body>
@@ -31,17 +32,17 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         <span>Chat</span>
       </a>
-      <a href="#memory" class="mobile-nav-item" data-view="memory" aria-label="Memory">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h12"></path><path d="M6 2h12"></path><path d="M16 2v14"></path></svg>
-        <span>Memory</span>
-      </a>
-      <a href="#tools" class="mobile-nav-item" data-view="tools" aria-label="Tools">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-        <span>Tools</span>
+      <a href="#goals" class="mobile-nav-item" data-view="goals" aria-label="Goals">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+        <span>Goals</span>
       </a>
       <a href="#tasks" class="mobile-nav-item" data-view="tasks" aria-label="Tasks">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path></svg>
         <span>Tasks</span>
+      </a>
+      <a href="#kernel" class="mobile-nav-item" data-view="kernel" aria-label="Cognitive Kernel">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        <span>Mind</span>
       </a>
       <a href="#settings" class="mobile-nav-item" data-view="settings" aria-label="Settings">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -50,27 +51,11 @@
     </nav>
 
     <!-- Sidebar -->
+    <!-- Sidebar header/footer are rendered by js/components/Sidebar.js -->
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
-      <div class="sidebar-header">
-        <a href="#chat" class="sidebar-brand" aria-label="Maya Home">
-          <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
-            <path d="M16 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z" fill="currentColor"/>
-          </svg>
-          <span class="brand-text">Maya 2.0</span>
-        </a>
-        <button id="sidebarToggle" class="sidebar-toggle" aria-label="Collapse sidebar" aria-expanded="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-      </div>
       <nav class="sidebar-nav" id="sidebarNav">
         <!-- Navigation items injected by JS -->
       </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user" id="sidebarUser">
-          <!-- User info injected by JS -->
-        </div>
-      </div>
     </aside>
 
     <!-- Sidebar overlay for mobile -->

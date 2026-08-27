@@ -10,6 +10,37 @@
 
 ## ⚡ ACTIVE — 2026-08-25
 
+**Session (2026-08-26, later) — production frontend built on the real backend map:**
+- Full backend reconnaissance FIRST (routes, kernel, providers, memory, MCP,
+  self-model, society, metacognition, checkpoints, streaming), then UI.
+- **Fixed broken SPA boot**: app.js imported 16 nonexistent view files and
+  BaseView.js was missing → frontend never rendered. Created BaseView.js,
+  LoginView.js; fixed imports; exposed app.api/toast/Modal/Chart/DataTable/
+  MarkdownRenderer/ws/sse utilities views already expected.
+- **New views on real endpoints**: KernelView (status/working memory/
+  beliefs+knowledge/simulate/checkpoints/audit), GoalsView (process-goal
+  propose-vs-execute gating, incomplete+resume, decompose), SkillsView
+  (procedural memory/search/compose/distill/replay), SelfModelView
+  (profile/assess/traits + Phase 42 propose→approve→execute),
+  CapabilitiesView, MetacognitionView, SocietyView, MCPView, CoreLoopView
+  (maya/core loop control/models/checkpoints/audit), ResearchView (Phase 32
+  research + Phase 21 guarded publish).
+- TasksView: live SSE event stream + pause/resume/cancel. ChatView: real
+  POST-SSE streaming via fetch (old EventSource code could never work —
+  endpoint is POST).
+- **Smallest backend adapters added** (capability existed, route missing):
+  POST /cognitive/kernel/resume-incomplete (Phase 41 batch scan/execute),
+  GET /cognitive/kernel/audit, PUT /api/v1/memory/{id} (versioned update).
+  Bugfixes: /capabilities/stats was shadowed by /{cap_id}; goals list now
+  returns all known statuses (was active-only → suspended goals invisible).
+- Tests: `integration_frontend.sh` (73 checks against booted server),
+  `frontend_smoke_test.mjs` (executes all ES modules with DOM shim;
+  frontend/js/package.json {"type":"module"} added for node),
+  `check_frontend_imports.py` (import/export graph). All green; backend
+  suite still 353 passed. Fixed pre-existing DevicesView brace bug.
+- `frontend/js/screens/* + router.js` are a dead parallel plain-script
+  system not loaded by index.html — left in place, excluded from tests.
+
 **Session (2026-08-26) — router resilience + push-validation hardening:**
 - **NIM default model rotated AGAIN**: `meta/llama-3.3-70b-instruct` retired
   from NIM (410 Gone). New default `minimaxai/minimax-m3` (verified live,

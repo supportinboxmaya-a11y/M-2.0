@@ -259,7 +259,7 @@
   
   /* Notifications dropdown */
   .user-dropdown {
-    right: -var(--space-3);
+    right: calc(-1 * var(--space-3));
     left: auto;
     min-width: 280px;
     width: calc(100vw - var(--space-3) * 2);
@@ -269,6 +269,7 @@
   /* Tabs scrollable */
   .tabs,
   .memory-tabs,
+  .learning-tabs,
   .tools-category-filter,
   .hosting-tabs,
   .cognition-tabs,
@@ -279,9 +280,10 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  
+
   .tabs::-webkit-scrollbar,
   .memory-tabs::-webkit-scrollbar,
+  .learning-tabs::-webkit-scrollbar,
   .tools-category-filter::-webkit-scrollbar,
   .hosting-tabs::-webkit-scrollbar,
   .cognition-tabs::-webkit-scrollbar,

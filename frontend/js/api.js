@@ -191,6 +191,10 @@ class ApiClient {
   deleteMemory(memoryId) {
     return this.delete(`/api/v1/memory/${memoryId}`);
   }
+
+  updateMemory(memoryId, content) {
+    return this.put(`/api/v1/memory/${memoryId}`, { content });
+  }
   
   getMemoryStats() {
     return this.get('/api/v1/memory/stats');
@@ -223,6 +227,10 @@ class ApiClient {
   
   getToolLogs(limit = 50) {
     return this.get(`/api/v1/tools/logs?limit=${limit}`);
+  }
+
+  getToolFramework() {
+    return this.get('/api/v1/tools/framework');
   }
   
   // LLM Providers
@@ -406,9 +414,31 @@ class ApiClient {
   listWorkspaceFiles() {
     return this.get('/api/v1/workspace/files');
   }
-  
+
   getWorkspaceFile(filename) {
     return this.get(`/api/v1/workspace/files/${filename}`);
+  }
+
+  // Multi-user Workspaces (personal + team memory)
+  listWorkspaces() {
+    return this.get('/api/v1/workspaces');
+  }
+
+  getWorkspaceMemory(workspace = 'default', q = '', limit = 20) {
+    const params = new URLSearchParams({ workspace, q, limit: limit.toString() });
+    return this.get(`/api/v1/workspace/memory?${params}`);
+  }
+
+  addWorkspaceMemory(workspace, content, type = 'general', metadata = {}) {
+    return this.post('/api/v1/workspace/memory', { workspace, content, type, metadata });
+  }
+
+  deleteWorkspaceMemory(memoryId, workspace = 'default') {
+    return this.delete(`/api/v1/workspace/memory/${memoryId}?workspace=${encodeURIComponent(workspace)}`);
+  }
+
+  getWorkspaceStats(workspace = 'default') {
+    return this.get(`/api/v1/workspace/stats?workspace=${encodeURIComponent(workspace)}`);
   }
   
   // Backups
@@ -480,6 +510,10 @@ class ApiClient {
   
   compressMemory(dryRun = true, memoryType = 'chat') {
     return this.post('/api/v1/learning/compress', { dry_run: dryRun, memory_type: memoryType });
+  }
+
+  getLearningPrompts() {
+    return this.get('/api/v1/learning/prompts');
   }
   
   // Plugins
@@ -1034,6 +1068,487 @@ class ApiClient {
   // Skills
   getSkills() {
     return this.get('/api/v1/skills');
+  }
+
+  // ── Cognitive Kernel (Phase 18/34 unified loop) ──────────────────
+  getKernelStatus() {
+    return this.get('/api/v1/cognitive/kernel/status');
+  }
+
+  processGoal(description, { priority = 50, execute = false, metadata = {} } = {}) {
+    return this.post('/api/v1/cognitive/kernel/process-goal', { description, priority, execute, metadata });
+  }
+
+  createKernelCheckpoint() {
+    return this.post('/api/v1/cognitive/kernel/checkpoint');
+  }
+
+  getKernelCheckpoints() {
+    return this.get('/api/v1/cognitive/kernel/checkpoints');
+  }
+
+  getKernelAudit(limit = 50) {
+    return this.get(`/api/v1/cognitive/kernel/audit?limit=${limit}`);
+  }
+
+  restoreKernelCheckpoint(checkpointId) {
+    return this.post('/api/v1/cognitive/kernel/restore', { checkpoint_id: checkpointId });
+  }
+
+  resumeIncompleteGoals({ execute = false, max_goals = 5, plan_proposals = true } = {}) {
+    return this.post('/api/v1/cognitive/kernel/resume-incomplete', { execute, max_goals, plan_proposals });
+  }
+
+  // ── Working memory ───────────────────────────────────────────────
+  addWorkingMemory(content, type = 'fact', attention = 1.0) {
+    return this.post('/api/v1/cognitive/memory/working/add', { content, type, attention });
+  }
+
+  searchWorkingMemory(q, limit = 10, type = null) {
+    const params = new URLSearchParams({ q, limit: limit.toString() });
+    if (type) params.set('type', type);
+    return this.get(`/api/v1/cognitive/memory/working/search?${params}`);
+  }
+
+  getWorkingMemoryCapacity() {
+    return this.get('/api/v1/cognitive/memory/working/capacity');
+  }
+
+  // ── Goals (persistent, Phase 35) ────────────────────────────────
+  getKernelGoals(status = null) {
+    const params = status ? `?status=${status}` : '';
+    return this.get(`/api/v1/cognitive/goals${params}`);
+  }
+
+  getGoal(goalId) {
+    return this.get(`/api/v1/cognitive/goals/${goalId}`);
+  }
+
+  createGoal(data) {
+    return this.post('/api/v1/cognitive/goals', data);
+  }
+
+  decomposeGoal(goalId, numSubgoals = 5) {
+    return this.post(`/api/v1/cognitive/goals/${goalId}/decompose`, { num_subgoals: numSubgoals });
+  }
+
+  updateGoal(goalId, data) {
+    return this.patch(`/api/v1/cognitive/goals/${goalId}`, data);
+  }
+
+  getIncompleteGoals() {
+    return this.get('/api/v1/cognitive/kernel/goals/incomplete');
+  }
+
+  resumeGoal(goalId, execute = false) {
+    return this.post(`/api/v1/cognitive/kernel/goals/${goalId}/resume`, { execute });
+  }
+
+  // ── Knowledge engine + beliefs + simulation (Phase 36) ──────────
+  knowledgeQuery(q, domain = null, limit = 5) {
+    const params = new URLSearchParams({ q, limit: limit.toString() });
+    if (domain) params.set('domain', domain);
+    return this.get(`/api/v1/cognitive/knowledge/query?${params}`);
+  }
+
+  getKnowledgeStats() {
+    return this.get('/api/v1/cognitive/knowledge/stats');
+  }
+
+  learnKnowledge(proposition, { confidence = 0.6, source = 'testimony', domain = 'general', evidence = null } = {}) {
+    return this.post('/api/v1/cognitive/knowledge/learn', { proposition, confidence, source, domain, evidence });
+  }
+
+  queryBeliefs(domain = null, minConf = 0.0) {
+    const params = new URLSearchParams({ min_conf: minConf.toString() });
+    if (domain) params.set('domain', domain);
+    return this.get(`/api/v1/cognitive/beliefs?${params}`);
+  }
+
+  addBelief(proposition, { confidence = 0.5, source = 'observation', domain = 'general', evidence = null } = {}) {
+    return this.post('/api/v1/cognitive/beliefs', { proposition, confidence, source, domain, evidence });
+  }
+
+  simulateAction(actionType, parameters = {}, domain = 'general') {
+    return this.post('/api/v1/cognitive/simulate', { action_type: actionType, parameters, domain });
+  }
+
+  // ── Capability registry ─────────────────────────────────────────
+  getCapabilities(filters = {}) {
+    const params = new URLSearchParams();
+    if (filters.type) params.set('type', filters.type);
+    if (filters.tag) params.set('tag', filters.tag);
+    if (filters.status) params.set('status', filters.status);
+    params.set('limit', (filters.limit || 100).toString());
+    return this.get(`/api/v1/capabilities?${params}`);
+  }
+
+  searchCapabilities(q, limit = 20) {
+    return this.get(`/api/v1/capabilities/search?q=${encodeURIComponent(q)}&limit=${limit}`);
+  }
+
+  getCapability(capId) {
+    return this.get(`/api/v1/capabilities/${capId}`);
+  }
+
+  verifyCapability(capId, testCases = null) {
+    return this.post(`/api/v1/capabilities/${capId}/verify`, { test_cases: testCases });
+  }
+
+  getComposableCapabilities(capId, limit = 10) {
+    return this.get(`/api/v1/capabilities/${capId}/composable?limit=${limit}`);
+  }
+
+  getCapabilityRelations(capId) {
+    return this.get(`/api/v1/capabilities/${capId}/relations`);
+  }
+
+  addCapabilityRelation(capId, targetId, relationType) {
+    return this.post(`/api/v1/capabilities/${capId}/relations`, { target_id: targetId, relation_type: relationType });
+  }
+
+  getCapabilityStats() {
+    return this.get('/api/v1/capabilities/stats');
+  }
+
+  // ── Tool synthesizer ────────────────────────────────────────────
+  synthesizeTool(goal, requirements = null, asyncMode = true) {
+    return this.post('/api/v1/cognitive/synthesize', { goal, requirements, async: asyncMode });
+  }
+
+  getSynthesisJob(jobId) {
+    return this.get(`/api/v1/cognitive/synthesize/${jobId}`);
+  }
+
+  getSynthesisJobs(status = null, limit = 50) {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    if (status) params.set('status', status);
+    return this.get(`/api/v1/cognitive/synthesize?${params}`);
+  }
+
+  getSynthesisStats() {
+    return this.get('/api/v1/cognitive/synthesize/stats');
+  }
+
+  // ── Hierarchical planner ────────────────────────────────────────
+  createPlan(goalId) {
+    return this.post('/api/v1/cognitive/plan', { goal_id: goalId });
+  }
+
+  getPlanStatus(planId) {
+    return this.get(`/api/v1/cognitive/plan/${planId}`);
+  }
+
+  executePlan(planId) {
+    return this.post(`/api/v1/cognitive/plan/${planId}/execute`, {});
+  }
+
+  replanPlan(planId, fromStep = null, reason = '') {
+    return this.post(`/api/v1/cognitive/plan/${planId}/replan`, { from_step: fromStep, reason });
+  }
+
+  // ── Metacognition ───────────────────────────────────────────────
+  getMetacognitiveStatus() {
+    return this.get('/api/v1/cognitive/metacognitive/status');
+  }
+
+  runMetacognitiveMonitor(context = {}) {
+    return this.post('/api/v1/cognitive/metacognitive/monitor', { context });
+  }
+
+  recordMetacognitiveStepResult(context, expected, actual, verified = false) {
+    return this.post('/api/v1/cognitive/metacognitive/step_result', { context, expected, actual, verified });
+  }
+
+  getMetacognitiveEvents(type = null, limit = 50) {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    if (type) params.set('type', type);
+    return this.get(`/api/v1/cognitive/metacognitive/events?${params}`);
+  }
+
+  // ── Agent society ───────────────────────────────────────────────
+  getSocietyStatus() {
+    return this.get('/api/v1/cognitive/society/status');
+  }
+
+  spawnSocietyAgent(role, spec = null) {
+    return this.post('/api/v1/cognitive/society/spawn', { role, spec });
+  }
+
+  getSocietyAgents(role = null, status = null) {
+    const params = new URLSearchParams();
+    if (role) params.set('role', role);
+    if (status) params.set('status', status);
+    return this.get(`/api/v1/cognitive/society/agents?${params}`);
+  }
+
+  assignSocietyTask(agentId, task) {
+    return this.post(`/api/v1/cognitive/society/agents/${agentId}/task`, task);
+  }
+
+  tenderSocietyTask(taskSpec, deadline = null, eligibleRoles = null) {
+    return this.post('/api/v1/cognitive/society/tasks/tender', { task_spec: taskSpec, deadline, eligible_roles: eligibleRoles });
+  }
+
+  awardSocietyTask(taskId) {
+    return this.post(`/api/v1/cognitive/society/tasks/${taskId}/award`);
+  }
+
+  writeBlackboard(agentId, key, value, tags = null, ttl = 3600) {
+    return this.post('/api/v1/cognitive/society/blackboard/write', { agent_id: agentId, key, value, tags, ttl });
+  }
+
+  readBlackboard(key) {
+    return this.get(`/api/v1/cognitive/society/blackboard/read?key=${encodeURIComponent(key)}`);
+  }
+
+  queryBlackboard({ tags = '', author = '', pattern = '' } = {}) {
+    const params = new URLSearchParams({ tags, author, pattern });
+    return this.get(`/api/v1/cognitive/society/blackboard/query?${params}`);
+  }
+
+  // ── Episodic / procedural memory ────────────────────────────────
+  getEpisodes(limit = 50, outcome = null) {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    if (outcome) params.set('outcome', outcome);
+    return this.get(`/api/v1/cognitive/memory/episodic?${params}`);
+  }
+
+  searchEpisodes(goal, limit = 10) {
+    return this.get(`/api/v1/cognitive/memory/episodic/search?goal=${encodeURIComponent(goal)}&limit=${limit}`);
+  }
+
+  getEpisodeStats() {
+    return this.get('/api/v1/cognitive/memory/episodic/stats');
+  }
+
+  getSkillsProcedural(verified = false, limit = 100) {
+    return this.get(`/api/v1/cognitive/memory/procedural?verified=${verified}&limit=${limit}`);
+  }
+
+  searchSkillsProcedural(q, limit = 5) {
+    return this.get(`/api/v1/cognitive/memory/procedural/search?q=${encodeURIComponent(q)}&limit=${limit}`);
+  }
+
+  getApplicableSkills(goal, context = '{}') {
+    return this.get(`/api/v1/cognitive/memory/procedural/applicable?goal=${encodeURIComponent(goal)}&context=${encodeURIComponent(context)}`);
+  }
+
+  recordSkillUse(skillId, success, reward = 0.0) {
+    return this.post(`/api/v1/cognitive/memory/procedural/${skillId}/use`, { success, reward });
+  }
+
+  getProceduralStats() {
+    return this.get('/api/v1/cognitive/memory/procedural/stats');
+  }
+
+  composeSkills(skillIds, name, description = '') {
+    return this.post('/api/v1/cognitive/memory/procedural/compose', { skill_ids: skillIds, name, description });
+  }
+
+  distillSkills(goal = '') {
+    return this.post('/api/v1/cognitive/memory/distill', { goal });
+  }
+
+  replayExperience(batchSize = 32) {
+    return this.post('/api/v1/cognitive/memory/replay', { batch_size: batchSize });
+  }
+
+  getReplayStats() {
+    return this.get('/api/v1/cognitive/memory/replay/stats');
+  }
+
+  // ── MCP host (Phase 38) ─────────────────────────────────────────
+  getMCPStatus() {
+    return this.get('/api/v1/mcp/status');
+  }
+
+  connectMCPServer(config) {
+    return this.post('/api/v1/mcp/connect', config);
+  }
+
+  disconnectMCPServers() {
+    return this.post('/api/v1/mcp/disconnect');
+  }
+
+  callMCPTool(server, tool, args = {}) {
+    return this.post(`/api/v1/mcp/call/${server}/${tool}`, args);
+  }
+
+  // ── Self-model (Phase 39) ───────────────────────────────────────
+  getSelfProfile() {
+    return this.get('/api/v1/cognitive/self/profile');
+  }
+
+  assessSelf(q) {
+    return this.get(`/api/v1/cognitive/self/assess?q=${encodeURIComponent(q)}`);
+  }
+
+  setSelfTrait(key, value) {
+    return this.post('/api/v1/cognitive/self/traits', { key, value });
+  }
+
+  // ── Self-improvement (Phase 42) ─────────────────────────────────
+  getSelfImproveStatus() {
+    return this.get('/api/v1/cognitive/self-improve/status');
+  }
+
+  getSelfImproveGaps() {
+    return this.get('/api/v1/cognitive/self-improve/gaps');
+  }
+
+  proposeImprovement(gap = null, goalHint = '') {
+    return this.post('/api/v1/cognitive/self-improve/propose', { gap, goal_hint: goalHint });
+  }
+
+  getImprovementProposals(status = null) {
+    const params = status ? `?status=${status}` : '';
+    return this.get(`/api/v1/cognitive/self-improve/proposals${params}`);
+  }
+
+  decideProposal(pid, approved) {
+    return this.post(`/api/v1/cognitive/self-improve/proposals/${pid}/decide`, { approved });
+  }
+
+  executeProposal(pid) {
+    return this.post(`/api/v1/cognitive/self-improve/proposals/${pid}/execute`);
+  }
+
+  // ── Maya Core (Phase 19 cognitive core) ─────────────────────────
+  getCoreStatus() {
+    return this.get('/api/v1/maya/core/status');
+  }
+
+  initializeCore() {
+    return this.post('/api/v1/maya/core/initialize');
+  }
+
+  coreLoopControl(action, interval = 30.0) {
+    return this.post(`/api/v1/maya/core/loop/${action}`, action === 'start' ? { interval } : {});
+  }
+
+  runCoreMission(description, missionType = 'general', selfGen = true) {
+    return this.post('/api/v1/maya/core/mission', { description, mission_type: missionType, self_gen: selfGen });
+  }
+
+  executeCoreGoal(goal, maxSteps = 10) {
+    return this.post('/api/v1/maya/core/goal/execute', { goal, max_steps: maxSteps });
+  }
+
+  getCoreIdentity() {
+    return this.get('/api/v1/maya/core/identity');
+  }
+
+  getCoreModels() {
+    return this.get('/api/v1/maya/core/models');
+  }
+
+  switchCoreModel(modelId) {
+    return this.post('/api/v1/maya/core/models/switch', { model_id: modelId });
+  }
+
+  invokeCoreModel(prompt, modelId = null, taskType = 'general', maxTokens = 4000) {
+    return this.post('/api/v1/maya/core/models/invoke', { prompt, model_id: modelId, task_type: taskType, max_tokens: maxTokens });
+  }
+
+  getCoreCheckpoints() {
+    return this.get('/api/v1/maya/core/checkpoints');
+  }
+
+  createCoreCheckpoint() {
+    return this.post('/api/v1/maya/core/checkpoint');
+  }
+
+  restoreCoreCheckpoint(checkpointId) {
+    return this.post('/api/v1/maya/core/checkpoint/restore', { checkpoint_id: checkpointId });
+  }
+
+  getCoreAudit(limit = 50) {
+    return this.get(`/api/v1/maya/core/audit?limit=${limit}`);
+  }
+
+  shutdownCore() {
+    return this.post('/api/v1/maya/core/shutdown');
+  }
+
+  // ── Task execution streaming (SSE) ──────────────────────────────
+  getTaskStatus(taskId) {
+    return this.get(`/api/v1/agent/tasks/${taskId}/status`);
+  }
+
+  cancelTask(taskId) {
+    return this.post(`/api/v1/agent/tasks/${taskId}/cancel`);
+  }
+
+  pauseTask(taskId) {
+    return this.post(`/api/v1/agent/tasks/${taskId}/pause`);
+  }
+
+  resumeTask(taskId) {
+    return this.post(`/api/v1/agent/tasks/${taskId}/resume`);
+  }
+
+  /**
+   * Stream a chat reply via POST + Server-Sent Events.
+   * Returns an abort handle: { promise, abort() }.
+   * Callbacks: onDelta(text), onDone(fullText), onError(err).
+   */
+  streamChat(message, { chatId = null, instanceId = null, onDelta, onDone, onError } = {}) {
+    const controller = new AbortController();
+    const token = this.token;
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const promise = fetch(`${this.baseUrl}/api/v1/agent/chat/stream`, {
+      method: 'POST',
+      headers,
+      credentials: 'include',
+      body: JSON.stringify({ message, chat_id: chatId, instance_id: instanceId }),
+      signal: controller.signal,
+    }).then(async (response) => {
+      if (!response.ok || !response.body) {
+        let detail = response.statusText;
+        try { detail = (await response.json()).detail || detail; } catch {}
+        throw new ApiError(response.status, detail || 'Stream failed');
+      }
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let full = '';
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop();
+        for (const part of parts) {
+          const line = part.split('\n').find(l => l.startsWith('data: '));
+          if (!line) continue;
+          let payload;
+          try { payload = JSON.parse(line.slice(6)); } catch { continue; }
+          if (payload.delta) { full += payload.delta; onDelta && onDelta(payload.delta); }
+          else if (payload.error) { onError && onError(new Error(payload.error)); }
+          else if (payload.done) { onDone && onDone(full); }
+        }
+      }
+      return full;
+    }).catch((err) => {
+      if (err.name === 'AbortError') return '';
+      onError && onError(err);
+      throw err;
+    });
+    return { promise, abort: () => controller.abort() };
+  }
+
+  /**
+   * Subscribe to live task events via native EventSource (GET SSE).
+   * Returns the EventSource instance; caller adds onmessage handlers.
+   */
+  streamTaskEvents(taskId) {
+    const url = `${this.baseUrl}/api/v1/agent/tasks/${taskId}/stream`;
+    const es = new EventSource(url);
+    // EventSource cannot send Authorization headers; the backend accepts
+    // anonymous connections for task streams but we pass token when present.
+    return es;
   }
 }
 

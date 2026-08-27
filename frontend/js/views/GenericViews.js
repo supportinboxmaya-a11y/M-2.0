@@ -151,19 +151,23 @@ export class LearningView {
       <div class="learning-tab-panel" id="panelPrompts" style="display: none;">
         <h3>Prompt Optimization</h3>
         <div id="promptOptStats">Loading...</div>
+        <h4 style="margin-top:var(--space-4)">Backend Optimizer Report</h4>
+        <div id="optimizedPrompts">Loading...</div>
       </div>
     `;
     
     this.bindTabEvents();
   }
-  
+
+  bindEvents() {
+    this.container.querySelector('#feedbackForm')?.addEventListener('submit', (e) => this.submitFeedback(e));
+    this.container.querySelector('#compressionForm')?.addEventListener('submit', (e) => this.runCompression(e));
+  }
+
   bindTabEvents() {
     this.container.querySelectorAll('.learning-tab').forEach(tab => {
       tab.addEventListener('click', () => this.setTab(tab.dataset.tab));
     });
-    
-    this.container.querySelector('#feedbackForm').addEventListener('submit', (e) => this.submitFeedback(e));
-    this.container.querySelector('#compressionForm').addEventListener('submit', (e) => this.runCompression(e));
   }
   
   setTab(tab) {
@@ -183,13 +187,33 @@ export class LearningView {
   renderStats(stats) {
     const el = this.container.querySelector('#feedbackStats');
     el.innerHTML = `
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${stats.feedback?.total || 0}</div><div class="analytics-stat-label">Total Feedback</div></div>
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${stats.feedback?.avg_rating || 0}</div><div class="analytics-stat-label">Avg Rating</div></div>
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${stats.lessons?.length || 0}</div><div class="analytics-stat-label">Lessons Learned</div></div>
+      <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">${stats.feedback?.total || 0}</div><div class="stat-label">Total Feedback</div></div>
+      <div class="stat-card"><div class="stat-value">${stats.feedback?.avg_rating || 0}</div><div class="stat-label">Avg Rating</div></div>
+      <div class="stat-card"><div class="stat-value">${stats.lessons?.length || 0}</div><div class="stat-label">Lessons Learned</div></div>
+      </div>
     `;
     
     this.renderExperience(stats.experience);
     this.renderPromptOpt(stats.prompts);
+    this.loadOptimizedPrompts();
+  }
+
+  async loadOptimizedPrompts() {
+    const el = this.container.querySelector('#optimizedPrompts');
+    if (!el) return;
+    try {
+      const res = await this.app.api.getLearningPrompts();
+      const report = res?.report || {};
+      const core = res?.core || res || {};
+      const coreRows = Object.entries(core).filter(([, v]) => typeof v !== 'object');
+      el.innerHTML = `
+        ${coreRows.length ? `<div class="stat-grid">${coreRows.map(([k, v]) =>
+          `<div class="stat-card"><div class="stat-value small-val">${this.escapeHtml(String(v))}</div><div class="stat-label">${this.escapeHtml(k)}</div></div>`).join('')}</div>` : ''}
+        <pre class="tool-tester-result" style="max-height:320px;overflow:auto">${this.escapeHtml(JSON.stringify(report, null, 2))}</pre>`;
+    } catch (err) {
+      el.innerHTML = `<div class="empty-state"><div class="desc">Optimizer report unavailable: ${this.escapeHtml(err.message)}</div></div>`;
+    }
   }
   
   renderExperience(experience) {
@@ -215,8 +239,10 @@ export class LearningView {
     }
     
     el.innerHTML = `
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${prompts.total_optimizations || 0}</div><div class="analytics-stat-label">Total Optimizations</div></div>
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${prompts.avg_improvement || 0}%</div><div class="analytics-stat-label">Avg Improvement</div></div>
+      <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">${prompts.total_optimizations || 0}</div><div class="stat-label">Total Optimizations</div></div>
+      <div class="stat-card"><div class="stat-value">${prompts.avg_improvement || 0}%</div><div class="stat-label">Avg Improvement</div></div>
+      </div>
     `;
   }
   
@@ -644,10 +670,12 @@ export class AnalyticsView extends BaseView {
   renderSummary(summary) {
     const el = this.container.querySelector('#summaryGrid');
     el.innerHTML = `
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${summary.total_tasks || 0}</div><div class="analytics-stat-label">Total Tasks</div></div>
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${summary.success_rate || 0}%</div><div class="analytics-stat-label">Success Rate</div></div>
-      <div class="analytics-stat-card"><div class="analytics-stat-value">$${(summary.total_cost_usd || 0).toFixed(4)}</div><div class="analytics-stat-label">Total Cost</div></div>
-      <div class="analytics-stat-card"><div class="analytics-stat-value">${summary.budget_used_pct || 0}%</div><div class="analytics-stat-label">Budget Used</div></div>
+      <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">${summary.total_tasks || 0}</div><div class="stat-label">Total Tasks</div></div>
+      <div class="stat-card"><div class="stat-value">${summary.success_rate || 0}%</div><div class="stat-label">Success Rate</div></div>
+      <div class="stat-card"><div class="stat-value">$${(summary.total_cost_usd || 0).toFixed(4)}</div><div class="stat-label">Total Cost</div></div>
+      <div class="stat-card"><div class="stat-value">${summary.budget_used_pct || 0}%</div><div class="stat-label">Budget Used</div></div>
+      </div>
     `;
   }
   
@@ -699,7 +727,7 @@ export class LogsView {
       this.container = document.createElement('div');
       this.container.className = 'view logs-view';
       this.render();
-      this.bindEvents();
+      this.bindTabEvents();
       this.loadLogs();
     }
     this.app.viewContainer.appendChild(this.container);
@@ -727,7 +755,7 @@ export class LogsView {
     `;
     this.bindTabEvents();
   }
-  
+
   bindTabEvents() {
     this.container.querySelectorAll('.logs-tab').forEach(tab => {
       tab.addEventListener('click', () => this.setTab(tab.dataset.tab));
@@ -1004,7 +1032,6 @@ export class DevicesView {
       this.container.querySelectorAll('[data-action="revoke"]').forEach(btn => {
         btn.addEventListener('click', () => this.revokeDevice(btn.dataset.id));
       });
-    }
   }
   
   async openPairingModal() {
@@ -1071,23 +1098,172 @@ export class DevicesView {
   }
 }
 
-export class WorkspaceView extends BaseView {
+export class WorkspaceView {
   constructor(app) {
-    super(app, {
-      title: 'Workspace Files',
-      apiEndpoint: 'listWorkspaceFiles',
-      showCreateButton: false,
-      columns: [
-        { key: 'name', label: 'Name' },
-        { key: 'size', label: 'Size', render: (v) => v ? this.app.formatBytes(v) : '—' },
-        { key: 'modified', label: 'Modified', render: (v) => v ? new Date(v * 1000).toLocaleString() : '—' }
-      ],
-      actions: [
-        { key: 'download', label: 'Download', icon: 'download' },
-        { key: 'delete', label: 'Delete', icon: 'trash' }
-      ],
-      emptyMessage: 'No files in workspace'
+    this.app = app;
+    this.container = null;
+    this.tab = 'memory';
+    this.workspaces = [];
+    this.workspace = 'default';
+    this.memories = [];
+    this.files = [];
+  }
+
+  show() {
+    if (!this.container) {
+      this.container = document.createElement('div');
+      this.container.className = 'view workspace-view';
+      this.render();
+      this.bindEvents();
+      this.init();
+    }
+    this.app.viewContainer.appendChild(this.container);
+  }
+
+  hide() {
+    if (this.container && this.container.parentNode) {
+      this.container.parentNode.removeChild(this.container);
+    }
+  }
+
+  render() {
+    this.container.innerHTML = `
+      <div class="view-header">
+        <h2>Workspace</h2>
+        <div class="view-header-actions">
+          <select class="form-select" id="wsSelect" aria-label="Workspace" style="max-width:200px"></select>
+          <button class="icon-btn" id="wsRefresh" aria-label="Refresh" title="Refresh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="learning-tabs" role="tablist">
+        <button class="learning-tab active" data-tab="memory">Memory</button>
+        <button class="learning-tab" data-tab="files">Files</button>
+        <button class="learning-tab" data-tab="stats">Stats</button>
+      </div>
+      <div id="wsBody"><div class="loading-state"><div class="spinner"></div><p>Loading…</p></div></div>
+      <div id="wsModalHost"></div>
+    `;
+  }
+
+  bindEvents() {
+    this.container.querySelectorAll('.learning-tab').forEach(t =>
+      t.addEventListener('click', () => { this.tab = t.dataset.tab; this.setTab(); this.loadTab(); }));
+    this.container.querySelector('#wsRefresh').addEventListener('click', () => this.loadTab());
+    this.container.querySelector('#wsSelect').addEventListener('change', (e) => {
+      this.workspace = e.target.value || 'default';
+      this.loadTab();
     });
+  }
+
+  setTab() {
+    this.container.querySelectorAll('.learning-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === this.tab));
+  }
+
+  async init() {
+    try {
+      const res = await this.app.api.listWorkspaces();
+      this.workspaces = res?.workspaces || [];
+    } catch { this.workspaces = []; }
+    const sel = this.container.querySelector('#wsSelect');
+    sel.innerHTML = (this.workspaces.length
+      ? this.workspaces.map(w =>
+          `<option value="${this.escapeHtml(w.scope || w.id || w.name)}">${this.escapeHtml(w.name || w.scope || w.id)}</option>`)
+      : '<option value="default">default</option>').join('');
+    const scopes = this.workspaces.map(w => w.scope || w.id || w.name);
+    if (!scopes.includes(this.workspace)) this.workspace = scopes[0] || 'default';
+    sel.value = this.workspace;
+    await this.loadTab();
+  }
+
+  async loadTab() {
+    const body = this.container.querySelector('#wsBody');
+    body.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading…</p></div>';
+    try {
+      if (this.tab === 'memory') await this.loadMemory(body);
+      else if (this.tab === 'files') await this.loadFiles(body);
+      else await this.loadStats(body);
+    } catch (err) {
+      body.innerHTML = `<div class="error-state"><div class="icon">⚠️</div><h3>Failed to load</h3><p>${this.escapeHtml(err.message)}</p></div>`;
+    }
+  }
+
+  async loadMemory(body) {
+    const res = await this.app.api.getWorkspaceMemory(this.workspace, '', 50);
+    this.memories = res?.results || [];
+    body.innerHTML = `
+      <form class="form" id="wsMemForm" style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-4)">
+        <input type="text" class="form-input" id="wsMemInput" placeholder="Add memory to ${this.escapeHtml(this.workspace)}…" required style="flex:1;min-width:180px">
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+      ${this.memories.length ? `
+      <div class="table-container"><table class="data-table">
+        <thead><tr><th>Content</th><th>Type</th><th>Author</th><th></th></tr></thead>
+        <tbody>${this.memories.map(m => `
+          <tr>
+            <td>${this.escapeHtml(m.content)}</td>
+            <td>${this.escapeHtml(m.type || 'general')}</td>
+            <td>${this.escapeHtml(m.author || m.metadata?.author || '—')}</td>
+            <td class="row-actions"><button class="task-action-btn" data-del="${this.escapeHtml(m.id)}">Delete</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>` : `<div class="empty-state"><div class="icon">🗂</div><div class="title">No memories</div><div class="desc">Nothing stored in this workspace yet.</div></div>`}
+    `;
+    body.querySelector('#wsMemForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = body.querySelector('#wsMemInput');
+      try {
+        await this.app.api.addWorkspaceMemory(this.workspace, input.value.trim());
+        this.app.toast.success('Memory added');
+        this.loadTab();
+      } catch (err) { this.app.toast.error('Add failed', err.message); }
+    });
+    body.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', async () => {
+      if (!await this.app.confirmDelete('workspace memory')) return;
+      try {
+        await this.app.api.deleteWorkspaceMemory(btn.dataset.del, this.workspace);
+        this.app.toast.success('Deleted');
+        this.loadTab();
+      } catch (err) { this.app.toast.error('Delete failed', err.message); }
+    }));
+  }
+
+  async loadFiles(body) {
+    const res = await this.app.api.listWorkspaceFiles();
+    this.files = Array.isArray(res) ? res : (res?.files || []);
+    if (!this.files.length) {
+      body.innerHTML = `<div class="empty-state"><div class="icon">📁</div><div class="title">No files</div><div class="desc">The workspace directory is empty.</div></div>`;
+      return;
+    }
+    body.innerHTML = `
+      <div class="table-container"><table class="data-table">
+        <thead><tr><th>Name</th><th>Size</th><th>Modified</th></tr></thead>
+        <tbody>${this.files.map(f => `
+          <tr>
+            <td>${this.escapeHtml(f.name)}</td>
+            <td>${f.size != null ? this.app.formatBytes(f.size) : '—'}</td>
+            <td>${f.modified ? new Date(f.modified * 1000).toLocaleString() : '—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`;
+  }
+
+  async loadStats(body) {
+    const s = await this.app.api.getWorkspaceStats(this.workspace);
+    const rows = Object.entries(s || {}).filter(([, v]) => typeof v !== 'object');
+    body.innerHTML = `
+      <div class="stat-grid">
+        ${rows.map(([k, v]) => `
+          <div class="stat-card"><div class="stat-value">${this.escapeHtml(String(v))}</div><div class="stat-label">${this.escapeHtml(k.replace(/_/g, ' '))}</div></div>`).join('')}
+      </div>`;
+  }
+
+  escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
   }
 }
 

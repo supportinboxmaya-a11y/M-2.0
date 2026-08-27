@@ -149,39 +149,33 @@ export class ChatView {
     const input = this.container.querySelector('#chatInput');
     const message = input.value.trim();
     if (!message || this.streaming) return;
-    
+
     // Clear input
     input.value = '';
     input.style.height = 'auto';
     this.handleInputChange();
-    
+
     // Add user message
     this.addMessage('user', message);
-    
-    // Show streaming indicator
+
+    // Stream the reply via POST + Server-Sent Events
     this.streaming = true;
     this.currentAssistantMessage = this.addStreamingMessage();
-    
+
     try {
-      // Use SSE for streaming
-      const token = this.app.auth.getToken();
-      await this.app.sse.connect('/api/v1/agent/chat/stream', token, this.chatId);
-      
-      this.app.sse.on('delta', (delta) => {
-        this.appendToStreamingMessage(delta);
+      await this.app.api.streamChat(message, {
+        chatId: this.chatId,
+        onDelta: (delta) => this.appendToStreamingMessage(delta),
+        onDone: () => {
+          if (!this.currentAssistantMessage?.querySelector('.message-text').textContent.trim()) {
+            this.appendToStreamingMessage('(empty response)');
+          }
+          this.finishStreamingMessage();
+        },
+        onError: (err) => this.finishStreamingMessage(err.message),
       });
-      
-      this.app.sse.on('done', () => {
-        this.finishStreamingMessage();
-      });
-      
-      this.app.sse.on('error', (error) => {
-        this.finishStreamingMessage(error.message);
-      });
-      
-      // Send message
-      await this.app.api.chat(message, this.chatId);
-      
+      // If stream ended without an explicit done event, close cleanly
+      if (this.streaming) this.finishStreamingMessage();
     } catch (error) {
       this.finishStreamingMessage(error.message);
     }
@@ -262,17 +256,17 @@ export class ChatView {
   
   async runGoal(goal) {
     if (!goal) return;
-    
+
     this.addMessage('user', goal);
-    
+
     try {
       const task = await this.app.api.runAgent(goal);
-      toast.success('Goal started', `Task ${task.id.slice(0, 8)}`);
-      
-      // Switch to tasks view
+      this.app.toast.success('Goal started', `Task ${task.id.slice(0, 8)}`);
+
+      // Switch to tasks view to watch live execution
       window.location.hash = '#tasks';
     } catch (error) {
-      toast.error('Failed to start goal', error.message);
+      this.app.toast.error('Failed to start goal', error.message);
     }
   }
   
