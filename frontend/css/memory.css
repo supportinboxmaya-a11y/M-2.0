@@ -101,6 +101,7 @@
 
 .memory-list {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -283,6 +284,7 @@
 
 .memory-detail-body {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   padding: var(--space-5);
 }

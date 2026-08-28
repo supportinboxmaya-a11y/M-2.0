@@ -269,6 +269,7 @@
   font-weight: 500;
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
 }
 
 .provider-order-status {
@@ -401,6 +402,7 @@
 
 .remote-status-text {
   flex: 1;
+  min-width: 0;
   font-size: var(--text-sm);
   color: var(--text-primary);
 }
@@ -475,6 +477,7 @@
 
 .safety-option-content {
   flex: 1;
+  min-width: 0;
 }
 
 .safety-option-title {

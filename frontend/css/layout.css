@@ -104,6 +104,7 @@
 
 .sidebar-nav {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   padding: var(--space-3) var(--space-2);
 }
@@ -538,6 +539,7 @@
   grid-row: 1 / -1;
   grid-column: 2;
   min-height: 100vh;
+  min-width: 0;
   transition: margin-left var(--transition);
 }
 
@@ -552,6 +554,8 @@
   max-width: var(--max-content-width);
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* View transitions */
@@ -658,6 +662,7 @@
   padding: var(--space-5);
   overflow-y: auto;
   flex: 1;
+  min-width: 0;
 }
 
 .modal-footer {
@@ -878,7 +883,7 @@
   max-width: 320px;
 }
 
-/* Responsive */
+/* Responsive - Tablet: sidebar becomes drawer */
 @media (max-width: 1024px) {
   .sidebar:not(.collapsed) {
     transform: translateX(-100%);
@@ -908,55 +913,4 @@
   }
 }
 
-@media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: flex;
-  }
-  .header {
-    left: 0;
-    padding: 0 var(--space-3);
-  }
-  .sidebar.collapsed ~ .main-content .header {
-    left: 0;
-  }
-  .view-title {
-    font-size: var(--text-lg);
-  }
-  .view-container {
-    padding: calc(var(--header-height) + var(--space-4)) var(--space-4) calc(var(--mobile-tab-height) + var(--space-4));
-  }
-  .modal {
-    width: 90vw;
-    max-width: calc(100vw - var(--space-4) * 2);
-    margin: var(--space-4);
-    top: auto;
-    left: auto;
-    transform: none;
-    bottom: 0;
-    right: 0;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    max-height: 85vh;
-  }
-  .modal.small, .modal.medium, .modal.large, .modal.full {
-    width: 90vw;
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-}
-
-@media (max-width: 480px) {
-  .header-right .icon-btn:not(#notificationsBtn):not(#themeToggle):not(.user-menu-btn) {
-    display: none;
-  }
-  .user-menu-btn .user-name {
-    display: none;
-  }
-  .toast-container {
-    left: var(--space-3);
-    right: var(--space-3);
-    bottom: calc(var(--mobile-tab-height) + var(--space-3));
-    max-width: none;
-  }
-}
+/* Mobile (< 768px): all mobile styles moved to mobile.css to avoid conflicts */

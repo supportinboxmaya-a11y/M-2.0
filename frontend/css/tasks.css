@@ -247,6 +247,7 @@
 
 .task-detail-body {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   padding: var(--space-5);
 }

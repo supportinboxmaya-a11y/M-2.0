@@ -242,6 +242,7 @@
 
 .app-detail-body {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   padding: var(--space-5);
 }
@@ -425,6 +426,7 @@
 
 .pipeline-plan-step-content {
   flex: 1;
+  min-width: 0;
 }
 
 .pipeline-plan-step-title {

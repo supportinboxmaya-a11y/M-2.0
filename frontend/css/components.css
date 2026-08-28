@@ -331,6 +331,13 @@
   border-radius: var(--radius);
   overflow: hidden;
   transition: box-shadow var(--transition), border-color var(--transition);
+  min-width: 0;
+}
+
+.card-header,
+.card-body,
+.card-footer {
+  min-width: 0;
 }
 
 .card:hover {

@@ -50,7 +50,7 @@
 .pre-wrap { white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow-y: auto; }
 
 .search-bar { display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-3); }
-.search-bar .form-input { flex: 1; }
+.search-bar .form-input { flex: 1; min-width: 0; }
 
 .form-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 .form-row-end { align-items: center; justify-content: flex-end; }
