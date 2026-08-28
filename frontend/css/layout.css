@@ -1057,6 +1057,274 @@
   }
 }
 
+/* Mobile (≤768px): component-specific responsive rules */
+@media (max-width: 768px) {
+  /* Touch targets */
+  button,
+  .btn,
+  .nav-item,
+  .tab-btn,
+  .filter-btn,
+  .category-filter-btn,
+  .mobile-nav-item,
+  .dropdown-item,
+  .task-action-btn,
+  .memory-action-btn,
+  .message-action-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Table responsive */
+  .table-container {
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 0 var(--space-4);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table {
+    min-width: 600px;
+  }
+
+  /* Card stacking for component grids */
+  .apps-grid,
+  .tools-grid,
+  .providers-grid,
+  .flags-grid,
+  .comm-config-grid,
+  .budget-summary,
+  .system-info-grid,
+  .admin-dashboard-grid,
+  .usage-stats,
+  .usage-charts,
+  .security-grid,
+  .analytics-grid,
+  .panel-grid,
+  .stat-grid,
+  .stat-grid-3,
+  .stat-grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tasks-kanban {
+    flex-direction: column !important;
+  }
+  .kanban-column {
+    min-width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* Pipeline form */
+  .pipeline-form-row {
+    grid-template-columns: 1fr !important;
+  }
+  .pipeline-progress {
+    flex-wrap: wrap;
+  }
+  .pipeline-step-line {
+    display: none;
+  }
+  .pipeline-step-label {
+    min-width: calc(50% - var(--space-2));
+    text-align: center;
+  }
+
+  /* Strategy selector */
+  .strategy-btn {
+    min-width: calc(50% - var(--space-1));
+  }
+
+  /* Footer stacking */
+  .card-footer,
+  .modal-footer,
+  .task-detail-footer,
+  .app-card-footer,
+  .mission-footer,
+  .provider-actions,
+  .comm-config-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .card-footer .btn,
+  .modal-footer .btn,
+  .task-detail-footer .btn,
+  .app-card-footer .btn,
+  .mission-footer .btn,
+  .provider-actions .btn,
+  .comm-config-actions .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Search inputs full width */
+  .memory-search,
+  .tools-search,
+  .chat-input-wrapper {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+  .tools-search,
+  .memory-search {
+    min-width: 0 !important;
+  }
+
+  /* Chat input */
+  .chat-input-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .chat-input-hints {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .chat-input-wrapper {
+    flex-wrap: wrap;
+  }
+  .chat-input {
+    min-width: 0;
+  }
+
+  /* Notifications dropdown */
+  .user-dropdown,
+  .notifications-dropdown {
+    right: calc(-1 * var(--space-3)) !important;
+    left: auto !important;
+    min-width: 280px;
+    width: calc(100vw - var(--space-3) * 2) !important;
+    max-width: 280px;
+    box-sizing: border-box;
+  }
+
+  /* Tabs scrollable */
+  .tabs,
+  .memory-tabs,
+  .learning-tabs,
+  .tools-category-filter,
+  .hosting-tabs,
+  .cognition-tabs,
+  .admin-tabs,
+  .settings-section-header,
+  .logs-tabs,
+  .analytics-tabs,
+  .translate-form > .form-group > div {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: var(--space-1);
+  }
+  .tabs::-webkit-scrollbar,
+  .memory-tabs::-webkit-scrollbar,
+  .learning-tabs::-webkit-scrollbar,
+  .tools-category-filter::-webkit-scrollbar,
+  .hosting-tabs::-webkit-scrollbar,
+  .cognition-tabs::-webkit-scrollbar,
+  .admin-tabs::-webkit-scrollbar,
+  .settings-section-header::-webkit-scrollbar,
+  .logs-tabs::-webkit-scrollbar,
+  .analytics-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab-btn,
+  .memory-tab,
+  .learning-tab,
+  .analytics-tab,
+  .logs-tab,
+  .category-filter-btn,
+  .hosting-tab,
+  .admin-tab,
+  .subtab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Mission card */
+  .mission-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .mission-actions {
+    justify-content: flex-start;
+  }
+
+  /* Objective item */
+  .objective-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .objective-actions {
+    opacity: 1;
+    justify-content: flex-end;
+  }
+
+  /* Stats */
+  .memory-stats,
+  .cognition-status {
+    flex-wrap: wrap;
+  }
+  .cognition-status-divider {
+    display: none;
+  }
+
+  /* User menu */
+  .user-menu-btn {
+    padding: var(--space-1);
+  }
+
+  /* Button groups */
+  .provider-actions,
+  .comm-config-actions,
+  .pipeline-wizard .modal-footer {
+    flex-wrap: wrap;
+  }
+  .provider-actions .btn,
+  .comm-config-actions .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* Usage charts */
+  .usage-chart {
+    height: 200px;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+  }
+  .chart-bar::before {
+    bottom: -18px;
+    font-size: 10px;
+  }
+  .chart-bar::after {
+    top: -20px;
+    font-size: 10px;
+  }
+
+  /* Reduce padding on mobile */
+  .card-body,
+  .card-header,
+  .card-footer,
+  .modal-body,
+  .modal-header,
+  .modal-footer {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  .view-header {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  .panel {
+    padding: var(--space-4);
+  }
+  .stat-card {
+    padding: var(--space-3);
+  }
+}
+
 /* Very small screens (≤480px): extra compact */
 @media (max-width: 480px) {
   .view-container {
