@@ -104,8 +104,8 @@
   box-sizing: border-box;
 }
 .login-card {
-  width: min(92vw, 420px);
-  max-width: 100%;
+  width: 100%;
+  max-width: 420px;
   box-sizing: border-box;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -134,7 +134,7 @@
 }
 
 @media (max-width: 480px) {
-  .login-wrap { padding: var(--space-4); }
+  .login-wrap { padding: var(--space-3); }
   .login-card { padding: var(--space-4); }
   .login-brand .brand-icon { width: 48px; height: 48px; }
   .login-brand h1 { font-size: 1.25rem; }
