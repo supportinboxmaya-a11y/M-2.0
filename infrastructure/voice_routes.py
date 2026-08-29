@@ -1,11 +1,12 @@
 """
 Maya 2.0 ULTRA - Voice API Routes
-Local STT/TTS endpoints for voice control.
+Local STT/TTS endpoints for voice control + Voice Gateway WebSocket.
 """
 import os
 import base64
 import tempfile
 import asyncio
+import json
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, WebSocket, WebSocketDisconnect, Request, Body
 from fastapi.responses import StreamingResponse, FileResponse
 from typing import Optional
@@ -13,6 +14,7 @@ import logging
 
 from infrastructure.stt_service import get_stt_service, TranscriptionResult
 from infrastructure.tts_service import get_tts_service, TTSResult, reset_tts_service
+from infrastructure.voice_gateway import get_voice_gateway, VoiceGateway
 
 logger = logging.getLogger("voice_routes")
 
@@ -414,3 +416,159 @@ async def voice_set_voice(
 
     tts = get_tts_service()
     return {"status": "ok", "voice": voice}
+
+
+# ═══════════════════════════════════════════════════════════
+# VOICE GATEWAY WEBSOCKET (Phone Client <-> Maya)
+# ═══════════════════════════════════════════════════════════
+
+@router.websocket("/gateway")
+async def voice_gateway_ws(
+    websocket: WebSocket,
+    token: Optional[str] = None,
+):
+    """
+    Voice Gateway WebSocket endpoint.
+    
+    Protocol:
+    - Client connects with ?token=JWT
+    - Server sends: {"type": "connected", "session_id": "..."}
+    - Client sends binary audio chunks (16-bit PCM, 16kHz mono)
+    - Server sends: {"type": "listening"} when buffering
+    - Server sends: {"type": "transcript", "text": "..."} when STT completes
+    - Server sends: {"type": "thinking"} while Maya processes
+    - Server sends: {"type": "speaking", "audio_base64": "..."} with TTS audio
+    - Server sends: {"type": "turn_complete"} when done
+    - Client can send JSON: {"type": "ping"} -> {"type": "pong"}
+    - Client can send JSON: {"type": "end"} to close session
+    """
+    await websocket.accept()
+    
+    if not token:
+        await websocket.send_json({"type": "error", "message": "Missing token parameter"})
+        await websocket.close()
+        return
+    
+    gateway = get_voice_gateway()
+    
+    # Authenticate
+    user = await gateway.authenticate(token)
+    if not user:
+        await websocket.send_json({"type": "error", "message": "Invalid token"})
+        await websocket.close()
+        return
+    
+    # Create session
+    session = gateway.create_session(user)
+    session_id = session.session_id
+    
+    # Register connection
+    gateway.active_connections[session_id] = websocket
+    
+    try:
+        await websocket.send_json({
+            "type": "connected",
+            "session_id": session_id,
+            "message": "Voice gateway ready. Send audio chunks (16kHz 16-bit mono)."
+        })
+        
+        while True:
+            message = await websocket.receive()
+            
+            if "bytes" in message:
+                # Binary audio chunk from phone
+                chunk = message["bytes"]
+                
+                # Process audio chunk (buffers and transcribes when ready)
+                transcript = await gateway.process_audio_chunk(session_id, chunk)
+                
+                if transcript:
+                    # Got transcript - send to Maya
+                    await websocket.send_json({
+                        "type": "transcript",
+                        "text": transcript,
+                    })
+                    
+                    await websocket.send_json({"type": "thinking"})
+                    
+                    # Send to Maya's agent core
+                    maya_response = await gateway.send_to_maya(session_id, transcript)
+                    
+                    # Synthesize response
+                    audio_bytes = await gateway.synthesize_response(maya_response)
+                    
+                    if audio_bytes:
+                        audio_b64 = base64.b64encode(audio_bytes).decode()
+                        await websocket.send_json({
+                            "type": "speaking",
+                            "audio_base64": audio_b64,
+                            "text": maya_response,
+                        })
+                    
+                    # Log the turn
+                    await gateway.log_turn(session_id, transcript, maya_response, len(audio_bytes))
+                    
+                    await websocket.send_json({"type": "turn_complete"})
+                    
+            elif "text" in message:
+                # JSON control messages
+                try:
+                    data = json.loads(message["text"])
+                    msg_type = data.get("type")
+                    
+                    if msg_type == "ping":
+                        await websocket.send_json({"type": "pong"})
+                    elif msg_type == "end":
+                        break
+                    elif msg_type == "text":
+                        # Direct text input (bypass STT)
+                        text = data.get("text", "")
+                        if text:
+                            await websocket.send_json({"type": "thinking"})
+                            maya_response = await gateway.send_to_maya(session_id, text)
+                            audio_bytes = await gateway.synthesize_response(maya_response)
+                            if audio_bytes:
+                                audio_b64 = base64.b64encode(audio_bytes).decode()
+                                await websocket.send_json({
+                                    "type": "speaking",
+                                    "audio_base64": audio_b64,
+                                    "text": maya_response,
+                                })
+                            await gateway.log_turn(session_id, text, maya_response, len(audio_bytes))
+                            await websocket.send_json({"type": "turn_complete"})
+                            
+                except json.JSONDecodeError:
+                    pass
+                    
+    except WebSocketDisconnect:
+        pass
+    except Exception as e:
+        logger.error(f"Voice gateway error: {e}")
+        try:
+            await websocket.send_json({"type": "error", "message": str(e)})
+        except:
+            pass
+    finally:
+        # Cleanup
+        gateway.cleanup_session(session_id)
+        gateway.active_connections.pop(session_id, None)
+        try:
+            await websocket.close()
+        except:
+            pass
+
+
+@router.get("/gateway/sessions")
+async def voice_gateway_sessions(user: dict = Depends(get_current_user)):
+    """List active voice gateway sessions."""
+    gateway = get_voice_gateway()
+    sessions = []
+    for session_id, session in gateway.sessions.items():
+        sessions.append({
+            "session_id": session_id,
+            "user_id": session.user_id,
+            "created_at": session.created_at.isoformat(),
+            "last_activity": session.last_activity.isoformat(),
+            "message_count": session.message_count,
+        })
+    return {"sessions": sessions, "count": len(sessions)}
