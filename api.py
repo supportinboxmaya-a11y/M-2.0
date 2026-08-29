@@ -786,6 +786,13 @@ from infrastructure.income_scout_routes import router as scout_router
 app.include_router(scout_router)
 
 # ══════════════════════════════════════════════
+# INCOME ENGINE ROUTES (Strategist Agent)
+# ══════════════════════════════════════════════
+from infrastructure.income_strategist_routes import router as strategist_router
+
+app.include_router(strategist_router)
+
+# ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as
