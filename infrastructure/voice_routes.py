@@ -7,11 +7,12 @@ import base64
 import tempfile
 import asyncio
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, WebSocket, WebSocketDisconnect, Request, Body
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from typing import Optional
 import logging
 
 from infrastructure.stt_service import get_stt_service, TranscriptionResult
+from infrastructure.tts_service import get_tts_service, TTSResult, reset_tts_service
 
 logger = logging.getLogger("voice_routes")
 
@@ -244,3 +245,172 @@ async def voice_set_model(
 
     stt = get_stt_service()
     return {"status": "ok", "model": model_size}
+
+
+# ═══════════════════════════════════════════════════════════
+# TTS ENDPOINTS
+# ═══════════════════════════════════════════════════════════
+
+@router.post("/synthesize")
+async def voice_synthesize(
+    text: str = Form(...),
+    voice: Optional[str] = Form(None),
+    length_scale: Optional[float] = Form(None),
+    noise_scale: Optional[float] = Form(None),
+    noise_w: Optional[float] = Form(None),
+    user: dict = Depends(get_current_user),
+):
+    """
+    Synthesize text to speech using Piper TTS.
+
+    Args:
+        text: Text to synthesize (required)
+        voice: Voice model to use (optional, overrides default)
+        length_scale: Speech speed multiplier (optional)
+        noise_scale: Variation scale (optional)
+        noise_w: Phoneme duration variation (optional)
+
+    Returns:
+        Audio file (WAV) as streaming response
+    """
+    tts = get_tts_service()
+
+    # Temporarily override voice settings if provided
+    original_voice = tts.voice_model
+    original_length = tts.length_scale
+    original_noise = tts.noise_scale
+    original_noise_w = tts.noise_w
+
+    if voice:
+        tts.voice_model = voice
+        tts._voice_loaded = False  # Force reload
+    if length_scale is not None:
+        tts.length_scale = length_scale
+    if noise_scale is not None:
+        tts.noise_scale = noise_scale
+    if noise_w is not None:
+        tts.noise_w = noise_w
+
+    try:
+        audio_bytes = await tts.synthesize_bytes_async(text)
+
+        from fastapi.responses import Response
+        return Response(
+            content=audio_bytes,
+            media_type="audio/wav",
+            headers={
+                "Content-Disposition": f'inline; filename="speech.wav"',
+                "X-Sample-Rate": str(tts._voice.config.sample_rate if tts._voice else 22050),
+            },
+        )
+    except Exception as e:
+        logger.error(f"TTS synthesis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Synthesis failed: {e}")
+    finally:
+        # Restore original settings
+        tts.voice_model = original_voice
+        tts.length_scale = original_length
+        tts.noise_scale = original_noise
+        tts.noise_w = original_noise_w
+        if voice:
+            tts._voice_loaded = False
+
+
+@router.post("/synthesize/json")
+async def voice_synthesize_json(
+    request: Request,
+    user: dict = Depends(get_current_user),
+):
+    """
+    Synthesize text to speech (JSON body).
+
+    Body:
+        text: Text to synthesize (required)
+        voice: Voice model (optional)
+        length_scale: Speech speed (optional)
+        noise_scale: Variation (optional)
+        noise_w: Phoneme variation (optional)
+
+    Returns:
+        JSON with base64 encoded audio
+    """
+    import base64
+
+    body = await request.json()
+    text = body.get("text")
+    if not text:
+        raise HTTPException(status_code=400, detail="Missing 'text' field")
+
+    voice = body.get("voice")
+    length_scale = body.get("length_scale")
+    noise_scale = body.get("noise_scale")
+    noise_w = body.get("noise_w")
+
+    tts = get_tts_service()
+
+    original_voice = tts.voice_model
+    original_length = tts.length_scale
+    original_noise = tts.noise_scale
+    original_noise_w = tts.noise_w
+
+    if voice:
+        tts.voice_model = voice
+        tts._voice_loaded = False
+    if length_scale is not None:
+        tts.length_scale = length_scale
+    if noise_scale is not None:
+        tts.noise_scale = noise_scale
+    if noise_w is not None:
+        tts.noise_w = noise_w
+
+    try:
+        audio_bytes = await tts.synthesize_bytes_async(text)
+        audio_b64 = base64.b64encode(audio_bytes).decode()
+
+        return {
+            "audio_base64": audio_b64,
+            "format": "wav",
+            "sample_rate": tts._voice.config.sample_rate if tts._voice else 22050,
+            "text": text,
+        }
+    except Exception as e:
+        logger.error(f"TTS synthesis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Synthesis failed: {e}")
+    finally:
+        tts.voice_model = original_voice
+        tts.length_scale = original_length
+        tts.noise_scale = original_noise
+        tts.noise_w = original_noise_w
+        if voice:
+            tts._voice_loaded = False
+
+
+@router.get("/voices")
+async def voice_list(user: dict = Depends(get_current_user)):
+    """List available Piper voice models."""
+    tts = get_tts_service()
+    voices = tts.get_available_voices()
+
+    return {
+        "current": tts.voice_model,
+        "available": voices,
+        "model_dir": tts.model_dir,
+    }
+
+
+@router.post("/voices")
+async def voice_set_voice(
+    voice: str = Form(...),
+    user: dict = Depends(get_current_user),
+):
+    """Change the Piper voice model (requires reload)."""
+    tts = get_tts_service()
+
+    if voice not in tts.get_available_voices():
+        raise HTTPException(status_code=400, detail=f"Voice '{voice}' not found. Available: {tts.get_available_voices()}")
+
+    reset_tts_service()
+    os.environ["PIPER_VOICE_MODEL"] = voice
+
+    tts = get_tts_service()
+    return {"status": "ok", "voice": voice}
