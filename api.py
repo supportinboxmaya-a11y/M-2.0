@@ -765,6 +765,27 @@ from infrastructure.voice_routes import router as voice_router
 app.include_router(voice_router)
 
 # ══════════════════════════════════════════════
+# EXTENDED AGENT ROUTES (Phase 5)
+# ══════════════════════════════════════════════
+from infrastructure.extended_agent_routes import router as extended_router
+
+app.include_router(extended_router)
+
+# ══════════════════════════════════════════════
+# PERMISSIONS ROUTES (Phase 5 Safety)
+# ══════════════════════════════════════════════
+from infrastructure.permissions_routes import router as permissions_router
+
+app.include_router(permissions_router)
+
+# ══════════════════════════════════════════════
+# INCOME ENGINE ROUTES (Scout Agent)
+# ══════════════════════════════════════════════
+from infrastructure.income_scout_routes import router as scout_router
+
+app.include_router(scout_router)
+
+# ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as

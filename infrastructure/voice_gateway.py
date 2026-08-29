@@ -1,6 +1,11 @@
 """
 Maya 2.0 ULTRA - Voice Gateway
 WebSocket server that connects phone client -> STT -> Maya Agent -> TTS -> phone client.
+Integrates with Extended Agent (Phase 5) for:
+- Autonomous planning with self-verification
+- Cross-session persistent memory
+- Interruption handling
+- Proactive task execution
 """
 import os
 import json
@@ -16,6 +21,7 @@ import jwt
 
 from infrastructure.stt_service import get_stt_service, TranscriptionResult
 from infrastructure.tts_service import get_tts_service, TTSResult
+from infrastructure.extended_agent import get_extended_agent, ExtendedAgent
 
 logger = logging.getLogger("voice_gateway")
 
@@ -56,6 +62,16 @@ class VoiceGateway:
         self._sample_rate = 16000  # Expected from phone client
         self._chunk_timeout = 3.0  # seconds of silence before processing
         
+        # Extended Agent (Phase 5) - lazy loaded
+        self._extended_agent: Optional[ExtendedAgent] = None
+    
+    @property
+    def extended_agent(self) -> ExtendedAgent:
+        """Lazy load extended agent."""
+        if self._extended_agent is None:
+            self._extended_agent = get_extended_agent()
+        return self._extended_agent
+    
     async def authenticate(self, token: str) -> Optional[dict]:
         """Validate JWT token and return user info."""
         try:
@@ -137,74 +153,78 @@ class VoiceGateway:
     async def send_to_maya(self, session_id: str, text: str) -> str:
         """
         Send transcribed text to Maya's agent core and get response.
-        Uses router directly with OpenRouter for faster voice responses.
+        Uses Extended Agent (Phase 5) for full capabilities:
+        - Autonomous planning with self-verification
+        - Cross-session persistent memory
+        - Interruption handling
+        - Proactive task awareness
+        Falls back to direct router if extended agent unavailable.
         """
         session = self.get_session(session_id)
         if not session:
             return "Session not found"
         
         try:
-            from api import maya_instance
+            # Use Extended Agent for full Phase 5 capabilities
+            ext_agent = self.extended_agent
+            user_id = session.user_id
             
-            if not maya_instance:
-                return "Maya not initialized"
-            
-            # Build messages like Maya.chat() does, but use router directly
-            # with openrouter for faster voice responses (avoids NIM rate limits)
-            system_prompt = (
-                f"You are Maya {maya_instance.VERSION}, an autonomous AI assistant created "
-                "by Urmi Mam. If anyone asks who made you, who created you, or who "
-                "built you, say that Urmi Mam created you. Be helpful, precise, "
-                "and concise."
+            result = await ext_agent.process_voice_command(
+                session_id=session_id,
+                transcript=text,
+                user_id=user_id,
             )
             
-            # Add RAG knowledge if relevant
-            addon, citations = maya_instance._augment_with_knowledge(text)
-            if addon:
-                system_prompt += addon
-            
-            # Add scoped memory context
-            scope = f"voice_{session_id}"
-            if scope:
-                ctx = maya_instance._scoped_search(scope, text, limit=5)
-                if ctx:
-                    system_prompt += (
-                        "\n\nRelevant past memories for this instance:\n" + ctx
-                    )
-            
-            messages = [{"role": "system", "content": system_prompt}]
-            if session.context.get("history"):
-                messages.extend(session.context["history"])
-            messages.append({"role": "user", "content": text})
-            
-            # Use router directly with openrouter for voice (faster, avoids NIM rate limits)
-            response = maya_instance.router.chat(messages, provider="openrouter")
-            
-            # Update history for conversation continuity
-            if "history" not in session.context:
-                session.context["history"] = []
-            session.context["history"].append({"role": "user", "content": text})
-            session.context["history"].append({"role": "assistant", "content": response})
-            # Keep last 10 exchanges
-            if len(session.context["history"]) > 20:
-                session.context["history"] = session.context["history"][-20:]
-            
-            # Store in scoped memory
-            maya_instance._scoped_add(scope, f"Chat: {text[:100]}", memory_type="chat")
-            
-            return str(response)
+            if result.get("success"):
+                response = result.get("result", "")
+                
+                # Update session history for continuity
+                if "history" not in session.context:
+                    session.context["history"] = []
+                session.context["history"].append({"role": "user", "content": text})
+                session.context["history"].append({"role": "assistant", "content": response})
+                if len(session.context["history"]) > 20:
+                    session.context["history"] = session.context["history"][-20:]
+                
+                # Log task info
+                logger.info(f"Voice task {result.get('task_id')} completed: "
+                           f"{result.get('steps_completed', 0)}/{result.get('total_steps', 0)} steps")
+                
+                return response
+            else:
+                # Task failed or interrupted
+                error = result.get("error", "Task failed")
+                if result.get("interrupted"):
+                    return f"[Interrupted] {error}"
+                return f"[Error] {error}"
                 
         except Exception as e:
-            logger.error(f"Maya chat error: {e}")
-            # Fallback to default Maya.chat (which has its own fallback chain)
+            logger.error(f"Extended agent error: {e}")
+            # Fallback to direct router (original behavior)
             try:
                 from api import maya_instance
                 if maya_instance:
-                    return str(maya_instance.chat(
-                        message=text,
-                        history=session.context.get("history"),
-                        scope=f"voice_{session_id}",
-                    ))
+                    scope = f"voice_{session_id}"
+                    messages = [{"role": "system", "content": (
+                        f"You are Maya {maya_instance.VERSION}, an autonomous AI assistant created "
+                        "by Urmi Mam. If anyone asks who made you, who created you, or who "
+                        "built you, say that Urmi Mam created you. Be helpful, precise, and concise."
+                    )}]
+                    if session.context.get("history"):
+                        messages.extend(session.context["history"])
+                    messages.append({"role": "user", "content": text})
+                    
+                    response = maya_instance.router.chat(messages, provider="openrouter")
+                    
+                    if "history" not in session.context:
+                        session.context["history"] = []
+                    session.context["history"].append({"role": "user", "content": text})
+                    session.context["history"].append({"role": "assistant", "content": response})
+                    if len(session.context["history"]) > 20:
+                        session.context["history"] = session.context["history"][-20:]
+                    
+                    maya_instance._scoped_add(scope, f"Chat: {text[:100]}", memory_type="chat")
+                    return str(response)
             except Exception as e2:
                 logger.error(f"Fallback chat also failed: {e2}")
             return f"Error: {str(e)}"
