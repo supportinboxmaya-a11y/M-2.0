@@ -1,0 +1,23 @@
+[Unit]
+Description=Maya 2.0 ULTRA API Server
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/M-2.0
+Environment=PATH=/home/ubuntu/M-2.0/venv/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/ubuntu/M-2.0/.env
+ExecStart=/home/ubuntu/M-2.0/venv/bin/python -m uvicorn api:app --host 0.0.0.0 --port 8000 --workers 2
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=maya-api
+
+# Resource limits for 2 vCPU / 12GB RAM
+MemoryMax=8G
+CPUQuota=200%
+
+[Install]
+WantedBy=multi-user.target

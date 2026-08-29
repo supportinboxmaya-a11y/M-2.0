@@ -758,49 +758,11 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
     return {"result": result["result"], "provider": result.get("provider", "")}
 
 # ══════════════════════════════════════════════
-# VOICE ROUTES
+# VOICE ROUTES (Local faster-whisper STT)
 # ══════════════════════════════════════════════
-@app.post("/api/v1/voice/transcribe")
-async def voice_transcribe(body: dict, user=Depends(get_current_user)):
-    """Transcribe base64/data-URL audio using Groq Whisper (whisper-large-v3)."""
-    audio = body.get("audio", "")
-    if not audio:
-        raise HTTPException(status_code=400, detail="No audio provided")
-    api_key = os.getenv("GROQ_API_KEY") or os.getenv("GROQ_KEY")
-    if not api_key:
-        return {"transcript": "", "message": "Set GROQ_API_KEY on the server to enable voice transcription"}
-    try:
-        import base64, tempfile
-        # Accept both raw base64 and data URLs (data:audio/webm;base64,....)
-        if "," in audio and audio.strip().startswith("data:"):
-            audio = audio.split(",", 1)[1]
-        raw = base64.b64decode(audio)
-        if len(raw) > 25 * 1024 * 1024:
-            raise HTTPException(status_code=413, detail="Audio too large (25MB max)")
-        with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as f:
-            f.write(raw)
-            tmp_path = f.name
+from infrastructure.voice_routes import router as voice_router
 
-        def _transcribe():
-            from groq import Groq
-            client = Groq(api_key=api_key)
-            with open(tmp_path, "rb") as af:
-                res = client.audio.transcriptions.create(
-                    file=("audio.webm", af.read()),
-                    model="whisper-large-v3",
-                )
-            return getattr(res, "text", "") or ""
-
-        text = await asyncio.get_event_loop().run_in_executor(None, _transcribe)
-        try:
-            os.unlink(tmp_path)
-        except OSError:
-            pass
-        return {"transcript": text.strip()}
-    except HTTPException:
-        raise
-    except Exception as e:
-        return {"transcript": "", "message": f"Transcription failed: {e}"}
+app.include_router(voice_router)
 
 # ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES

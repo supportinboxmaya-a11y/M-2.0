@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Maya 2.0 - Layout Diagnostic</title>
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/memory.css">
+  <link rel="stylesheet" href="/css/tools.css">
+  <link rel="stylesheet" href="/css/tasks.css">
+  <link rel="stylesheet" href="/css/hosting.css">
+  <link rel="stylesheet" href("/css/cognition.css">
+  <link rel="stylesheet" href="/css/settings.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/cognitive.css">
+  <link rel="stylesheet" href="/css/mobile.css">
+  <style>
+    #diagnostic-output {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 50vh;
+      overflow: auto;
+      background: rgba(0,0,0,0.9);
+      color: #0f0;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 10px;
+      z-index: 9999;
+      white-space: pre-wrap;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+    <nav id="mobileNav" class="mobile-nav" role="navigation" aria-label="Primary navigation">
+      <a href="#chat" class="mobile-nav-item" data-view="chat" aria-label="Chat">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span>Chat</span>
+      </a>
+      <a href="#goals" class="mobile-nav-item" data-view="goals" aria-label="Goals">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+        <span>Goals</span>
+      </a>
+      <a href="#tasks" class="mobile-nav-item" data-view="tasks" aria-label="Tasks">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path></svg>
+        <span>Tasks</span>
+      </a>
+      <a href="#kernel" class="mobile-nav-item" data-view="kernel" aria-label="Cognitive Kernel">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        <span>Mind</span>
+      </a>
+      <a href="#settings" class="mobile-nav-item" data-view="settings" aria-label="Settings">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+    </aside>
+    <div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
+    <main id="mainContent" class="main-content" role="main">
+      <header id="header" class="header" role="banner">
+        <div class="header-left">
+          <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <h1 id="viewTitle" class="view-title">Sign in</h1>
+        </div>
+        <div class="header-right"></div>
+      </header>
+      <div id="viewContainer" class="view-container">
+        <div class="login-wrap">
+          <div class="login-card fade-in">
+            <div class="login-brand">
+              <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                <path d="M16 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z" fill="currentColor"/>
+              </svg>
+              <h1>Maya 2.0</h1>
+              <p class="login-sub">Autonomous AI Operating System</p>
+            </div>
+            <form class="form login-form" id="authForm">
+              <div class="form-group">
+                <label class="form-label" for="authEmail">Email</label>
+                <input type="email" class="form-input" id="authEmail" required autocomplete="username" placeholder="you@example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="authPassword">Password</label>
+                <input type="password" class="form-input" id="authPassword" required autocomplete="current-password" placeholder="••••••••">
+              </div>
+              <div class="login-error" id="authError" style="display:none" role="alert"></div>
+              <button type="submit" class="btn btn-primary btn-block" id="authSubmit">Sign in</button>
+              <p class="login-toggle">Need an account? <a href="#" id="authToggle">Register</a></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div id="modalsContainer" class="modals-container"></div>
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  </div>
+  <div id="diagnostic-output"></div>
+  <script>
+    function logRect(label, el) {
+      if (!el) { console.log(label, 'NOT FOUND'); return; }
+      const r = el.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      console.log(`${label}:`, {
+        left: r.left.toFixed(1),
+        right: r.right.toFixed(1),
+        width: r.width.toFixed(1),
+        x: r.x.toFixed(1),
+        computedWidth: cs.width,
+        computedMinWidth: cs.minWidth,
+        computedMaxWidth: cs.maxWidth,
+        marginLeft: cs.marginLeft,
+        marginRight: cs.marginRight,
+        paddingLeft: cs.paddingLeft,
+        paddingRight: cs.paddingRight,
+        leftProp: cs.left,
+        rightProp: cs.right,
+        transform: cs.transform,
+        position: cs.position,
+        display: cs.display,
+        gridColumn: cs.gridColumn,
+        boxSizing: cs.boxSizing,
+        overflowX: cs.overflowX,
+        overflowY: cs.overflowY
+      });
+    }
+    
+    function diagnose() {
+      const out = document.getElementById('diagnostic-output');
+      const log = (...args) => {
+        const line = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : a).join(' ');
+        console.log(line);
+        out.textContent += line + '\n';
+        out.scrollTop = out.scrollHeight;
+      };
+      
+      log('=== VIEWPORT ===');
+      log('innerWidth:', window.innerWidth);
+      log('clientWidth:', document.documentElement.clientWidth);
+      log('scrollWidth:', document.documentElement.scrollWidth);
+      log('body.scrollWidth:', document.body.scrollWidth);
+      log('scrollWidth === clientWidth:', document.documentElement.scrollWidth === document.documentElement.clientWidth);
+      log('Horizontal overflow:', document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      log('');
+      log('=== ELEMENTS ===');
+      
+      const app = document.querySelector('.app');
+      const mainContent = document.querySelector('.main-content');
+      const viewContainer = document.querySelector('.view-container');
+      const loginWrap = document.querySelector('.login-wrap');
+      const loginCard = document.querySelector('.login-card');
+      const sidebar = document.querySelector('.sidebar');
+      const header = document.querySelector('.header');
+      const mobileNav = document.querySelector('.mobile-nav');
+      
+      log('html:', { scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth });
+      log('body:', { scrollWidth: document.body.scrollWidth, clientWidth: document.body.clientWidth });
+      log('');
+      log('.app grid-template-columns:', getComputedStyle(app).gridTemplateColumns);
+      log('.app grid-template-rows:', getComputedStyle(app).gridTemplateRows);
+      log('.app position:', getComputedStyle(app).position);
+      log('.app width:', getComputedStyle(app).width);
+      log('.app height:', getComputedStyle(app).height);
+      log('.app left/right/top/bottom:', getComputedStyle(app).left, getComputedStyle(app).right, getComputedStyle(app).top, getComputedStyle(app).bottom);
+      log('');
+      log('.sidebar position:', getComputedStyle(sidebar).position);
+      log('.sidebar width:', getComputedStyle(sidebar).width);
+      log('.sidebar transform:', getComputedStyle(sidebar).transform);
+      log('');
+      log('.main-content grid-column:', getComputedStyle(mainContent).gridColumn);
+      log('.main-content grid-row:', getComputedStyle(mainContent).gridRow);
+      log('.main-content margin-left:', getComputedStyle(mainContent).marginLeft);
+      log('.main-content min-width:', getComputedStyle(mainContent).minWidth);
+      log('');
+      log('.view-container width:', getComputedStyle(viewContainer).width);
+      log('.view-container max-width:', getComputedStyle(viewContainer).maxWidth);
+      log('.view-container margin:', getComputedStyle(viewContainer).margin);
+      log('.view-container padding:', getComputedStyle(viewContainer).padding);
+      log('');
+      log('.login-wrap width:', getComputedStyle(loginWrap).width);
+      log('.login-wrap max-width:', getComputedStyle(loginWrap).maxWidth);
+      log('.login-wrap display:', getComputedStyle(loginWrap).display);
+      log('.login-wrap justify-content:', getComputedStyle(loginWrap).justifyContent);
+      log('');
+      log('.login-card width:', getComputedStyle(loginCard).width);
+      log('.login-card max-width:', getComputedStyle(loginCard).maxWidth);
+      log('.login-card box-sizing:', getComputedStyle(loginCard).boxSizing);
+      log('');
+      log('.header position:', getComputedStyle(header).position);
+      log('.header left:', getComputedStyle(header).left);
+      log('.header width:', getComputedStyle(header).width);
+      log('');
+      log('.mobile-nav display:', getComputedStyle(mobileNav).display);
+      log('.mobile-nav position:', getComputedStyle(mobileNav).position);
+      log('');
+      
+      logRect('html', document.documentElement);
+      logRect('body', document.body);
+      logRect('.app', app);
+      logRect('.sidebar', sidebar);
+      logRect('.header', header);
+      logRect('.mobile-nav', mobileNav);
+      logRect('.main-content', mainContent);
+      logRect('.view-container', viewContainer);
+      logRect('.login-wrap', loginWrap);
+      logRect('.login-card', loginCard);
+    }
+    
+    document.addEventListener('DOMContentLoaded', diagnose);
+  </script>
+</body>
+</html>
