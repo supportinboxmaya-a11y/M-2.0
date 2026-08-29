@@ -800,6 +800,13 @@ from infrastructure.income_notification_routes import router as notif_router
 app.include_router(notif_router)
 
 # ══════════════════════════════════════════════
+# INCOME ENGINE ROUTES (Builder Agent)
+# ══════════════════════════════════════════════
+from infrastructure.income_builder_routes import router as builder_router
+
+app.include_router(builder_router)
+
+# ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as
