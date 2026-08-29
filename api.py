@@ -814,6 +814,13 @@ from infrastructure.income_launcher_routes import router as launcher_router
 app.include_router(launcher_router)
 
 # ══════════════════════════════════════════════
+# INCOME ENGINE ROUTES (Growth & Portfolio)
+# ══════════════════════════════════════════════
+from infrastructure.income_growth_portfolio_routes import router as growth_router
+
+app.include_router(growth_router)
+
+# ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as
