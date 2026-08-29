@@ -137,7 +137,7 @@ class VoiceGateway:
     async def send_to_maya(self, session_id: str, text: str) -> str:
         """
         Send transcribed text to Maya's agent core and get response.
-        Reuses the existing chat endpoint logic.
+        Uses router directly with OpenRouter for faster voice responses.
         """
         session = self.get_session(session_id)
         if not session:
@@ -146,21 +146,67 @@ class VoiceGateway:
         try:
             from api import maya_instance
             
-            # Use Maya's existing chat pipeline
-            if maya_instance:
-                # Maya.chat(message, history=None, scope="")
-                # Use session_id as scope for conversation memory
-                response = maya_instance.chat(
-                    message=text,
-                    history=session.context.get("history"),
-                    scope=f"voice_{session_id}",
-                )
-                return str(response)
-            else:
+            if not maya_instance:
                 return "Maya not initialized"
+            
+            # Build messages like Maya.chat() does, but use router directly
+            # with openrouter for faster voice responses (avoids NIM rate limits)
+            system_prompt = (
+                f"You are Maya {maya_instance.VERSION}, an autonomous AI assistant created "
+                "by Urmi Mam. If anyone asks who made you, who created you, or who "
+                "built you, say that Urmi Mam created you. Be helpful, precise, "
+                "and concise."
+            )
+            
+            # Add RAG knowledge if relevant
+            addon, citations = maya_instance._augment_with_knowledge(text)
+            if addon:
+                system_prompt += addon
+            
+            # Add scoped memory context
+            scope = f"voice_{session_id}"
+            if scope:
+                ctx = maya_instance._scoped_search(scope, text, limit=5)
+                if ctx:
+                    system_prompt += (
+                        "\n\nRelevant past memories for this instance:\n" + ctx
+                    )
+            
+            messages = [{"role": "system", "content": system_prompt}]
+            if session.context.get("history"):
+                messages.extend(session.context["history"])
+            messages.append({"role": "user", "content": text})
+            
+            # Use router directly with openrouter for voice (faster, avoids NIM rate limits)
+            response = maya_instance.router.chat(messages, provider="openrouter")
+            
+            # Update history for conversation continuity
+            if "history" not in session.context:
+                session.context["history"] = []
+            session.context["history"].append({"role": "user", "content": text})
+            session.context["history"].append({"role": "assistant", "content": response})
+            # Keep last 10 exchanges
+            if len(session.context["history"]) > 20:
+                session.context["history"] = session.context["history"][-20:]
+            
+            # Store in scoped memory
+            maya_instance._scoped_add(scope, f"Chat: {text[:100]}", memory_type="chat")
+            
+            return str(response)
                 
         except Exception as e:
             logger.error(f"Maya chat error: {e}")
+            # Fallback to default Maya.chat (which has its own fallback chain)
+            try:
+                from api import maya_instance
+                if maya_instance:
+                    return str(maya_instance.chat(
+                        message=text,
+                        history=session.context.get("history"),
+                        scope=f"voice_{session_id}",
+                    ))
+            except Exception as e2:
+                logger.error(f"Fallback chat also failed: {e2}")
             return f"Error: {str(e)}"
     
     async def synthesize_response(self, text: str) -> bytes:
