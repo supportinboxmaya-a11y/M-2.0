@@ -1,0 +1,29 @@
+{
+  "name": "Maya Voice",
+  "short_name": "Maya Voice",
+  "description": "Voice-controlled AI assistant",
+  "start_url": "/voice/",
+  "display": "standalone",
+  "background_color": "#faf9f6",
+  "theme_color": "#8b6f47",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Voice Chat",
+      "short_name": "Chat",
+      "description": "Start voice conversation with Maya",
+      "url": "/voice/",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>", "sizes": "96x96" }]
+    }
+  ]
+}
