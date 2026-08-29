@@ -793,6 +793,13 @@ from infrastructure.income_strategist_routes import router as strategist_router
 app.include_router(strategist_router)
 
 # ══════════════════════════════════════════════
+# INCOME ENGINE ROUTES (Notifications)
+# ══════════════════════════════════════════════
+from infrastructure.income_notification_routes import router as notif_router
+
+app.include_router(notif_router)
+
+# ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as
