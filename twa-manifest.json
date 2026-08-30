@@ -1,0 +1,37 @@
+{
+  "host": "localhost",
+  "startUrl": "/voice/",
+  "name": "Maya",
+  "launcherName": "Maya",
+  "packageId": "com.maya.assistant",
+  "appVersionCode": 1,
+  "appVersionName": "1.0.0",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "themeColor": "#8b6f47",
+  "backgroundColor": "#faf9f6",
+  "iconUrl": "http://127.0.0.1:8080/icon-512.png",
+  "maskableIconUrl": "http://127.0.0.1:8080/icon-512.png",
+  "shortcuts": [
+    {
+      "name": "Voice Chat",
+      "shortName": "Chat",
+      "description": "Start voice conversation with Maya",
+      "url": "/voice/",
+      "chosenIconUrl": "http://127.0.0.1:8080/icon-192.png"
+    }
+  ],
+  "features": {
+    "playBilling": {
+      "enabled": false
+    },
+    "locationDelegation": {
+      "enabled": false
+    }
+  },
+  "signingKey": {
+    "path": "/home/ubuntu/M-2.0/twa-output/release.keystore",
+    "alias": "android"
+  },
+  "generatorApp": "bubblewrap"
+}
