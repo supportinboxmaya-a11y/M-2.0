@@ -22,13 +22,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.maya.assistant">
 
-    
-
-    
-
-    
-
-    
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name="Application"
@@ -119,13 +115,6 @@
 
             <meta-data android:name="android.support.customtabs.trusted.FALLBACK_STRATEGY"
                 android:value="@string/fallbackType" />
-
-            
-
-            
-
-            <meta-data android:name="android.support.customtabs.trusted.SCREEN_ORIENTATION"
-                android:value="@string/orientation"/>
 
             
 
