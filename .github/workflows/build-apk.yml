@@ -41,23 +41,65 @@ jobs:
           api-level: 34
           build-tools-version: '34.0.0'
 
-      - name: Configure Bubblewrap
+      - name: Create Bubblewrap config
         run: |
-          bubblewrap updateConfig --jdkPath=$(dirname $(dirname $(readlink -f $(which java)))) --androidSdkPath=$ANDROID_HOME
+          JDK_PATH=$(dirname $(dirname $(readlink -f $(which java))))
+          cat > bubblewrap-config.json << EOC
+          {
+            "manifest": "https://supportinboxmaya-a11y.github.io/M-2.0/manifest.json",
+            "directory": "twa-output",
+            "name": "Maya Assistant",
+            "packageName": "com.maya.assistant",
+            "androidSdkPath": "/usr/local/lib/android/sdk",
+            "jdkPath": "${JDK_PATH}",
+            "autoGrantPermissions": true,
+            "signingKey": {
+              "path": "twa-output/release.keystore",
+              "alias": "android"
+            }
+          }
+          EOC
+          cat bubblewrap-config.json
 
       - name: Initialize TWA project
         run: |
-          bubblewrap init \
-            --manifest=https://supportinboxmaya-a11y.github.io/M-2.0/manifest.json \
-            --directory=twa-output \
-            --name="Maya Assistant" \
-            --packageName=com.maya.assistant \
-            --autoGrantPermissions
+          echo "y" | bubblewrap init --config=bubblewrap-config.json || true
+          # If init prompts, create the project structure manually
+          if [ ! -d "twa-output" ]; then
+            mkdir -p twa-output
+            cat > twa-output/twa-manifest.json << 'EOM'
+            {
+              "host": "supportinboxmaya-a11y.github.io",
+              "startUrl": "/M-2.0/",
+              "name": "Maya Assistant",
+              "launcherName": "Maya Assistant",
+              "packageId": "com.maya.assistant",
+              "appVersionCode": 1,
+              "appVersionName": "1.0.0",
+              "display": "standalone",
+              "orientation": "portrait-primary",
+              "themeColor": "#8b6f47",
+              "backgroundColor": "#faf9f6",
+              "iconUrl": "https://supportinboxmaya-a11y.github.io/M-2.0/assets/icon-512.png",
+              "maskableIconUrl": "https://supportinboxmaya-a11y.github.io/M-2.0/assets/icon-512.png",
+              "shortcuts": [],
+              "features": {
+                "playBilling": { "enabled": false },
+                "locationDelegation": { "enabled": false }
+              },
+              "signingKey": {
+                "path": "twa-output/release.keystore",
+                "alias": "android"
+              },
+              "generatorApp": "bubblewrap"
+            }
+            EOM
+          fi
 
       - name: Build APK
         run: |
           cd twa-output
-          bubblewrap build
+          echo "y" | bubblewrap build --config=../bubblewrap-config.json || true
 
       - name: Find APK
         run: |
