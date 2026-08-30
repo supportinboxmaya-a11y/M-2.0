@@ -18,10 +18,10 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build Release APK
+  test:
+    name: Test Gradle
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -36,47 +36,19 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          build-tools-version: '34.0.0'
+          api-level: 36
+          build-tools-version: '36.0.0'
 
       - name: Show Android SDK
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
           ls -la $ANDROID_HOME
-          echo "Build tools:"
-          ls -la $ANDROID_HOME/build-tools/
-          echo "Platforms:"
-          ls -la $ANDROID_HOME/platforms/
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Gradle wrapper validation
-        run: ./gradlew wrapper --gradle-version 8.11.1
+      - name: List gradle tasks
+        run: ./gradlew tasks --no-daemon
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace --info
-
-      - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace --info
-
-      - name: Find ALL APKs
-        run: |
-          echo "=== Searching for APKs ==="
-          find . -name "*.apk" -type f | while read f; do echo "Found: $f"; ls -lh "$f"; done
-
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: maya-voice-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
-          retention-days: 30
-
-      - name: Upload Release APK
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: maya-voice-release-apk
-          path: app/build/outputs/apk/release/*.apk
-          retention-days: 30
+      - name: Try assembleDebug
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
