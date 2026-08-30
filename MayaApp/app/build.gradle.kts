@@ -65,7 +65,6 @@ dependencies {
     val coroutines_version: String by extra("1.7.3")
     val coil_version: String by extra("2.6.0")
     val material_version: String by extra("1.11.0")
-    val material3_version: String by extra("1.2.0")
     val core_ktx_version: String by extra("1.12.0")
     val fragment_version: String by extra("1.6.2")
     val constraint_layout_version: String by extra("2.1.4")
@@ -80,8 +79,8 @@ dependencies {
     // Material Components (for XML theming)
     implementation("com.google.android.material:material:$material_version")
 
-    // Material 3 (for Compose theming)
-    implementation("androidx.compose.material3:material3:$material3_version")
+    // Material 2 for Compose (from Compose BOM)
+    // Material 3 removed - was causing Theme.Material3.DayNight.NoActionBar resource conflict
 
     // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
