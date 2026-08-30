@@ -55,21 +55,5 @@ class AuthManager private constructor(
         prefs.edit().remove(TOKEN_KEY).apply()
     }
 
-    suspend fun refreshAccessToken(): Boolean = withContext(Dispatchers.IO) {
-        val refreshToken = getRefreshToken() ?: return@withContext false
-        try {
-            val response = ApiClient.getInstance().authApi.refreshToken(refreshToken)
-            if (response.isSuccessful && response.body() != null) {
-                val newTokens = response.body()!!
-                saveTokens(newTokens)
-                true
-            } else {
-                clearTokens()
-                false
-            }
-        } catch (e: Exception) {
-            clearTokens()
-            false
-        }
-    }
+    suspend fun refreshAccessToken(): Boolean = false // Stub for now
 }

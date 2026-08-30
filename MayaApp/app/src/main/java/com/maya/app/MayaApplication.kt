@@ -2,7 +2,6 @@ package com.maya.app
 
 import android.app.Application
 import android.content.Context
-import com.maya.app.api.ApiClient
 import com.maya.app.api.AuthManager
 import com.maya.app.repository.DataRepository
 import kotlinx.coroutines.CoroutineScope
@@ -17,9 +16,6 @@ class MayaApplication : Application() {
         
         // Initialize auth manager
         AuthManager.initialize(this)
-        
-        // Initialize API client
-        ApiClient.initialize(this)
         
         // Initialize data repository
         DataRepository.initialize(this)
