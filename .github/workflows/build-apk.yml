@@ -39,32 +39,26 @@ jobs:
           api-level: 34
           build-tools-version: '34.0.0'
 
-      - name: List project structure
-        run: |
-          echo "=== Project root ==="
-          ls -la
-          echo "=== App directory ==="
-          ls -la app/
-          echo "=== App src ==="
-          find app/src -type f | head -30
-
       - name: Make gradlew executable
         run: chmod +x gradlew
 
+      - name: Build Debug APK (faster)
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
       - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace --info
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: List build outputs
+      - name: List ALL build outputs
         run: |
-          echo "=== Build outputs ==="
-          find app/build -name "*.apk" -o -name "*.aab" 2>/dev/null | xargs ls -lh
+          echo "=== ALL APK/AAB outputs ==="
+          find . -name "*.apk" -o -name "*.aab" 2>/dev/null | xargs -I {} sh -c 'echo "Found: {}"; ls -lh {}'
 
-      - name: Upload APK artifact
+      - name: Upload ALL artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: maya-voice-apk
           path: |
-            app/build/outputs/apk/release/*.apk
-            app/build/outputs/apk/release/*.aab
+            **/*.apk
+            **/*.aab
           retention-days: 30
