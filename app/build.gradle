@@ -43,12 +43,12 @@ def twaManifest = [
 ]
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 36
     namespace "com.maya.assistant"
     defaultConfig {
         applicationId "com.maya.assistant"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0.0"
 
