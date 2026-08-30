@@ -18,10 +18,10 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Test Gradle
+  build:
+    name: Build Release APK
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -39,16 +39,20 @@ jobs:
           api-level: 36
           build-tools-version: '36.0.0'
 
-      - name: Show Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls -la $ANDROID_HOME
-
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: List gradle tasks
-        run: ./gradlew tasks --no-daemon
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
-      - name: Try assembleDebug
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Find APK
+        run: |
+          find . -name "*.apk" -type f | while read f; do echo "Found: $f"; ls -lh "$f"; done
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maya-voice-release-apk
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 30
