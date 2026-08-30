@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/backgroundColor" />
+    <item
+        android:width="128dp"
+        android:height="128dp"
+        android:gravity="center">
+        <vector
+            android:width="128dp"
+            android:height="128dp"
+            android:viewportWidth="100"
+            android:viewportHeight="100">
+            <path
+                android:fillColor="@color/colorPrimary"
+                android:pathData="M50,10 C30,10 14,26 14,46 C14,66 30,82 50,82 C70,82 86,66 86,46 C86,26 70,10 50,10 Z M50,20 C65,20 78,33 78,48 C78,63 65,76 50,76 C35,76 22,63 22,48 C22,33 35,20 50,20 Z M50,30 C40,30 32,38 32,48 C32,58 40,66 50,66 C60,66 68,58 68,48 C68,38 60,30 50,30 Z M50,36 C45,36 41,40 41,45 C41,50 45,54 50,54 C55,54 59,50 59,45 C59,40 55,36 50,36 Z"/>
+        </vector>
+    </item>
+</layer-list>
