@@ -4,13 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'app/**'
-      - 'gradle/**'
-      - 'gradlew'
-      - 'gradlew.bat'
-      - 'settings.gradle'
-      - 'build.gradle'
-      - 'gradle.properties'
+      - 'frontend/voice/**'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
@@ -21,11 +15,19 @@ jobs:
   build:
     name: Build Release APK
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -39,26 +41,34 @@ jobs:
           api-level: 34
           build-tools-version: '34.0.0'
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      - name: Build Debug APK (faster)
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
-
-      - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
-
-      - name: List ALL build outputs
+      - name: Configure Bubblewrap
         run: |
-          echo "=== ALL APK/AAB outputs ==="
-          find . -name "*.apk" -o -name "*.aab" 2>/dev/null | xargs -I {} sh -c 'echo "Found: {}"; ls -lh {}'
+          bubblewrap updateConfig --jdkPath=$(dirname $(dirname $(readlink -f $(which java)))) --androidSdkPath=$ANDROID_HOME
 
-      - name: Upload ALL artifacts
+      - name: Initialize TWA project
+        run: |
+          bubblewrap init \
+            --manifest=https://supportinboxmaya-a11y.github.io/M-2.0/voice/manifest.json \
+            --directory=twa-output \
+            --name="Maya" \
+            --packageName=com.maya.assistant \
+            --autoGrantPermissions
+
+      - name: Build APK
+        run: |
+          cd twa-output
+          bubblewrap build
+
+      - name: Find APK
+        run: |
+          find . -name "*.apk" -exec ls -lh {} \;
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: maya-voice-apk
           path: |
-            **/*.apk
-            **/*.aab
+            twa-output/app/build/outputs/apk/release/*.apk
+            twa-output/**/*.apk
           retention-days: 30
