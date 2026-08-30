@@ -18,9 +18,6 @@ interface MayaApi {
 
     @POST("/api/v1/auth/refresh")
     suspend fun refreshToken(@Body request: RefreshRequest): Response<AuthTokens>
-
-    @androidx.room.migration.MigrationCallback.OnConflictStrategy
-    interface OnConflictStrategy
 }
 
 data class LoginRequest(
