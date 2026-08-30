@@ -7,6 +7,7 @@ Supports multiple channels: Email, Webhook, Telegram, Slack, Discord.
 import asyncio
 import json
 import os
+import random
 import time
 import uuid
 from contextlib import contextmanager
@@ -195,17 +196,32 @@ def init_notification_db():
 
 
 @contextmanager
-def get_notif_conn():
-    conn = sqlite3.connect(NOTIF_DB)
-    conn.row_factory = sqlite3.Row
-    try:
-        yield conn
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        conn.close()
+def get_notif_conn(max_retries: int = 5, base_delay: float = 0.1):
+    """Get a database connection with retry logic for handling 'database is locked' errors.
+    Uses exponential backoff with jitter."""
+    for attempt in range(max_retries):
+        try:
+            conn = sqlite3.connect(NOTIF_DB)
+            conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA busy_timeout=5000")
+            try:
+                yield conn
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+            finally:
+                conn.close()
+            return
+        except sqlite3.OperationalError as e:
+            if "database is locked" in str(e).lower() and attempt < max_retries - 1:
+                import random
+                delay = base_delay * (2 ** attempt) + random.uniform(0, 0.1)
+                log.warning(f"Database locked, retrying in {delay:.2f}s (attempt {attempt + 1}/{max_retries})")
+                time.sleep(delay)
+                continue
+            raise
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -304,14 +320,32 @@ async def send_telegram(notification: Notification, config: Dict) -> bool:
         
         url = f"https://api.telegram.org/bot{config['bot_token']}/sendMessage"
         
+        # Check if this is an approval request with inline keyboard
+        reply_markup = None
+        if notification.type == NotificationType.APPROVAL_REQUEST:
+            approval_id = notification.metadata.get("approval_id", "")
+            if approval_id:
+                reply_markup = {
+                    "inline_keyboard": [
+                        [
+                            {"text": "✅ Approve", "callback_data": f"approve:{approval_id}"},
+                            {"text": "❌ Reject", "callback_data": f"reject:{approval_id}"}
+                        ]
+                    ]
+                }
+        
         async with aiohttp.ClientSession() as session:
             for chat_id in config["chat_ids"]:
-                async with session.post(url, json={
+                payload = {
                     "chat_id": chat_id,
                     "text": text,
                     "parse_mode": "Markdown",
                     "disable_web_page_preview": True
-                }) as resp:
+                }
+                if reply_markup:
+                    payload["reply_markup"] = json.dumps(reply_markup)
+                
+                async with session.post(url, json=payload, timeout=10) as resp:
                     if resp.status >= 400:
                         log.warning(f"Telegram send failed for {chat_id}: {await resp.text()}")
                         return False

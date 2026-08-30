@@ -1,0 +1,23 @@
+[Unit]
+Description=Maya Telegram Polling Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/M-2.0
+Environment=PATH=/home/ubuntu/M-2.0/venv/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/ubuntu/M-2.0/.env
+ExecStart=/home/ubuntu/M-2.0/venv/bin/python /home/ubuntu/M-2.0/infrastructure/telegram_polling.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=maya-telegram-polling
+
+# Resource limits
+MemoryMax=256M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

@@ -5,13 +5,14 @@ Approval requests, digests, and multi-channel notifications.
 import os
 import time
 import json
+import aiohttp
 from fastapi import APIRouter, HTTPException, Depends, Form, Body
 from typing import Optional, List, Dict
 from pydantic import BaseModel
 
 from infrastructure.income_notifications import (
-    get_notification_service, NotificationService, NotificationService,
-    Notification, NotificationType, NotificationPriority, ApprovalRequest,
+    get_notification_service, NotificationService, Notification,
+    NotificationType, NotificationPriority, ApprovalRequest,
     reset_notification_service
 )
 
@@ -169,13 +170,25 @@ async def decide_approval(
             WHERE id = ?
         """, (decision, decided_at, decision, req.decided_by, approval_id))
         
-        # Note: Notification sending skipped to avoid DB lock issues
-        # In production, use a separate notification queue/worker
-        
         return {"success": True, "approval_id": approval_id, "decision": decision}
 
 
 # ═════════════════════════════════════════════════════════════════════════════
+# TELEGRAM WEBHOOK
+# ═════════════════════════════════════════════════════════════════════════════
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# TELEGRAM POLLING MODE
+# ════════════════════════════════════════════════════════════════════════════════════
+# Note: Telegram integration now runs in polling mode via a separate systemd service
+# (maya-telegram-polling.service). The webhook endpoint has been removed.
+# The polling service (infrastructure/telegram_polling.py) handles callback queries
+# by periodically calling getUpdates on the Telegram Bot API.
+# 
+# To check polling service status: systemctl status maya-telegram-polling
+# To view logs: journalctl -u maya-telegram-polling -f
+# ═════════════════════════════════════════════════════════════════════════════════════
+
 # DIGESTS & ALERTS
 # ═════════════════════════════════════════════════════════════════════════════
 
@@ -185,8 +198,6 @@ async def send_daily_digest(
     service: NotificationService = Depends(get_service),
 ):
     """Send daily digest notification."""
-    from infrastructure.income_notifications import get_notification_service
-    service = get_notification_service()
     await service.send_daily_digest(req.strategist_result, req.scout_stats)
     return {"success": True, "message": "Daily digest sent"}
 
@@ -226,7 +237,7 @@ async def send_error_alert(
     return {"success": True}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════════
 # TEMPLATES
 # ═════════════════════════════════════════════════════════════════════════════
 
@@ -248,7 +259,6 @@ async def create_template(
     service: NotificationService = Depends(get_service),
 ):
     """Create a notification template."""
-    from infrastructure.income_notifications import get_notif_conn
     try:
         channels_list = json.loads(channels)
     except json.JSONDecodeError:
@@ -272,9 +282,9 @@ async def delete_template(name: str, service: NotificationService = Depends(get_
     return {"success": True, "name": name}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════════
 # STATUS & HEALTH
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
 
 @router.get("/channels")
 async def get_channels(service: NotificationService = Depends(get_service)):
@@ -313,9 +323,9 @@ async def health():
     return {"status": "healthy", "notification_service": "active"}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════
 # INITIALIZATION
-# ══════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════════
 
 @router.on_event("startup")
 async def startup_notifications():
