@@ -105,7 +105,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version")
 
     // WebSocket
-    implementation("com.squareup.okhttp3:okhttp-ws:$okhttp_version")
+    // okhttp-ws is part of okhttp now
 
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
