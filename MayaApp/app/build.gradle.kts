@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-    val kotlin_version: String by extra("1.9.20")
+    val kotlin_version: String by extra("1.9.22")
     val compose_version: String by extra("1.5.10")
     val activity_version: String by extra("1.8.2")
     val lifecycle_version: String by extra("2.7.0")
