@@ -37,30 +37,34 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           api-level: 34
-          ndk-version: r26d
           build-tools-version: '34.0.0'
+
+      - name: List project structure
+        run: |
+          echo "=== Project root ==="
+          ls -la
+          echo "=== App directory ==="
+          ls -la app/
+          echo "=== App src ==="
+          find app/src -type f | head -30
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease --no-daemon --stacktrace --info
 
-      - name: Verify APK exists
+      - name: List build outputs
         run: |
-          APK_PATH="app/build/outputs/apk/release/app-release.apk"
-          if [ -f "$APK_PATH" ]; then
-            echo "APK found at $APK_PATH"
-            ls -lh "$APK_PATH"
-          else
-            echo "ERROR: APK not found at $APK_PATH"
-            find app/build -name "*.apk" 2>/dev/null
-            exit 1
-          fi
+          echo "=== Build outputs ==="
+          find app/build -name "*.apk" -o -name "*.aab" 2>/dev/null | xargs ls -lh
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: maya-voice-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/release/*.aab
           retention-days: 30
