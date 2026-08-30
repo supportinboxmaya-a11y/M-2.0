@@ -36,6 +36,17 @@ import { MCPView } from './views/MCPView.js';
 import { CoreLoopView } from './views/CoreLoopView.js';
 import { ResearchView } from './views/ResearchView.js';
 
+// Income Engine views
+import { IncomeScoutView } from './views/IncomeScoutView.js';
+import { IncomeStrategistView } from './views/IncomeStrategistView.js';
+import { IncomeBuilderView } from './views/IncomeBuilderView.js';
+import { IncomeLauncherView } from './views/IncomeLauncherView.js';
+import { IncomeGrowthView } from './views/IncomeGrowthView.js';
+import { IncomePortfolioView } from './views/IncomePortfolioView.js';
+
+// Notifications view
+import { NotificationsView } from './views/NotificationsView.js';
+
 // Generic CRUD/list views
 import {
   RAGView, WorkflowsView, LearningView, PromptsView, WebhooksView,
@@ -136,6 +147,15 @@ class App {
       mcp: MCPView,
       coreloop: CoreLoopView,
       research: ResearchView,
+      // Income Engine
+      scout: IncomeScoutView,
+      strategist: IncomeStrategistView,
+      builder: IncomeBuilderView,
+      launcher: IncomeLauncherView,
+      growth: IncomeGrowthView,
+      portfolio: IncomePortfolioView,
+      // Notifications
+      notifications: NotificationsView,
       // Generic list/detail views
       rag: RAGView,
       workflows: WorkflowsView,
@@ -180,6 +200,16 @@ class App {
       mcp: 'MCP Servers',
       coreloop: 'Core Loop',
       research: 'Research & Publish',
+      // Income Engine
+      scout: 'Scout - Opportunities',
+      strategist: 'Strategist - Plans',
+      builder: 'Builder - Projects',
+      launcher: 'Launcher - Launches',
+      growth: 'Growth - Proposals',
+      portfolio: 'Portfolio Manager',
+      // Notifications
+      notifications: 'Notifications',
+      // Generic list/detail views
       rag: 'RAG / Knowledge Base',
       workflows: 'Workflows',
       learning: 'Learning',
