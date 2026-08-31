@@ -30,7 +30,7 @@ class OpenRouterProvider(BaseProvider):
                     api_key=key,
                     base_url=OPENROUTER_BASE_URL,
                     default_headers={
-                        "HTTP-Referer": "https://m-2-0-1.onrender.com",
+                        "HTTP-Referer": "http://130.210.46.182:8000",
                         "X-Title": "Maya",
                     },
                 )

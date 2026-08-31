@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 ENVIRONMENT = "production"
 APP_NAME = "Maya 2.0 ULTRA"
-BACKEND_URL = "https://m-2-0.onrender.com"
+BACKEND_URL = "http://130.210.46.182:8000"
 
 # D1 Database (SQLite)
 [[d1_databases]]

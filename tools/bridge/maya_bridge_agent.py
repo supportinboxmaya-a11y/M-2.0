@@ -43,7 +43,7 @@ except ImportError:
 
 
 def main():
-    backend_url = input("Backend URL (e.g. https://m-2-0.onrender.com/api/v1): ").strip().rstrip("/")
+    backend_url = input("Backend URL (e.g. http://130.210.46.182:8000/api/v1): ").strip().rstrip("/")
     code = input("Pairing code from Settings > Device Bridge: ").strip().upper()
 
     try:

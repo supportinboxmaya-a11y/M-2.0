@@ -9,8 +9,6 @@ class WSManager {
     this.listeners = new Map();
     this.isConnected = false;
     this.authToken = null;
-    // Cloudflare tunnel for WebSocket (Vercel static doesn't proxy WS)
-    this.wsBackend = 'wss://gzip-separately-competition-democratic.trycloudflare.com';
   }
   
   connect(token) {
@@ -19,7 +17,8 @@ class WSManager {
     }
     
     this.authToken = token;
-    this.url = `${this.wsBackend}/ws/agent?token=${encodeURIComponent(token)}`;
+    // Use relative path - Vercel rewrites /ws/* to ws://130.210.46.182:8000/ws/*
+    this.url = `/ws/agent?token=${encodeURIComponent(token)}`;
     
     this.ws = new WebSocket(this.url);
     

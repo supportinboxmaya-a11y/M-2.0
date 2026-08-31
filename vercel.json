@@ -7,15 +7,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://maya-backend.onrender.com/api/$1"
+      "destination": "http://130.210.46.182:8000/api/$1"
     },
     {
       "source": "/ws/(.*)",
-      "destination": "wss://maya-backend.onrender.com/ws/$1"
+      "destination": "ws://130.210.46.182:8000/ws/$1"
     },
     {
       "source": "/health/(.*)",
-      "destination": "https://maya-backend.onrender.com/health/$1"
+      "destination": "http://130.210.46.182:8000/health/$1"
     },
     {
       "source": "/(.*)",
