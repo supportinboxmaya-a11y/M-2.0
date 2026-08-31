@@ -7,6 +7,8 @@ import com.maya.app.repository.DataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmName
 
 class MayaApplication : Application() {
 
@@ -24,12 +26,10 @@ class MayaApplication : Application() {
     companion object {
         @Suppress("UNUSED_PARAMETER")
         @JvmStatic
+        @JvmName("getInstance")
         lateinit var instance: MayaApplication
             private set
 
-        @JvmStatic
-        fun getInstance(): MayaApplication = instance
-        
         @JvmStatic
         fun getContext(): Context = instance.applicationContext
     }
