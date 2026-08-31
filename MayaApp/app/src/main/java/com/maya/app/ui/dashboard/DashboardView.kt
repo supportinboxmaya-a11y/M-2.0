@@ -27,21 +27,21 @@ fun DashboardView() {
             modifier = androidx.compose.ui.Modifier.fillMaxSize(),
             contentAlignment = androidx.compose.ui.Alignment.Center
         ) {
-            androidx.compose.foundation.layout.Column(
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontal,
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                androidx.compose.material.Text(
+                Text(
                     text = "Dashboard",
                     fontSize = 24.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.onBackground
                 )
-                androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.padding(16.dp))
-                androidx.compose.material.Text(
+                Spacer(modifier = Modifier.padding(16.dp))
+                Text(
                     text = "Income Engine status\nOpportunities • Projects • Activity",
                     fontSize = 16.sp,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    textAlign = TextAlign.Center,
                     color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                 )
             }
