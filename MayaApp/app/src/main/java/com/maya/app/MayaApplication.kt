@@ -23,11 +23,14 @@ class MayaApplication : Application() {
 
     companion object {
         @Suppress("UNUSED_PARAMETER")
+        @JvmStatic
         lateinit var instance: MayaApplication
             private set
 
+        @JvmStatic
         fun getInstance(): MayaApplication = instance
         
+        @JvmStatic
         fun getContext(): Context = instance.applicationContext
     }
 
