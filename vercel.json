@@ -14,6 +14,18 @@
       "destination": "ws://130.210.46.182:8000/ws/$1"
     },
     {
+      "source": "/health",
+      "destination": "http://130.210.46.182:8000/health"
+    },
+    {
+      "source": "/health/live",
+      "destination": "http://130.210.46.182:8000/health/live"
+    },
+    {
+      "source": "/health/ready",
+      "destination": "http://130.210.46.182:8000/health/ready"
+    },
+    {
       "source": "/health/(.*)",
       "destination": "http://130.210.46.182:8000/health/$1"
     },
