@@ -33,9 +33,7 @@ object ApiClient {
     private var instance: ApiClient? = null
 
     fun initialize(context: android.content.Context) {
-        if (instance == null) {
-            instance = ApiClient()
-        }
+        instance = this
     }
 
     fun getInstance(): ApiClient = instance ?: throw IllegalStateException("ApiClient not initialized")
