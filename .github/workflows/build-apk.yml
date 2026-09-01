@@ -33,9 +33,18 @@ jobs:
           api-level: 34
           build-tools-version: '34.0.0'
 
+      - name: Set up keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > MayaApp/keystore/maya-release.keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
       - name: Build Release APK
         working-directory: MayaApp
         run: ./gradlew assembleRelease --no-daemon --stacktrace
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Find APK
         run: |

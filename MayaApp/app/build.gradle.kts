@@ -18,9 +18,19 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../keystore/maya-release.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "maya2024release"
+            keyAlias = "maya-release"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "maya2024release"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
