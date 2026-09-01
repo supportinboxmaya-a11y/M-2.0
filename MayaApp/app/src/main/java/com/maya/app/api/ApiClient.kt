@@ -27,10 +27,6 @@ interface MayaApi {
     suspend fun logout(@Header("Authorization") authHeader: String): Response<Unit>
 }
 
-data class RefreshRequest(
-    val refresh_token: String
-)
-
 class ApiClient private constructor(
     private val api: MayaApi,
     private val authManager: AuthManager

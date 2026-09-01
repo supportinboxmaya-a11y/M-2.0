@@ -16,6 +16,10 @@ data class LoginRequest(
     @SerializedName("password") val password: String
 )
 
+data class RefreshRequest(
+    @SerializedName("refresh_token") val refreshToken: String
+)
+
 data class RegisterRequest(
     @SerializedName("email") val email: String,
     @SerializedName("password") val password: String,
