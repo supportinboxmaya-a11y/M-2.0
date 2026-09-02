@@ -1,5 +1,6 @@
 package com.maya.app
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maya.app.ui.AppViewModel
-import com.maya.app.ui.dashboard.DashboardView
+import com.maya.app.ui.DashboardView
+import com.maya.app.ui.LoginActivity
 
 class MainActivity : ComponentActivity() {
 
@@ -46,7 +48,9 @@ class MainActivity : ComponentActivity() {
                     if (isLoggedIn) {
                         DashboardView()
                     } else {
-                        LoginPromptView(onLoginClick = { viewModel.login() })
+                        LoginPromptView(onLoginClick = { 
+                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        })
                     }
                 }
             }
