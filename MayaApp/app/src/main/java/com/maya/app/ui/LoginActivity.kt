@@ -54,10 +54,14 @@ class LoginActivity : ComponentActivity() {
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val emailState = remember { mutableStateOf("") }
+    var email by emailState
+    val passwordState = remember { mutableStateOf("") }
+    var password by passwordState
+    val isLoadingState = remember { mutableStateOf(false) }
+    var isLoading by isLoadingState
+    val errorState = remember { mutableStateOf<String?>(null) }
+    var errorMessage by errorState
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -82,7 +86,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
         TextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { emailState.value = it },
             label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,7 +98,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
         TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { passwordState.value = it },
             label = { Text("Password") },
             modifier = Modifier
                 .fillMaxWidth()
