@@ -16,13 +16,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maya.app.ui.AppViewModel
 import com.maya.app.ui.dashboard.DashboardView
 
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
         // Initialize ApiClient with production backend URL
         com.maya.app.api.ApiClient.initialize(this, "http://130.210.46.182:8000/")
 
-        val isLoggedIn by viewModel.isLoggedIn.observeAsState(initial = false)
+        val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle(initial = false)
 
         setContent {
             MaterialTheme {
