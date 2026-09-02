@@ -36,6 +36,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="false"
+            android:label="Sign In"
+            android:theme="@style/Theme.MayaApp"
+            android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name=".voice.VoiceRecordingService"
             android:exported="false"
