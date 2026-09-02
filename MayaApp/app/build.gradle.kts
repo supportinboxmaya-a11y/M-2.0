@@ -81,6 +81,8 @@ dependencies {
     // Core Android
     implementation("androidx.core:core-ktx:$core_ktx_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
     implementation("androidx.activity:activity-compose:$activity_version")
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
