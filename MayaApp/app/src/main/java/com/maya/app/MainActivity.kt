@@ -35,14 +35,14 @@ class MainActivity : ComponentActivity() {
         // Initialize ApiClient with production backend URL
         com.maya.app.api.ApiClient.initialize(this, "http://130.210.46.182:8000/")
 
-        val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle(initial = false)
-
         setContent {
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+
                     if (isLoggedIn) {
                         DashboardView()
                     } else {
@@ -67,15 +67,15 @@ fun LoginPromptView(onLoginClick: () -> Unit) {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.onBackground
         )
-        androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.foundation.layout.padding(24.dp))
+        Spacer(modifier = Modifier.padding(24.dp))
         Text(
             text = "Sign in to access your dashboard",
             fontSize = 16.sp,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
             textAlign = TextAlign.Center
         )
-        androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.foundation.layout.padding(24.dp))
-        androidx.compose.material.Button(
+        Spacer(modifier = Modifier.padding(24.dp))
+        Button(
             onClick = onLoginClick,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
         ) {
