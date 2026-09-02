@@ -6,10 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.PasswordVisualTransformation
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -20,6 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +33,7 @@ import com.maya.app.api.AuthManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginActivity : ComponentActivity() {
 
@@ -82,9 +88,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             singleLine = true,
-            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Email
-            )
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
         Spacer(modifier = Modifier.padding(16.dp))
 
@@ -96,10 +100,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             singleLine = true,
-            keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
-            ),
-            visualTransformation = androidx.compose.material.PasswordVisualTransformation()
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation()
         )
 
         errorMessage?.let { msg ->
@@ -122,14 +124,14 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                     errorMessage = null
                     CoroutineScope(Dispatchers.IO).launch {
                         val result = ApiClient.getInstance().login(email, password)
-                        kotlinx.coroutines.withContext(Dispatchers.Main) {
+                        withContext(Dispatchers.Main) {
                             isLoading = false
                             when (result) {
-                                is androidx.compose.runtime.Result.Success -> {
+                                is kotlin.Result.Success -> {
                                     AuthManager.getInstance().saveTokens(result.getOrNull()!!)
                                     onLoginSuccess()
                                 }
-                                is androidx.compose.runtime.Result.Failure -> {
+                                is kotlin.Result.Failure -> {
                                     errorMessage = result.exceptionOrNull()?.message ?: "Login failed"
                                 }
                             }
