@@ -126,12 +126,12 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                         val result = ApiClient.getInstance().login(email, password)
                         withContext(Dispatchers.Main) {
                             isLoading = false
-                            when (result) {
-                                is kotlin.Result.Success -> {
+                            when {
+                                result.isSuccess -> {
                                     AuthManager.getInstance().saveTokens(result.getOrNull()!!)
                                     onLoginSuccess()
                                 }
-                                is kotlin.Result.Failure -> {
+                                result.isFailure -> {
                                     errorMessage = result.exceptionOrNull()?.message ?: "Login failed"
                                 }
                             }
