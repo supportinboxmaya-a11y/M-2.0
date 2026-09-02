@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -24,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -100,7 +100,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 .padding(horizontal = 32.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = VisualTransformation.Password
+            visualTransformation = androidx.compose.ui.text.input.VisualTransformation.Password
         )
 
         val error = errorState.value
@@ -125,9 +125,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 if (email.isNotBlank() && password.isNotBlank() && !isLoadingState.value) {
                     isLoadingState.value = true
                     errorState.value = null
-                    CoroutineScope(Dispatchers.IO).launch {
+                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
                         val result = ApiClient.getInstance().login(emailState.value, passwordState.value)
-                        withContext(Dispatchers.Main) {
+                        withContext(kotlinx.coroutines.Dispatchers.Main) {
                             isLoadingState.value = false
                             when {
                                 result.isSuccess -> {
