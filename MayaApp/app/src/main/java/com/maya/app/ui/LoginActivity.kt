@@ -16,7 +16,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,13 +55,9 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit) {
     val emailState = remember { mutableStateOf("") }
-    var email by emailState
     val passwordState = remember { mutableStateOf("") }
-    var password by passwordState
     val isLoadingState = remember { mutableStateOf(false) }
-    var isLoading by isLoadingState
     val errorState = remember { mutableStateOf<String?>(null) }
-    var errorMessage by errorState
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -85,7 +81,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         Spacer(modifier = Modifier.padding(24.dp))
 
         TextField(
-            value = email,
+            value = emailState.value,
             onValueChange = { emailState.value = it },
             label = { Text("Email") },
             modifier = Modifier
@@ -97,7 +93,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         Spacer(modifier = Modifier.padding(16.dp))
 
         TextField(
-            value = password,
+            value = passwordState.value,
             onValueChange = { passwordState.value = it },
             label = { Text("Password") },
             modifier = Modifier
@@ -108,10 +104,11 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             visualTransformation = PasswordVisualTransformation()
         )
 
-        errorMessage?.let { msg ->
+        val error = errorState.value
+        if (error != null) {
             Spacer(modifier = Modifier.padding(16.dp))
             Text(
-                text = msg,
+                text = error,
                 fontSize = 14.sp,
                 color = MaterialTheme.colors.error,
                 textAlign = TextAlign.Center,
@@ -121,22 +118,25 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
         Spacer(modifier = Modifier.padding(24.dp))
 
+        val loading = isLoadingState.value
         Button(
             onClick = {
-                if (email.isNotBlank() && password.isNotBlank() && !isLoading) {
-                    isLoading = true
-                    errorMessage = null
+                val email = emailState.value
+                val password = passwordState.value
+                if (email.isNotBlank() && password.isNotBlank() && !isLoadingState.value) {
+                    isLoadingState.value = true
+                    errorState.value = null
                     CoroutineScope(Dispatchers.IO).launch {
-                        val result = ApiClient.getInstance().login(email, password)
-                        withContext(Dispatchers.Main) {
-                            isLoading = false
+                        val result = ApiClient.getInstance().login(emailState.value, passwordState.value)
+                        withContext(androidx.compose.runtime.Dispatchers.Main) {
+                            isLoadingState.value = false
                             when {
                                 result.isSuccess -> {
                                     AuthManager.getInstance().saveTokens(result.getOrNull()!!)
                                     onLoginSuccess()
                                 }
                                 result.isFailure -> {
-                                    errorMessage = result.exceptionOrNull()?.message ?: "Login failed"
+                                    errorState.value = result.exceptionOrNull()?.message ?: "Login failed"
                                 }
                             }
                         }
@@ -145,9 +145,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
-            enabled = !isLoading
+            enabled = !isLoadingState.value
         ) {
-            Text(text = if (isLoading) "Signing in..." else "Sign In", fontSize = 16.sp)
+            Text(text = if (isLoadingState.value) "Signing in..." else "Sign In", fontSize = 16.sp)
         }
 
         Spacer(modifier = Modifier.padding(16.dp))
