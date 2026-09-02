@@ -29,7 +29,7 @@ interface MayaApi {
 
 class ApiClient private constructor(
     private val api: MayaApi,
-    private val authManager: AuthManager
+    private val authManagerProvider: () -> AuthManager
 ) {
     companion object {
         @Suppress("UNUSED_PARAMETER")
@@ -55,8 +55,8 @@ class ApiClient private constructor(
                             .build()
 
                         val api = retrofit.create(MayaApi::class.java)
-                        val authManager = AuthManager.getInstance()
-                        INSTANCE = ApiClient(api, authManager)
+                        // AuthManager is lazily retrieved when needed, not during ApiClient init
+                        INSTANCE = ApiClient(api, AuthManager::getInstance)
                     }
                 }
             }
@@ -70,7 +70,7 @@ class ApiClient private constructor(
             val response = api.login(LoginRequest(email, password))
             if (response.isSuccessful) {
                 response.body()?.let { tokens ->
-                    authManager.saveTokens(tokens)
+                    authManagerProvider().saveTokens(tokens)
                     Result.success(tokens)
                 } ?: Result.failure(Exception("Login response body is null"))
             } else {
@@ -82,12 +82,12 @@ class ApiClient private constructor(
     }
 
     suspend fun refreshAuthToken(): Boolean {
-        val refreshToken = authManager.getRefreshToken() ?: return false
+        val refreshToken = authManagerProvider().getRefreshToken() ?: return false
         return try {
             val response = api.refreshToken(RefreshRequest(refreshToken))
             if (response.isSuccessful) {
                 response.body()?.let { tokens ->
-                    authManager.saveTokens(tokens)
+                    authManagerProvider().saveTokens(tokens)
                     true
                 } ?: false
             } else {
@@ -99,11 +99,11 @@ class ApiClient private constructor(
     }
 
     suspend fun logout(): Boolean {
-        val accessToken = authManager.getAccessToken() ?: return false
+        val accessToken = authManagerProvider().getAccessToken() ?: return false
         return try {
             val response = api.logout("Bearer $accessToken")
             if (response.isSuccessful) {
-                authManager.clearTokens()
+                authManagerProvider().clearTokens()
                 true
             } else {
                 false
@@ -114,5 +114,5 @@ class ApiClient private constructor(
     }
 
     fun getAuthApi(): MayaApi = api
-    fun getAuthManager(): AuthManager = authManager
+    fun getAuthManager(): AuthManager = authManagerProvider()
 }
