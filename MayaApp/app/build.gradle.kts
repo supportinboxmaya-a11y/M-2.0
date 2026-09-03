@@ -64,8 +64,10 @@ composeOptions {
 }
 
 dependencies {
-    // Known working versions: Kotlin 1.9.22 + Compose Compiler 1.5.10 + Compose 1.5.4 (BOM 2023.10.01)
-    val compose_version = "1.5.4"
+    // Compose BOM 2023.10.01 (Compose 1.5.4) - manages all Compose library versions
+    val compose_bom_version = "2023.10.01"
+    implementation(platform("androidx.compose:compose-bom:$compose_bom_version"))
+
     val activity_version = "1.8.2"
     val lifecycle_version = "2.7.0"
     val navigation_version = "2.7.6"
@@ -89,18 +91,16 @@ dependencies {
     // Material Components (for XML theming)
     implementation("com.google.android.material:material:$material_version")
 
-    // Material 2 for Compose
-    implementation("androidx.compose.material:material:$compose_version")
-
-    // Compose dependencies - explicit 1.5.4
-    implementation("androidx.compose.ui:ui:$compose_version")
-    implementation("androidx.compose.ui:ui-text:$compose_version")
-    implementation("androidx.compose.ui:ui-graphics:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-    implementation("androidx.compose.foundation:foundation:$compose_version")
-    implementation("androidx.compose.runtime:runtime:$compose_version")
-    implementation("androidx.compose.animation:animation:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling:$compose_version")
+    // Compose dependencies (managed by BOM)
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-text")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.ui:ui-tooling")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:$navigation_version")
@@ -131,7 +131,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
-    debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
