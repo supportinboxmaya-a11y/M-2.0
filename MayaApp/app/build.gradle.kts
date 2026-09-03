@@ -53,7 +53,7 @@ android {
     }
 
 composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     packagingOptions {
@@ -64,64 +64,53 @@ composeOptions {
 }
 
 dependencies {
-    val kotlin_version: String by extra("1.9.24")
-    val compose_version: String by extra("1.6.8")
-    val activity_version: String by extra("1.8.2")
-    val lifecycle_version: String by extra("2.7.0")
-    val navigation_version: String by extra("2.7.6")
-    val retrofit_version: String by extra("2.11.0")
-    val okhttp_version: String by extra("4.12.0")
-    val coroutines_version: String by extra("1.7.3")
-    val coil_version: String by extra("2.6.0")
-    val material_version: String by extra("1.11.0")
-    val core_ktx_version: String by extra("1.12.0")
-    val fragment_version: String by extra("1.6.2")
-    val constraint_layout_version: String by extra("2.1.4")
+    // Compose BOM 2023.10.01 (Compose 1.5.4) - known working with Kotlin 1.9.22
+    val compose_bom_version = "2023.10.01"
+    implementation(platform("androidx.compose:compose-bom:$compose_bom_version"))
 
     // Core Android
-    implementation("androidx.core:core-ktx:$core_ktx_version")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
-    implementation("androidx.activity:activity-compose:$activity_version")
-    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Material Components (for XML theming)
-    implementation("com.google.android.material:material:$material_version")
+    implementation("com.google.android.material:material:1.11.0")
 
-    // Material 2 for Compose (from Compose BOM)
-    // Material 3 removed - was causing Theme.Material3.DayNight.NoActionBar resource conflict
+    // Material 2 for Compose (from BOM)
+    implementation("androidx.compose.material:material")
 
-    // Explicit Compose dependencies (no BOM) - Compose 1.6.8 versions
-    implementation("androidx.compose.ui:ui:1.6.8")
-    implementation("androidx.compose.ui:ui-text:1.6.8")
-    implementation("androidx.compose.ui:ui-graphics:1.6.8")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.8")
-    implementation("androidx.compose.foundation:foundation:1.6.8")
-    implementation("androidx.compose.material:material:1.6.8")
-    implementation("androidx.compose.runtime:runtime:1.6.8")
-    implementation("androidx.compose.animation:animation:1.6.8")
-    implementation("androidx.compose.ui:ui-tooling:1.6.8")
+    // Compose dependencies (managed by BOM)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-text")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.ui:ui-tooling")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:$navigation_version")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // Retrofit & OkHttp
-    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
-    implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 
     // Coil for images
-    implementation("io.coil-kt:coil-compose:$coil_version")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
@@ -133,7 +122,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
