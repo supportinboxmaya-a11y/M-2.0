@@ -4589,7 +4589,42 @@ try:
 
     # ── Cognitive Kernel Routes ──────────────────────────────────────
     @app.get("/api/v1/cognitive/kernel/status")
-    async def _p18_kernel_status(user=Depends(get_current_user)):
+    async def _p18_kernel_status(summary: bool = False, user=Depends(get_current_user)):
+        # Simple in-memory cache (5s TTL) for summary requests
+        if summary:
+            if hasattr(_p18_kernel_status, "_cache") and _p18_kernel_status._cache:
+                cached_data, cached_time = _p18_kernel_status._cache
+                if time.time() - cached_time < 5:
+                    return cached_data
+            
+            full = _p18_kernel.status()
+            summary_data = {
+                "instance_id": full.get("instance_id"),
+                "version": full.get("version"),
+                "uptime": full.get("uptime"),
+                "running": full.get("running"),
+                "goals": full.get("goals"),
+                "working_memory": {
+                    "total_slots": full.get("working_memory", {}).get("total_slots"),
+                    "by_type": full.get("working_memory", {}).get("by_type"),
+                    "total_attention": full.get("working_memory", {}).get("total_attention"),
+                },
+                "beliefs": full.get("beliefs"),
+                "plans": full.get("plans"),
+                "active_plan_id": full.get("active_plan_id"),
+                "controller": full.get("controller"),
+                "metacognitive": {
+                    "overall_confidence": full.get("metacognitive", {}).get("overall_confidence"),
+                    "active_goals": full.get("metacognitive", {}).get("active_goals"),
+                    "active_plan": full.get("metacognitive", {}).get("active_plan"),
+                    "belief_count": full.get("metacognitive", {}).get("belief_count"),
+                },
+                "threads": full.get("threads"),
+                "last_checkpoint": full.get("last_checkpoint"),
+            }
+            _p18_kernel_status._cache = (summary_data, time.time())
+            return summary_data
+        
         return _p18_kernel.status()
 
     # ── Phase 34: Unified Cognitive Loop ─────────────────────────────

@@ -1071,8 +1071,8 @@ class ApiClient {
   }
 
   // ── Cognitive Kernel (Phase 18/34 unified loop) ──────────────────
-  getKernelStatus() {
-    return this.get('/api/v1/cognitive/kernel/status');
+  getKernelStatus(summary = true) {
+    return this.get('/api/v1/cognitive/kernel/status' + (summary ? '?summary=true' : ''));
   }
 
   processGoal(description, { priority = 50, execute = false, metadata = {} } = {}) {
