@@ -96,7 +96,7 @@ dependencies {
     // Compose BOM - 2024.06.00 compatible with Kotlin 1.9.23 and Compose Compiler 1.5.13
     implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-text")
+    implementation("androidx.compose.ui:ui-text:1.6.10")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.foundation:foundation")
