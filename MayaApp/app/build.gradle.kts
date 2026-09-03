@@ -93,8 +93,8 @@ dependencies {
     // Material 2 for Compose (from Compose BOM)
     // Material 3 removed - was causing Theme.Material3.DayNight.NoActionBar resource conflict
 
-    // Compose BOM - 2024.06.00 compatible with Kotlin 1.9.23 and Compose Compiler 1.5.13
-    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    // Compose BOM - 2024.04.00 (Compose 1.6.0) includes ui-text, compatible with Kotlin 1.9.23 and Compose Compiler 1.5.13
+    implementation(platform("androidx.compose:compose-bom:2024.04.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-text")
     implementation("androidx.compose.ui:ui-graphics")
