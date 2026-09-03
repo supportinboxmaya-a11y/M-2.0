@@ -16,12 +16,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,7 +85,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
         Spacer(modifier = Modifier.padding(16.dp))
 
@@ -96,6 +98,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = PasswordVisualTransformation()
         )
 
@@ -136,7 +139,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                             }
                         }
                     }
-                },
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
