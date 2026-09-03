@@ -4,6 +4,11 @@ plugins {
     id("kotlin-parcelize")
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 android {
     namespace = "com.maya.app"
     compileSdk = 34
