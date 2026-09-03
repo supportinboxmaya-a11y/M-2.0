@@ -196,10 +196,21 @@ class CognitiveKernel:
 
         # Phase 40: semantic index over beliefs (vector retrieval upgrade).
         # Skills are indexed inside ProceduralMemory itself.
-        from infrastructure.semantic_index import SemanticIndex
-        self._belief_index = SemanticIndex()
-        for b in self.beliefs.values():
-            self._belief_index.add(b.id, b.proposition)
+        # Build index lazily to avoid blocking startup with 9966+ beliefs.
+        self._belief_index = None
+        self._belief_index_built = False
+
+    @property
+    def belief_index(self):
+        """Lazily build the semantic index on first access."""
+        if not self._belief_index_built:
+            from infrastructure.semantic_index import SemanticIndex
+            self._belief_index = SemanticIndex()
+            with self._lock:
+                for b in self.beliefs.values():
+                    self._belief_index.add(b.id, b.proposition)
+            self._belief_index_built = True
+        return self._belief_index
 
     # =========================================================================
     # Database & Persistence
@@ -657,7 +668,7 @@ Return ONLY a JSON array of strings, no other text:
         with self._lock:
             self.beliefs[belief_id] = belief
             self._save_belief(belief)
-        self._belief_index.add(belief.id, belief.proposition)
+        self.belief_index.add(belief.id, belief.proposition)
         return belief
 
     def update_belief(self, belief_id: str, confidence: float = None,
@@ -678,7 +689,7 @@ Return ONLY a JSON array of strings, no other text:
             belief.updated_at = time.time()
             self._save_belief(belief)
         if proposition is not None:
-            self._belief_index.add(belief_id, belief.proposition)
+            self.belief_index.add(belief_id, belief.proposition)
         return belief
 
     def query_beliefs(self, domain: str = None, min_confidence: float = 0.0) -> List[Belief]:
@@ -1524,11 +1535,11 @@ Return ONLY the JSON array.
         # alone is too loose to guarantee that); with real embeddings the
         # vector score itself decides.
         match = None
-        best_hit = self._belief_index.best_match(proposition, min_score=0.05)
+        best_hit = self.belief_index.best_match(proposition, min_score=0.05)
         if best_hit is not None:
             candidate = self.beliefs.get(best_hit[0])
             if candidate is not None:
-                if self._belief_index.engine == "embeddings":
+                if self.belief_index.engine == "embeddings":
                     if best_hit[1] >= 0.85:
                         match = candidate
                 elif self._token_overlap(proposition, candidate.proposition) >= 0.8:
@@ -1568,7 +1579,7 @@ Return ONLY the JSON array.
             beliefs = {b.id: b for b in self.beliefs.values()
                        if b.confidence >= min_confidence}
         scored = []
-        for belief_id, sim in self._belief_index.search(
+        for belief_id, sim in self.belief_index.search(
                 query, limit=len(beliefs) or 1):
             b = beliefs.get(belief_id)
             if b is None:
@@ -1620,7 +1631,7 @@ Return ONLY the JSON array.
                     c.execute("DELETE FROM beliefs WHERE id=?", (belief_id,))
             except Exception:
                 pass
-        self._belief_index.remove(belief_id)
+        self.belief_index.remove(belief_id)
 
     def knowledge_stats(self) -> Dict:
         with self._lock:
@@ -1631,7 +1642,7 @@ Return ONLY the JSON array.
         return {
             "total": len(beliefs),
             "domains": domains,
-            "retrieval_engine": self._belief_index.engine,
+            "retrieval_engine": self.belief_index.engine,
             "avg_confidence": (
                 round(sum(b.confidence for b in beliefs) / len(beliefs), 3)
                 if beliefs else 0.0
