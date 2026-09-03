@@ -1,9 +1,10 @@
 {
   "buildCommand": "echo 'No build step - vanilla ES modules'",
-  "outputDirectory": "frontend",
+  "outputDirectory": ".",
   "devCommand": "echo 'Use vercel dev for local testing'",
   "installCommand": "echo 'No dependencies to install'",
   "framework": null,
+  "rootDirectory": "frontend",
   "rewrites": [
     {
       "source": "/api/(.*)",
