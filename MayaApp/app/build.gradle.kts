@@ -4,11 +4,6 @@ plugins {
     id("kotlin-parcelize")
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 android {
     namespace = "com.maya.app"
     compileSdk = 34
@@ -58,7 +53,7 @@ android {
     }
 
 composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
 
     packagingOptions {
@@ -69,20 +64,20 @@ composeOptions {
 }
 
 dependencies {
-    // Compose BOM 2023.10.01 (Compose 1.5.4) - manages all Compose library versions
-    val compose_bom_version = "2023.10.01"
+    // Compose BOM 2023.03.00 (Compose 1.4.3) - known working with Kotlin 1.8.20
+    val compose_bom_version = "2023.03.00"
     implementation(platform("androidx.compose:compose-bom:$compose_bom_version"))
 
-    val activity_version = "1.8.2"
-    val lifecycle_version = "2.7.0"
-    val navigation_version = "2.7.6"
-    val retrofit_version = "2.11.0"
-    val okhttp_version = "4.12.0"
-    val coroutines_version = "1.7.3"
-    val coil_version = "2.6.0"
-    val material_version = "1.11.0"
-    val core_ktx_version = "1.12.0"
-    val fragment_version = "1.6.2"
+    val activity_version = "1.7.2"
+    val lifecycle_version = "2.6.2"
+    val navigation_version = "2.7.0"
+    val retrofit_version = "2.9.0"
+    val okhttp_version = "4.11.0"
+    val coroutines_version = "1.7.1"
+    val coil_version = "2.4.0"
+    val material_version = "1.10.0"
+    val core_ktx_version = "1.10.1"
+    val fragment_version = "1.5.5"
 
     // Core Android
     implementation("androidx.core:core-ktx:$core_ktx_version")
@@ -127,10 +122,10 @@ dependencies {
     implementation("io.coil-kt:coil-compose:$coil_version")
 
     // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
     // WorkManager
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
