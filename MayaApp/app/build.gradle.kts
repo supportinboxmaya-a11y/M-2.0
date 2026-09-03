@@ -44,7 +44,10 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs += listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Pandroidx.compose.compiler.suppressKotlinVersionCompatibilityCheck=true"
+        )
     }
 
     buildFeatures {
@@ -54,8 +57,6 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.12"
-        // Suppress version check to allow Kotlin 1.9.24 with Compose Compiler 1.5.12
-        suppressKotlinVersionCompatibilityCheck = true
     }
 
     packagingOptions {
