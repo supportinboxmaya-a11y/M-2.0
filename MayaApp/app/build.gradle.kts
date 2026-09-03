@@ -53,7 +53,7 @@ android {
     }
 
 composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     packagingOptions {
@@ -64,18 +64,18 @@ composeOptions {
 }
 
 dependencies {
-    // Known working versions: Kotlin 1.8.20 + Compose Compiler 1.4.7 + Compose 1.4.3 (BOM 2023.03.00)
-    val compose_version = "1.4.3"
-    val activity_version = "1.7.2"
-    val lifecycle_version = "2.6.2"
-    val navigation_version = "2.7.0"
-    val retrofit_version = "2.9.0"
-    val okhttp_version = "4.11.0"
-    val coroutines_version = "1.7.1"
-    val coil_version = "2.4.0"
-    val material_version = "1.10.0"
-    val core_ktx_version = "1.10.1"
-    val fragment_version = "1.5.5"
+    // Known working versions: Kotlin 1.9.22 + Compose Compiler 1.5.10 + Compose 1.5.4 (BOM 2023.10.01)
+    val compose_version = "1.5.4"
+    val activity_version = "1.8.2"
+    val lifecycle_version = "2.7.0"
+    val navigation_version = "2.7.6"
+    val retrofit_version = "2.11.0"
+    val okhttp_version = "4.12.0"
+    val coroutines_version = "1.7.3"
+    val coil_version = "2.6.0"
+    val material_version = "1.11.0"
+    val core_ktx_version = "1.12.0"
+    val fragment_version = "1.6.2"
 
     // Core Android
     implementation("androidx.core:core-ktx:$core_ktx_version")
@@ -92,7 +92,7 @@ dependencies {
     // Material 2 for Compose
     implementation("androidx.compose.material:material:$compose_version")
 
-    // Compose dependencies - explicit 1.4.3
+    // Compose dependencies - explicit 1.5.4
     implementation("androidx.compose.ui:ui:$compose_version")
     implementation("androidx.compose.ui:ui-text:$compose_version")
     implementation("androidx.compose.ui:ui-graphics:$compose_version")
@@ -122,10 +122,10 @@ dependencies {
     implementation("io.coil-kt:coil-compose:$coil_version")
 
     // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // WorkManager
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
