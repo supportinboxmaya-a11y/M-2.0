@@ -52,7 +52,7 @@ android {
         viewBinding = true
     }
 
-    composeOptions {
+composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
 
@@ -65,8 +65,8 @@ android {
 
 dependencies {
     val kotlin_version: String by extra("1.9.24")
-    val compose_version: String by extra("1.6.10")
-    val activity_version: String by extra("1.9.0")
+    val compose_version: String by extra("1.6.8")
+    val activity_version: String by extra("1.8.2")
     val lifecycle_version: String by extra("2.7.0")
     val navigation_version: String by extra("2.7.6")
     val retrofit_version: String by extra("2.11.0")
@@ -93,16 +93,17 @@ dependencies {
     // Material 2 for Compose (from Compose BOM)
     // Material 3 removed - was causing Theme.Material3.DayNight.NoActionBar resource conflict
 
-    // Explicit Compose dependencies (no BOM) - Compose 1.6.10 versions
-    implementation("androidx.compose.ui:ui:1.6.10")
-    implementation("androidx.compose.ui:ui-text:1.6.10")
-    implementation("androidx.compose.ui:ui-graphics:1.6.10")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.10")
-    implementation("androidx.compose.foundation:foundation:1.6.10")
-    implementation("androidx.compose.material:material:1.6.10")
-    implementation("androidx.compose.runtime:runtime:1.6.10")
-    implementation("androidx.compose.animation:animation:1.6.10")
-    implementation("androidx.compose.ui:ui-tooling:1.6.10")
+    // Compose BOM - 2024.08.00 (Compose 1.6.8) includes ui-text, compatible with Kotlin 1.9.24 and Compose Compiler 1.5.14
+    implementation(platform("androidx.compose:compose-bom:2024.08.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-text")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.ui:ui-tooling")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:$navigation_version")
@@ -133,7 +134,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.10")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.10")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.10")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
 }
