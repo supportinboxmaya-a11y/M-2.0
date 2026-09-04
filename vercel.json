@@ -1,6 +1,6 @@
 {
   "buildCommand": "echo 'No build step - vanilla ES modules'",
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "devCommand": "echo 'Use vercel dev for local testing'",
   "installCommand": "echo 'No dependencies to install'",
   "framework": null,
