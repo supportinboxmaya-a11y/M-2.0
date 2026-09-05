@@ -1514,9 +1514,13 @@ class ApiClient {
       const decoder = new TextDecoder();
       let buffer = '';
       let full = '';
+      let streamEnded = false;
       for (;;) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (done) {
+          streamEnded = true;
+          break;
+        }
         buffer += decoder.decode(value, { stream: true });
         const parts = buffer.split('\n\n');
         buffer = parts.pop();
@@ -1529,6 +1533,23 @@ class ApiClient {
           else if (payload.error) { onError && onError(new Error(payload.error)); }
           else if (payload.done) { onDone && onDone(full); }
         }
+      }
+      // Process any remaining buffer after stream ends (handles missing trailing \n\n)
+      if (streamEnded && buffer.trim()) {
+        const parts = buffer.split('\n\n');
+        for (const part of parts) {
+          const line = part.split('\n').find(l => l.startsWith('data: '));
+          if (!line) continue;
+          let payload;
+          try { payload = JSON.parse(line.slice(6)); } catch { continue; }
+          if (payload.delta) { full += payload.delta; onDelta && onDelta(payload.delta); }
+          else if (payload.error) { onError && onError(new Error(payload.error)); }
+          else if (payload.done) { onDone && onDone(full); }
+        }
+      }
+      // Ensure onDone is called even if stream ended without explicit done event
+      if (streamEnded && !full.includes('"done":true')) {
+        onDone && onDone(full);
       }
       return full;
     }).catch((err) => {
