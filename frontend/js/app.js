@@ -1,7 +1,6 @@
 // Maya 2.0 ULTRA - Minimal App (Voice + Dashboard + Approvals)
 import { auth } from './auth.js';
 import { api } from './api.js';
-import { ws } from './ws.js';
 import { sse } from './sse.js';
 import { sync } from './sync.js';
 import { Sidebar } from './components/Sidebar.js';
@@ -96,7 +95,6 @@ class App {
 
         this.api = api;
         this.auth = auth;
-        this.ws = ws;
         this.sse = sse;
         this.toast = toast;
         this.Modal = Modal;
@@ -120,7 +118,7 @@ class App {
         this.setupRouting();
 
         if (hasAuth && auth.getToken()) {
-            this.connectWebSocket();
+            // WebSocket removed - using SSE for real-time updates
         }
 
         try {
@@ -134,11 +132,9 @@ class App {
 
         auth.subscribe((event) => {
             if (event === 'login') {
-                this.connectWebSocket();
                 this.header.render?.();
                 this.sidebar.render();
             } else if (event === 'logout') {
-                this.disconnectWebSocket();
                 window.location.hash = '#login';
             }
         });
@@ -154,7 +150,7 @@ class App {
     registerViews() {
         const viewClasses = {
             login: LoginView,
-            voice: ChatView,
+            chat: ChatView,
             dashboard: DashboardView,
             approvals: ApprovalsView,
         };
@@ -217,29 +213,7 @@ class App {
         this.viewContainer.scrollTop = 0;
     }
 
-    connectWebSocket() {
-        const token = auth.getToken();
-        if (token) {
-            ws.connect(token);
-            ws.on('approval_requested', (approval) => this.handleApprovalRequested(approval));
-        }
-    }
-
-    disconnectWebSocket() {
-        ws.disconnect();
-    }
-
-    handleApprovalRequested(approval) {
-        this.header.updateApprovalStatus?.(1);
-        toast.warning('Approval Required', approval.action, {
-            action: {
-                label: 'Review',
-                onClick: () => {
-                    window.location.hash = '#approvals';
-                },
-            },
-        });
-    }
+    
 
     async registerServiceWorker() {
         if ('serviceWorker' in navigator) {
@@ -290,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.confirmDelete = ConfirmDialog.destructive;
     window.api = api;
     window.auth = auth;
-    window.ws = ws;
     window.sync = sync;
 });
 
