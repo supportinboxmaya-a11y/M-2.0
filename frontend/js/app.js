@@ -270,3 +270,4 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled rejection:', event.reason);
 });
+// Force rebuild Sun Sep  6 23:35:12 UTC 2026
