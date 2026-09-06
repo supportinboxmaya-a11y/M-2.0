@@ -128,7 +128,7 @@ class App {
         }
         this.registerServiceWorker();
 
-        this.handleRoute(window.location.hash || '#voice');
+        this.handleRoute(window.location.hash || '#chat');
 
         auth.subscribe((event) => {
             if (event === 'login') {
@@ -162,28 +162,28 @@ class App {
     setupRouting() {
         this.viewTitles = {
             login: 'Sign in',
-            voice: 'Voice',
+            chat: 'Chat',
             dashboard: 'Dashboard',
             approvals: 'Approvals',
         };
     }
 
     handleRoute(hash) {
-        const viewName = hash.replace('#', '').split('/')[0] || 'voice';
+        const viewName = hash.replace('#', '').split('/')[0] || 'chat';
 
         if (!auth.getToken() && viewName !== 'login') {
             window.location.hash = '#login';
             return;
         }
         if (auth.getToken() && viewName === 'login') {
-            window.location.hash = '#voice';
+            window.location.hash = '#chat';
             return;
         }
 
         const view = this.views.get(viewName);
         if (!view) {
             console.warn(`View not found: ${viewName}`);
-            window.location.hash = '#voice';
+            window.location.hash = '#chat';
             return;
         }
 
