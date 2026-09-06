@@ -1515,6 +1515,7 @@ class ApiClient {
       let buffer = '';
       let full = '';
       let streamEnded = false;
+      let receivedDone = false;
       for (;;) {
         const { done, value } = await reader.read();
         if (done) {
@@ -1531,7 +1532,7 @@ class ApiClient {
           try { payload = JSON.parse(line.slice(6)); } catch { continue; }
           if (payload.delta) { full += payload.delta; onDelta && onDelta(payload.delta); }
           else if (payload.error) { onError && onError(new Error(payload.error)); }
-          else if (payload.done) { onDone && onDone(full); }
+          else if (payload.done) { receivedDone = true; onDone && onDone(full); }
         }
       }
       // Process any remaining buffer after stream ends (handles missing trailing \n\n)
@@ -1544,11 +1545,11 @@ class ApiClient {
           try { payload = JSON.parse(line.slice(6)); } catch { continue; }
           if (payload.delta) { full += payload.delta; onDelta && onDelta(payload.delta); }
           else if (payload.error) { onError && onError(new Error(payload.error)); }
-          else if (payload.done) { onDone && onDone(full); }
+          else if (payload.done) { receivedDone = true; onDone && onDone(full); }
         }
       }
       // Ensure onDone is called even if stream ended without explicit done event
-      if (streamEnded && !full.includes('"done":true')) {
+      if (streamEnded && !receivedDone) {
         onDone && onDone(full);
       }
       return full;
