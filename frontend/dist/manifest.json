@@ -1,0 +1,37 @@
+{
+  "name": "Maya 2.0 ULTRA",
+  "short_name": "Maya",
+  "description": "Autonomous AI Agent - Chat, Memory, Tools, Tasks, Hosting, and more",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf9f6",
+  "theme_color": "#8b6f47",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "developer"],
+  "shortcuts": [
+    {
+      "name": "New Chat",
+      "url": "/?view=chat",
+      "description": "Start a new conversation"
+    },
+    {
+      "name": "Memory",
+      "url": "/?view=memory",
+      "description": "Browse memory"
+    },
+    {
+      "name": "Tasks",
+      "url": "/?view=tasks",
+      "description": "View tasks"
+    }
+  ],
+  "prefer_related_applications": false
+}
