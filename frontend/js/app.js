@@ -1,4 +1,4 @@
-// Maya 2.0 ULTRA - Minimal App (Voice + Dashboard + Approvals)
+// Maya 2.0 ULTRA - Full App with Phase 1-4 Capabilities
 import { auth } from './auth.js';
 import { api } from './api.js';
 import { sse } from './sse.js';
@@ -12,78 +12,21 @@ import { MarkdownRenderer } from './components/MarkdownRenderer.js';
 import { Chart } from './components/Chart.js';
 import { DataTable } from './components/DataTable.js';
 
-// Core views (minimal set)
+// Core views
+import { LoginView } from './views/LoginView.js';
 import { ChatView } from './views/ChatView.js';
 import { CodeView } from './views/CodeView.js';
 import { ApprovalsView } from './views/GenericViews.js';
-import { LoginView } from './views/LoginView.js';
+import { DashboardView } from './views/DashboardView.js';
 
-// Minimal Dashboard view
-class DashboardView {
-    constructor(app) {
-        this.app = app;
-        this.container = null;
-    }
-
-    show() {
-        if (!this.container) {
-            this.container = document.createElement('div');
-            this.container.className = 'view dashboard-view';
-            this.render();
-        }
-        this.app.viewContainer.appendChild(this.container);
-    }
-
-    hide() {
-        if (this.container && this.container.parentNode) {
-            this.container.parentNode.removeChild(this.container);
-        }
-    }
-
-    render() {
-        this.container.innerHTML = `
-            <div class="view-header"><h2>Dashboard</h2></div>
-            <div class="dashboard-grid">
-                <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Opportunities</div></div>
-                <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Projects</div></div>
-                <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Active</div></div>
-            </div>
-            <div class="activity-section">
-                <h3>Recent Activity</h3>
-                <div class="activity-list">Loading...</div>
-            </div>
-        `;
-        this.loadActivity();
-    }
-
-    async loadActivity() {
-        try {
-            const response = await this.app.api.get('/api/v1/income/scout/opportunities?limit=5');
-            const opps = response.opportunities || [];
-            const el = this.container.querySelector('.activity-list');
-            if (!opps.length) {
-                el.innerHTML = '<div class="empty-state">No activity yet</div>';
-                return;
-            }
-            el.innerHTML = opps.map(o => `
-                <div class="activity-item">
-                    <div class="activity-title">${this.escapeHtml(o.title)}</div>
-                    <div class="activity-meta">${o.source_category} • Score: ${o.total_score.toFixed(1)}</div>
-                </div>
-            `).join('');
-        } catch (e) {
-            console.error('Failed to load activity:', e);
-        }
-    }
-
-    escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    destroy() {}
-}
+// Phase 1-4 views
+import { BrowserView } from './views/BrowserView.js';
+import { SandboxView } from './views/SandboxView.js';
+import { VectorView } from './views/VectorView.js';
+import { AgentGraphView } from './views/AgentGraphView.js';
+import { MultiModalView } from './views/MultiModalView.js';
+import { EnhancedMemoryView } from './views/EnhancedMemoryView.js';
+import { SystemStatusView } from './views/SystemStatusView.js';
 
 class App {
     constructor() {
@@ -119,7 +62,7 @@ class App {
         this.setupRouting();
 
         if (hasAuth && auth.getToken()) {
-            // WebSocket removed - using SSE for real-time updates
+            this.connectSSE();
         }
 
         try {
@@ -129,13 +72,15 @@ class App {
         }
         this.registerServiceWorker();
 
-        this.handleRoute(window.location.hash || '#chat');
+        this.handleRoute(window.location.hash || '#dashboard');
 
         auth.subscribe((event) => {
             if (event === 'login') {
                 this.header.render?.();
                 this.sidebar.render();
+                this.connectSSE();
             } else if (event === 'logout') {
+                this.disconnectSSE();
                 window.location.hash = '#login';
             }
         });
@@ -145,17 +90,67 @@ class App {
         const overlay = document.getElementById('sidebarOverlay');
         if (overlay) overlay.addEventListener('click', () => this.sidebar.closeMobile());
 
-        console.log('Maya 2.0 - Minimal App initialized');
+        console.log('Maya 2.0 ULTRA - Full App initialized');
+    }
+
+    connectSSE() {
+        if (this.sseConnected) return;
+        this.sseConnected = true;
+        this.sse.connect('/api/v1/events', (event) => {
+            this.handleSSEEvent(event);
+        });
+    }
+
+    disconnectSSE() {
+        if (this.sseConnected) {
+            this.sse.disconnect();
+            this.sseConnected = false;
+        }
+    }
+
+    handleSSEEvent(event) {
+        // Broadcast to current view if it has a handler
+        if (this.currentView && typeof this.currentView.onSSEEvent === 'function') {
+            this.currentView.onSSEEvent(event);
+        }
+        
+        // Global handlers
+        switch (event.type) {
+            case 'task_started':
+            case 'task_done':
+            case 'approval_requested':
+                this.showToast(event.type === 'approval_requested' ? 'Approval required' : `Task ${event.type}`, 'info');
+                break;
+        }
     }
 
     registerViews() {
         const viewClasses = {
+            // Core
             login: LoginView,
+            dashboard: DashboardView,
             chat: ChatView,
             code: CodeView,
-            dashboard: DashboardView,
             approvals: ApprovalsView,
+            
+            // Phase 1: Browser & Sandbox
+            browser: BrowserView,
+            sandbox: SandboxView,
+            
+            // Phase 2: Vector Store & Agent Graphs
+            vector: VectorView,
+            'agent-graph': AgentGraphView,
+            
+            // Phase 3: Multi-Modal
+            multimodal: MultiModalView,
+            
+            // Phase 4: Enhanced Memory
+            'enhanced-memory': EnhancedMemoryView,
+            
+            // System
+            'system-status': SystemStatusView,
         };
+        
         for (const [name, ViewClass] of Object.entries(viewClasses)) {
             this.views.set(name, new ViewClass(this));
         }
@@ -164,28 +159,53 @@ class App {
     setupRouting() {
         this.viewTitles = {
             login: 'Sign in',
-            chat: 'Chat',
             dashboard: 'Dashboard',
+            chat: 'Chat',
+            code: 'Code',
             approvals: 'Approvals',
+            browser: 'Browser Pool',
+            sandbox: 'Sandbox',
+            vector: 'Vector Store',
+            'agent-graph': 'Agent Graphs',
+            multimodal: 'Multi-Modal',
+            'enhanced-memory': 'Enhanced Memory',
+            'system-status': 'System Status',
+        };
+        
+        this.viewIcons = {
+            login: '🔐',
+            dashboard: '📊',
+            chat: '💬',
+            code: '💻',
+            approvals: '✅',
+            browser: '🌐',
+            sandbox: '🔒',
+            vector: '🔍',
+            'agent-graph': '🕸️',
+            multimodal: '🎨',
+            'enhanced-memory': '🧠',
+            'system-status': '⚙️',
         };
     }
 
     handleRoute(hash) {
-        const viewName = hash.replace('#', '').split('/')[0] || 'chat';
+        const parts = hash.replace('#', '').split('/');
+        const viewName = parts[0] || 'dashboard';
+        const viewParams = parts.slice(1);
 
         if (!auth.getToken() && viewName !== 'login') {
             window.location.hash = '#login';
             return;
         }
         if (auth.getToken() && viewName === 'login') {
-            window.location.hash = '#chat';
+            window.location.hash = '#dashboard';
             return;
         }
 
         const view = this.views.get(viewName);
         if (!view) {
             console.warn(`View not found: ${viewName}`);
-            window.location.hash = '#chat';
+            window.location.hash = '#dashboard';
             return;
         }
 
@@ -196,7 +216,9 @@ class App {
         }
 
         this.currentView = view;
-        try { this.currentView.show(); } catch (err) {
+        try { 
+            this.currentView.show(viewParams); 
+        } catch (err) {
             console.error('View render failed:', err);
             const errBox = document.createElement('div');
             errBox.className = 'error-state';
@@ -205,7 +227,7 @@ class App {
             this.viewContainer.appendChild(errBox);
         }
 
-        this.header.setViewTitle?.(this.viewTitles[viewName] || viewName);
+        this.header.setViewTitle?.(`${this.viewIcons[viewName] || '📄'} ${this.viewTitles[viewName] || viewName}`);
         this.sidebar.setActiveView(viewName);
 
         document.querySelectorAll('.mobile-nav-item').forEach(item => {
@@ -214,8 +236,6 @@ class App {
 
         this.viewContainer.scrollTop = 0;
     }
-
-    
 
     async registerServiceWorker() {
         if ('serviceWorker' in navigator) {
@@ -257,6 +277,13 @@ class App {
         while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
         return `${n.toFixed(n < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
     }
+
+    formatDuration(ms) {
+        if (!ms && ms !== 0) return '—';
+        if (ms < 1000) return `${ms}ms`;
+        if (ms < 60000) return `${(ms/1000).toFixed(1)}s`;
+        return `${(ms/60000).toFixed(1)}m`;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -272,4 +299,3 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled rejection:', event.reason);
 });
-// Force rebuild Sun Sep  6 23:35:12 UTC 2026

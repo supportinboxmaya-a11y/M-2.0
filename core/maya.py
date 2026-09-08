@@ -8,7 +8,10 @@ import os
 import sys
 import asyncio
 import threading
-from typing import List, Dict, Optional
+import uuid
+from typing import List, Dict, Optional, Union, AsyncGenerator
+from pathlib import Path
+from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
@@ -47,6 +50,14 @@ from infrastructure.procedural_memory import (
 )
 from infrastructure.streaming import get_stream_manager, StreamEmitter
 from infrastructure.unified_checkpoint import get_checkpoint_manager, CheckpointManager
+
+# Phase 1-4: New infrastructure modules
+from infrastructure.browser_pool import get_browser_pool, init_browser_pool
+from infrastructure.sandbox_executor import get_sandbox_executor, SandboxConfig
+from infrastructure.vector_store import get_vector_store, get_hybrid_retriever, VectorDocument
+from infrastructure.agent_graph import AgentGraph, GraphBuilder, GraphTemplates, register_graph, get_graph
+from infrastructure.multimodal import get_multimodal_processor, MultiModalProcessor
+from infrastructure.enhanced_memory import get_hippocampus, get_semantic_consolidation, get_working_memory_v2
 
 log = get_logger("maya")
 
@@ -368,6 +379,101 @@ class Maya:
 
             # Start agent society
             self.agent_society.start()
+
+            # Phase 1-4: Initialize new infrastructure modules
+            try:
+                # Browser pool
+                self.browser_pool = get_browser_pool(
+                    max_contexts=int(os.getenv("BROWSER_POOL_SIZE", "5")),
+                    headless=os.getenv("BROWSER_HEADLESS", "true").lower() == "true",
+                )
+                asyncio.create_task(self.browser_pool.initialize())
+                print(f"  Browser Pool        : Initializing ({os.getenv('BROWSER_POOL_SIZE', '5')} contexts)")
+            except Exception as e:
+                log.warning(f"Browser pool init skipped: {e}")
+                self.browser_pool = None
+
+            try:
+                # Sandbox executor
+                self.sandbox_executor = get_sandbox_executor(SandboxConfig(
+                    runtime=os.getenv("SANDBOX_RUNTIME", "gvisor"),
+                    timeout_seconds=int(os.getenv("SANDBOX_TIMEOUT", "30")),
+                    memory_limit_mb=int(os.getenv("SANDBOX_MEMORY_MB", "512")),
+                ))
+                print(f"  Sandbox Executor    : {self.sandbox_executor.config.runtime}")
+            except Exception as e:
+                log.warning(f"Sandbox executor init skipped: {e}")
+                self.sandbox_executor = None
+
+            try:
+                # Vector store
+                self.vector_store = await get_vector_store(
+                    backend=os.getenv("VECTOR_STORE_BACKEND", "chroma"),
+                    collection_name="maya",
+                )
+                self.hybrid_retriever = await get_hybrid_retriever(
+                    backend=os.getenv("VECTOR_STORE_BACKEND", "chroma"),
+                )
+                print(f"  Vector Store        : {os.getenv('VECTOR_STORE_BACKEND', 'chroma')}")
+            except Exception as e:
+                log.warning(f"Vector store init skipped: {e}")
+                self.vector_store = None
+                self.hybrid_retriever = None
+
+            try:
+                # Multi-modal processor
+                self.multimodal = get_multimodal_processor(
+                    vision_model=os.getenv("VISION_MODEL", "ViT-B-32"),
+                    audio_model=os.getenv("AUDIO_MODEL", "base"),
+                    document_model=os.getenv("DOCUMENT_MODEL", "microsoft/layoutlmv3-base"),
+                    device=os.getenv("ML_DEVICE", "cpu"),
+                )
+                asyncio.create_task(self.multimodal.initialize())
+                print(f"  Multi-Modal         : Initializing (vision, audio, document)")
+            except Exception as e:
+                log.warning(f"Multi-modal init skipped: {e}")
+                self.multimodal = None
+
+            try:
+                # Enhanced memory systems
+                def llm_fn(prompt: str) -> str:
+                    return self.router.chat([{"role": "user", "content": prompt}])
+                
+                self.hippocampus = get_hippocampus(
+                    episodic_memory=self.episodic_memory,
+                    semantic_memory=self.memory,
+                    procedural_memory=self.procedural_memory,
+                    llm_fn=llm_fn,
+                )
+                asyncio.create_task(self.hippocampus.start_consolidation(300))
+                
+                self.semantic_consolidation = get_semantic_consolidation(
+                    kernel=self.cognitive_kernel,
+                    llm_fn=llm_fn,
+                )
+                
+                self.working_memory_v2 = get_working_memory_v2(
+                    capacity=int(os.getenv("WM_CAPACITY", "7")),
+                )
+                print(f"  Enhanced Memory     : Hippocampus + Semantic Consolidation + WMv2")
+            except Exception as e:
+                log.warning(f"Enhanced memory init skipped: {e}")
+                self.hippocampus = None
+                self.semantic_consolidation = None
+                self.working_memory_v2 = None
+
+            # Register graph templates
+            try:
+                templates = [
+                    GraphTemplates.research_and_write(self),
+                    GraphTemplates.code_generation_pipeline(self),
+                    GraphTemplates.autonomous_research_agent(self),
+                ]
+                for t in templates:
+                    register_graph(t)
+                print(f"  Agent Graphs        : {len(templates)} templates registered")
+            except Exception as e:
+                log.warning(f"Graph templates init skipped: {e}")
 
             log.info("Phase 18 Cognitive Architecture initialized")
             print(f"\n{'='*50}")
@@ -799,6 +905,166 @@ class Maya:
     def load_plugin(self, path: str) -> bool:
         """Plugin load করে।"""
         return self.plugins.load_plugin(path)
+
+    # ── New Phase 1-4 Capabilities ────────────────────────────────────
+
+    async def browser_navigate(self, url: str, context_id: str = None, **kwargs) -> Dict:
+        """Navigate browser to URL."""
+        if not self.browser_pool:
+            return {"success": False, "error": "Browser pool not initialized"}
+        if not context_id:
+            async with await self.browser_pool.acquire() as ctx:
+                return await self.browser_pool.navigate(ctx.context_id, url, **kwargs)
+        return await self.browser_pool.navigate(context_id, url, **kwargs)
+
+    async def browser_click(self, context_id: str, selector: str, **kwargs) -> Dict:
+        """Click element in browser."""
+        if not self.browser_pool:
+            return {"success": False, "error": "Browser pool not initialized"}
+        return await self.browser_pool.click(context_id, selector, **kwargs)
+
+    async def browser_screenshot(self, context_id: str, **kwargs) -> Dict:
+        """Take browser screenshot."""
+        if not self.browser_pool:
+            return {"success": False, "error": "Browser pool not initialized"}
+        return await self.browser_pool.screenshot(context_id, **kwargs)
+
+    async def execute_sandbox(self, code: str, language: str = "python", **kwargs) -> Dict:
+        """Execute code in sandbox."""
+        if not self.sandbox_executor:
+            return {"success": False, "error": "Sandbox executor not initialized"}
+        from infrastructure.sandbox_executor import ExecutionResult
+        result = await self.sandbox_executor.execute(code, language, **kwargs)
+        return {
+            "success": result.success,
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "exit_code": result.exit_code,
+            "duration_ms": result.duration_ms,
+            "artifacts": result.artifacts,
+        }
+
+    async def vector_search(self, query: str, limit: int = 10, hybrid: bool = True) -> List[Dict]:
+        """Search vector store."""
+        if not self.hybrid_retriever:
+            return []
+        results = await self.hybrid_retriever.search(query, limit=limit)
+        return [
+            {
+                "id": r.document.id,
+                "content": r.document.content,
+                "metadata": r.document.metadata,
+                "score": r.score,
+            }
+            for r in results
+        ]
+
+    async def vector_add(self, content: str, metadata: Dict = None, doc_id: str = None) -> str:
+        """Add document to vector store."""
+        if not self.vector_store:
+            return ""
+        doc_id = doc_id or uuid.uuid4().hex[:12]
+        doc = VectorDocument(id=doc_id, content=content, metadata=metadata or {})
+        await self.vector_store.add_documents([doc])
+        return doc_id
+
+    async def run_agent_graph(self, graph_id: str, input_data: Dict = None) -> AsyncGenerator[Dict, None]:
+        """Run an agent graph."""
+        graph = get_graph(graph_id)
+        if not graph:
+            yield {"type": "error", "error": f"Graph not found: {graph_id}"}
+            return
+        graph.maya = self
+        async for event in graph.execute(input_data):
+            yield event
+
+    async def create_agent_graph(self, name: str, description: str = "") -> GraphBuilder:
+        """Create a new agent graph using the builder."""
+        return GraphBuilder(name, description, self)
+
+    async def process_image(self, image: Union[str, Path, Image.Image, bytes], tasks: List[str] = None, **kwargs) -> Dict:
+        """Process image with vision models."""
+        if not self.multimodal:
+            return {"success": False, "error": "Multi-modal processor not initialized"}
+        return await self.multimodal.process_image(image, tasks, **kwargs)
+
+    async def process_audio(self, audio: Union[str, Path, bytes], **kwargs) -> Dict:
+        """Process audio with transcription."""
+        if not self.multimodal:
+            return {"success": False, "error": "Multi-modal processor not initialized"}
+        return await self.multimodal.process_audio(audio, **kwargs)
+
+    async def process_document(self, document: Union[str, Path, Image.Image, bytes], **kwargs) -> Dict:
+        """Process document with layout analysis."""
+        if not self.multimodal:
+            return {"success": False, "error": "Multi-modal processor not initialized"}
+        return await self.multimodal.process_document(document, **kwargs)
+
+    def add_episode_to_hippocampus(self, episode: Dict) -> None:
+        """Add episode to hippocampus for consolidation."""
+        if self.hippocampus:
+            self.hippocampus.add_episode(episode)
+
+    async def query_schema(self, query: str, limit: int = 3) -> List[Dict]:
+        """Query hippocampus for relevant schemas."""
+        if not self.hippocampus:
+            return []
+        schemas = await self.hippocampus.query_schema(query, limit)
+        return [
+            {
+                "id": s.id,
+                "name": s.name,
+                "pattern": s.pattern,
+                "confidence": s.confidence,
+                "instances": s.instances,
+            }
+            for s in schemas
+        ]
+
+    async def apply_schema(self, schema_id: str, context: Dict) -> Dict:
+        """Apply a schema from hippocampus."""
+        if not self.hippocampus:
+            return {"error": "Hippocampus not initialized"}
+        return await self.hippocampus.apply_schema(schema_id, context)
+
+    async def causal_query(self, **kwargs) -> Dict:
+        """Query semantic consolidation for causal reasoning."""
+        if not self.semantic_consolidation:
+            return {"error": "Semantic consolidation not initialized"}
+        return await self.semantic_consolidation.causal_query(**kwargs)
+
+    def wm_add(self, content: str, **kwargs) -> str:
+        """Add to working memory v2."""
+        if not self.working_memory_v2:
+            return ""
+        return self.working_memory_v2.add(content, **kwargs)
+
+    def wm_retrieve(self, query: str, limit: int = 5) -> List[Dict]:
+        """Retrieve from working memory v2."""
+        if not self.working_memory_v2:
+            return []
+        return self.working_memory_v2.retrieve(query, limit)
+
+    def wm_decay(self) -> int:
+        """Apply decay to working memory v2."""
+        if not self.working_memory_v2:
+            return 0
+        return self.working_memory_v2.decay()
+
+    def get_enhanced_status(self) -> Dict:
+        """Get status of all enhanced systems."""
+        status = self.status()
+        status.update({
+            "browser_pool": await self.browser_pool.get_status() if self.browser_pool else {"enabled": False},
+            "sandbox_executor": self.sandbox_executor.get_status() if self.sandbox_executor else {"enabled": False},
+            "vector_store": await self.vector_store.get_stats() if self.vector_store else {"enabled": False},
+            "multimodal": {"enabled": self.multimodal is not None},
+            "hippocampus": self.hippocampus.get_stats() if self.hippocampus else {"enabled": False},
+            "semantic_consolidation": self.semantic_consolidation.get_stats() if self.semantic_consolidation else {"enabled": False},
+            "working_memory_v2": self.working_memory_v2.get_state() if self.working_memory_v2 else {"enabled": False},
+            "agent_graphs": len(list_graphs()),
+        })
+        return status
 
     def status(self) -> dict:
         """Maya-র current status।"""

@@ -1,0 +1,132 @@
+# Maya 2.0 ULTRA - ARM64 Docker Image
+# Multi-stage build for Oracle ARM64 VPS
+# =============================================================================
+
+# ---- Build Stage ----
+FROM ubuntu:24.04 AS builder
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 python3.11-venv python3.11-dev \
+    nodejs npm \
+    git curl wget \
+    build-essential pkg-config \
+    libssl-dev libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up Python
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Create app directory
+WORKDIR /app
+
+# Copy dependency files first for better caching
+COPY requirements.txt package.json pnpm-lock.yaml* ./
+
+# Install Python dependencies
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Install Node dependencies
+RUN pnpm install --frozen-lockfile --prod=false
+
+# Copy source code
+COPY . .
+
+# Build frontend
+WORKDIR /app/frontend
+RUN pnpm run build
+
+# ---- Runtime Stage ----
+FROM ubuntu:24.04 AS runtime
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/opt/venv/bin:/usr/local/bin:/usr/bin:/bin"
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 python3.11-venv \
+    nodejs \
+    nginx \
+    supervisor \
+    curl \
+    gnupg \
+    lsb-release \
+    ca-certificates \
+    # For Playwright
+    libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+    libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+    libxrandr2 libgbm1 libasound2 libatspi2.0-0 \
+    # For gVisor (runsc)
+    iptables \
+    # Cleanup
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Install gVisor (runsc)
+RUN curl -fsSL https://storage.googleapis.com/gvisor/releases/release/latest/runsc-arm64.deb -o /tmp/runsc.deb \
+    && dpkg -i /tmp/runsc.deb || apt-get install -f -y \
+    && rm /tmp/runsc.deb
+
+# Configure runsc for rootless
+RUN runsc install --rootless
+
+# Install Playwright browsers
+RUN /opt/venv/bin/python -m playwright install chromium \
+    && /opt/venv/bin/python -m playwright install-deps chromium
+
+# Create maya user
+RUN useradd -r -m -d /opt/maya -s /bin/bash maya \
+    && usermod -aG docker maya
+
+# Copy built artifacts from builder
+COPY --from=builder --chown=maya:maya /opt/venv /opt/venv
+COPY --from=builder --chown=maya:maya /app /opt/maya
+COPY --from=builder --chown=maya:maya /app/frontend/dist /opt/maya/frontend/dist
+
+# Create necessary directories
+RUN mkdir -p /opt/maya/storage/{browser_pool,sandbox,vector_store,cognitive_kernel,agent_graphs,multimodal,enhanced_memory,procedural_memory,streaming_sessions,self_improve} \
+    /opt/maya/logs \
+    /opt/maya/workspace \
+    /opt/maya/config \
+    /opt/maya/backups \
+    && chown -R maya:maya /opt/maya
+
+# Copy configuration files
+COPY docker/nginx.conf /etc/nginx/sites-available/maya
+COPY docker/supervisord.conf /etc/supervisor/conf.d/maya.conf
+COPY docker/entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh \
+    && ln -sf /etc/nginx/sites-available/maya /etc/nginx/sites-enabled/ \
+    && rm -f /etc/nginx/sites-enabled/default
+
+# Expose ports
+EXPOSE 80 443 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Switch to maya user
+USER maya
+WORKDIR /opt/maya
+
+# Environment variables
+ENV MAYA_DIR=/opt/maya
+ENV PYTHONPATH=/opt/maya
+ENV STORAGE_DIR=/opt/maya/storage
+ENV WORKSPACE_DIR=/opt/maya/workspace
+
+# Run entrypoint
+ENTRYPOINT ["/entrypoint.sh"]

@@ -5647,6 +5647,331 @@ async def execute_code(request: CodeExecRequest, user=Depends(get_current_user))
     return result
 
 # ══════════════════════════════════════════════
+# PHASE 1-4: NEW CAPABILITIES ROUTES
+# ══════════════════════════════════════════════
+
+class BrowserNavigateRequest(BaseModel):
+    url: str
+    context_id: Optional[str] = None
+    wait_until: str = "networkidle"
+    timeout: float = 30000
+
+class BrowserClickRequest(BaseModel):
+    context_id: str
+    selector: str
+    force: bool = False
+    timeout: float = 5000
+
+class BrowserScreenshotRequest(BaseModel):
+    context_id: str
+    full_page: bool = True
+
+class SandboxExecuteRequest(BaseModel):
+    code: str
+    language: str = "python"
+    files: Optional[Dict[str, str]] = None
+    stdin: str = ""
+    timeout_seconds: int = 30
+    memory_limit_mb: int = 512
+
+class VectorSearchRequest(BaseModel):
+    query: str
+    limit: int = 10
+    hybrid: bool = True
+
+class VectorAddRequest(BaseModel):
+    content: str
+    metadata: Optional[Dict] = None
+    doc_id: Optional[str] = None
+
+class AgentGraphRunRequest(BaseModel):
+    graph_id: str
+    input_data: Optional[Dict] = None
+
+class AgentGraphCreateRequest(BaseModel):
+    name: str
+    description: str = ""
+
+class ImageProcessRequest(BaseModel):
+    image: str  # base64 or data URL
+    tasks: Optional[List[str]] = None  # embed, classify
+    labels: Optional[List[str]] = None
+
+class AudioProcessRequest(BaseModel):
+    audio: str  # base64
+    transcribe: bool = True
+    translate: bool = False
+    diarize: bool = True
+
+class DocumentProcessRequest(BaseModel):
+    document: str  # base64
+    extract_tables: bool = True
+    extract_figures: bool = True
+    question: Optional[str] = None
+
+class SchemaQueryRequest(BaseModel):
+    query: str
+    limit: int = 3
+
+class SchemaApplyRequest(BaseModel):
+    schema_id: str
+    context: Dict
+
+class CausalQueryRequest(BaseModel):
+    cause: Optional[str] = None
+    effect: Optional[str] = None
+    intervention: Optional[Dict] = None
+
+class WMAddRequest(BaseModel):
+    content: str
+    chunk_id: Optional[str] = None
+    attention: float = 1.0
+
+class WMRetrieveRequest(BaseModel):
+    query: str
+    limit: int = 5
+
+
+@router.post("/browser/navigate")
+async def browser_navigate(req: BrowserNavigateRequest, user=Depends(get_current_user)):
+    """Navigate browser to URL using persistent pool."""
+    if not maya_instance or not hasattr(maya_instance, 'browser_pool') or not maya_instance.browser_pool:
+        raise HTTPException(503, "Browser pool not initialized")
+    result = await maya_instance.browser_navigate(req.url, req.context_id, 
+                                                  wait_until=req.wait_until, timeout=req.timeout)
+    return result
+
+
+@router.post("/browser/click")
+async def browser_click(req: BrowserClickRequest, user=Depends(get_current_user)):
+    """Click element in browser."""
+    if not maya_instance or not hasattr(maya_instance, 'browser_pool') or not maya_instance.browser_pool:
+        raise HTTPException(503, "Browser pool not initialized")
+    result = await maya_instance.browser_click(req.context_id, req.selector, 
+                                               force=req.force, timeout=req.timeout)
+    return result
+
+
+@router.post("/browser/screenshot")
+async def browser_screenshot(req: BrowserScreenshotRequest, user=Depends(get_current_user)):
+    """Take browser screenshot."""
+    if not maya_instance or not hasattr(maya_instance, 'browser_pool') or not maya_instance.browser_pool:
+        raise HTTPException(503, "Browser pool not initialized")
+    result = await maya_instance.browser_screenshot(req.context_id, full_page=req.full_page)
+    return result
+
+
+@router.post("/sandbox/execute")
+async def sandbox_execute(req: SandboxExecuteRequest, user=Depends(get_current_user)):
+    """Execute code in secure sandbox (gVisor/Firecracker)."""
+    if not maya_instance or not hasattr(maya_instance, 'sandbox_executor') or not maya_instance.sandbox_executor:
+        raise HTTPException(503, "Sandbox executor not initialized")
+    result = await maya_instance.execute_sandbox(req.code, req.language,
+                                                 files=req.files, stdin=req.stdin)
+    return result
+
+
+@router.post("/vector/search")
+async def vector_search(req: VectorSearchRequest, user=Depends(get_current_user)):
+    """Search vector store with hybrid retrieval."""
+    if not maya_instance or not hasattr(maya_instance, 'hybrid_retriever') or not maya_instance.hybrid_retriever:
+        raise HTTPException(503, "Vector store not initialized")
+    results = await maya_instance.vector_search(req.query, req.limit, req.hybrid)
+    return {"results": results}
+
+
+@router.post("/vector/add")
+async def vector_add(req: VectorAddRequest, user=Depends(get_current_user)):
+    """Add document to vector store."""
+    if not maya_instance or not hasattr(maya_instance, 'vector_store') or not maya_instance.vector_store:
+        raise HTTPException(503, "Vector store not initialized")
+    doc_id = await maya_instance.vector_add(req.content, req.metadata, req.doc_id)
+    return {"doc_id": doc_id, "success": bool(doc_id)}
+
+
+@router.post("/agent-graph/run")
+async def agent_graph_run(req: AgentGraphRunRequest, user=Depends(get_current_user)):
+    """Run an agent graph (streaming)."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    graph = get_graph(req.graph_id)
+    if not graph:
+        raise HTTPException(404, f"Graph not found: {req.graph_id}")
+    graph.maya = maya_instance
+    
+    # Collect all events
+    events = []
+    async for event in graph.execute(req.input_data):
+        events.append(event)
+    return {"events": events, "graph_id": req.graph_id}
+
+
+@router.post("/agent-graph/create")
+async def agent_graph_create(req: AgentGraphCreateRequest, user=Depends(get_current_user)):
+    """Create a new agent graph using the builder."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    builder = await maya_instance.create_agent_graph(req.name, req.description)
+    graph = builder.build()
+    register_graph(graph)
+    return {"graph_id": graph.graph_id, "name": graph.name, "description": graph.description}
+
+
+@router.get("/agent-graph/list")
+async def agent_graph_list(user=Depends(get_current_user)):
+    """List available agent graphs."""
+    return {"graphs": list_graphs()}
+
+
+@router.get("/agent-graph/{graph_id}")
+async def agent_graph_get(graph_id: str, user=Depends(get_current_user)):
+    """Get agent graph details."""
+    graph = get_graph(graph_id)
+    if not graph:
+        raise HTTPException(404, f"Graph not found: {graph_id}")
+    return {
+        "graph_id": graph.graph_id,
+        "name": graph.name,
+        "description": graph.description,
+        "nodes": [
+            {
+                "id": n.id,
+                "name": n.name,
+                "agent_role": n.agent_role,
+                "tools": n.tools,
+            }
+            for n in graph.nodes.values()
+        ],
+        "edges": [
+            {
+                "id": e.id,
+                "source": e.source,
+                "target": e.target,
+                "edge_type": e.edge_type.value,
+            }
+            for e in graph.edges
+        ],
+    }
+
+
+@router.post("/multimodal/image")
+async def multimodal_image(req: ImageProcessRequest, user=Depends(get_current_user)):
+    """Process image with vision models (CLIP/SigLIP)."""
+    if not maya_instance or not hasattr(maya_instance, 'multimodal') or not maya_instance.multimodal:
+        raise HTTPException(503, "Multi-modal processor not initialized")
+    
+    # Decode base64 image
+    import base64
+    image_data = req.image
+    if "," in image_data:
+        image_data = image_data.split(",")[1]
+    image_bytes = base64.b64decode(image_data)
+    
+    result = await maya_instance.process_image(image_bytes, req.tasks, labels=req.labels)
+    return result
+
+
+@router.post("/multimodal/audio")
+async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_user)):
+    """Process audio with Whisper transcription."""
+    if not maya_instance or not hasattr(maya_instance, 'multimodal') or not maya_instance.multimodal:
+        raise HTTPException(503, "Multi-modal processor not initialized")
+    
+    import base64
+    audio_data = req.audio
+    if "," in audio_data:
+        audio_data = audio_data.split(",")[1]
+    audio_bytes = base64.b64decode(audio_data)
+    
+    result = await maya_instance.process_audio(audio_bytes)
+    return result
+
+
+@router.post("/multimodal/document")
+async def multimodal_document(req: DocumentProcessRequest, user=Depends(get_current_user)):
+    """Process document with LayoutLM/Donut."""
+    if not maya_instance or not hasattr(maya_instance, 'multimodal') or not maya_instance.multimodal:
+        raise HTTPException(503, "Multi-modal processor not initialized")
+    
+    import base64
+    doc_data = req.document
+    if "," in doc_data:
+        doc_data = doc_data.split(",")[1]
+    doc_bytes = base64.b64decode(doc_data)
+    
+    result = await maya_instance.process_document(doc_bytes,
+                                                  extract_tables=req.extract_tables,
+                                                  extract_figures=req.extract_figures,
+                                                  question=req.question)
+    return result
+
+
+@router.post("/hippocampus/schema/query")
+async def hippocampus_schema_query(req: SchemaQueryRequest, user=Depends(get_current_user)):
+    """Query hippocampus for relevant schemas."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    schemas = await maya_instance.query_schema(req.query, req.limit)
+    return {"schemas": schemas}
+
+
+@router.post("/hippocampus/schema/apply")
+async def hippocampus_schema_apply(req: SchemaApplyRequest, user=Depends(get_current_user)):
+    """Apply a schema from hippocampus."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    result = await maya_instance.apply_schema(req.schema_id, req.context)
+    return result
+
+
+@router.post("/semantic-consolidation/causal")
+async def semantic_consolidation_causal(req: CausalQueryRequest, user=Depends(get_current_user)):
+    """Query semantic consolidation for causal reasoning."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    result = await maya_instance.causal_query(
+        cause=req.cause, effect=req.effect, intervention=req.intervention
+    )
+    return result
+
+
+@router.post("/working-memory/add")
+async def working_memory_add(req: WMAddRequest, user=Depends(get_current_user)):
+    """Add item to working memory v2."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    item_id = maya_instance.wm_add(req.content, req.chunk_id, req.attention)
+    return {"item_id": item_id, "success": bool(item_id)}
+
+
+@router.post("/working-memory/retrieve")
+async def working_memory_retrieve(req: WMRetrieveRequest, user=Depends(get_current_user)):
+    """Retrieve from working memory v2."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    results = maya_instance.wm_retrieve(req.query, req.limit)
+    return {"results": results}
+
+
+@router.post("/working-memory/decay")
+async def working_memory_decay(user=Depends(get_current_user)):
+    """Apply decay to working memory v2."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    removed = maya_instance.wm_decay()
+    return {"removed": removed}
+
+
+@router.get("/enhanced/status")
+async def enhanced_status(user=Depends(get_current_user)):
+    """Get status of all enhanced Phase 1-4 systems."""
+    if not maya_instance:
+        raise HTTPException(503, "Maya not initialized")
+    status = maya_instance.get_enhanced_status()
+    return status
+
+
+# ══════════════════════════════════════════════
 # SPA fallback: serve index.html for any non-API path ──────────
 import os as _fe_os
 import pathlib as _fe_path
