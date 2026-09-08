@@ -93,6 +93,19 @@ render() {
           
           <div class="chat-input-area">
             <div class="chat-input-wrapper">
+              <button class="chat-attach-btn" id="chatAttachBtn" aria-label="Attach file" title="Attach file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 0l9.18 9.18a6 6 0 0 1-8.49 8.49l-9.22 9.22a4 4 0 0 1-5.66 0l-9.2-9.2a4 4 0 0 1 0-5.66l9.2-9.2a6 6 0 0 1 8.49 0l9.2 9.2a4 4 0 0 0 5.66 0l9.2-9.2a6 6 0 0 1 8.49 0l9.18-9.18a4 4 0 0 1 0-5.66z"></path></svg>
+              </button>
+              <textarea 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Message Maya... (Shift+Enter for new line)"
+                rows="1"
+                aria-label="Chat input"
+              ></textarea>
+              <button class="chat-voice-btn" id="chatVoiceBtn" aria-label="Voice input" title="Voice input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+              </button>
               <textarea 
                 class="chat-input" 
                 id="chatInput" 
@@ -120,6 +133,8 @@ render() {
   bindEvents() {
     const input = this.container.querySelector('#chatInput');
     const sendBtn = this.container.querySelector('#chatSendBtn');
+    const attachBtn = this.container.querySelector('#chatAttachBtn');
+    const voiceBtn = this.container.querySelector('#chatVoiceBtn');
     const newChatBtn = this.container.querySelector('#newChatBtn');
     const newChatSidebarBtn = this.container.querySelector('#newChatSidebarBtn');
     const modeBtns = this.container.querySelectorAll('.mode-btn');
@@ -131,6 +146,16 @@ render() {
     
     // Send button
     sendBtn.addEventListener('click', () => this.sendMessage());
+    
+    // Attach file button
+    if (attachBtn) {
+      attachBtn.addEventListener('click', () => this.handleFileAttach());
+    }
+    
+    // Voice input button
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+    }
     
     // New chat buttons
     newChatBtn.addEventListener('click', () => this.newChat());
@@ -736,7 +761,113 @@ async loadHistory() {
     // Handle task events from WebSocket
   }
   
-  destroy() {
-    this.app.sse.disconnect();
+  onTaskEvent(type, data) {
+    // Handle task events from WebSocket
   }
-}
+  
+  async handleFileAttach() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = '.txt,.md,.py,.js,.ts,.json,.csv,.pdf,.png,.jpg,.jpeg,.png,.gif,.webp';
+    
+    input.onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      
+      this.app.toast.info('Processing files...', `Uploading ${files.length} file(s)`);
+      
+      for (const file of files) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          
+          const response = await fetch('/api/v1/files/upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.app.api.token}`
+            },
+            body: formData
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+          }
+          
+          const result = await response.json();
+          this.addMessage('user', `📎 Attached: ${file.name} (${result.path})`);
+          this.app.toast.success('File uploaded', file.name);
+        } catch (err) {
+          this.app.toast.error('Upload failed', err.message);
+        }
+      }
+    };
+    
+    input.click();
+  }
+  
+  async toggleVoiceInput() {
+    const btn = this.container.querySelector('#chatVoiceBtn');
+    if (!btn) return;
+    
+    if (!this.mediaRecorder) {
+      // Start recording
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        this.mediaRecorder = new MediaRecorder(stream);
+        this.audioChunks = [];
+        
+        this.mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) this.audioChunks.push(e.data);
+        };
+        
+        this.mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+          this.audioChunks = [];
+          
+          // Convert to base64 and send to backend for STT
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'recording.webm');
+          
+          try {
+            const response = await fetch('/api/v1/voice/transcribe', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${this.app.api.token}`
+              },
+              body: formData
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.text) {
+                const input = this.container.querySelector('#chatInput');
+                input.value = result.text;
+                this.handleInputChange();
+              }
+            } catch (err) {
+              this.app.toast.error('Voice input failed', err.message);
+            }
+          } finally {
+            stream.getTracks().forEach(t => t.stop());
+          }
+          
+          this.mediaRecorder.start();
+          btn.classList.add('recording');
+          btn.setAttribute('aria-label', 'Stop voice input');
+          btn.title = 'Stop voice input';
+          this.app.toast.info('Recording...', 'Click again to stop');
+        } catch (err) {
+          this.app.toast.error('Voice input failed', err.message);
+        }
+      } else {
+        // Stop recording
+        this.mediaRecorder.stop();
+        this.mediaRecorder = null;
+        btn.classList.remove('recording');
+        btn.setAttribute('aria-label', 'Voice input');
+        btn.title = 'Voice input';
+      }
+    }
+  
+  destroy() {

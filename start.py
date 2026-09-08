@@ -10,5 +10,7 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         reload=os.getenv("DEV", "false") == "true",
-        log_level="info"
+        log_level="info",
+        timeout_keep_alive=30,
+        timeout_graceful_shutdown=30,
     )

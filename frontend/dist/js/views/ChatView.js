@@ -19,6 +19,8 @@ export class ChatView {
       this.loadHistory();
     }
     this.app.viewContainer.appendChild(this.container);
+    // Restore chat history sidebar state
+    this.restoreSidebarState();
   }
   
   hide() {
@@ -27,63 +29,101 @@ export class ChatView {
     }
   }
   
-  render() {
+render() {
     this.container.innerHTML = `
-      <div class="chat-header">
-        <div>
-          <h2 class="chat-title">Maya Assistant</h2>
-        </div>
-        <div class="chat-actions">
-          <div class="chat-mode">
-            <button class="mode-btn active" data-mode="chat" title="Chat mode">💬</button>
-            <button class="mode-btn" data-mode="run" title="Run goal">▶</button>
-            <button class="mode-btn" data-mode="think" title="Deep think">🧠</button>
+      <div class="chat-layout">
+        <!-- Chat History Sidebar -->
+        <aside class="chat-history-sidebar" id="chatHistorySidebar">
+          <div class="sidebar-header">
+            <h3>Chats</h3>
+            <button class="btn btn-primary btn-sm" id="newChatSidebarBtn" title="New conversation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              New Chat
+            </button>
           </div>
-          <button class="btn btn-secondary btn-sm" id="newChatBtn" title="New conversation">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            New
-          </button>
-        </div>
-      </div>
-      
-      <div class="chat-messages" id="chatMessages" role="log" aria-live="polite">
-        <div class="welcome-message">
-          <div class="message assistant">
-            <div class="message-avatar">🧠</div>
-            <div class="message-content">
-              <div class="message-text">
-                <p>Welcome to Maya 2.0 ULTRA! I'm your autonomous AI assistant.</p>
-                <p>You can:</p>
-                <ul>
-                  <li><strong>Chat</strong> - Ask questions, get explanations</li>
-                  <li><strong>Run goals</strong> - Execute multi-step tasks with tools</li>
-                  <li><strong>Deep think</strong> - Complex reasoning and analysis</li>
-                </ul>
-                <p>Try asking me to "Create a Python script that..." or "Research the latest..."</p>
+          <div class="sidebar-search">
+            <input type="text" id="chatSearchInput" placeholder="Search chats..." aria-label="Search chats">
+          </div>
+          <div class="sidebar-chats" id="sidebarChats">
+            <div class="no-chats">No previous conversations</div>
+          </div>
+        </aside>
+        
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+          <div class="chat-header">
+            <div>
+              <h2 class="chat-title">Maya Assistant</h2>
+              <div class="chat-status">
+                <span class="token-counter" id="tokenCounter" title="Estimated tokens">~0 tokens</span>
+              </div>
+            </div>
+            <div class="chat-actions">
+              <div class="chat-mode">
+                <button class="mode-btn active" data-mode="chat" title="Chat mode">💬</button>
+                <button class="mode-btn" data-mode="run" title="Run goal">▶</button>
+                <button class="mode-btn" data-mode="think" title="Deep think">🧠</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="newChatBtn" title="New conversation">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New
+              </button>
+            </div>
+          </div>
+          
+          <div class="chat-messages" id="chatMessages" role="log" aria-live="polite">
+            <div class="welcome-message">
+              <div class="message assistant">
+                <div class="message-avatar">🧠</div>
+                <div class="message-content">
+                  <div class="message-text">
+                    <p>Welcome to Maya 2.0 ULTRA! I'm your autonomous AI assistant.</p>
+                    <p>You can:</p>
+                    <ul>
+                      <li><strong>Chat</strong> - Ask questions, get explanations</li>
+                      <li><strong>Run goals</strong> - Execute multi-step tasks with tools</li>
+                      <li><strong>Deep think</strong> - Complex reasoning and analysis</li>
+                    </ul>
+                    <p>Try asking me to "Create a Python script that..." or "Research the latest..."</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      
-      <div class="chat-input-area">
-        <div class="chat-input-wrapper">
-          <textarea 
-            class="chat-input" 
-            id="chatInput" 
-            placeholder="Message Maya... (Shift+Enter for new line)"
-            rows="1"
-            aria-label="Chat input"
-          ></textarea>
-          <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-          </button>
-        </div>
-        <div class="chat-input-footer">
-          <div class="chat-input-hints">
-            <span>Enter to send</span>
-            <span>Shift+Enter for new line</span>
-            <span>⌘/Ctrl+Enter to run goal</span>
+          
+          <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+              <button class="chat-attach-btn" id="chatAttachBtn" aria-label="Attach file" title="Attach file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 0l9.18 9.18a6 6 0 0 1-8.49 8.49l-9.22 9.22a4 4 0 0 1-5.66 0l-9.2-9.2a4 4 0 0 1 0-5.66l9.2-9.2a6 6 0 0 1 8.49 0l9.2 9.2a4 4 0 0 0 5.66 0l9.2-9.2a6 6 0 0 1 8.49 0l9.18-9.18a4 4 0 0 1 0-5.66z"></path></svg>
+              </button>
+              <textarea 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Message Maya... (Shift+Enter for new line)"
+                rows="1"
+                aria-label="Chat input"
+              ></textarea>
+              <button class="chat-voice-btn" id="chatVoiceBtn" aria-label="Voice input" title="Voice input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+              </button>
+              <textarea 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Message Maya... (Shift+Enter for new line)"
+                rows="1"
+                aria-label="Chat input"
+              ></textarea>
+              <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+            <div class="chat-input-footer">
+              <div class="chat-input-hints">
+                <span>Enter to send</span>
+                <span>Shift+Enter for new line</span>
+                <span>⌘/Ctrl+Enter to run goal</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -93,8 +133,12 @@ export class ChatView {
   bindEvents() {
     const input = this.container.querySelector('#chatInput');
     const sendBtn = this.container.querySelector('#chatSendBtn');
+    const attachBtn = this.container.querySelector('#chatAttachBtn');
+    const voiceBtn = this.container.querySelector('#chatVoiceBtn');
     const newChatBtn = this.container.querySelector('#newChatBtn');
+    const newChatSidebarBtn = this.container.querySelector('#newChatSidebarBtn');
     const modeBtns = this.container.querySelectorAll('.mode-btn');
+    const searchInput = this.container.querySelector('#chatSearchInput');
     
     // Input handling
     input.addEventListener('input', () => this.handleInputChange());
@@ -103,13 +147,31 @@ export class ChatView {
     // Send button
     sendBtn.addEventListener('click', () => this.sendMessage());
     
-    // New chat
+    // Attach file button
+    if (attachBtn) {
+      attachBtn.addEventListener('click', () => this.handleFileAttach());
+    }
+    
+    // Voice input button
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+    }
+    
+    // New chat buttons
     newChatBtn.addEventListener('click', () => this.newChat());
+    if (newChatSidebarBtn) {
+      newChatSidebarBtn.addEventListener('click', () => this.newChat());
+    }
     
     // Mode buttons
     modeBtns.forEach(btn => {
       btn.addEventListener('click', () => this.setMode(btn.dataset.mode));
     });
+    
+    // Search input
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => this.filterChats(e.target.value));
+    }
     
     // Auto-resize textarea
     input.addEventListener('input', () => {
@@ -157,14 +219,17 @@ export class ChatView {
 
     // Add user message
     this.addMessage('user', message);
+    this.saveChat();
 
     // Stream the reply via POST + Server-Sent Events
     this.streaming = true;
     this.currentAssistantMessage = this.addStreamingMessage();
+    this.abortController = new AbortController();
 
     try {
       await this.app.api.streamChat(message, {
         chatId: this.chatId,
+        signal: this.abortController.signal,
         onDelta: (delta) => this.appendToStreamingMessage(delta),
         onDone: () => {
           if (!this.currentAssistantMessage?.querySelector('.message-text').textContent.trim()) {
@@ -202,6 +267,13 @@ export class ChatView {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     
     this.messages.push({ role, content, timestamp: Date.now() });
+    
+    // Add message actions
+    this.addMessageActions(messageEl, role);
+    
+    // Update token counter
+    this.updateTokenCounter();
+    
     return messageEl;
   }
   
@@ -214,11 +286,23 @@ export class ChatView {
       <div class="message-avatar">🧠</div>
       <div class="message-content">
         <div class="message-text"></div>
+        <div class="message-actions">
+          <button class="msg-action-btn stop-btn" title="Stop generating" aria-label="Stop generating">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          </button>
+        </div>
       </div>
     `;
     
     messagesContainer.appendChild(messageEl);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Bind stop button
+    const stopBtn = messageEl.querySelector('.stop-btn');
+    if (stopBtn) {
+      stopBtn.addEventListener('click', () => this.stopStreaming());
+    }
+    
     return messageEl;
   }
   
@@ -231,10 +315,15 @@ export class ChatView {
   
   finishStreamingMessage(error = null) {
     this.streaming = false;
+    this.abortController = null;
     this.app.sse.disconnect();
     
     if (this.currentAssistantMessage) {
       this.currentAssistantMessage.classList.remove('message-streaming');
+      
+      // Remove stop button
+      const stopBtn = this.currentAssistantMessage.querySelector('.stop-btn');
+      if (stopBtn) stopBtn.remove();
       
       if (error) {
         this.currentAssistantMessage.querySelector('.message-text').innerHTML = 
@@ -248,12 +337,232 @@ export class ChatView {
       metaEl.innerHTML = `<span>${new Date().toLocaleTimeString()}</span>`;
       contentEl.appendChild(metaEl);
       
+      // Add message actions
+      this.addMessageActions(this.currentAssistantMessage, 'assistant');
+      
       this.currentAssistantMessage = null;
     }
     
+    // Save chat after assistant response
+    this.saveChat();
+    
     this.handleInputChange();
   }
+
+  stopStreaming() {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+    this.finishStreamingMessage('Stopped by user');
+  }
+
+  addMessageActions(messageEl, role) {
+    const contentEl = messageEl.querySelector('.message-content');
+    const actionsEl = document.createElement('div');
+    actionsEl.className = 'message-actions';
+    
+    // Copy button
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'msg-action-btn';
+    copyBtn.title = 'Copy message';
+    copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+    copyBtn.addEventListener('click', () => {
+      const text = messageEl.querySelector('.message-text').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        this.app.toast.success('Copied to clipboard');
+      });
+    });
+    actionsEl.appendChild(copyBtn);
+
+    if (role === 'user') {
+      // Edit button
+      const editBtn = document.createElement('button');
+      editBtn.className = 'msg-action-btn';
+      editBtn.title = 'Edit message';
+      editBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5a2.121 2.121 0 0 1 3 3z"></path></svg>`;
+      editBtn.addEventListener('click', () => this.editMessage(messageEl));
+      actionsEl.appendChild(editBtn);
+
+      // Regenerate button
+      const regenBtn = document.createElement('button');
+      regenBtn.className = 'msg-action-btn';
+      regenBtn.title = 'Regenerate response';
+      regenBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>`;
+      regenBtn.addEventListener('click', () => this.regenerateResponse(messageEl));
+      actionsEl.appendChild(regenBtn);
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'msg-action-btn';
+      deleteBtn.title = 'Delete message';
+      deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+      deleteBtn.addEventListener('click', () => this.deleteMessage(messageEl));
+      actionsEl.appendChild(deleteBtn);
+    } else {
+      // Regenerate button for assistant
+      const regenBtn = document.createElement('button');
+      regenBtn.className = 'msg-action-btn';
+      regenBtn.title = 'Regenerate response';
+      regenBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>`;
+      regenBtn.addEventListener('click', () => this.regenerateResponse(messageEl));
+      actionsEl.appendChild(regenBtn);
+    }
+
+    // Insert actions after message-meta
+    const metaEl = contentEl.querySelector('.message-meta');
+    if (metaEl) {
+      metaEl.after(actionsEl);
+    } else {
+      contentEl.appendChild(actionsEl);
+    }
+  }
   
+  stopStreaming() {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+    this.finishStreamingMessage('Stopped by user');
+  }
+
+  editMessage(messageEl) {
+    const textEl = messageEl.querySelector('.message-text');
+    const originalText = textEl.textContent;
+    
+    // Replace with textarea
+    const textarea = document.createElement('textarea');
+    textarea.className = 'edit-textarea';
+    textarea.value = originalText;
+    textarea.rows = 3;
+    textEl.replaceWith(textarea);
+    textarea.focus();
+    
+    // Replace actions with save/cancel
+    const actionsEl = messageEl.querySelector('.message-actions');
+    if (actionsEl) {
+      actionsEl.innerHTML = '';
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'msg-action-btn save-btn';
+      saveBtn.title = 'Save';
+      saveBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>`;
+      saveBtn.addEventListener('click', () => this.saveEditedMessage(messageEl, originalText));
+      actionsEl.appendChild(saveBtn);
+      
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'msg-action-btn cancel-btn';
+      cancelBtn.title = 'Cancel';
+      cancelBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></svg>`;
+      cancelBtn.addEventListener('click', () => this.cancelEditMessage(messageEl, originalText));
+      actionsEl.appendChild(cancelBtn);
+    }
+  }
+
+  saveEditedMessage(messageEl, originalText) {
+    const textarea = messageEl.querySelector('.edit-textarea');
+    const newText = textarea.value.trim();
+    
+    if (!newText || newText === originalText) {
+      this.cancelEditMessage(messageEl, originalText);
+      return;
+    }
+    
+    // Update the message in the messages array
+    const msgIndex = this.messages.findIndex(m => m.content === originalText && m.role === 'user');
+    if (msgIndex !== -1) {
+      this.messages[msgIndex].content = newText;
+    }
+    
+    // Update the DOM
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.innerHTML = this.formatMessage(newText);
+    textarea.replaceWith(textEl);
+    
+    // Restore actions
+    const actionsEl = messageEl.querySelector('.message-actions');
+    if (actionsEl) {
+      actionsEl.innerHTML = '';
+      this.addMessageActions(messageEl, 'user');
+    }
+    
+    // Re-send the edited message to get new response
+    if (newText !== originalText) {
+      this.regenerateResponse(messageEl);
+    }
+  }
+
+  cancelEditMessage(messageEl, originalText) {
+    const textarea = messageEl.querySelector('.edit-textarea');
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.innerHTML = this.formatMessage(originalText);
+    textarea.replaceWith(textEl);
+    
+    // Restore actions
+    const actionsEl = messageEl.querySelector('.message-actions');
+    if (actionsEl) {
+      actionsEl.innerHTML = '';
+      this.addMessageActions(messageEl, 'user');
+    }
+  }
+
+  regenerateResponse(messageEl) {
+    // Find the user message that precedes this assistant message
+    const messagesContainer = this.container.querySelector('#chatMessages');
+    const messages = Array.from(messagesContainer.querySelectorAll('.message'));
+    const msgIndex = messages.indexOf(messageEl);
+    
+    let userMessageEl = null;
+    for (let i = msgIndex - 1; i >= 0; i--) {
+      if (messages[i].classList.contains('user')) {
+        userMessageEl = messages[i];
+        break;
+      }
+    }
+    
+    if (!userMessageEl) return;
+    
+    const userText = userMessageEl.querySelector('.message-text').textContent;
+    
+    // Remove all messages after the user message
+    const messagesAfter = messages.slice(messages.indexOf(userMessageEl) + 1);
+    messagesAfter.forEach(el => el.remove());
+    
+    // Re-send the user message
+    this.sendMessage = this.sendMessage.bind(this);
+    this.sendMessage(userText);
+  }
+
+  deleteMessage(messageEl) {
+    // Find the message in the messages array
+    const text = messageEl.querySelector('.message-text').textContent;
+    const role = messageEl.classList.contains('user') ? 'user' : 'assistant';
+    
+    const msgIndex = this.messages.findIndex(m => m.content === text && m.role === role);
+    if (msgIndex !== -1) {
+      this.messages.splice(msgIndex, 1);
+    }
+    
+    // If deleting a user message, also delete the next assistant message
+    if (role === 'user') {
+      const messagesContainer = this.container.querySelector('#chatMessages');
+      const messages = Array.from(messagesContainer.querySelectorAll('.message'));
+      const msgIndex = messages.indexOf(messageEl);
+      if (msgIndex + 1 < messages.length && messages[msgIndex + 1].classList.contains('assistant')) {
+        const nextMsg = messages[msgIndex + 1];
+        const nextText = nextMsg.querySelector('.message-text').textContent;
+        const nextMsgIndex = this.messages.findIndex(m => m.content === nextText && m.role === 'assistant');
+        if (nextMsgIndex !== -1) {
+          this.messages.splice(nextMsgIndex, 1);
+        }
+        nextMsg.remove();
+      }
+    }
+    
+    messageEl.remove();
+  }
+
   async runGoal(goal) {
     if (!goal) return;
 
@@ -288,18 +597,148 @@ export class ChatView {
       </div>
     `;
     
+    // Update token counter for new empty chat
+    this.updateTokenCounter();
+    
     toast.info('New conversation started');
   }
   
-  async loadHistory() {
+async loadHistory() {
     // Load recent chats if chatId exists
+    this.loadChats();
   }
-  
+
+  // Chat history sidebar methods
+  saveChat() {
+    if (!this.messages.length) return;
+    
+    const chat = {
+      id: this.chatId || Date.now().toString(),
+      title: this.messages[0]?.content?.slice(0, 50) || 'New Chat',
+      messages: this.messages,
+      timestamp: Date.now()
+    };
+    
+    let chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
+    const existingIndex = chats.findIndex(c => c.id === chat.id);
+    if (existingIndex >= 0) {
+      chats[existingIndex] = chat;
+    } else {
+      chats.unshift(chat);
+    }
+    // Keep only last 50 chats
+    chats = chats.slice(0, 50);
+    localStorage.setItem('maya_chats', JSON.stringify(chats));
+    
+    this.chatId = chat.id;
+    this.renderChats();
+  }
+
+  loadChats() {
+    const chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
+    this.renderChats(chats);
+  }
+
+  renderChats(chats = null) {
+    const sidebarChats = this.container.querySelector('#sidebarChats');
+    if (!sidebarChats) return;
+    
+    const chatsToRender = chats || JSON.parse(localStorage.getItem('maya_chats') || '[]');
+    
+    if (!chatsToRender.length) {
+      sidebarChats.innerHTML = '<div class="no-chats">No previous conversations</div>';
+      return;
+    }
+    
+    sidebarChats.innerHTML = chatsToRender.map(chat => `
+      <div class="chat-history-item" data-chat-id="${chat.id}">
+        <div class="chat-item-title">${this.escapeHtml(chat.title)}</div>
+        <div class="chat-item-time">${new Date(chat.timestamp).toLocaleDateString()}</div>
+      </div>
+    `).join('');
+    
+    // Bind click events
+    sidebarChats.querySelectorAll('.chat-history-item').forEach(item => {
+      item.addEventListener('click', () => this.loadChat(item.dataset.chatId));
+    });
+  }
+
+  filterChats(query) {
+    const items = this.container.querySelectorAll('.chat-history-item');
+    const lowerQuery = query.toLowerCase();
+    items.forEach(item => {
+      const title = item.querySelector('.chat-item-title').textContent.toLowerCase();
+      item.style.display = title.includes(lowerQuery) ? '' : 'none';
+    });
+  }
+
+  loadChat(chatId) {
+    const chats = JSON.parse(localStorage.getItem('maya_chats') || '[]');
+    const chat = chats.find(c => c.id === chatId);
+    if (!chat) return;
+    
+    this.chatId = chat.id;
+    this.messages = chat.messages || [];
+    
+    // Update sidebar active state
+    this.container.querySelectorAll('.chat-history-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.chatId === chatId);
+    });
+    
+    // Render messages
+    const messagesContainer = this.container.querySelector('#chatMessages');
+    messagesContainer.innerHTML = '';
+    
+    if (this.messages.length === 0) {
+      messagesContainer.innerHTML = `
+        <div class="welcome-message">
+          <div class="message assistant">
+            <div class="message-avatar">🧠</div>
+            <div class="message-content">
+              <div class="message-text">
+                <p>New conversation started. How can I help you?</p>
+              </div>
+            </div>
+          </div>
+        `;
+      return;
+    }
+    
+    this.messages.forEach(msg => {
+      this.addMessage(msg.role, msg.content);
+    });
+    
+    // Update sidebar active state
+    this.container.querySelectorAll('.chat-history-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.chatId === chatId);
+    });
+    
+    // Update token counter
+    this.updateTokenCounter();
+  }
+
+  restoreSidebarState() {
+    if (this.chatId) {
+      this.container.querySelectorAll('.chat-history-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.chatId === this.chatId);
+      });
+    }
+  }
+
   formatMessage(content) {
-    // Simple markdown-like formatting
+    // Enhanced markdown-like formatting
     return content
+      // Code blocks
+      .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
+      // Inline code
       .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // Bold
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      // Italic
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      // Links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      // Newlines
       .replace(/\n/g, '<br>');
   }
   
@@ -307,12 +746,128 @@ export class ChatView {
     const messagesContainer = this.container.querySelector('#chatMessages');
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
+
+  updateTokenCounter() {
+    const counter = this.container.querySelector('#tokenCounter');
+    if (!counter) return;
+    
+    // Estimate tokens: ~1 token per 4 characters for English text
+    const totalChars = this.messages.reduce((sum, msg) => sum + (msg.content?.length || 0), 0);
+    const estimatedTokens = Math.ceil(totalChars / 4);
+    counter.textContent = `~${estimatedTokens.toLocaleString()} tokens`;
+  }
   
   onTaskEvent(type, data) {
     // Handle task events from WebSocket
   }
   
-  destroy() {
-    this.app.sse.disconnect();
+  onTaskEvent(type, data) {
+    // Handle task events from WebSocket
   }
-}
+  
+  async handleFileAttach() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = '.txt,.md,.py,.js,.ts,.json,.csv,.pdf,.png,.jpg,.jpeg,.png,.gif,.webp';
+    
+    input.onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      
+      this.app.toast.info('Processing files...', `Uploading ${files.length} file(s)`);
+      
+      for (const file of files) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          
+          const response = await fetch('/api/v1/files/upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.app.api.token}`
+            },
+            body: formData
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+          }
+          
+          const result = await response.json();
+          this.addMessage('user', `📎 Attached: ${file.name} (${result.path})`);
+          this.app.toast.success('File uploaded', file.name);
+        } catch (err) {
+          this.app.toast.error('Upload failed', err.message);
+        }
+      }
+    };
+    
+    input.click();
+  }
+  
+  async toggleVoiceInput() {
+    const btn = this.container.querySelector('#chatVoiceBtn');
+    if (!btn) return;
+    
+    if (!this.mediaRecorder) {
+      // Start recording
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        this.mediaRecorder = new MediaRecorder(stream);
+        this.audioChunks = [];
+        
+        this.mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) this.audioChunks.push(e.data);
+        };
+        
+        this.mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+          this.audioChunks = [];
+          
+          // Convert to base64 and send to backend for STT
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'recording.webm');
+          
+          try {
+            const response = await fetch('/api/v1/voice/transcribe', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${this.app.api.token}`
+              },
+              body: formData
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.text) {
+                const input = this.container.querySelector('#chatInput');
+                input.value = result.text;
+                this.handleInputChange();
+              }
+            } catch (err) {
+              this.app.toast.error('Voice input failed', err.message);
+            }
+          } finally {
+            stream.getTracks().forEach(t => t.stop());
+          }
+          
+          this.mediaRecorder.start();
+          btn.classList.add('recording');
+          btn.setAttribute('aria-label', 'Stop voice input');
+          btn.title = 'Stop voice input';
+          this.app.toast.info('Recording...', 'Click again to stop');
+        } catch (err) {
+          this.app.toast.error('Voice input failed', err.message);
+        }
+      } else {
+        // Stop recording
+        this.mediaRecorder.stop();
+        this.mediaRecorder = null;
+        btn.classList.remove('recording');
+        btn.setAttribute('aria-label', 'Voice input');
+        btn.title = 'Voice input';
+      }
+    }
+  
+  destroy() {

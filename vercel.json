@@ -11,10 +11,6 @@
       "destination": "http://130.210.46.182:8000/api/$1"
     },
     {
-      "source": "/ws/(.*)",
-      "destination": "ws://130.210.46.182:8000/ws/$1"
-    },
-    {
       "source": "/health",
       "destination": "http://130.210.46.182:8000/health"
     },

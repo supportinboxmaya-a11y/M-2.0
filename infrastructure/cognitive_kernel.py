@@ -392,6 +392,7 @@ class CognitiveKernel:
         # Sort goal stack by priority
         self.goal_stack.sort(key=lambda gid: self.goals[gid].priority, reverse=True)
         self._audit("kernel_load", f"Loaded {len(self.goals)} goals, {len(self.working_memory)} WM slots, {len(self.beliefs)} beliefs")
+        self._invalidate_wm_cache()
 
     def _save_goal(self, goal: Goal) -> None:
         with self._lock, self._conn() as c:
@@ -478,6 +479,7 @@ class CognitiveKernel:
         with self._lock:
             self.working_memory[slot_id] = slot
             self._save_working_memory(slot_id, slot)
+        self._invalidate_wm_cache()
         return slot_id
 
     def wm_get(self, slot_id: str) -> Optional[WorkingMemorySlot]:
@@ -519,19 +521,33 @@ class CognitiveKernel:
                 with self._conn() as c:
                     c.execute("DELETE FROM working_memory WHERE id = ?", (slot_id,))
                 removed += 1
+        self._invalidate_wm_cache()
         return removed
 
     def wm_capacity(self) -> Dict:
         with self._lock:
+            # Use cached counters to avoid iterating over 300k+ slots
+            if hasattr(self, '_wm_counters') and self._wm_counters:
+                return self._wm_counters
+            # Fallback: compute once and cache
             by_type = {}
+            total_attention = 0.0
             for slot in self.working_memory.values():
                 by_type[slot.slot_type] = by_type.get(slot.slot_type, 0) + 1
-            return {
+                total_attention += slot.attention
+            result = {
                 "total_slots": len(self.working_memory),
                 "by_type": by_type,
-                "total_attention": sum(s.attention for s in self.working_memory.values()),
+                "total_attention": total_attention,
                 "attention_budget": self.attention_budget
             }
+            self._wm_counters = result
+            return result
+    
+    def _invalidate_wm_cache(self):
+        """Call when working memory changes"""
+        if hasattr(self, '_wm_counters'):
+            del self._wm_counters
 
     # =========================================================================
     # Goal Management

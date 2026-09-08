@@ -14,6 +14,7 @@ import { DataTable } from './components/DataTable.js';
 
 // Core views (minimal set)
 import { ChatView } from './views/ChatView.js';
+import { CodeView } from './views/CodeView.js';
 import { ApprovalsView } from './views/GenericViews.js';
 import { LoginView } from './views/LoginView.js';
 
@@ -151,6 +152,7 @@ class App {
         const viewClasses = {
             login: LoginView,
             chat: ChatView,
+            code: CodeView,
             dashboard: DashboardView,
             approvals: ApprovalsView,
         };
@@ -270,3 +272,4 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled rejection:', event.reason);
 });
+// Force rebuild Sun Sep  6 23:35:12 UTC 2026

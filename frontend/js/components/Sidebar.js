@@ -38,6 +38,7 @@ const NAV_GROUPS = [
     { id: 'prompts', label: 'Prompts', icon: 'file-text', href: '#prompts' },
     { id: 'hosting', label: 'Hosting', icon: 'server', href: '#hosting' },
     { id: 'research', label: 'Research & Publish', icon: 'file-text', href: '#research' },
+    { id: 'code', label: 'Code Execution', icon: 'terminal', href: '#code' },
   ]},
   { label: 'Safety & Ops', items: [
     { id: 'approvals', label: 'Approvals', icon: 'alert-triangle', href: '#approvals' },
@@ -95,6 +96,7 @@ const ICONS = {
   search: '<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>',
   rocket: '<path d="M4.5 16.5c-1.5 1.5-3 3.5-3 5.5A5.5 5.5 0 0 0 10.5 23H13a4 4 0 0 0 4-4V9.5a2.5 2.5 0 0 0-5 0v5a2.5 2.5 0 0 1-5 0V5a5 5 0 0 1 10 0v5a3.5 3.5 0 0 1-7 0v-1.5c0-.5.5-1 1-1h2c.5 0 1 .5 1 1v1.5c0 1.5 1.5 3 3.5 3H20a5 5 0 0 0 5-5v-5a5 5 0 0 0-5-5h-1.5c-1.5 0-3-1.5-3-3.5V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2.5c0 1.5 1.5 3 3.5 3z"></path>',
   'trending-up': '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 18 23 18 23 12"></polyline>',
+  terminal: '<polyline points="4 17 10 17 10 23 4 23"></polyline><line x1="9" y1="9" x2="9" y2="17"></line><line x1="15" y1="9" x2="15" y2="17"></line>',
   briefcase: '<path d="M21 21V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v13a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"></path><path d="M16.5 5.5a3.5 3.5 0 0 1 0 7h-3a3.5 3.5 0 0 1 0-7h3z"></path>',
   bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>',
 };
