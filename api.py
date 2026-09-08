@@ -757,12 +757,19 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
         return {"result": "", "message": result.get("error", "Vision failed")}
     return {"result": result["result"], "provider": result.get("provider", "")}
 
-# ══════════════════════════════════════════════
+# ═══════════════════════════════════════════════
 # VOICE ROUTES (Local faster-whisper STT)
-# ══════════════════════════════════════════════
+# ═══════════════════════════════════════════════
 from infrastructure.voice_routes import router as voice_router
 
 app.include_router(voice_router)
+
+# ═══════════════════════════════════════════════
+# MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
+# ═══════════════════════════════════════════════
+from api.routes.multimodal import router as multimodal_router
+
+app.include_router(multimodal_router)
 
 # ══════════════════════════════════════════════
 # EXTENDED AGENT ROUTES (Phase 5)
@@ -5452,23 +5459,194 @@ except Exception as _p19_err:
     print(f"WARNING: Phase 19 Maya Cognitive Core not loaded: {_p19_err}")
 # ══════════════ End Phase 19 integration ══════════════
 
-# ── SPA fallback: serve index.html for any non-API path ──────────
+# ══════════════════════════════════════════════
+# MULTIMODAL ENDPOINTS (Voice, Vision, Files, Search, Code)
+# ══════════════════════════════════════════════
+from fastapi import APIRouter, UploadFile, File, Form
+from pydantic import BaseModel
+from typing import Optional
+import base64
+import time
+
+router = APIRouter(prefix="/api/v1", tags=["multimodal"])
+
+class ImageGenRequest(BaseModel):
+    prompt: str
+    provider: Optional[str] = "stability"
+    width: int = 1024
+    height: int = 768
+
+class WebSearchRequest(BaseModel):
+    query: str
+    num_results: int = 5
+
+class CodeExecRequest(BaseModel):
+    code: str
+    language: str = "python"
+
+class BrowserActionRequest(BaseModel):
+    action: str  # open, click, type, text, screenshot, search
+    url: Optional[str] = None
+    selector: Optional[str] = None
+    text: Optional[str] = None
+    query: Optional[str] = None
+
+@router.post("/upload")
+async def upload_file(
+    file: UploadFile = File(...),
+    user=Depends(get_current_user)
+):
+    """Upload a file to the workspace."""
+    from pathlib import Path
+    from config.settings import WORKSPACE_DIR
+    import aiofiles
+    
+    if not file.filename:
+        raise HTTPException(400, "No filename provided")
+    
+    # Security: validate filename
+    safe_name = "".join(c for c in file.filename if c.isalnum() or c in "._- ")
+    if not safe_name:
+        safe_name = "upload"
+    
+    upload_dir = Path(WORKSPACE_DIR) / "uploads"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    file_path = upload_dir / file.filename
+    content = await file.read()
+    
+    # Limit file size to 50MB
+    if len(content) > 50 * 1024 * 1024:
+        raise HTTPException(413, "File too large (max 50MB)")
+    
+    async with aiofiles.open(upload_dir / file.filename, "wb") as f:
+        await f.write(content)
+    
+    return {"filename": file.filename, "path": str(upload_dir / file.filename), "size": len(content)}
+
+@router.get("/files")
+async def list_files(user=Depends(get_current_user)):
+    """List uploaded files."""
+    from pathlib import Path
+    from config.settings import WORKSPACE_DIR
+    upload_dir = Path(WORKSPACE_DIR) / "uploads"
+    if not upload_dir.exists():
+        return {"files": []}
+    files = []
+    for f in upload_dir.iterdir():
+        if f.is_file():
+            stat = f.stat()
+            files.append({
+                "name": f.name,
+                "size": stat.st_size,
+                "modified": stat.st_mtime,
+                "url": f"/api/v1/files/{f.name}"
+            })
+    return {"files": files}
+
+@router.get("/files/{filename}")
+async def get_file(filename: str, user=Depends(get_current_user)):
+    """Download a file."""
+    from pathlib import Path
+    from config.settings import WORKSPACE_DIR
+    from fastapi.responses import FileResponse
+    
+    file_path = Path(WORKSPACE_DIR) / "uploads" / filename
+    if not file_path.exists():
+        raise HTTPException(404, "File not found")
+    return FileResponse(str(file_path), filename=filename)
+
+@router.post("/camera/capture")
+async def camera_capture(
+    image: str = Form(...),  # base64 encoded image
+    user=Depends(get_current_user)
+):
+    """Capture photo from camera (base64 encoded)."""
+    import base64
+    from pathlib import Path
+    from config.settings import WORKSPACE_DIR
+    
+    try:
+        # Remove data URL prefix if present
+        if "," in image:
+            image = image.split(",")[1]
+        image_bytes = base64.b64decode(image)
+        
+        captures_dir = Path(WORKSPACE_DIR) / "captures"
+        captures_dir.mkdir(parents=True, exist_ok=True)
+        
+        filename = f"capture_{int(time.time() * 1000)}.jpg"
+        file_path = Path(WORKSPACE_DIR) / "captures" / filename
+        
+        async with aiofiles.open(captures_dir / filename, "wb") as f:
+            await f.write(image_bytes)
+        
+        return {"filename": filename, "path": str(file_path)}
+    except Exception as e:
+        raise HTTPException(400, f"Invalid image data: {e}")
+
+@router.post("/images/generate")
+async def generate_image(
+    request: ImageGenRequest,
+    user=Depends(get_current_user)
+):
+    """Generate an image using AI."""
+    from tools.media.image_gen_tool import ImageGenTool
+    
+    tool = ImageGenTool()
+    result = tool.run(
+        prompt=request.prompt,
+        provider=request.provider,
+        width=request.width,
+        height=request.height
+    )
+    
+    return {"result": result}
+
+@router.post("/web/search")
+async def web_search(request: WebSearchRequest, user=Depends(get_current_user)):
+    """Search the web."""
+    from tools.web.google_search import GoogleSearch
+    
+    search = GoogleSearch()
+    results = search.search(request.query, request.num_results)
+    return {"query": request.query, "results": results}
+
+@router.post("/browser/action")
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = browser.open(request.url)
+        elif request.action == "click":
+            result = browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = browser.screenshot()
+        elif request.action == "search":
+            result = browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        browser.close()
+
+@router.post("/code/execute")
+async def execute_code(request: CodeExecRequest, user=Depends(get_current_user)):
+    """Execute code in sandbox."""
+    from tools.code.code_runner import CodeRunner
+    
+    runner = CodeRunner()
+    result = runner.run(request.code, request.language)
+    return result
+
+# ══════════════════════════════════════════════
+# SPA fallback: serve index.html for any non-API path ──────────
 import os as _fe_os
 import pathlib as _fe_path
-_frontend_root = _fe_path.Path(__file__).parent / "frontend"
-_frontend_index = _frontend_root / "index.html"
-
-@app.api_route("/{path:path}", methods=["GET"])
-async def spa_fallback(path: str):
-    # Only serve non-API, non-dotfile paths as SPA routes
-    if path.startswith("api/") or path.startswith(".") or path.startswith("_"):
-        raise HTTPException(status_code=404, detail="Not found")
-    resolved = (_frontend_root / path).resolve()
-    # Security: only serve files under frontend/
-    if str(resolved).startswith(str(_frontend_root.resolve())) and resolved.is_file():
-        from fastapi.responses import FileResponse
-        return FileResponse(str(resolved))
-    if _frontend_index.is_file():
-        from fastapi.responses import FileResponse
-        return FileResponse(str(_frontend_index))
-    raise HTTPException(status_code=404, detail="Not found")
