@@ -45,6 +45,8 @@ async def lifespan(app: FastAPI):
                     maya_instance.router.set_key(provider, key)
         except Exception as e:
             print(f"WARNING: could not load saved provider keys: {e}")
+    # Initialize Phase 1-4 infrastructure modules asynchronously
+    await maya_instance.initialize()
     print("✅ Maya 2.0 ULTRA started")
     yield
     print("Maya shutting down...")
@@ -766,10 +768,9 @@ app.include_router(voice_router)
 
 # ═══════════════════════════════════════════════
 # MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
-# ═══════════════════════════════════════════════
-from api.routes.multimodal import router as multimodal_router
 
-app.include_router(multimodal_router)
+# MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
+# Router is defined locally below and included there
 
 # ══════════════════════════════════════════════
 # EXTENDED AGENT ROUTES (Phase 5)
@@ -5620,23 +5621,275 @@ async def browser_action(request: BrowserActionRequest, user=Depends(get_current
     browser = BrowserTool()
     try:
         if request.action == "open":
-            result = browser.open(request.url)
+            result = await browser.open(request.url)
         elif request.action == "click":
-            result = browser.click(selector=request.selector, text=request.text)
+            result = await browser.click(selector=request.selector, text=request.text)
         elif request.action == "type":
-            result = browser.type_text(request.selector, request.text)
+            result = await browser.type_text(request.selector, request.text)
         elif request.action == "text":
-            result = browser.get_text(request.selector)
+            result = await browser.get_text(request.selector)
         elif request.action == "screenshot":
-            result = browser.screenshot()
+            result = await browser.screenshot()
         elif request.action == "search":
-            result = browser.search_google(request.query)
+            result = await browser.search_google(request.query)
         else:
             raise HTTPException(400, f"Unknown action: {request.action}")
         return {"result": result}
     finally:
-        browser.close()
-
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
+async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
+    """Perform browser automation action."""
+    from tools.web.browser_tool import BrowserTool
+    
+    browser = BrowserTool()
+    try:
+        if request.action == "open":
+            result = await browser.open(request.url)
+        elif request.action == "click":
+            result = await browser.click(selector=request.selector, text=request.text)
+        elif request.action == "type":
+            result = await browser.type_text(request.selector, request.text)
+        elif request.action == "text":
+            result = await browser.get_text(request.selector)
+        elif request.action == "screenshot":
+            result = await browser.screenshot()
+        elif request.action == "search":
+            result = await browser.search_google(request.query)
+        else:
+            raise HTTPException(400, f"Unknown action: {request.action}")
+        return {"result": result}
+    finally:
+        await browser.close()
 @router.post("/code/execute")
 async def execute_code(request: CodeExecRequest, user=Depends(get_current_user)):
     """Execute code in sandbox."""
@@ -5878,10 +6131,18 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
         raise HTTPException(503, "Multi-modal processor not initialized")
     
     import base64
+    import binascii
     audio_data = req.audio
     if "," in audio_data:
         audio_data = audio_data.split(",")[1]
-    audio_bytes = base64.b64decode(audio_data)
+    # Properly fix base64 padding: strip existing, then add correct amount
+    audio_data = audio_data.rstrip("=")
+    pad_needed = (4 - len(audio_data) % 4) % 4
+    audio_data = audio_data + "=" * pad_needed
+    try:
+        audio_bytes = base64.b64decode(audio_data, validate=False)
+    except binascii.Error as e:
+        raise HTTPException(400, f"Invalid base64 audio data: {e}")
     
     result = await maya_instance.process_audio(audio_bytes)
     return result
@@ -5967,9 +6228,11 @@ async def enhanced_status(user=Depends(get_current_user)):
     """Get status of all enhanced Phase 1-4 systems."""
     if not maya_instance:
         raise HTTPException(503, "Maya not initialized")
-    status = maya_instance.get_enhanced_status()
+    status = await maya_instance.get_enhanced_status()
     return status
 
+
+app.include_router(router)
 
 # ══════════════════════════════════════════════
 # SPA fallback: serve index.html for any non-API path ──────────

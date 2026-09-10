@@ -30,7 +30,7 @@ from infrastructure.income_engine import get_income_conn, get_pref_conn
 # CONFIGURATION
 # ════════════════════════════════════════════════════════════════════════════
 
-LAUNCH_DB_DIR = Path("/home/ubuntu/M-2.0/storage/income_engine")
+LAUNCH_DB_DIR = Path("/opt/maya/storage/income_engine")
 LAUNCH_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # ═════════════════════════════════════════════════════════════════════════════

@@ -13,7 +13,10 @@ from infrastructure.permissions import (
     ActionCategory, ActionRequest, PermissionScope, KillSwitch,
     DEFAULT_SAFE_SCOPES, DEFAULT_DANGEROUS_SCOPES
 )
-from api import get_current_user
+# Lazy import to avoid circular dependency
+def _get_current_user():
+    from api import get_current_user
+    return get_current_user
 
 logger = None  # Will be set on import
 
@@ -83,7 +86,7 @@ async def get_mode(engine: PermissionEngine = Depends(get_engine)):
 async def set_mode(
     req: ModeRequest,
     engine: PermissionEngine = Depends(get_engine),
-    user=Depends(get_current_user),
+    user=Depends(_get_current_user),
 ):
     """Set global permission mode."""
     try:
@@ -130,7 +133,7 @@ async def get_scope(name: str, engine: PermissionEngine = Depends(get_engine)):
 async def create_scope(
     req: ScopeRequest,
     engine: PermissionEngine = Depends(get_engine),
-    user=Depends(get_current_user),
+    user=Depends(_get_current_user),
 ):
     """Create a custom permission scope."""
     try:
@@ -152,7 +155,7 @@ async def create_scope(
 
 @router.delete("/scopes/{name}")
 async def delete_scope(name: str, engine: PermissionEngine = Depends(get_engine),
-                       user=Depends(get_current_user)):
+                       user=Depends(_get_current_user)):
     """Delete a custom scope."""
     try:
         engine.delete_scope(name)
@@ -263,7 +266,7 @@ async def get_kill_switch_status(engine: PermissionEngine = Depends(get_engine))
 async def trigger_kill_switch(
     reason: str = Form("Manual trigger"),
     engine: PermissionEngine = Depends(get_engine),
-    user=Depends(get_current_user),
+    user=Depends(_get_current_user),
 ):
     """Activate the kill switch."""
     email = user.get("email", "unknown")
@@ -275,7 +278,7 @@ async def trigger_kill_switch(
 async def reset_kill_switch(
     req: KillSwitchResetRequest,
     engine: PermissionEngine = Depends(get_engine),
-    user=Depends(get_current_user),
+    user=Depends(_get_current_user),
 ):
     """Reset (deactivate) the kill switch."""
     if not req.confirm:
@@ -326,17 +329,25 @@ async def get_constants():
 @router.get("/approval/mode")
 async def get_approval_mode():
     """Get current approval mode (delegates to existing endpoint)."""
-    from api import maya_instance
-    if maya_instance:
-        return {"mode": maya_instance.approval.mode}
+    # Lazy import to avoid circular dependency
+    def _get_maya_instance():
+        from api import maya_instance
+        return maya_instance
+    
+    if _get_maya_instance():
+        return {"mode": _get_maya_instance().approval.mode}
     return {"mode": os.getenv("APPROVAL_MODE", "auto")}
 
 
 @router.put("/approval/mode")
 async def set_approval_mode(mode: str = Form(...)):
     """Set approval mode (delegates to existing endpoint)."""
-    from api import maya_instance
-    if not maya_instance:
+    # Lazy import to avoid circular dependency
+    def _get_maya_instance():
+        from api import maya_instance
+        return maya_instance
+    
+    if not _get_maya_instance():
         raise HTTPException(status_code=503, detail="Maya not initialized")
-    maya_instance.approval.mode = mode
+    _get_maya_instance().approval.mode = mode
     return {"mode": mode}

@@ -1,15 +1,15 @@
 """
-Maya 2.0 - Browser Automation Tool (Playwright)
-------------------------------------------------
-Real browser control: open pages, click, type, read text, screenshot.
-Launches a single headless Chromium instance lazily (on first use) and
-keeps it alive across calls so multi-step tasks stay fast.
+Maya 2.0 - Browser Automation Tool (Playwright Async Native)
+-------------------------------------------------------------
+Real browser control using native async Playwright API.
+Designed to work natively within FastAPI's async event loop.
 """
 import os
+import asyncio
 from config.settings import WORKSPACE_DIR
 
 try:
-    from playwright.sync_api import sync_playwright
+    from playwright.async_api import async_playwright
     _PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     _PLAYWRIGHT_AVAILABLE = False
@@ -20,77 +20,84 @@ class BrowserTool:
         self.workspace = str(WORKSPACE_DIR)
         self._playwright = None
         self._browser = None
+        self._context = None
         self._page = None
+        self._lock = asyncio.Lock()
 
-    def _ensure_page(self):
+    async def _ensure_page(self):
+        """Ensure we have a valid page, creating browser/context if needed."""
         if not _PLAYWRIGHT_AVAILABLE:
             raise RuntimeError(
                 "Playwright is not installed. Add 'playwright' to requirements.txt "
                 "and run 'playwright install --with-deps chromium' in the Dockerfile."
             )
-        if self._page is not None:
-            return self._page
-        try:
-            self._playwright = sync_playwright().start()
-            self._browser = self._playwright.chromium.launch(
-                headless=True,
-                args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
-            )
-            context = self._browser.new_context(
-                user_agent=(
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
-                ),
-                viewport={"width": 1280, "height": 800},
-            )
-            self._page = context.new_page()
-            self._page.set_default_timeout(15000)
-            return self._page
-        except Exception as e:
-            self._page = None
-            raise RuntimeError(f"Could not launch browser: {e}")
+        async with self._lock:
+            if self._page is not None:
+                try:
+                    # Check if page is still valid
+                    await self._page.title()
+                    return self._page
+                except Exception:
+                    self._page = None
+            
+            try:
+                self._playwright = await async_playwright().start()
+                self._browser = await self._playwright.chromium.launch(
+                    headless=True,
+                    args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
+                )
+                self._context = await self._browser.new_context(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+                    ),
+                    viewport={"width": 1280, "height": 800},
+                )
+                self._page = await self._context.new_page()
+                self._page.set_default_timeout(15000)
+                return self._page
+            except Exception as e:
+                self._page = None
+                self._context = None
+                self._browser = None
+                self._playwright = None
+                raise RuntimeError(f"Could not launch browser: {e}")
 
-    def open(self, url: str = "", **kwargs) -> str:
+    async def open(self, url: str = "", **kwargs) -> str:
         """Navigate to a URL."""
         if not url:
             return "Error: url required"
         if not url.startswith(("http://", "https://")):
             url = "https://" + url
         try:
-            page = self._ensure_page()
-            page.goto(url, wait_until="domcontentloaded")
-            return f"Opened: {url}\nTitle: {page.title()}"
+            page = await self._ensure_page()
+            await page.goto(url, wait_until="domcontentloaded")
+            title = await page.title()
+            return f"Opened: {url}\nTitle: {title}"
         except Exception as e:
             return f"Error opening {url}: {e}"
 
-    def click(self, selector: str = "", text: str = "", **kwargs) -> str:
+    async def click(self, selector: str = "", text: str = "", **kwargs) -> str:
         """Click an element by CSS selector, or by visible text if no selector given."""
         try:
-            page = self._ensure_page()
+            page = await self._ensure_page()
             if text and not selector:
-                page.get_by_text(text, exact=False).first.click()
+                await page.get_by_text(text, exact=False).first.click()
                 return f"Clicked element with text: {text}"
             if not selector:
                 return "Error: selector or text required"
-            page.click(selector, timeout=10000)
+            await page.click(selector, timeout=10000)
             return f"Clicked: {selector}"
         except Exception as e:
             return f"Error clicking '{selector or text}': {e}"
 
-    def click_visually(self, instruction: str = "", **kwargs) -> str:
-        """Click something on the page by DESCRIPTION rather than a CSS
-        selector — for pages where the DOM is unreliable (canvas UIs,
-        heavily obfuscated class names, elements only distinguishable by
-        appearance). Screenshots the current page, asks the multimodal
-        vision model for the pixel coordinates of the described element,
-        then clicks there directly. Best-effort — vision coordinate
-        grounding isn't pixel-perfect, so prefer click(selector=...) when
-        a selector is available; use this as the fallback."""
+    async def click_visually(self, instruction: str = "", **kwargs) -> str:
+        """Click by visual description using vision model."""
         if not instruction or not instruction.strip():
-            return "Error: instruction required (describe what to click, e.g. 'the blue Sign In button')"
+            return "Error: instruction required (describe what to click)"
         try:
-            page = self._ensure_page()
-            png_bytes = page.screenshot(full_page=False)
+            page = await self._ensure_page()
+            png_bytes = await page.screenshot(full_page=False)
             viewport = page.viewport_size or {"width": 1280, "height": 800}
             import base64, re
             b64 = base64.b64encode(png_bytes).decode()
@@ -109,19 +116,16 @@ class BrowserTool:
             if not match:
                 return f"Could not locate '{instruction}' on the page (vision reply: {coords_text!r})"
             x, y = int(match.group(1)), int(match.group(2))
-            page.mouse.click(x, y)
+            await page.mouse.click(x, y)
             return f"Clicked at ({x}, {y}) — vision-located target: {instruction}"
         except Exception as e:
             return f"Error in visual click on '{instruction}': {e}"
 
-    def look(self, question: str = "What's on this page?", **kwargs) -> str:
-        """Screenshot the current page and ask the vision model a free-form
-        question about it — for reading layout/state that get_text (DOM
-        text only) can't capture, e.g. 'is the login button greyed out?'
-        or 'what does the chart show?'."""
+    async def look(self, question: str = "What's on this page?", **kwargs) -> str:
+        """Screenshot and ask vision model a question."""
         try:
-            page = self._ensure_page()
-            png_bytes = page.screenshot(full_page=False)
+            page = await self._ensure_page()
+            png_bytes = await page.screenshot(full_page=False)
             import base64
             b64 = base64.b64encode(png_bytes).decode()
             from tools.media.vision_tool import VisionTool
@@ -132,74 +136,77 @@ class BrowserTool:
         except Exception as e:
             return f"Error looking at page: {e}"
 
-    def type_text(self, selector: str = "", text: str = "", submit: bool = False, **kwargs) -> str:
+    async def type_text(self, selector: str = "", text: str = "", submit: bool = False, **kwargs) -> str:
         """Type text into an input identified by CSS selector."""
         if not selector:
             return "Error: selector required"
         try:
-            page = self._ensure_page()
-            page.fill(selector, text or "")
+            page = await self._ensure_page()
+            await page.fill(selector, text or "")
             if submit:
-                page.press(selector, "Enter")
+                await page.press(selector, "Enter")
             return f"Typed into {selector}"
         except Exception as e:
             return f"Error typing into '{selector}': {e}"
 
-    def get_text(self, selector: str = "", **kwargs) -> str:
+    async def get_text(self, selector: str = "", **kwargs) -> str:
         """Get visible text from the page or a specific element."""
         try:
-            page = self._ensure_page()
+            page = await self._ensure_page()
             if selector:
-                el = page.query_selector(selector)
+                el = await page.query_selector(selector)
                 if not el:
                     return f"Error: element not found: {selector}"
-                text = el.inner_text()
+                text = await el.inner_text()
             else:
-                text = page.inner_text("body")
+                text = await page.inner_text("body")
             return text.strip()[:5000]
         except Exception as e:
             return f"Error getting text: {e}"
 
-    def screenshot(self, filename: str = "screenshot.png", **kwargs) -> str:
+    async def screenshot(self, filename: str = "screenshot.png", **kwargs) -> str:
         """Take a screenshot of the current page, saved into the workspace."""
         try:
-            page = self._ensure_page()
+            page = await self._ensure_page()
             safe_name = os.path.basename(filename) or "screenshot.png"
             path = os.path.join(self.workspace, safe_name)
-            page.screenshot(path=path, full_page=False)
+            await page.screenshot(path=path, full_page=False)
             return f"Screenshot saved: {safe_name}"
         except Exception as e:
             return f"Error taking screenshot: {e}"
 
-    def search_google(self, query: str = "", **kwargs) -> str:
+    async def search_google(self, query: str = "", **kwargs) -> str:
         """Perform a real Google search through the browser and return top results."""
         if not query:
             return "Error: query required"
         try:
-            page = self._ensure_page()
-            page.goto(f"https://www.google.com/search?q={query}", wait_until="domcontentloaded")
-            results = page.query_selector_all("div.g")
+            page = await self._ensure_page()
+            await page.goto(f"https://www.google.com/search?q={query}", wait_until="domcontentloaded")
+            results = await page.query_selector_all("div.g")
             out = []
             for r in results[:5]:
-                text = (r.inner_text() or "").strip()
+                text = (await r.inner_text() or "").strip()
                 if text:
                     out.append(text[:300])
             if not out:
-                out.append(page.inner_text("body")[:1000])
+                out.append((await page.inner_text("body"))[:1000])
             return "\n\n".join(out)
         except Exception as e:
             return f"Error searching Google: {e}"
 
-    def close(self):
-        """Shut down the browser cleanly (called on app shutdown)."""
+    async def close(self):
+        """Shut down the browser cleanly."""
         try:
+            if self._context:
+                await self._context.close()
             if self._browser:
-                self._browser.close()
+                await self._browser.close()
             if self._playwright:
-                self._playwright.stop()
+                await self._playwright.stop()
         except Exception:
             pass
         finally:
             self._page = None
+            self._context = None
             self._browser = None
             self._playwright = None

@@ -36,7 +36,7 @@ log = get_logger("income_engine")
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════════
 
-INCOME_DB_DIR = Path("/home/ubuntu/M-2.0/storage/income_engine")
+INCOME_DB_DIR = Path("/opt/maya/storage/income_engine")
 INCOME_DB_DIR.mkdir(parents=True, exist_ok=True)
 INCOME_DB = str(INCOME_DB_DIR / "income_engine.db")
 

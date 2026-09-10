@@ -28,7 +28,7 @@ from infrastructure.income_engine import get_income_conn, get_pref_conn
 # CONFIGURATION
 # ════════════════════════════════════════════════════════════════════════════
 
-BUILDER_DB_DIR = Path("/home/ubuntu/M-2.0/storage/income_engine")
+BUILDER_DB_DIR = Path("/opt/maya/storage/income_engine")
 BUILDER_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 MAX_BUILD_ITERATIONS = int(os.environ.get("BUILDER_MAX_ITERATIONS", "10"))
@@ -471,10 +471,13 @@ Return as JSON array of tasks with: file, description, priority."""
 from config import settings
 from database import engine
 from models import Base
-from api.routes import router
+# Lazy import to avoid circular dependency
+def _get__get_router()():
+    from api.routes import _get_router()
+    return _get_router()
 
 app = FastAPI(title="Maya Income Project", version="0.1.0")
-app.include_router(router, prefix="/api/v1")
+app.include__get_router()(_get_router(), prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup():
@@ -557,7 +560,7 @@ from models import Item
 from pydantic import BaseModel
 from datetime import datetime
 
-router = APIRouter()
+_get_router() = APIRouter()
 
 class ItemCreate(BaseModel):
     name: str
@@ -572,7 +575,7 @@ class ItemResponse(BaseModel):
     class Config:
         from_attributes = True
 
-@router.post("/items", response_model=ItemResponse)
+@_get_router().post("/items", response_model=ItemResponse)
 def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db_item = Item(name=item.name, description=item.description)
     db.add(db_item)
@@ -580,12 +583,12 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-@router.get("/items", response_model=List[ItemResponse])
+@_get_router().get("/items", response_model=List[ItemResponse])
 def list_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = db.query(Item).offset(skip).limit(limit).all()
     return items
 
-@router.get("/items/{item_id}", response_model=ItemResponse)
+@_get_router().get("/items/{item_id}", response_model=ItemResponse)
 def get_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
     if not item:

@@ -55,7 +55,7 @@ from infrastructure.unified_checkpoint import get_checkpoint_manager, Checkpoint
 from infrastructure.browser_pool import get_browser_pool, init_browser_pool
 from infrastructure.sandbox_executor import get_sandbox_executor, SandboxConfig
 from infrastructure.vector_store import get_vector_store, get_hybrid_retriever, VectorDocument
-from infrastructure.agent_graph import AgentGraph, GraphBuilder, GraphTemplates, register_graph, get_graph
+from infrastructure.agent_graph import AgentGraph, GraphBuilder, GraphTemplates, register_graph, get_graph, list_graphs
 from infrastructure.multimodal import get_multimodal_processor, MultiModalProcessor
 from infrastructure.enhanced_memory import get_hippocampus, get_semantic_consolidation, get_working_memory_v2
 
@@ -378,102 +378,18 @@ class Maya:
                 log.debug(f"incomplete-goal scan skipped: {e}")
 
             # Start agent society
+            # Start agent society
             self.agent_society.start()
 
-            # Phase 1-4: Initialize new infrastructure modules
-            try:
-                # Browser pool
-                self.browser_pool = get_browser_pool(
-                    max_contexts=int(os.getenv("BROWSER_POOL_SIZE", "5")),
-                    headless=os.getenv("BROWSER_HEADLESS", "true").lower() == "true",
-                )
-                asyncio.create_task(self.browser_pool.initialize())
-                print(f"  Browser Pool        : Initializing ({os.getenv('BROWSER_POOL_SIZE', '5')} contexts)")
-            except Exception as e:
-                log.warning(f"Browser pool init skipped: {e}")
-                self.browser_pool = None
-
-            try:
-                # Sandbox executor
-                self.sandbox_executor = get_sandbox_executor(SandboxConfig(
-                    runtime=os.getenv("SANDBOX_RUNTIME", "gvisor"),
-                    timeout_seconds=int(os.getenv("SANDBOX_TIMEOUT", "30")),
-                    memory_limit_mb=int(os.getenv("SANDBOX_MEMORY_MB", "512")),
-                ))
-                print(f"  Sandbox Executor    : {self.sandbox_executor.config.runtime}")
-            except Exception as e:
-                log.warning(f"Sandbox executor init skipped: {e}")
-                self.sandbox_executor = None
-
-            try:
-                # Vector store
-                self.vector_store = await get_vector_store(
-                    backend=os.getenv("VECTOR_STORE_BACKEND", "chroma"),
-                    collection_name="maya",
-                )
-                self.hybrid_retriever = await get_hybrid_retriever(
-                    backend=os.getenv("VECTOR_STORE_BACKEND", "chroma"),
-                )
-                print(f"  Vector Store        : {os.getenv('VECTOR_STORE_BACKEND', 'chroma')}")
-            except Exception as e:
-                log.warning(f"Vector store init skipped: {e}")
-                self.vector_store = None
-                self.hybrid_retriever = None
-
-            try:
-                # Multi-modal processor
-                self.multimodal = get_multimodal_processor(
-                    vision_model=os.getenv("VISION_MODEL", "ViT-B-32"),
-                    audio_model=os.getenv("AUDIO_MODEL", "base"),
-                    document_model=os.getenv("DOCUMENT_MODEL", "microsoft/layoutlmv3-base"),
-                    device=os.getenv("ML_DEVICE", "cpu"),
-                )
-                asyncio.create_task(self.multimodal.initialize())
-                print(f"  Multi-Modal         : Initializing (vision, audio, document)")
-            except Exception as e:
-                log.warning(f"Multi-modal init skipped: {e}")
-                self.multimodal = None
-
-            try:
-                # Enhanced memory systems
-                def llm_fn(prompt: str) -> str:
-                    return self.router.chat([{"role": "user", "content": prompt}])
-                
-                self.hippocampus = get_hippocampus(
-                    episodic_memory=self.episodic_memory,
-                    semantic_memory=self.memory,
-                    procedural_memory=self.procedural_memory,
-                    llm_fn=llm_fn,
-                )
-                asyncio.create_task(self.hippocampus.start_consolidation(300))
-                
-                self.semantic_consolidation = get_semantic_consolidation(
-                    kernel=self.cognitive_kernel,
-                    llm_fn=llm_fn,
-                )
-                
-                self.working_memory_v2 = get_working_memory_v2(
-                    capacity=int(os.getenv("WM_CAPACITY", "7")),
-                )
-                print(f"  Enhanced Memory     : Hippocampus + Semantic Consolidation + WMv2")
-            except Exception as e:
-                log.warning(f"Enhanced memory init skipped: {e}")
-                self.hippocampus = None
-                self.semantic_consolidation = None
-                self.working_memory_v2 = None
-
-            # Register graph templates
-            try:
-                templates = [
-                    GraphTemplates.research_and_write(self),
-                    GraphTemplates.code_generation_pipeline(self),
-                    GraphTemplates.autonomous_research_agent(self),
-                ]
-                for t in templates:
-                    register_graph(t)
-                print(f"  Agent Graphs        : {len(templates)} templates registered")
-            except Exception as e:
-                log.warning(f"Graph templates init skipped: {e}")
+            # Phase 1-4 modules will be initialized asynchronously via initialize()
+            self.browser_pool = None
+            self.sandbox_executor = None
+            self.vector_store = None
+            self.hybrid_retriever = None
+            self.multimodal = None
+            self.hippocampus = None
+            self.semantic_consolidation = None
+            self.working_memory_v2 = None
 
             log.info("Phase 18 Cognitive Architecture initialized")
             print(f"\n{'='*50}")
@@ -492,6 +408,103 @@ class Maya:
         except Exception as e:
             log.warning(f"Phase 18 initialization partial: {e}")
             print(f"Warning: Phase 18 partial initialization: {e}")
+
+    async def initialize(self):
+        """Asynchronously initialize Phase 1-4 infrastructure modules."""
+        # Browser pool
+        try:
+            self.browser_pool = get_browser_pool(
+                max_contexts=int(os.getenv("BROWSER_POOL_SIZE", "5")),
+                headless=os.getenv("BROWSER_HEADLESS", "true").lower() == "true",
+            )
+            await self.browser_pool.initialize()
+            print(f"  Browser Pool        : Initialized ({os.getenv('BROWSER_POOL_SIZE', '5')} contexts)")
+        except Exception as e:
+            log.warning(f"Browser pool init skipped: {e}")
+            self.browser_pool = None
+
+        # Sandbox executor
+        try:
+            self.sandbox_executor = get_sandbox_executor(SandboxConfig(
+                runtime=os.getenv("SANDBOX_RUNTIME", "gvisor"),
+                timeout_seconds=int(os.getenv("SANDBOX_TIMEOUT", "30")),
+                memory_limit_mb=int(os.getenv("SANDBOX_MEMORY_MB", "512")),
+            ))
+            print(f"  Sandbox Executor    : {self.sandbox_executor.config.runtime}")
+        except Exception as e:
+            log.warning(f"Sandbox executor init skipped: {e}")
+            self.sandbox_executor = None
+
+        # Vector store
+        try:
+            self.vector_store = await get_vector_store(
+                backend=os.getenv("VECTOR_STORE_BACKEND", "chroma"),
+                collection_name="maya",
+            )
+            self.hybrid_retriever = await get_hybrid_retriever(
+                backend=os.getenv("VECTOR_STORE_BACKEND", "chroma"),
+            )
+            print(f"  Vector Store        : {os.getenv('VECTOR_STORE_BACKEND', 'chroma')}")
+        except Exception as e:
+            log.warning(f"Vector store init skipped: {e}")
+            self.vector_store = None
+            self.hybrid_retriever = None
+
+        # Multi-modal processor
+        try:
+            self.multimodal = await get_multimodal_processor(
+                vision_model=os.getenv("VISION_MODEL", "ViT-B-32"),
+                audio_model=os.getenv("AUDIO_MODEL", "base"),
+                document_model=os.getenv("DOCUMENT_MODEL", "microsoft/layoutlmv3-base"),
+                device=os.getenv("ML_DEVICE", "cpu"),
+            )
+            await self.multimodal.initialize()
+            print(f"  Multi-Modal         : Initialized (vision, audio, document)")
+        except Exception as e:
+            log.warning(f"Multi-modal init skipped: {e}")
+            self.multimodal = None
+
+        # Enhanced memory systems
+        try:
+            def llm_fn(prompt: str) -> str:
+                return self.router.chat([{"role": "user", "content": prompt}])
+            
+            self.hippocampus = await get_hippocampus(
+                episodic_memory=self.episodic_memory,
+                semantic_memory=self.memory,
+                procedural_memory=self.procedural_memory,
+                llm_fn=llm_fn,
+            )
+            asyncio.create_task(self.hippocampus.start_consolidation(300))
+            
+            self.semantic_consolidation = get_semantic_consolidation(
+                kernel=self.cognitive_kernel,
+                llm_fn=llm_fn,
+            )
+            
+            self.working_memory_v2 = get_working_memory_v2(
+                capacity=int(os.getenv("WM_CAPACITY", "7")),
+            )
+            print(f"  Enhanced Memory     : Hippocampus + Semantic Consolidation + WMv2")
+        except Exception as e:
+            log.warning(f"Enhanced memory init skipped: {e}")
+            self.hippocampus = None
+            self.semantic_consolidation = None
+            self.working_memory_v2 = None
+
+        # Register graph templates
+        try:
+            templates = [
+                GraphTemplates.research_and_write(self),
+                GraphTemplates.code_generation_pipeline(self),
+                GraphTemplates.autonomous_research_agent(self),
+            ]
+            for t in templates:
+                register_graph(t)
+            print(f"  Agent Graphs        : {len(templates)} templates registered")
+        except Exception as e:
+            log.warning(f"Graph templates init skipped: {e}")
+
 
     def _init_checkpoint_system(self):
         """Initialize the unified checkpoint/recovery system."""
@@ -1051,7 +1064,7 @@ class Maya:
             return 0
         return self.working_memory_v2.decay()
 
-    def get_enhanced_status(self) -> Dict:
+    async def get_enhanced_status(self) -> Dict:
         """Get status of all enhanced systems."""
         status = self.status()
         status.update({

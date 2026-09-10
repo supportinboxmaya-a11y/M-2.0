@@ -653,10 +653,14 @@ def get_permission_engine(approval_manager: ApprovalManager = None,
         if approval_manager is None or intervention is None:
             # Try to get from Maya instance
             try:
-                from api import maya_instance
-                if maya_instance:
-                    approval_manager = maya_instance.approval
-                    intervention = maya_instance.intervention
+                # Lazy import to avoid circular dependency
+                def _get_maya_instance():
+                    from api import maya_instance
+                    return maya_instance
+                
+                if _get_maya_instance():
+                    approval_manager = _get_maya_instance().approval
+                    intervention = _get_maya_instance().intervention
             except Exception:
                 pass
         

@@ -34,7 +34,7 @@ BOT_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 # ─── DB HELPERS ──────────────────────────────────────────────────────────────
 def get_notif_conn():
-    conn = sqlite3.connect("/home/ubuntu/M-2.0/storage/income_engine/notifications.db")
+    conn = sqlite3.connect("/opt/maya/storage/income_engine/notifications.db")
     conn.row_factory = sqlite3.Row
     return conn
 

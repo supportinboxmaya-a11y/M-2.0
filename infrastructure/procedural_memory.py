@@ -97,7 +97,12 @@ class EpisodicMemory:
         conn = sqlite3.connect(PROC_MEM_DB, check_same_thread=False, timeout=30)
         conn.row_factory = sqlite3.Row
         try:
-            conn.execute("PRAGMA journal_mode=WAL")
+            # Try to enable WAL mode, but fall back gracefully if not possible
+            try:
+                conn.execute("PRAGMA journal_mode=WAL")
+            except sqlite3.OperationalError:
+                # WAL mode not available (readonly, etc.), use default
+                pass
             yield conn
             conn.commit()
         except Exception:
@@ -244,7 +249,12 @@ class ProceduralMemory:
         conn = sqlite3.connect(PROC_MEM_DB, check_same_thread=False, timeout=30)
         conn.row_factory = sqlite3.Row
         try:
-            conn.execute("PRAGMA journal_mode=WAL")
+            # Try to enable WAL mode, but fall back gracefully if not possible
+            try:
+                conn.execute("PRAGMA journal_mode=WAL")
+            except sqlite3.OperationalError:
+                # WAL mode not available (readonly, etc.), use default
+                pass
             yield conn
             conn.commit()
         except Exception:

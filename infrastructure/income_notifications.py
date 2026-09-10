@@ -27,7 +27,7 @@ log = get_logger("notifications")
 # CONFIGURATION
 # ════════════════════════════════════════════════════════════════════════════
 
-NOTIF_DB_DIR = Path("/home/ubuntu/M-2.0/storage/income_engine")
+NOTIF_DB_DIR = Path("/opt/maya/storage/income_engine")
 NOTIF_DB_DIR.mkdir(parents=True, exist_ok=True)
 NOTIF_DB = str(NOTIF_DB_DIR / "notifications.db")
 
