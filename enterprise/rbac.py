@@ -2,12 +2,16 @@
 
 
 class Role:
+    SUPER_ADMIN = "super_admin"
     ADMIN = "admin"
     DEVELOPER = "developer"
     VIEWER = "viewer"
 
 
 ROLE_PERMISSIONS = {
+    Role.SUPER_ADMIN: {"read", "write", "execute", "manage_users", "manage_keys",
+                       "view_audit", "manage_orgs", "autonomous", "system_override",
+                       "shutdown", "config_write", "owner_command", "all"},
     Role.ADMIN: {"read", "write", "execute", "manage_users", "manage_keys",
                  "view_audit", "manage_orgs", "autonomous"},
     Role.DEVELOPER: {"read", "write", "execute", "autonomous"},

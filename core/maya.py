@@ -171,6 +171,84 @@ class Maya:
             category="meta",
         )
 
+        # Owner/Boss Command: Full system override for Primary Owner
+        def owner_command(action: str, reason: str, _user: dict = None, **kwargs) -> Dict:
+            """Execute a system command with FULL OVERRIDE privileges.
+            ONLY available to PRIMARY OWNER (SUPER_ADMIN). Bypasses all approval gates.
+            Args:
+                action: Command to execute (shutdown, restart, config_write, deploy, shutdown_maya, etc.)
+                reason: Justification for the override
+                _user: User dict from authentication (injected by tool registry)
+                **kwargs: Action-specific parameters
+            Returns: Execution result
+            """
+            # Verify owner identity - accept user from parameter or fallback to self._current_user
+            owner_email = os.getenv("MAYA_OWNER_EMAIL", "")
+            current_user = _user or getattr(self, '_current_user', None)
+            if not current_user or current_user.get("email") != os.getenv("MAYA_OWNER_EMAIL", ""):
+                return {"error": "UNAUTHORIZED: Only PRIMARY OWNER (SUPER_ADMIN) can use owner_command"}
+
+            # Log the override
+            log.warning(f"OWNER OVERRIDE by {current_user.get('email')}: {action} - {reason}")
+
+            # Execute based on action
+            try:
+                if action == "shutdown":
+                    import subprocess
+                    subprocess.run(["sudo", "shutdown", "now"], check=True)
+                    return {"status": "shutdown initiated"}
+                elif action == "restart_maya":
+                    import subprocess
+                    subprocess.run(["sudo", "systemctl", "restart", "maya"], check=True)
+                    return {"status": "maya restart initiated"}
+                elif action == "config_write":
+                    # Allow writing to .env or config files
+                    key = kwargs.get("key")
+                    value = kwargs.get("value")
+                    if key and value:
+                        # Update .env file
+                        env_path = "/opt/maya/.env"
+                        with open(env_path, "r") as f:
+                            lines = f.readlines()
+                        with open(env_path, "w") as f:
+                            found = False
+                            for line in lines:
+                                if line.startswith(f"{key}="):
+                                    f.write(f"{key}={value}\n")
+                                    found = True
+                                else:
+                                    f.write(line)
+                            if not found:
+                                f.write(f"{key}={value}\n")
+                        return {"status": f"config {key} updated"}
+                    return {"error": "missing key/value for config_write"}
+                elif action == "shutdown_maya":
+                    import subprocess
+                    subprocess.run(["sudo", "systemctl", "stop", "maya"], check=True)
+                    return {"status": "maya stopped"}
+                elif action == "deploy":
+                    # Trigger a deployment
+                    return {"status": "deployment triggered", "note": "implement deployment logic"}
+                elif action == "system_status":
+                    return {
+                        "maya_status": "running",
+                        "owner": os.getenv("MAYA_OWNER_EMAIL", ""),
+                        "override_enabled": os.getenv("MAYA_OVERRIDE_ENABLED", "true"),
+                    }
+                else:
+                    return {"error": f"Unknown owner action: {action}"}
+            except Exception as e:
+                return {"error": f"Owner command failed: {e}"}
+
+        self.tool_manager.get_registry().register(
+            "owner_command", owner_command,
+            "Execute system command with FULL OVERRIDE (PRIMARY OWNER ONLY). "
+            "Bypasses ALL approval gates. Args: action (str), reason (str), **kwargs. "
+            "Actions: shutdown, restart_maya, config_write, shutdown_maya, deploy, system_status. "
+            "Requires SUPER_ADMIN role and owner email match.",
+            category="meta",
+        )
+
         # Security
         self.risk = RiskChecker()
         self.permissions = PermissionManager()
@@ -485,7 +563,28 @@ class Maya:
             self.working_memory_v2 = get_working_memory_v2(
                 capacity=int(os.getenv("WM_CAPACITY", "7")),
             )
-            print(f"  Enhanced Memory     : Hippocampus + Semantic Consolidation + WMv2")
+            # Store Owner/Boss context in enhanced memory systems
+            owner_email = os.getenv("MAYA_OWNER_EMAIL", "")
+            if owner_email:
+                # Store in Hippocampus as a high-priority episode
+                if self.hippocampus:
+                    self.hippocampus.add_episode({
+                        "id": "owner_context",
+                        "type": "owner_context",
+                        "content": f"PRIMARY OWNER: {owner_email} - SUPER_ADMIN role. This identity has full system override privileges. All commands from this identity carry maximum priority.",
+                        "success": True,
+                        "reward": 1.0,
+                        "priority": 100,
+                        "timestamp": time.time(),
+                    })
+                # Store in Working Memory v2 with maximum attention
+                if self.working_memory_v2:
+                    self.working_memory_v2.add(
+                        content=f"OWNER CONTEXT: {owner_email} is the PRIMARY OWNER (SUPER_ADMIN). All commands from this identity have MAXIMUM PRIORITY and SYSTEM OVERRIDE authority.",
+                        attention=100.0,
+                        chunk_id="owner_context",
+                    )
+            print(f"  Owner Context       : {owner_email} (SUPER_ADMIN) stored in Hippocampus + WMv2")
         except Exception as e:
             log.warning(f"Enhanced memory init skipped: {e}")
             self.hippocampus = None

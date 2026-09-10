@@ -6,6 +6,7 @@ Maya 2.0 - Ultra Tool Registry
 """
 
 from typing import Dict, Any, Callable, List, Optional
+import os
 import time
 import inspect
 from datetime import datetime, timezone
@@ -113,15 +114,33 @@ class ToolRegistry:
         """Every registered tool name in a given category."""
         return [n for n, c in self._categories.items() if c == category]
 
-    def run(self, name: str, inputs: Dict = None) -> Any:
+    def run(self, name: str, inputs: Dict = None, user: dict = None) -> Any:
         """
         Tool execute করে। Stats update করে।
+        Owner mode check: In PERMISSION mode, high-risk tools require explicit approval.
         """
         if name not in self._tools:
             raise ValueError(f"Tool '{name}' not found. Available: {self.tool_names()}")
 
+        # Check owner mode for high-risk tools
+        category = self._categories.get(name, "general")
+        owner_mode = os.getenv("MAYA_OWNER_MODE", "AUTO")
+        
+        # Check if permission is required
+        if self._requires_permission(category, owner_mode):
+            # Check if user is provided and has SUPER_ADMIN role
+            if not user or user.get("role") != "super_admin":
+                raise PermissionError(
+                    f"Tool '{name}' (category: {category}) requires explicit approval in PERMISSION mode. "
+                    "Only SUPER_ADMIN can execute high-risk tools."
+                )
+
         inputs = inputs or {}
         start = time.time()
+
+        # Inject user as _user for tools that need it (like owner_command)
+        if user is not None:
+            inputs["_user"] = user
 
         try:
             call_args = _adapt_inputs(self._tools[name], inputs)
@@ -215,6 +234,15 @@ class ToolRegistry:
                         suggestions.append(tool)
 
         return suggestions or self.tool_names()[:3]
+
+    # High-risk categories that require permission in PERMISSION mode
+    HIGH_RISK_CATEGORIES = {'system', 'file', 'developer', 'meta'}
+
+    def _requires_permission(self, category: str, owner_mode: str) -> bool:
+        """Check if a tool execution requires explicit permission based on owner mode."""
+        if owner_mode == "PERMISSION":
+            return category in self.HIGH_RISK_CATEGORIES
+        return False
 
     def _update_stats(self, name: str, success: bool, elapsed: float = 0, error: str = None):
         """Usage stats update করে।"""

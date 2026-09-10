@@ -103,10 +103,8 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         raise HTTPException(status_code=401, detail="Invalid token")
 
 def require_admin(user: dict = Depends(get_current_user)) -> dict:
-    """Use as a dependency on admin-only endpoints once multi-user is on.
-    Before Supabase is configured, every logged-in user is treated as admin
-    (there's only the single ADMIN_EMAIL account), so this stays permissive."""
-    if supabase_store.enabled and user.get("role") != "admin":
+    """Use as a dependency on admin-only endpoints. SUPER_ADMIN has full access."""
+    if supabase_store.enabled and user.get("role") not in ("admin", "super_admin"):
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
 
@@ -199,9 +197,15 @@ async def login(req: LoginRequest):
                 "email": user["email"], "role": user.get("role", "user")}
 
     # ── Fallback: single hardcoded admin (no Supabase set up yet) ──
+    owner_email = os.getenv("MAYA_OWNER_EMAIL", "")
     if req.email == ADMIN_EMAIL and req.password == ADMIN_PASSWORD:
-        token = create_token(req.email, uid="", role="admin")
-        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": "admin"}
+        role = "super_admin" if owner_email and req.email == owner_email else "admin"
+        token = create_token(req.email, uid="", role=role)
+        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": role}
+    # Also allow owner@maya.local with admin password as super_admin
+    if owner_email and req.email == owner_email and req.password == ADMIN_PASSWORD:
+        token = create_token(req.email, uid="", role="super_admin")
+        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": "super_admin"}
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.post("/api/v1/auth/register")
@@ -559,7 +563,7 @@ async def run_tool(tool_name: str, body: dict, user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
     result = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.tool_manager.get_registry().run(tool_name, body.get("input", {}))
+        None, lambda: maya_instance.tool_manager.get_registry().run(tool_name, body.get("input", {}), user)
     )
     return {"result": result}
 
