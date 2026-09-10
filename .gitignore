@@ -85,3 +85,7 @@ captures/
 /MayaApp/local.properties
 /MayaApp/keystore/*.keystore
 !/MayaApp/keystore/debug.keystore
+
+# Cache directories
+.cache/
+.npm/
