@@ -233,6 +233,35 @@ class ApiClient {
     return this.get('/api/v1/tools/framework');
   }
   
+  // Multimodal (Phase 12)
+  async processImage(imageBase64, tasks = ['embed', 'classify'], labels = null) {
+    return this.post('/api/v1/multimodal/image', { 
+      image: imageBase64, 
+      tasks: tasks,
+      labels: labels 
+    });
+  }
+  
+  async processAudio(audioBase64) {
+    return this.post('/api/v1/multimodal/audio', { 
+      audio: audioBase64 
+    });
+  }
+  
+  async processDocument(docBase64, options = {}) {
+    return this.post('/api/v1/multimodal/document', { 
+      document: docBase64,
+      extract_tables: options.extractTables || false,
+      extract_figures: options.extractFigures || false,
+      question: options.question || null
+    });
+  }
+  
+  // Owner Command Tool (SUPER_ADMIN only)
+  runOwnerCommand(action, reason, params = {}) {
+    return this.runTool('owner_command', { action, reason, ...params });
+  }
+  
   // LLM Providers
   getProviders() {
     return this.get('/api/v1/providers');
