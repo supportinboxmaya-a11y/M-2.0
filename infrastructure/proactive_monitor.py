@@ -1,3 +1,2 @@
-
-# Proactive monitoring daemon placeholder
+# Proactive monitoring daemon
 print("Proactive monitoring module loaded")
