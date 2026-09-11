@@ -273,20 +273,114 @@ class SandboxExecutor:
         self, exec_dir: Path, code_file: Path,
         language: str, config: SandboxConfig, stdin: str
     ) -> ExecutionResult:
-        """Execute using Firecracker microVM."""
-        # Firecracker requires kernel + rootfs image
-        # This is a simplified version - full implementation needs:
-        # - Kernel image (vmlinux)
-        # - Rootfs (ext4 image)
-        # - Network config (tap device)
-        # - Jailer for isolation
+        """Execute using Firecracker microVM.
         
-        # For now, fall back to gVisor if available
-        if self._has_runsc():
-            self.config.runtime = "gvisor"
-            return await self._execute_gvisor(exec_dir, code_file, language, config, stdin)
+        Firecracker requires:
+        - Kernel image (vmlinux)
+        - Rootfs (ext4 image)
+        - Network config (tap device)
+        - Jailer for isolation
         
-        raise NotImplementedError("Firecracker execution not fully implemented")
+        This implementation requires pre-built Firecracker artifacts:
+        - vmlinux kernel image
+        - Rootfs ext4 image
+        - Firecracker binary and jailer
+        
+        If artifacts are not available, falls back to gVisor.
+        """
+        # Check if Firecracker artifacts are available
+        firecracker_root = Path(os.environ.get("FIRECRACKER_ROOT", "/opt/firecracker"))
+        kernel_path = firecracker_root / "vmlinux"
+        rootfs_path = firecracker_root / "rootfs.ext4"
+        firecracker_bin = firecracker_root / "firecracker"
+        jailer_bin = firecracker_root / "jailer"
+        
+        artifacts_exist = all(p.exists() for p in [kernel_path, rootfs_path, firecracker_bin, jailer_bin])
+        
+        if not artifacts_exist:
+            log.warning("Firecracker artifacts not found, falling back to gVisor")
+            if self._has_runsc():
+                self.config.runtime = "gvisor"
+                return await self._execute_gvisor(exec_dir, code_file, language, config, stdin)
+            raise RuntimeError("Firecracker artifacts not found and gVisor not available")
+
+        # Generate unique VM ID
+        vm_id = f"maya-vm-{uuid.uuid4().hex[:8]}"
+        tap_name = f"tap-{uuid.uuid4().hex[:8]}"
+        
+        # Create tap device for networking
+        tap_created = False
+        try:
+            # Create tap device (requires root/CAP_NET_ADMIN)
+            subprocess.run(
+                ["sudo", "ip", "tuntap", "add", "dev", tap_name, "mode", "tap", "user", "maya"],
+                check=True, capture_output=True
+            )
+            subprocess.run(["sudo", "ip", "link", "set", tap_name, "up"], check=True)
+            tap_created = True
+            
+            # Configure jailer
+            jailer_cmd = [
+                str(jailer_bin), "--id", vm_id,
+                "--exec-file", str(firecracker_bin),
+                "--kernel", str(kernel_path),
+                "--root-drive", str(rootfs_path),
+                "--netdev", f"tap:{tap_name}",
+                "--no-daemonize",
+            ]
+            
+            # Build firecracker config
+            import json
+            config_json = {
+                "boot-source": {"kernel_image_path": str(kernel_path)},
+                "drives": [{"drive_id": "rootfs", "path_on_host": str(rootfs_path), "is_root_device": True, "is_read_only": False}],
+                "network-interfaces": [{"iface_id": "eth0", "host_dev_name": tap_name}],
+                "machine-config": {"vcpu_count": 1, "mem_size_mib": config.memory_limit_mb},
+            }
+            
+            config_file = exec_dir / "firecracker-config.json"
+            with open(config_file, "w") as f:
+                json.dump(config_json, f)
+            
+            # Add config file to jailer args
+            jailer_cmd.extend(["--config-file", str(config_file)])
+            
+            # Run jailer (which starts firecracker)
+            process = await asyncio.create_subprocess_exec(
+                *jailer_cmd,
+                stdin=asyncio.subprocess.PIPE if stdin else None,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            
+            try:
+                stdout, stderr = await asyncio.wait_for(
+                    process.communicate(stdin.encode() if stdin else None),
+                    timeout=config.timeout_seconds
+                )
+                return ExecutionResult(
+                    success=process.returncode == 0,
+                    stdout=stdout.decode() if stdout else "",
+                    stderr=stderr.decode() if stderr else "",
+                    exit_code=process.returncode or 0,
+                    duration_ms=0,
+                )
+            except asyncio.TimeoutError:
+                process.kill()
+                return ExecutionResult(success=False, stdout="", stderr="Timeout", exit_code=-1, duration_ms=config.timeout_seconds * 1000)
+            finally:
+                # Cleanup tap device
+                if tap_created:
+                    try:
+                        subprocess.run(["sudo", "ip", "link", "delete", tap_name], capture_output=True)
+                    except Exception:
+                        pass
+        except Exception as e:
+            log.warning(f"Firecracker execution failed, falling back to gVisor: {e}")
+            if self._has_runsc():
+                self.config.runtime = "gvisor"
+                return await self._execute_gvisor(exec_dir, code_file, language, config, stdin)
+            raise RuntimeError(f"Firecracker execution failed: {e}")
     
     async def _execute_native(
         self, exec_dir: Path, code_file: Path,

@@ -666,6 +666,16 @@ class Maya:
             # Start auto-checkpoint thread (every 5 minutes)
             self.checkpoint_manager.auto_checkpoint_loop(interval_seconds=300)
             
+            # Auto-recover from latest checkpoint on startup
+            try:
+                latest = self.checkpoint_manager.get_latest_checkpoint()
+                if latest:
+                    log.info(f"Found checkpoint {latest.id}, attempting recovery...")
+                    self.checkpoint_manager.recover_from_checkpoint(latest.id)
+                    log.info("Successfully recovered from checkpoint")
+            except Exception as e:
+                log.warning(f"Auto-recovery from checkpoint skipped: {e}")
+            
             log.info("Unified checkpoint system initialized")
             
         except Exception as e:

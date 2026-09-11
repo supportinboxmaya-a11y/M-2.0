@@ -6185,9 +6185,6 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
 
     result = await maya_instance.process_audio(audio_bytes)
     return result
-    
-    result = await maya_instance.process_audio(audio_bytes)
-    return result
 
 
 @router.post("/multimodal/document")
