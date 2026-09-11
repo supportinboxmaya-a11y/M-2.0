@@ -6167,13 +6167,16 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
     # Fix base64 padding: strip existing padding, then add correct amount
     # Some clients may send base64 with missing or extra padding
     audio_data = audio_data.rstrip("=")
+    audio_data = audio_data.replace(" ", "").replace("
+", "").replace("
+", "")
     # Add correct padding
     pad_needed = (4 - len(audio_data) % 4) % 4
     audio_data = audio_data + "=" * pad_needed
     # Use validate=False to be lenient with minor padding issues
     try:
         audio_bytes = base64.b64decode(audio_data, validate=False)
-    except binascii.Error as e:
+    except Exception as e:
         # Try alternative: maybe the data has spaces or newlines
         try:
             clean_data = audio_data.replace(" ", "").replace("\n", "").replace("\r", "")
@@ -6181,7 +6184,7 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
             clean_data = clean_data + "=" * pad_needed
             audio_bytes = base64.b64decode(clean_data, validate=False)
         except binascii.Error:
-            raise HTTPException(400, f"Invalid base64 audio data: {e}")
+            raise HTTPException(400, "Invalid base64 audio data")
 
     result = await maya_instance.process_audio(audio_bytes)
     return result
