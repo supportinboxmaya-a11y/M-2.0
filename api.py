@@ -1280,17 +1280,22 @@ async def fire_webhooks(event: str, payload: dict):
 # ══════════════════════════════════════════════
 @app.websocket("/ws/agent")
 async def websocket_endpoint(ws: WebSocket):
-    token = ws.query_params.get("token")
-    if token:
-        try:
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        except Exception:
-            await ws.close(code=4401)
-            return
+    # Validate JWT token from query params or headers
+    token = ws.query_params.get("token") or ws.headers.get("authorization", "").replace("Bearer ", "")
+    if not token:
+        await ws.close(code=4401)
+        return
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_email = payload.get("sub")
+        user_role = payload.get("role", "user")
+    except Exception:
+        await ws.close(code=4401)
+        return
     await ws.accept()
     ws_clients.append(ws)
     try:
-        await ws.send_json({"type": "connected", "message": "Maya 2.0 ULTRA connected"})
+        await ws.send_json({"type": "connected", "message": "Maya 2.0 ULTRA connected", "user": user_email})
         while True:
             data = await ws.receive_json()
             if data.get("type") == "ping":
@@ -1305,19 +1310,24 @@ async def websocket_endpoint(ws: WebSocket):
                     await websocket_handler(ws, task_id, stream_manager)
                     return  # Handler takes over the connection
     except WebSocketDisconnect:
-        ws_clients.remove(ws) if ws in ws_clients else None
+        if ws in ws_clients:
+            ws_clients.remove(ws)
 
 # New WebSocket endpoint for streaming
 @app.websocket("/ws/stream/{task_id}")
 async def websocket_stream_endpoint(ws: WebSocket, task_id: str):
     """WebSocket endpoint for real-time task streaming with reconnect support."""
-    token = ws.query_params.get("token")
-    if token:
-        try:
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        except Exception:
-            await ws.close(code=4401)
-            return
+    token = ws.query_params.get("token") or ws.headers.get("authorization", "").replace("Bearer ", "")
+    if not token:
+        await ws.close(code=4401)
+        return
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_email = payload.get("sub")
+        user_role = payload.get("role", "user")
+    except Exception:
+        await ws.close(code=4401)
+        return
     await ws.accept()
     await websocket_handler(ws, task_id, stream_manager)
 
@@ -1958,6 +1968,21 @@ try:
     @app.get("/api/v1/admin/apikeys")
     async def _p9_list_keys(user=Depends(get_current_user)):
         return {"keys": _p9_keys.list()}
+
+    @app.post("/api/v1/admin/owner-mode")
+    async def _p9_set_owner_mode(payload: dict, user=Depends(require_admin)):
+        """Set the owner control mode (AUTO or PERMISSION). SUPER_ADMIN only."""
+        mode = payload.get("mode", "").upper()
+        if mode not in ("AUTO", "PERMISSION"):
+            raise HTTPException(status_code=400, detail="Mode must be AUTO or PERMISSION")
+        os.environ["MAYA_OWNER_MODE"] = mode
+        _p9_audit.record(_p9_actor(user), "owner_mode_changed", mode, {"mode": mode})
+        return {"mode": mode, "message": f"Owner mode set to {mode}"}
+
+    @app.get("/api/v1/admin/owner-mode")
+    async def _p9_get_owner_mode(user=Depends(get_current_user)):
+        """Get the current owner control mode."""
+        return {"mode": os.getenv("MAYA_OWNER_MODE", "AUTO")}
 
     @app.delete("/api/v1/admin/apikeys/{key_id}")
     async def _p9_revoke_key(key_id: str, user=Depends(get_current_user)):
@@ -6139,14 +6164,27 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
     audio_data = req.audio
     if "," in audio_data:
         audio_data = audio_data.split(",")[1]
-    # Properly fix base64 padding: strip existing, then add correct amount
+    # Fix base64 padding: strip existing padding, then add correct amount
+    # Some clients may send base64 with missing or extra padding
     audio_data = audio_data.rstrip("=")
+    # Add correct padding
     pad_needed = (4 - len(audio_data) % 4) % 4
     audio_data = audio_data + "=" * pad_needed
+    # Use validate=False to be lenient with minor padding issues
     try:
         audio_bytes = base64.b64decode(audio_data, validate=False)
     except binascii.Error as e:
-        raise HTTPException(400, f"Invalid base64 audio data: {e}")
+        # Try alternative: maybe the data has spaces or newlines
+        try:
+            clean_data = audio_data.replace(" ", "").replace("\n", "").replace("\r", "")
+            pad_needed = (4 - len(clean_data) % 4) % 4
+            clean_data = clean_data + "=" * pad_needed
+            audio_bytes = base64.b64decode(clean_data, validate=False)
+        except binascii.Error:
+            raise HTTPException(400, f"Invalid base64 audio data: {e}")
+
+    result = await maya_instance.process_audio(audio_bytes)
+    return result
     
     result = await maya_instance.process_audio(audio_bytes)
     return result

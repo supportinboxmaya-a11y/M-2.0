@@ -70,6 +70,10 @@ export class SettingsView {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           <span>Safety & Approvals</span>
         </a>
+        <a href="#owner-control" class="settings-nav-item" data-section="owner-control">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+          <span>Owner Control</span>
+        </a>
         <a href="#system" class="settings-nav-item" data-section="system">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span>System Info</span>
@@ -610,6 +614,48 @@ export class SettingsView {
     }
   }
   
+  renderOwnerControlSection() {
+    const ownerMode = this.app.auth.getOwnerMode?.() || 'AUTO';
+    return `
+      <div class="settings-section">
+        <div class="settings-section-header"><h3 class="settings-section-title">Owner Control</h3></div>
+        <div class="settings-section-body">
+          <div class="owner-control-panel">
+            <div class="owner-mode-selector">
+              <label class="form-label">Owner Control Mode</label>
+              <div class="owner-mode-toggle">
+                <select id="ownerModeSelect" class="form-select" onchange="window.app.views.get('settings').onOwnerModeChange(this.value)">
+                  <option value="AUTO" ${this.app.auth.getOwnerMode?.() === 'PERMISSION' ? '' : 'selected'}>AUTO - Automatic execution with logging</option>
+                  <option value="PERMISSION" ${this.app.auth.getOwnerMode?.() === 'PERMISSION' ? 'selected' : ''}>PERMISSION - Require explicit approval for high-risk actions</option>
+                </select>
+              </div>
+              <p class="form-hint">AUTO: Maya executes autonomously. PERMISSION: High-risk actions require explicit owner approval.</p>
+            </div>
+            
+            <div class="owner-override-section">
+              <h4>Owner Override Commands</h4>
+              <p class="form-hint">Direct system commands that bypass all approval gates. Only available to PRIMARY OWNER (SUPER_ADMIN).</p>
+              <div class="owner-commands-grid">
+                <button class="btn btn-secondary owner-cmd-btn" data-action="system_status" onclick="window.app.views.get('settings').runOwnerCmd('system_status', 'Health check')">System Status</button>
+                <button class="btn btn-secondary owner-cmd-btn" data-action="config_write" onclick="window.app.views.get('settings').runOwnerCmd('config_write', 'Update config', {key: 'LOG_LEVEL', value: 'DEBUG'})">Update Config</button>
+                <button class="btn btn-warning owner-cmd-btn" data-action="restart_maya" onclick="window.app.views.get('settings').runOwnerCmd('restart_maya', 'Restart Maya service')">Restart Maya</button>
+                <button class="btn btn-danger owner-cmd-btn" data-action="shutdown_maya" onclick="window.app.views.get('settings').runOwnerCmd('shutdown_maya', 'Shutdown Maya')">Shutdown Maya</button>
+              </div>
+            </div>
+            
+            <div class="owner-status">
+              <h4>Current Status</h4>
+              <div class="status-grid">
+                <div class="status-item"><span class="status-label">Mode</span><span class="status-value" id="ownerModeDisplay">${ownerMode}</span></div>
+                <div class="status-item"><span class="status-label">Override Enabled</span><span class="status-value">${this.app.env?.MAYA_OVERRIDE_ENABLED || 'true'}</span></div>
+                <div class="status-item"><span class="status-label">Owner Email</span><span class="status-value">${this.app.env?.MAYA_OWNER_EMAIL || 'owner@maya.local'}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
   renderSystemSection() {
     return `
       <div class="settings-section">
@@ -647,6 +693,23 @@ export class SettingsView {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+  
+  async onOwnerModeChange(mode) {
+    try {
+      await this.app.api.post('/api/v1/admin/owner-mode', { mode });
+      this.app.env.MAYA_OWNER_MODE = mode;
+      this.app.toast.success(`Owner mode set to ${mode}`);
+    } catch (error) {
+      console.error('Failed to update owner mode:', error);
+      this.app.toast.error('Failed to update owner mode');
+      const select = document.getElementById('ownerModeSelect');
+      if (select) select.value = this.app.auth.getOwnerMode?.() || 'AUTO';
+    }
+  }
+  
+  runOwnerCmd(action, reason, params = {}) {
+    this.runTool('owner_command', { action, reason, ...params });
   }
   
   destroy() {}
