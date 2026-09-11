@@ -4,7 +4,7 @@ import { join, extname } from 'path';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const FRONTEND_DIR = '/home/ubuntu/M-2.0/frontend';
-const BACKEND_URL = 'http://127.0.0.1:8622';
+const BACKEND_URL = 'http://127.0.0.1:8000';
 const PORT = 8623;
 
 const MIME_TYPES = {
