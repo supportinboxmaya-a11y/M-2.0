@@ -9,7 +9,7 @@ LOG=.integ_server.log
 cleanup() { [ -n "${SRV_PID:-}" ] && kill -9 "$SRV_PID" 2>/dev/null; }
 trap cleanup EXIT
 
-./venv/bin/python -m uvicorn api:app --host 127.0.0.1 --port $PORT > "$LOG" 2>&1 &
+python3 -m uvicorn api:app --host 127.0.0.1 --port $PORT > "$LOG" 2>&1 &
 SRV_PID=$!
 
 echo "waiting for boot..."
@@ -23,7 +23,7 @@ if [ "$up" -ne 1 ]; then echo "SERVER FAILED TO BOOT"; tail -30 "$LOG"; exit 1; 
 EMAIL=$(grep '^ADMIN_EMAIL=' .env | cut -d= -f2-)
 PASS=$(grep '^ADMIN_PASSWORD=' .env | cut -d= -f2-)
 TOKEN=$(curl -s -X POST "http://127.0.0.1:$PORT/api/v1/auth/login" -H 'Content-Type: application/json' \
-  -d "{\"email\":\"$EMAIL\",\"password\":\"$PASS\"}" | ./venv/bin/python -c "import sys,json;print(json.load(sys.stdin).get('access_token',''))")
+  -d "{\"email\":\"$EMAIL\",\"password\":\"$PASS\"}" | python3 -c "import sys,json;print(json.load(sys.stdin).get('access_token',''))")
 if [ -z "$TOKEN" ]; then echo "LOGIN FAILED"; exit 1; fi
 AUTH="Authorization: Bearer $TOKEN"
 
@@ -111,7 +111,7 @@ check tools-framework           200 "$B/api/v1/tools/framework"
 # goal create + detail + patch (no execution)
 GID=$(curl -s -X POST -H "$AUTH" -H 'Content-Type: application/json' \
   -d '{"description":"integ lifecycle goal","priority":50}' "$B/api/v1/cognitive/goals" \
-  | ./venv/bin/python -c "import sys,json;print(json.load(sys.stdin).get('goal_id',''))")
+  | python3 -c "import sys,json;print(json.load(sys.stdin).get('goal_id',''))")
 if [ -n "$GID" ]; then
   check "goal-detail($GID)"   200 "$B/api/v1/cognitive/goals/$GID"
   check "goal-patch($GID)"    200 "$B/api/v1/cognitive/goals/$GID" PATCH '{"status":"abandoned"}'
@@ -132,10 +132,10 @@ done
 
 # memory lifecycle: add → update → delete
 MID=$(curl -s -X POST -H "$AUTH" -H 'Content-Type: application/json' \
-  -d '{"content":"integ probe memory","type":"general"}' "$B/api/v1/memory" | ./venv/bin/python -c "import sys,json;print(json.load(sys.stdin).get('id',''))")
+  -d '{"content":"integ probe memory","type":"general"}' "$B/api/v1/memory" | python3 -c "import sys,json;print(json.load(sys.stdin).get('id',''))")
 if [ -n "$MID" ]; then
   # find the real DB id for the probe memory via search
-  RID=$(curl -s -H "$AUTH" "$B/api/v1/memory/search?q=integ%20probe&limit=1" | ./venv/bin/python -c "
+  RID=$(curl -s -H "$AUTH" "$B/api/v1/memory/search?q=integ%20probe&limit=1" | python3 -c "
 import sys,json
 d=json.load(sys.stdin)
 print(d[0]['id'] if isinstance(d,list) and d else '')")
