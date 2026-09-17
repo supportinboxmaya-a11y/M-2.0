@@ -6167,9 +6167,7 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
     # Fix base64 padding: strip existing padding, then add correct amount
     # Some clients may send base64 with missing or extra padding
     audio_data = audio_data.rstrip("=")
-    audio_data = audio_data.replace(" ", "").replace("
-", "").replace("
-", "")
+    audio_data = audio_data.replace(" ", "").replace("\n", "").replace("\r", "")
     # Add correct padding
     pad_needed = (4 - len(audio_data) % 4) % 4
     audio_data = audio_data + "=" * pad_needed
@@ -6275,6 +6273,14 @@ async def enhanced_status(user=Depends(get_current_user)):
 
 
 app.include_router(router)
+
+# Maya-Learner routes
+try:
+    from agents.learner.routes import router as learner_router
+    app.include_router(learner_router)
+    print("Maya-Learner routes active")
+except Exception as e:
+    print(f"Maya-Learner routes not loaded: {e}")
 
 # ══════════════════════════════════════════════
 # SPA fallback: serve index.html for any non-API path ──────────
