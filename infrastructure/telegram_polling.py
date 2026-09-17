@@ -26,7 +26,8 @@ from infrastructure.income_notifications import (
     get_notif_conn, get_notification_service, NotificationType, NotificationPriority
 )
 
-# ─── CONFIG ──────────────────────────────────────────────────────────────────
+from config.settings import STORAGE_DIR
+
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 POLL_INTERVAL = int(os.environ.get("TELEGRAM_POLL_INTERVAL", "3"))  # seconds
@@ -34,7 +35,7 @@ BOT_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 # ─── DB HELPERS ──────────────────────────────────────────────────────────────
 def get_notif_conn():
-    conn = sqlite3.connect("/opt/maya/storage/income_engine/notifications.db")
+    conn = sqlite3.connect("/home/ubuntu/M-2.0/storage/income_engine/notifications.db")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -279,6 +280,9 @@ def get_polling_service() -> TelegramPollingService:
 
 async def start_polling():
     """Start the Telegram polling service."""
+    if not TELEGRAM_BOT_TOKEN:
+        print("[TelegramPolling] TELEGRAM_BOT_TOKEN not set - exiting gracefully", flush=True)
+        return None
     service = get_polling_service()
     await service.start()
     return service
@@ -298,6 +302,27 @@ async def main():
     print("[TelegramPolling] Starting service...", flush=True)
     
     service = await start_polling()
+    
+    # If no token configured, sleep indefinitely (service stays alive but idle)
+    if service is None:
+        print("[TelegramPolling] No Telegram bot configured - staying idle", flush=True)
+        # Sleep forever, wait for shutdown signal
+        loop = asyncio.get_event_loop()
+        shutdown_event = asyncio.Event()
+        
+        def signal_handler():
+            print("[TelegramPolling] Shutdown signal received", flush=True)
+            shutdown_event.set()
+        
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            loop.add_signal_handler(sig, signal_handler)
+        
+        try:
+            await shutdown_event.wait()
+        except asyncio.CancelledError:
+            pass
+        print("[TelegramPolling] Service stopped", flush=True)
+        return
     
     # Handle shutdown signals
     loop = asyncio.get_event_loop()
