@@ -35,8 +35,9 @@ log = get_logger("income_engine")
 # ════════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 
-INCOME_DB_DIR = Path("/opt/maya/storage/income_engine")
+INCOME_DB_DIR = STORAGE_DIR / "income_engine"
 INCOME_DB_DIR.mkdir(parents=True, exist_ok=True)
 INCOME_DB = str(INCOME_DB_DIR / "income_engine.db")
 

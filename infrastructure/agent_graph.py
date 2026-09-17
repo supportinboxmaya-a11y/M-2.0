@@ -137,7 +137,6 @@ class AgentGraph:
         agent_role: str,
         tools: List[str] = None,
         prompt_template: str = "",
-        prompt: str = "",
         input_schema: Dict = None,
         output_schema: Dict = None,
         config: Dict = None,
@@ -146,14 +145,12 @@ class AgentGraph:
     ) -> GraphNode:
         """Add a node to the graph."""
         node_id = node_id or uuid.uuid4().hex[:8]
-        # Support both prompt and prompt_template for backward compatibility
-        effective_prompt = prompt_template or prompt
         node = GraphNode(
             id=node_id,
             name=name,
             agent_role=agent_role,
             tools=tools or [],
-            prompt_template=effective_prompt,
+            prompt_template=prompt_template,
             input_schema=input_schema or {},
             output_schema=output_schema or {},
             config=config or {},
@@ -411,6 +408,11 @@ class AgentGraph:
         node.status = NodeStatus.RUNNING
         node.started_at = time.time()
         
+        if stream:
+            # Note: we can't yield here since this is called via gather
+            # The execute method will emit the node_started event
+            pass
+        
         try:
             # Prepare input
             input_data = {**state.global_state, **node.input_data}
@@ -533,7 +535,7 @@ class GraphBuilder:
         **kwargs,
     ) -> "GraphBuilder":
         """Add a node and chain it."""
-        node = self.graph.add_node(name, agent_role, tools, prompt_template=prompt, **kwargs)
+        node = self.graph.add_node(name, agent_role, tools, prompt, **kwargs)
         if self._last_node:
             self.graph.add_edge(self._last_node, node.id)
         self._last_node = node.id

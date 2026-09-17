@@ -77,12 +77,7 @@ class TaskQueue:
         conn = sqlite3.connect(self._db, check_same_thread=False, timeout=10)
         conn.row_factory = sqlite3.Row
         try:
-            # Try to enable WAL mode, but fall back gracefully if not possible
-            try:
-                conn.execute("PRAGMA journal_mode=WAL")
-            except sqlite3.OperationalError:
-                # WAL mode not available (readonly, etc.), use default
-                pass
+            conn.execute("PRAGMA journal_mode=WAL")
             yield conn
             conn.commit()
         except Exception:

@@ -129,6 +129,7 @@ for d in [STORAGE_DIR, MEMORY_DIR, WORKSPACE_DIR, LOG_DIR, BACKUP_DIR]:
 # Validation
 def validate():
     """Check at least one LLM provider is configured."""
+    import logging
     keys = [
         GROQ_KEY,
         GEMINI_KEY,
@@ -141,9 +142,11 @@ def validate():
         OMNIROUTE_API_KEY,
     ]
     if not any(keys):
-        print("WARNING: No API keys found! Set at least one in .env file.")
-        print("  Get free Groq key at: console.groq.com")
-        print("  Get free Gemini key at: aistudio.google.com")
+        # Allow suppressing this warning via env var for intentional no-key setups
+        if not os.environ.get("SUPPRESS_API_KEY_WARNING", "").lower() in ("1", "true", "yes"):
+            logging.warning("No API keys found! Set at least one in .env file.")
+            logging.info("  Get free Groq key at: console.groq.com")
+            logging.info("  Get free Gemini key at: aistudio.google.com")
         return False
     return True
 

@@ -74,14 +74,9 @@ class VoiceGateway:
     
     async def authenticate(self, token: str) -> Optional[dict]:
         """Validate JWT token and return user info."""
-        # Lazy import to avoid circular dependency
-        def _get_secret_key():
-            from api import SECRET_KEY
-            return SECRET_KEY
-        
         try:
-            import jwt
-            payload = jwt.decode(token, _get_secret_key(), algorithms=["HS256"])
+            from api import SECRET_KEY
+            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
             return {"email": payload.get("sub"), "uid": payload.get("uid", ""), "role": payload.get("role", "admin")}
         except Exception as e:
             logger.warning(f"Auth failed: {e}")
@@ -207,15 +202,11 @@ class VoiceGateway:
             logger.error(f"Extended agent error: {e}")
             # Fallback to direct router (original behavior)
             try:
-                # Lazy import to avoid circular dependency
-                def _get_maya_instance():
-                    from api import maya_instance
-                    return maya_instance
-                
-                if _get_maya_instance():
+                from api import maya_instance
+                if maya_instance:
                     scope = f"voice_{session_id}"
                     messages = [{"role": "system", "content": (
-                        f"You are Maya {_get_maya_instance().VERSION}, an autonomous AI assistant created "
+                        f"You are Maya {maya_instance.VERSION}, an autonomous AI assistant created "
                         "by Urmi Mam. If anyone asks who made you, who created you, or who "
                         "built you, say that Urmi Mam created you. Be helpful, precise, and concise."
                     )}]
@@ -223,7 +214,7 @@ class VoiceGateway:
                         messages.extend(session.context["history"])
                     messages.append({"role": "user", "content": text})
                     
-                    response = _get_maya_instance().router.chat(messages, provider="openrouter")
+                    response = maya_instance.router.chat(messages, provider="openrouter")
                     
                     if "history" not in session.context:
                         session.context["history"] = []
@@ -232,7 +223,7 @@ class VoiceGateway:
                     if len(session.context["history"]) > 20:
                         session.context["history"] = session.context["history"][-20:]
                     
-                    _get_maya_instance()._scoped_add(scope, f"Chat: {text[:100]}", memory_type="chat")
+                    maya_instance._scoped_add(scope, f"Chat: {text[:100]}", memory_type="chat")
                     return str(response)
             except Exception as e2:
                 logger.error(f"Fallback chat also failed: {e2}")

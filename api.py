@@ -13,6 +13,11 @@ from typing import Optional, List, Dict
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect, Response
+import httpx
+import urllib.parse
+import time
+from fastapi.responses import RedirectResponse
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
@@ -22,6 +27,10 @@ import bcrypt
 from dotenv import load_dotenv
 
 load_dotenv()
+import logging
+logging.getLogger("chromadb.telemetry.product.posthog").setLevel(logging.CRITICAL)
+logging.getLogger("chromadb.telemetry").setLevel(logging.CRITICAL)
+logging.getLogger("onnxruntime").setLevel(logging.CRITICAL)
 
 # ── Maya Core ──────────────────────────────────
 from core.maya import Maya
@@ -45,8 +54,6 @@ async def lifespan(app: FastAPI):
                     maya_instance.router.set_key(provider, key)
         except Exception as e:
             print(f"WARNING: could not load saved provider keys: {e}")
-    # Initialize Phase 1-4 infrastructure modules asynchronously
-    await maya_instance.initialize()
     print("✅ Maya 2.0 ULTRA started")
     yield
     print("Maya shutting down...")
@@ -103,8 +110,10 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         raise HTTPException(status_code=401, detail="Invalid token")
 
 def require_admin(user: dict = Depends(get_current_user)) -> dict:
-    """Use as a dependency on admin-only endpoints. SUPER_ADMIN has full access."""
-    if supabase_store.enabled and user.get("role") not in ("admin", "super_admin"):
+    """Use as a dependency on admin-only endpoints once multi-user is on.
+    Before Supabase is configured, every logged-in user is treated as admin
+    (there's only the single ADMIN_EMAIL account), so this stays permissive."""
+    if supabase_store.enabled and user.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
 
@@ -197,15 +206,9 @@ async def login(req: LoginRequest):
                 "email": user["email"], "role": user.get("role", "user")}
 
     # ── Fallback: single hardcoded admin (no Supabase set up yet) ──
-    owner_email = os.getenv("MAYA_OWNER_EMAIL", "")
     if req.email == ADMIN_EMAIL and req.password == ADMIN_PASSWORD:
-        role = "super_admin" if owner_email and req.email == owner_email else "admin"
-        token = create_token(req.email, uid="", role=role)
-        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": role}
-    # Also allow owner@maya.local with admin password as super_admin
-    if owner_email and req.email == owner_email and req.password == ADMIN_PASSWORD:
-        token = create_token(req.email, uid="", role="super_admin")
-        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": "super_admin"}
+        token = create_token(req.email, uid="", role="admin")
+        return {"access_token": token, "token_type": "bearer", "email": req.email, "role": "admin"}
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.post("/api/v1/auth/register")
@@ -563,7 +566,7 @@ async def run_tool(tool_name: str, body: dict, user=Depends(get_current_user)):
     if not maya_instance:
         raise HTTPException(status_code=503, detail="Maya not initialized")
     result = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.tool_manager.get_registry().run(tool_name, body.get("input", {}), user)
+        None, lambda: maya_instance.tool_manager.get_registry().run(tool_name, body.get("input", {}))
     )
     return {"result": result}
 
@@ -768,13 +771,18 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
 # ═══════════════════════════════════════════════
 from infrastructure.voice_routes import router as voice_router
 
+from infrastructure.backend_image_generation import router as image_gen_router
+from infrastructure.backend_chat_export import router as chat_export_router
+from infrastructure.backend_agent_profiles import router as agent_profiles_router
+from infrastructure.backend_oauth import router as oauth_router
 app.include_router(voice_router)
 
 # ═══════════════════════════════════════════════
 # MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
+# ═══════════════════════════════════════════════
+from api.routes.multimodal import router as multimodal_router
 
-# MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
-# Router is defined locally below and included there
+app.include_router(multimodal_router)
 
 # ══════════════════════════════════════════════
 # EXTENDED AGENT ROUTES (Phase 5)
@@ -832,7 +840,18 @@ from infrastructure.income_growth_portfolio_routes import router as growth_route
 
 app.include_router(growth_router)
 
-# ══════════════════════════════════════════════
+# ═══════════════════════════════════════════════
+# ULTRA ROUTES (Phase 1-4: Dynamic Tools, Vision Browser, Secure Sandbox, Swarm)
+app.include_router(image_gen_router, prefix="/api/v1/image")
+app.include_router(chat_export_router)
+app.include_router(agent_profiles_router)
+app.include_router(oauth_router)
+# ═══════════════════════════════════════════════
+from api.routes.ultra import router as ultra_router
+
+app.include_router(ultra_router)
+
+# ═══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as
@@ -1280,22 +1299,17 @@ async def fire_webhooks(event: str, payload: dict):
 # ══════════════════════════════════════════════
 @app.websocket("/ws/agent")
 async def websocket_endpoint(ws: WebSocket):
-    # Validate JWT token from query params or headers
-    token = ws.query_params.get("token") or ws.headers.get("authorization", "").replace("Bearer ", "")
-    if not token:
-        await ws.close(code=4401)
-        return
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_email = payload.get("sub")
-        user_role = payload.get("role", "user")
-    except Exception:
-        await ws.close(code=4401)
-        return
+    token = ws.query_params.get("token")
+    if token:
+        try:
+            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        except Exception:
+            await ws.close(code=4401)
+            return
     await ws.accept()
     ws_clients.append(ws)
     try:
-        await ws.send_json({"type": "connected", "message": "Maya 2.0 ULTRA connected", "user": user_email})
+        await ws.send_json({"type": "connected", "message": "Maya 2.0 ULTRA connected"})
         while True:
             data = await ws.receive_json()
             if data.get("type") == "ping":
@@ -1310,24 +1324,19 @@ async def websocket_endpoint(ws: WebSocket):
                     await websocket_handler(ws, task_id, stream_manager)
                     return  # Handler takes over the connection
     except WebSocketDisconnect:
-        if ws in ws_clients:
-            ws_clients.remove(ws)
+        ws_clients.remove(ws) if ws in ws_clients else None
 
 # New WebSocket endpoint for streaming
 @app.websocket("/ws/stream/{task_id}")
 async def websocket_stream_endpoint(ws: WebSocket, task_id: str):
     """WebSocket endpoint for real-time task streaming with reconnect support."""
-    token = ws.query_params.get("token") or ws.headers.get("authorization", "").replace("Bearer ", "")
-    if not token:
-        await ws.close(code=4401)
-        return
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_email = payload.get("sub")
-        user_role = payload.get("role", "user")
-    except Exception:
-        await ws.close(code=4401)
-        return
+    token = ws.query_params.get("token")
+    if token:
+        try:
+            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        except Exception:
+            await ws.close(code=4401)
+            return
     await ws.accept()
     await websocket_handler(ws, task_id, stream_manager)
 
@@ -1968,21 +1977,6 @@ try:
     @app.get("/api/v1/admin/apikeys")
     async def _p9_list_keys(user=Depends(get_current_user)):
         return {"keys": _p9_keys.list()}
-
-    @app.post("/api/v1/admin/owner-mode")
-    async def _p9_set_owner_mode(payload: dict, user=Depends(require_admin)):
-        """Set the owner control mode (AUTO or PERMISSION). SUPER_ADMIN only."""
-        mode = payload.get("mode", "").upper()
-        if mode not in ("AUTO", "PERMISSION"):
-            raise HTTPException(status_code=400, detail="Mode must be AUTO or PERMISSION")
-        os.environ["MAYA_OWNER_MODE"] = mode
-        _p9_audit.record(_p9_actor(user), "owner_mode_changed", mode, {"mode": mode})
-        return {"mode": mode, "message": f"Owner mode set to {mode}"}
-
-    @app.get("/api/v1/admin/owner-mode")
-    async def _p9_get_owner_mode(user=Depends(get_current_user)):
-        """Get the current owner control mode."""
-        return {"mode": os.getenv("MAYA_OWNER_MODE", "AUTO")}
 
     @app.delete("/api/v1/admin/apikeys/{key_id}")
     async def _p9_revoke_key(key_id: str, user=Depends(get_current_user)):
@@ -5650,275 +5644,23 @@ async def browser_action(request: BrowserActionRequest, user=Depends(get_current
     browser = BrowserTool()
     try:
         if request.action == "open":
-            result = await browser.open(request.url)
+            result = browser.open(request.url)
         elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
+            result = browser.click(selector=request.selector, text=request.text)
         elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
+            result = browser.type_text(request.selector, request.text)
         elif request.action == "text":
-            result = await browser.get_text(request.selector)
+            result = browser.get_text(request.selector)
         elif request.action == "screenshot":
-            result = await browser.screenshot()
+            result = browser.screenshot()
         elif request.action == "search":
-            result = await browser.search_google(request.query)
+            result = browser.search_google(request.query)
         else:
             raise HTTPException(400, f"Unknown action: {request.action}")
         return {"result": result}
     finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
-async def browser_action(request: BrowserActionRequest, user=Depends(get_current_user)):
-    """Perform browser automation action."""
-    from tools.web.browser_tool import BrowserTool
-    
-    browser = BrowserTool()
-    try:
-        if request.action == "open":
-            result = await browser.open(request.url)
-        elif request.action == "click":
-            result = await browser.click(selector=request.selector, text=request.text)
-        elif request.action == "type":
-            result = await browser.type_text(request.selector, request.text)
-        elif request.action == "text":
-            result = await browser.get_text(request.selector)
-        elif request.action == "screenshot":
-            result = await browser.screenshot()
-        elif request.action == "search":
-            result = await browser.search_google(request.query)
-        else:
-            raise HTTPException(400, f"Unknown action: {request.action}")
-        return {"result": result}
-    finally:
-        await browser.close()
+        browser.close()
+
 @router.post("/code/execute")
 async def execute_code(request: CodeExecRequest, user=Depends(get_current_user)):
     """Execute code in sandbox."""
@@ -6160,32 +5902,12 @@ async def multimodal_audio(req: AudioProcessRequest, user=Depends(get_current_us
         raise HTTPException(503, "Multi-modal processor not initialized")
     
     import base64
-    import binascii
     audio_data = req.audio
     if "," in audio_data:
         audio_data = audio_data.split(",")[1]
-    # Fix base64 padding: strip existing padding, then add correct amount
-    # Some clients may send base64 with missing or extra padding
-    audio_data = audio_data.rstrip("=")
-    audio_data = audio_data.replace(" ", "").replace("
-", "").replace("
-", "")
-    # Add correct padding
-    pad_needed = (4 - len(audio_data) % 4) % 4
-    audio_data = audio_data + "=" * pad_needed
-    # Use validate=False to be lenient with minor padding issues
-    try:
-        audio_bytes = base64.b64decode(audio_data, validate=False)
-    except Exception as e:
-        # Try alternative: maybe the data has spaces or newlines
-        try:
-            clean_data = audio_data.replace(" ", "").replace("\n", "").replace("\r", "")
-            pad_needed = (4 - len(clean_data) % 4) % 4
-            clean_data = clean_data + "=" * pad_needed
-            audio_bytes = base64.b64decode(clean_data, validate=False)
-        except binascii.Error:
-            raise HTTPException(400, "Invalid base64 audio data")
-
+    # Use validate=False to be lenient with padding issues
+    audio_bytes = base64.b64decode(audio_data, validate=False)
+    
     result = await maya_instance.process_audio(audio_bytes)
     return result
 
@@ -6270,11 +5992,9 @@ async def enhanced_status(user=Depends(get_current_user)):
     """Get status of all enhanced Phase 1-4 systems."""
     if not maya_instance:
         raise HTTPException(503, "Maya not initialized")
-    status = await maya_instance.get_enhanced_status()
+    status = maya_instance.get_enhanced_status()
     return status
 
-
-app.include_router(router)
 
 # ══════════════════════════════════════════════
 # SPA fallback: serve index.html for any non-API path ──────────

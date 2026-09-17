@@ -97,12 +97,7 @@ class EpisodicMemory:
         conn = sqlite3.connect(PROC_MEM_DB, check_same_thread=False, timeout=30)
         conn.row_factory = sqlite3.Row
         try:
-            # Try to enable WAL mode, but fall back gracefully if not possible
-            try:
-                conn.execute("PRAGMA journal_mode=WAL")
-            except sqlite3.OperationalError:
-                # WAL mode not available (readonly, etc.), use default
-                pass
+            conn.execute("PRAGMA journal_mode=WAL")
             yield conn
             conn.commit()
         except Exception:
@@ -209,7 +204,8 @@ class EpisodicMemory:
 class ProceduralMemory:
     """Procedural memory for storing and retrieving distilled skills."""
     
-    def __init__(self):
+    def __init__(self, db_path: str = None):
+        self._db_path = db_path or PROC_MEM_DB
         self._init_db()
         self._skills: Dict[str, Skill] = {}
         self._load_skills()
@@ -246,15 +242,10 @@ class ProceduralMemory:
     
     @contextmanager
     def _conn(self):
-        conn = sqlite3.connect(PROC_MEM_DB, check_same_thread=False, timeout=30)
+        conn = sqlite3.connect(self._db_path, check_same_thread=False, timeout=30)
         conn.row_factory = sqlite3.Row
         try:
-            # Try to enable WAL mode, but fall back gracefully if not possible
-            try:
-                conn.execute("PRAGMA journal_mode=WAL")
-            except sqlite3.OperationalError:
-                # WAL mode not available (readonly, etc.), use default
-                pass
+            conn.execute("PRAGMA journal_mode=WAL")
             yield conn
             conn.commit()
         except Exception:
@@ -701,7 +692,7 @@ def get_episodic_memory() -> EpisodicMemory:
 def get_procedural_memory() -> ProceduralMemory:
     global _procedural_memory
     if _procedural_memory is None:
-        _procedural_memory = ProceduralMemory()
+        _procedural_memory = ProceduralMemory(PROC_MEM_DB)
     return _procedural_memory
 
 

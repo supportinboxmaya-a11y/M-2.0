@@ -1,33 +1,63 @@
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 Maya 2.0 ULTRA - Income Engine: Growth & Portfolio Manager Agents
+from config.settings import STORAGE_DIR
 ==================================================================
+from config.settings import STORAGE_DIR
 Growth Agent: Monitors live projects, proposes improvements, auto-implements small fixes.
+from config.settings import STORAGE_DIR
 Portfolio Manager: Weekly review of all projects, recommends resource allocation.
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 import asyncio
+from config.settings import STORAGE_DIR
 import json
+from config.settings import STORAGE_DIR
 import os
+from config.settings import STORAGE_DIR
 import time
+from config.settings import STORAGE_DIR
 import uuid
+from config.settings import STORAGE_DIR
 from contextlib import contextmanager
+from config.settings import STORAGE_DIR
 from dataclasses import dataclass, field
+from config.settings import STORAGE_DIR
 from datetime import datetime
+from config.settings import STORAGE_DIR
 from enum import Enum
+from config.settings import STORAGE_DIR
 from pathlib import Path
+from config.settings import STORAGE_DIR
 from typing import Any, Callable, Dict, List, Optional, Set
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 import sqlite3
+from config.settings import STORAGE_DIR
 from maya_logging.logger import get_logger
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 log = get_logger("growth_portfolio")
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 from infrastructure.income_engine import get_income_conn, get_pref_conn
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 # ══════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 # CONFIGURATION
+from config.settings import STORAGE_DIR
 # ═════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 
-GROWTH_DB_DIR = Path("/opt/maya/storage/income_engine")
+from config.settings import STORAGE_DIR
+GROWTH_DB_DIR = STORAGE_DIR / "income_engine"
 GROWTH_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # ══════════════════════════════════════════════════════════════════════════════

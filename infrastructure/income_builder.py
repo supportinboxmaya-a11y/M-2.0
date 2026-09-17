@@ -1,34 +1,64 @@
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 Maya 2.0 ULTRA - Income Engine: Builder Agent
+from config.settings import STORAGE_DIR
 =============================================
+from config.settings import STORAGE_DIR
 Autonomous MVP builder using Maya's existing coding pipeline.
+from config.settings import STORAGE_DIR
 Runs when a plan is approved - builds, tests, deploys iteratively.
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 import asyncio
+from config.settings import STORAGE_DIR
 import json
+from config.settings import STORAGE_DIR
 import os
+from config.settings import STORAGE_DIR
 import time
+from config.settings import STORAGE_DIR
 import uuid
+from config.settings import STORAGE_DIR
 from contextlib import contextmanager
+from config.settings import STORAGE_DIR
 from dataclasses import dataclass, field
+from config.settings import STORAGE_DIR
 from datetime import datetime
+from config.settings import STORAGE_DIR
 from enum import Enum
+from config.settings import STORAGE_DIR
 from pathlib import Path
+from config.settings import STORAGE_DIR
 from typing import Any, Callable, Dict, List, Optional, Set
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 import sqlite3
+from config.settings import STORAGE_DIR
 from maya_logging.logger import get_logger
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 log = get_logger("builder")
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 # Import from income_engine
+from config.settings import STORAGE_DIR
 from infrastructure.income_engine import get_income_conn, get_pref_conn
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 # ═════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 # CONFIGURATION
+from config.settings import STORAGE_DIR
 # ════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 
-BUILDER_DB_DIR = Path("/opt/maya/storage/income_engine")
+BUILDER_DB_DIR = STORAGE_DIR / "income_engine"
 BUILDER_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 MAX_BUILD_ITERATIONS = int(os.environ.get("BUILDER_MAX_ITERATIONS", "10"))
@@ -471,13 +501,10 @@ Return as JSON array of tasks with: file, description, priority."""
 from config import settings
 from database import engine
 from models import Base
-# Lazy import to avoid circular dependency
-def _get__get_router()():
-    from api.routes import _get_router()
-    return _get_router()
+from api.routes import router
 
 app = FastAPI(title="Maya Income Project", version="0.1.0")
-app.include__get_router()(_get_router(), prefix="/api/v1")
+app.include_router(router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup():
@@ -560,7 +587,7 @@ from models import Item
 from pydantic import BaseModel
 from datetime import datetime
 
-_get_router() = APIRouter()
+router = APIRouter()
 
 class ItemCreate(BaseModel):
     name: str
@@ -575,7 +602,7 @@ class ItemResponse(BaseModel):
     class Config:
         from_attributes = True
 
-@_get_router().post("/items", response_model=ItemResponse)
+@router.post("/items", response_model=ItemResponse)
 def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db_item = Item(name=item.name, description=item.description)
     db.add(db_item)
@@ -583,12 +610,12 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     db.refresh(db_item)
     return db_item
 
-@_get_router().get("/items", response_model=List[ItemResponse])
+@router.get("/items", response_model=List[ItemResponse])
 def list_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = db.query(Item).offset(skip).limit(limit).all()
     return items
 
-@_get_router().get("/items/{item_id}", response_model=ItemResponse)
+@router.get("/items/{item_id}", response_model=ItemResponse)
 def get_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == item_id).first()
     if not item:

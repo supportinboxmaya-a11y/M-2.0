@@ -317,8 +317,8 @@ class CognitiveKernel:
 
     def _load_state(self) -> None:
         with self._lock, self._conn() as c:
-            # Load goals
-            for row in c.execute("SELECT * FROM goals WHERE status IN ('active', 'suspended', 'blocked')"):
+            # Load goals (ALL statuses for full persistence)
+            for row in c.execute("SELECT * FROM goals"):
                 goal = Goal(
                     id=row["id"],
                     description=row["description"],

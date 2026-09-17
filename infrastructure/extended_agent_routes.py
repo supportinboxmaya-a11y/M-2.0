@@ -323,14 +323,10 @@ async def process_voice_command(
 @router.get("/tools/extended")
 async def list_extended_tools(agent: ExtendedAgent = Depends(get_agent)):
     """List all available extended tools."""
-    # Lazy import to avoid circular dependency
-    def _get_maya_instance():
-        from api import maya_instance
-        return maya_instance
-    
-    if not _get_maya_instance():
+    from api import maya_instance
+    if not maya_instance:
         return {"tools": [], "count": 0}
-    tool_registry = _get_maya_instance().tool_manager.get_registry()
+    tool_registry = maya_instance.tool_manager.get_registry()
     all_tools = tool_registry.list_tools()
     extended = [t for t in all_tools if t["category"] in 
                ("calendar", "files", "system", "research", "communication")]

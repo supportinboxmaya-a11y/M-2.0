@@ -21,11 +21,10 @@ logger = logging.getLogger("voice_routes")
 router = APIRouter(prefix="/api/v1/voice", tags=["voice"])
 
 
-
-# Lazy import to avoid circular dependency
-def _get_current_user():
-    from api import get_current_user
-    return get_current_user
+# Import auth at module level to avoid circular import issues
+# from api import get_current_user  # Lazy import to avoid circular import
+from fastapi import Depends
+get_current_user = lambda: __import("api").get_current_user
 
 
 @router.post("/transcribe")
@@ -34,7 +33,7 @@ async def voice_transcribe(
     file: Optional[UploadFile] = File(None),
     audio_base64: Optional[str] = Form(None),
     language: Optional[str] = Form(None),
-    user: dict = Depends(_get_current_user),  # Use proper auth dependency
+    user: dict = Depends(get_current_user),  # Use proper auth dependency
 ):
     """
     Transcribe audio using local faster-whisper.
@@ -123,14 +122,10 @@ async def voice_transcribe_ws(
     await websocket.accept()
 
     if token:
-        # Lazy import to avoid circular dependency
-        def _get_secret_key():
-            from api import SECRET_KEY
-            return SECRET_KEY
-        
         try:
             import jwt
-            jwt.decode(token, _get_secret_key(), algorithms=["HS256"])
+            from api import SECRET_KEY
+            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         except Exception:
             await websocket.send_json({"type": "error", "message": "Invalid token"})
             await websocket.close()
@@ -227,7 +222,7 @@ async def voice_transcribe_ws(
 
 
 @router.get("/models")
-async def voice_models(user: dict = Depends(_get_current_user)):
+async def voice_models(user: dict = Depends(get_current_user)):
     """List available Whisper models."""
 
     return {
@@ -240,20 +235,20 @@ async def voice_models(user: dict = Depends(_get_current_user)):
 
 @router.post("/models")
 async def voice_set_model(
-    model_size: str = Form(...),
-    user: dict = Depends(_get_current_user),
+    whisper_model: str = Form(...),
+    user: dict = Depends(get_current_user),
 ):
     """Change the Whisper model (requires reload)."""
 
-    if model_size not in ["tiny", "base", "small", "medium", "large-v3"]:
+    if whisper_model not in ["tiny", "base", "small", "medium", "large-v3"]:
         raise HTTPException(status_code=400, detail="Invalid model size")
 
     from infrastructure.stt_service import reset_stt_service
     reset_stt_service()
-    os.environ["WHISPER_MODEL_SIZE"] = model_size
+    os.environ["WHISPER_MODEL_SIZE"] = whisper_model
 
     stt = get_stt_service()
-    return {"status": "ok", "model": model_size}
+    return {"status": "ok", "model": whisper_model}
 
 
 # ═══════════════════════════════════════════════════════════
@@ -267,7 +262,7 @@ async def voice_synthesize(
     length_scale: Optional[float] = Form(None),
     noise_scale: Optional[float] = Form(None),
     noise_w: Optional[float] = Form(None),
-    user: dict = Depends(_get_current_user),
+    user: dict = Depends(get_current_user),
 ):
     """
     Synthesize text to speech using Piper TTS.
@@ -328,7 +323,7 @@ async def voice_synthesize(
 @router.post("/synthesize/json")
 async def voice_synthesize_json(
     request: Request,
-    user: dict = Depends(_get_current_user),
+    user: dict = Depends(get_current_user),
 ):
     """
     Synthesize text to speech (JSON body).
@@ -395,7 +390,7 @@ async def voice_synthesize_json(
 
 
 @router.get("/voices")
-async def voice_list(user: dict = Depends(_get_current_user)):
+async def voice_list(user: dict = Depends(get_current_user)):
     """List available Piper voice models."""
     tts = get_tts_service()
     voices = tts.get_available_voices()
@@ -410,7 +405,7 @@ async def voice_list(user: dict = Depends(_get_current_user)):
 @router.post("/voices")
 async def voice_set_voice(
     voice: str = Form(...),
-    user: dict = Depends(_get_current_user),
+    user: dict = Depends(get_current_user),
 ):
     """Change the Piper voice model (requires reload)."""
     tts = get_tts_service()
@@ -566,7 +561,7 @@ async def voice_gateway_ws(
 
 
 @router.get("/gateway/sessions")
-async def voice_gateway_sessions(user: dict = Depends(_get_current_user)):
+async def voice_gateway_sessions(user: dict = Depends(get_current_user)):
     """List active voice gateway sessions."""
     gateway = get_voice_gateway()
     sessions = []

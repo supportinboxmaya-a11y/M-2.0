@@ -100,6 +100,7 @@ AnthropicProvider = _load("Anthropic", "claude", "ClaudeProvider", "anthropic")
 DeepSeekProvider = _load("DeepSeek", "deepseek", "DeepSeekProvider", "openai")
 NvidiaNimProvider = _load("NVIDIA NIM", "nvidia_nim", "NvidiaNimProvider", "openai")
 LocalLLMProvider = _load("Local LLM", "local_llm", "LocalLLMProvider", "requests")
+LocalFastLLMProvider = _load("Local LLM (Fast)", "local_llm_fast", "LocalFastLLMProvider", "requests")
 
 
 # Per-provider metadata (label + env-var key)
@@ -131,6 +132,7 @@ PROVIDER_CLASSES: Dict[str, Type] = {
     "deepseek": DeepSeekProvider,
     "nvidia_nim": NvidiaNimProvider,
     "local": LocalLLMProvider,
+    "local_fast": LocalFastLLMProvider,
 }
 
 

@@ -1,33 +1,63 @@
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 Maya 2.0 ULTRA - Income Engine: Notification Service
+from config.settings import STORAGE_DIR
 ====================================================
+from config.settings import STORAGE_DIR
 Unified notification system for approval requests, digests, and alerts.
+from config.settings import STORAGE_DIR
 Supports multiple channels: Email, Webhook, Telegram, Slack, Discord.
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 import asyncio
+from config.settings import STORAGE_DIR
 import json
+from config.settings import STORAGE_DIR
 import os
+from config.settings import STORAGE_DIR
 import random
+from config.settings import STORAGE_DIR
 import time
+from config.settings import STORAGE_DIR
 import uuid
+from config.settings import STORAGE_DIR
 from contextlib import contextmanager
+from config.settings import STORAGE_DIR
 from dataclasses import dataclass, field
+from config.settings import STORAGE_DIR
 from datetime import datetime
+from config.settings import STORAGE_DIR
 from enum import Enum
+from config.settings import STORAGE_DIR
 from pathlib import Path
+from config.settings import STORAGE_DIR
 from typing import Any, Callable, Dict, List, Optional, Set
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 import aiohttp
+from config.settings import STORAGE_DIR
 import sqlite3
+from config.settings import STORAGE_DIR
 from maya_logging.logger import get_logger
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 log = get_logger("notifications")
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 # ═════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 # CONFIGURATION
+from config.settings import STORAGE_DIR
 # ════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 
-NOTIF_DB_DIR = Path("/opt/maya/storage/income_engine")
+from config.settings import STORAGE_DIR
+NOTIF_DB_DIR = STORAGE_DIR / "income_engine"
 NOTIF_DB_DIR.mkdir(parents=True, exist_ok=True)
 NOTIF_DB = str(NOTIF_DB_DIR / "notifications.db")
 

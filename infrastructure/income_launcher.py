@@ -1,36 +1,66 @@
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 Maya 2.0 ULTRA - Income Engine: Launch Agent
+from config.settings import STORAGE_DIR
 ============================================
+from config.settings import STORAGE_DIR
 Handles production launch of completed MVPs:
+from config.settings import STORAGE_DIR
 - Generates launch content (landing page, Product Hunt, social)
+from config.settings import STORAGE_DIR
 - Queues all content for owner approval before going live
+from config.settings import STORAGE_DIR
 - Coordinates DNS, SSL, monitoring setup
+from config.settings import STORAGE_DIR
 - Tracks launch metrics post-launch
+from config.settings import STORAGE_DIR
 """
+from config.settings import STORAGE_DIR
 import asyncio
+from config.settings import STORAGE_DIR
 import json
+from config.settings import STORAGE_DIR
 import os
+from config.settings import STORAGE_DIR
 import time
+from config.settings import STORAGE_DIR
 import uuid
+from config.settings import STORAGE_DIR
 from contextlib import contextmanager
+from config.settings import STORAGE_DIR
 from dataclasses import dataclass, field
+from config.settings import STORAGE_DIR
 from datetime import datetime
+from config.settings import STORAGE_DIR
 from enum import Enum
+from config.settings import STORAGE_DIR
 from pathlib import Path
+from config.settings import STORAGE_DIR
 from typing import Any, Callable, Dict, List, Optional, Set
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 import sqlite3
+from config.settings import STORAGE_DIR
 from maya_logging.logger import get_logger
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 log = get_logger("launcher")
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 from infrastructure.income_engine import get_income_conn, get_pref_conn
+from config.settings import STORAGE_DIR
 
+from config.settings import STORAGE_DIR
 # ═════════════════════════════════════════════════════════════════════════════
+from config.settings import STORAGE_DIR
 # CONFIGURATION
 # ════════════════════════════════════════════════════════════════════════════
 
-LAUNCH_DB_DIR = Path("/opt/maya/storage/income_engine")
+LAUNCH_DB_DIR = STORAGE_DIR / "income_engine"
 LAUNCH_DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # ═════════════════════════════════════════════════════════════════════════════

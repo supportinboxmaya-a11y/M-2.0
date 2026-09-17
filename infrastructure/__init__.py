@@ -1,4 +1,5 @@
-"""Maya 3.0 — Phase 1 infrastructure package.
+"""
+Maya 3.0 — Phase 1 infrastructure package.
 
 Production-hardening primitives: config, secrets, metrics, retry,
 cache, rate limiting, background tasks, feature flags, exceptions.
