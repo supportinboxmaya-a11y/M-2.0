@@ -15,7 +15,7 @@ jobs:
   build:
     name: Build Release APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -40,9 +40,15 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
+      - name: Clean Gradle cache
+        run: |
+          rm -rf ~/.gradle/caches
+          rm -rf ~/.gradle/daemon
+          rm -rf ~/.gradle/wrapper
+
       - name: Build Release APK
         working-directory: MayaApp
-        run: ./gradlew assembleRelease --no-daemon --stacktrace --refresh-dependencies
+        run: ./gradlew clean assembleRelease --no-daemon --stacktrace --refresh-dependencies
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
