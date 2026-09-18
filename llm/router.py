@@ -25,7 +25,7 @@ from llm.providers import (
 )
 
 class LLMRouter:
-    DEFAULT_PRIORITY = ["local", "local_fast", "nvidia_nim", "groq", "cerebras", "openrouter", "gemini", "deepseek", "openai", "claude"]
+    DEFAULT_PRIORITY = ["groq", "cerebras", "openrouter", "gemini", "deepseek", "local", "local_fast", "nvidia_nim", "openai", "claude"]
 
     # Seconds after which a provider disabled by repeated errors gets a
     # second chance (free tiers throttle in bursts; without cooldown
@@ -273,14 +273,14 @@ class LLMRouter:
     def _select_best_provider(self, task_type: str = "general") -> Optional[str]:
         """Selects optimal healthy provider based on task routing mapping preferences."""
         preferences = {
-            "planning": ["local_fast", "local", "groq", "cerebras"],
-            "reasoning": ["local", "local_fast", "groq", "cerebras"],
-            "tool_use": ["local", "local_fast", "groq"],
-            "coding": ["local", "groq", "cerebras", "openrouter"],
-            "fast": ["local_fast", "groq", "cerebras"],
-            "analysis": ["local", "local_fast", "groq"],
-            "creative": ["local", "local_fast", "groq"],
-            "general": ["local", "local_fast", "nvidia_nim", "groq"]
+            "planning": ["groq", "cerebras", "openrouter", "gemini", "local_fast", "local"],
+            "reasoning": ["groq", "cerebras", "openrouter", "gemini", "local", "local_fast"],
+            "tool_use": ["groq", "cerebras", "local", "local_fast"],
+            "coding": ["groq", "cerebras", "openrouter", "local"],
+            "fast": ["groq", "cerebras", "local_fast"],
+            "analysis": ["groq", "cerebras", "local", "local_fast"],
+            "creative": ["groq", "cerebras", "local", "local_fast"],
+            "general": ["groq", "cerebras", "openrouter", "gemini", "local", "local_fast", "nvidia_nim"]
         }
         priority = preferences.get(task_type, self.DEFAULT_PRIORITY)
         for p in priority:
