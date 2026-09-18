@@ -65,7 +65,7 @@ composeOptions {
 
 dependencies {
     // Compose BOM 2023.03.00 (Compose 1.4.3) - known working with Kotlin 1.8.20
-    val compose_bom_version = "2024.02.00"
+    val compose_bom_version = "2024.08.00"
     implementation(platform("androidx.compose:compose-bom:$compose_bom_version"))
 
     val activity_version = "1.7.2"
