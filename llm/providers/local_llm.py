@@ -12,7 +12,7 @@ class LocalLLMProvider(BaseProvider):
             api_key_env="",  # No API key needed
             default_model=os.environ.get("LOCAL_MODEL_PRIMARY", "qwen2.5:7b-instruct-q4_k_m"),
             retry_config=RetryConfig(max_retries=2, base_delay=2.0, max_delay=30.0),
-            timeout=120.0,
+            timeout=300.0,
         )
 
     def _initialize_client(self):
@@ -30,7 +30,7 @@ class LocalLLMProvider(BaseProvider):
             json={"model": use_model, "prompt": prompt, "stream": False},
             timeout=self.timeout
         )
-        result = response.json(); print(f"DEBUG: response = {result}"); return result.get("response", "")
+        result = response.json(); return result.get("response", "")
 
     def _stream_chat_impl(self, messages: List[Dict], model: Optional[str], max_tokens: int) -> Generator[str, None, None]:
         if not self.client:

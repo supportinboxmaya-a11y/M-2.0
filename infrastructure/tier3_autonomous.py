@@ -96,80 +96,24 @@ class Tier3Core:
         context = context or {}
         context_str = json.dumps(context, indent=2) if context else "{}"
         
-        # Build the prompt using string concatenation to avoid formatting issues
-        # Build the prompt using string concatenation to avoid formatting issues
-        # Build the prompt using string concatenation to avoid formatting issues
+        # Simplified prompt for faster LLM response
         prompt = (
-            "You are Maya-Core, the autonomous planning agent. Decompose this goal into a structured execution plan.\n\n"
-            "GOAL: {goal}\n\n"
-            "CONTEXT:\n{context_str}\n\n"
-            "AVAILABLE AGENTS:\n"
-            "- core: Planning, orchestration, decision making\n"
-            "- learner: Research, web search, knowledge synthesis\n"
-            "- executor: Code execution, sandbox verification, shell commands\n"
-            "- registry: Tool management, skill registration, capability lookup\n\n"
-            "AVAILABLE TOOLS (key ones):\n"
-            "- web_search, web_scrape: Research\n"
-            "- run_code, run_shell: Execution\n"
-            "- sandbox_execute: Verified execution\n"
-            "- web_build, web_deploy: Web development\n"
-            "- git_*: Version control\n"
-            "- file operations: read_file, write_file, list_files\n"
-            "- generate_image, vision_analyze: Media\n\n"
-            "OUTPUT FORMAT (JSON):\n"
-            "{{\n"
-            "  \"tasks\": [\n"
-            "    {{\n"
-            "      \"id\": \"task_1\",\n"
-            "      \"name\": \"Research latest React patterns\",\n"
-            "      \"description\": \"Search and scrape for modern React 18 patterns\",\n"
-            "      \"agent\": \"learner\",\n"
-            "      \"tool\": \"web_search\",\n"
-            "      \"args\": {{\"query\": \"React 18 best practices 2024\"}},\n"
-            "      \"depends_on\": [],\n"
-            "      \"depth\": 0\n"
-            "    }},\n"
-            "    {{\n"
-            "      \"id\": \"task_2\",\n"
-            "      \"name\": \"Synthesize findings\",\n"
-            "      \"description\": \"Combine research into architecture document\",\n"
-            "      \"agent\": \"core\",\n"
-            "      \"tool\": \"run_code\",\n"
-            "      \"args\": {{\"code\": \"synthesis_logic\"}},\n"
-            "      \"depends_on\": [\"task_1\"],\n"
-            "      \"depth\": 1\n"
-            "    }},\n"
-            "    {{\n"
-            "      \"id\": \"task_3\",\n"
-            "      \"name\": \"Run shell command\",\n"
-            "      \"description\": \"Execute a shell command\",\n"
-            "      \"agent\": \"executor\",\n"
-            "      \"tool\": \"run_shell\",\n"
-            "      \"args\": {{\"command\": \"echo hello\"}},\n"
-            "      \"depends_on\": [],\n"
-            "      \"depth\": 0\n"
-            "    }}\n"
-            "  ]\n"
-            "}}\n\n"
-            "IMPORTANT: Use \"run_code\" for Python code execution, \"run_shell\" for shell/bash commands.\n"
-            "Return ONLY valid JSON. Max {TIER3_MAX_DEPTH} depth, max 20 tasks."
-        ).format(goal=goal, context_str=context_str, TIER3_MAX_DEPTH=TIER3_MAX_DEPTH)
+            "Goal: {goal}. Return JSON plan with tasks array. Each task: id, agent (executor/learner/core/registry), tool (run_code/run_shell/web_search), args, depends_on. Example: {{\"tasks\":[{\"id\":\"t1\",\"agent\":\"executor\",\"tool\":\"run_shell\",\"args\":{\"command\":\"echo hello\"},\"depends_on\":[]}]}}"
+        ).format(goal=goal)
         
         try:
             messages = [{"role": "user", "content": prompt}]
-            response = await self.llm(messages)
+            response = self.llm(messages)
             # Extract JSON from markdown code blocks if present
             json_str = response.strip()
             if json_str.startswith("```"):
                 # Extract JSON from markdown code block
-                lines = json_str.split("
-")
+                lines = json_str.split("\n")
                 if lines[0].startswith("```"):
                     lines = lines[1:]
                 if lines[-1].startswith("```"):
                     lines = lines[:-1]
-                json_str = "
-".join(lines)
+                json_str = "\n".join(lines)
             plan_data = json.loads(json_str)
             
             for t in plan_data.get("tasks", []):
@@ -226,13 +170,8 @@ class Tier3Learner:
         results["sources"] = scraped
         
         if scraped:
-            prompt = f"""Synthesize research on: {query}
-
-SOURCES:
-{json.dumps(scraped, indent=2)[:4000]}
-
-Provide a concise synthesis with key findings, code patterns, and actionable insights."""
-            synthesis = await self.llm([{"role": "user", "content": prompt}])
+            prompt = f"Summarize: {query}. Sources: {str(scraped)[:1000]}. Key findings:"
+            synthesis = self.llm([{"role": "user", "content": prompt}])
             results["synthesis"] = synthesis
             
             if self.memory:
@@ -252,13 +191,8 @@ Provide a concise synthesis with key findings, code patterns, and actionable ins
             })
             
             if i < iterations - 1:
-                followup_prompt = f"""Based on this research, what specific follow-up question would deepen understanding?
-
-TOPIC: {topic}
-CURRENT FINDINGS: {result['synthesis'][:1000]}
-
-Return ONE specific follow-up question."""
-            current_query = await self.llm([{"role": "user", "content": followup_prompt}])
+                followup_prompt = f"Topic: {topic}. Findings: {result['synthesis'][:500]}. Next question? One line."
+                current_query = self.llm([{"role": "user", "content": followup_prompt}])
             
         return knowledge
 
@@ -294,6 +228,16 @@ class Tier3Executor:
     
     def _direct_execute(self, code: str) -> Dict:
         try:
+            # Strip markdown code fences if present
+            code = code.strip()
+            if code.startswith("```"):
+                lines = code.split("\n")
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines and lines[-1].startswith("```"):
+                    lines = lines[:-1]
+                code = "\n".join(lines)
+            
             if code.strip().startswith("#!"):
                 result = self.tools.run("run_shell", {"command": code})
             else:
@@ -321,19 +265,20 @@ class Tier3Executor:
                 if "error" not in result or not result["error"]:
                     return {"success": True, "code": code, "output": result.get("output")}
             
-            fix_prompt = f"""Fix this code that failed:
-
-CODE:
-{code}
-
-ERROR: {result.get('error', 'Unknown')}
-OUTPUT: {result.get('output', '')[:1000]}
-
-Return ONLY the fixed code."""
+            fix_prompt = f"Fix code. Error: {result.get('error', 'Unknown')}. Code: {code[:500]}. Return fixed code only."
             code = self.llm(
                 [{"role": "user", "content": fix_prompt}],
-                max_tokens=2000
+                max_tokens=1000
             )
+            # Strip markdown code fences from LLM response
+            code = code.strip()
+            if code.startswith("```"):
+                lines = code.split("\n")
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines and lines[-1].startswith("```"):
+                    lines = lines[:-1]
+                code = "\n".join(lines)
             
         return {"success": False, "error": "Max retries exceeded", "final_code": code}
 
@@ -482,7 +427,7 @@ The function should:
 
 Return ONLY the Python function code."""
         
-        code = await self.llm([{"role": "user", "content": prompt}])
+        code = self.llm([{"role": "user", "content": prompt}])
         
         test_result = await self._test_skill(code, examples[0] if examples else {})
         
@@ -719,15 +664,8 @@ class Tier3Orchestrator:
             return {"success": False, "error": f"Unknown registry tool: {tool}"}
     
     async def _execute_core_task(self, task: Task, context: Dict) -> Dict:
-        prompt = f"""Make a decision for this task:
-
-TASK: {task.name}
-DESCRIPTION: {task.description}
-CONTEXT: {json.dumps(context, indent=2)[:2000]}
-
-Provide a clear decision or output as JSON."""
-        
-        decision = await self.llm([{"role": "user", "content": prompt}])
+        prompt = f"Task: {task.name}. Context: {str(context)[:500]}. Decision:"
+        decision = self.llm([{"role": "user", "content": prompt}])
         return {"success": True, "output": decision}
 
 

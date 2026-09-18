@@ -273,7 +273,7 @@ class LLMRouter:
     def _select_best_provider(self, task_type: str = "general") -> Optional[str]:
         """Selects optimal healthy provider based on task routing mapping preferences."""
         preferences = {
-            "planning": ["local", "local_fast", "groq", "cerebras"],
+            "planning": ["local_fast", "local", "groq", "cerebras"],
             "reasoning": ["local", "local_fast", "groq", "cerebras"],
             "tool_use": ["local", "local_fast", "groq"],
             "coding": ["local", "groq", "cerebras", "openrouter"],

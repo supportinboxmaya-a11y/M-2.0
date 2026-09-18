@@ -59,8 +59,12 @@ async def lifespan(app: FastAPI):
             print("Tier 3 Autonomous System disabled")
     except Exception as e:
         print("Tier 3 init failed: " + str(e))
-    yield
-    print("Maya shutting down...")
+    print("DEBUG: Before yield")
+    try:
+        yield
+    finally:
+        print("DEBUG: After yield")
+        print("Maya shutting down...")
 
 app = FastAPI(title="Maya 2.0 ULTRA API", version="2.0.0", lifespan=lifespan)
 
@@ -72,6 +76,33 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Static Files (Frontend) ────────────────────
+import pathlib
+# Frontend is at /opt/maya/frontend/dist, not relative to api.py
+_frontend_dist = pathlib.Path("/opt/maya/frontend/dist")
+if _frontend_dist.is_dir():
+    # Mount directories that exist
+    for _subdir in ("css", "js", "assets"):
+        _p = _frontend_dist / _subdir
+        if _p.is_dir():
+            app.mount(f"/{_subdir}", StaticFiles(directory=str(_p)), name=_subdir)
+    # Also serve manifest.json and sw.js
+    from fastapi.responses import FileResponse
+    
+    @app.get("/manifest.json")
+    async def manifest():
+        _manifest = _frontend_dist / "manifest.json"
+        if _manifest.is_file():
+            return FileResponse(str(_manifest))
+        return {"detail": "Not found"}
+    
+    @app.get("/sw.js")
+    async def sw():
+        _sw = _frontend_dist / "sw.js"
+        if _sw.is_file():
+            return FileResponse(str(_sw))
+        return {"detail": "Not found"}
 
 # ── Auth ───────────────────────────────────────
 SECRET_KEY = os.getenv("SECRET_KEY", "maya-secret-key-2024")
@@ -1336,7 +1367,7 @@ async def websocket_stream_endpoint(ws: WebSocket, task_id: str):
 async def root():
     # Serve the frontend SPA when the frontend directory exists
     import pathlib as _root_path
-    _root_idx = _root_path.Path(__file__).parent / "frontend" / "index.html"
+    _root_idx = _root_path.Path("/opt/maya/frontend/dist/index.html")
     if _root_idx.is_file():
         from fastapi.responses import FileResponse
         return FileResponse(str(_root_idx))
