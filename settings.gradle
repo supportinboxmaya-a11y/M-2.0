@@ -1,0 +1,2 @@
+rootProject.name = 'Maya'
+include ':app'

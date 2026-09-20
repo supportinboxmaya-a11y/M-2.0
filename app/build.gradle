@@ -22,7 +22,7 @@ plugins {
 
 def twaManifest = [
     applicationId: 'com.maya.assistant',
-    hostName: 'localhost',
+    hostName: '130.210.46.182:8080',
     launchUrl: '/voice/',
     name: 'Maya',
     launcherName: 'Maya',
@@ -80,9 +80,18 @@ android {
         resValue "bool", "enableSiteSettingsShortcut", twaManifest.enableSiteSettingsShortcut
         resValue "string", "orientation", twaManifest.orientation
     }
+    signingConfigs {
+        release {
+            storeFile file('../maya-release.keystore')
+            storePassword 'maya123'
+            keyAlias 'maya-key'
+            keyPassword 'maya123'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
