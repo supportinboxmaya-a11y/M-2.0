@@ -96,9 +96,13 @@ class Tier3Core:
         context = context or {}
         context_str = json.dumps(context, indent=2) if context else "{}"
         
+        # Pre-escape JSON example for str.format()
+        example_json = '{"tasks":[{"id":"t1","agent":"executor","tool":"run_shell","args":{"command":"echo hello"},"depends_on":[]}]}'
+        escaped_example = example_json.replace("{", "{{").replace("}", "}}")
+        
         # Simplified prompt for faster LLM response
         prompt = (
-            "Goal: {goal}. Return JSON plan with tasks array. Each task: id, agent (executor/learner/core/registry), tool (run_code/run_shell/web_search), args, depends_on. Example: {{\"tasks\":[{\"id\":\"t1\",\"agent\":\"executor\",\"tool\":\"run_shell\",\"args\":{\"command\":\"echo hello\"},\"depends_on\":[]}]}}"
+            "Goal: {goal}. Return JSON plan with tasks array. Each task: id, agent (executor/learner/core/registry), tool (run_code/run_shell/web_search), args, depends_on. Example: " + escaped_example
         ).format(goal=goal)
         
         try:

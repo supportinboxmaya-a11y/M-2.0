@@ -263,7 +263,7 @@ class ProactiveTaskScheduler:
         self.jobs: Dict[str, ProactiveJob] = {}
         self._running = False
         self._task = None
-        self._db_path = "/home/ubuntu/M-2.0/storage/proactive_jobs.db"
+        self._db_path = "/opt/maya/storage/proactive_jobs.db"
         self._init_db()
         self._load_jobs()
     

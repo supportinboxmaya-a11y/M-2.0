@@ -9,8 +9,10 @@ import asyncio
 import json
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, WebSocket, WebSocketDisconnect, Request, Body
 from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
 import logging
+import jwt
 
 from infrastructure.stt_service import get_stt_service, TranscriptionResult
 from infrastructure.tts_service import get_tts_service, TTSResult, reset_tts_service
@@ -20,12 +22,22 @@ logger = logging.getLogger("voice_routes")
 
 router = APIRouter(prefix="/api/v1/voice", tags=["voice"])
 
+# Auth dependency - uses the same SECRET_KEY as api.py
+from config.settings import SECRET_KEY, JWT_ALGORITHM
+security = HTTPBearer(auto_error=False)
 
-# Import auth at module level to avoid circular import issues
-# from api import get_current_user  # Lazy import to avoid circular import
-from fastapi import Depends
-get_current_user = lambda: __import("api").get_current_user
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    """Returns {'email', 'uid', 'role'} - same as api.py"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        return {"email": payload.get("sub"), "uid": payload.get("uid", ""), "role": payload.get("role", "admin")}
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
+
+# STT ENDPOINTS
 
 @router.post("/transcribe")
 async def voice_transcribe(
@@ -33,7 +45,7 @@ async def voice_transcribe(
     file: Optional[UploadFile] = File(None),
     audio_base64: Optional[str] = Form(None),
     language: Optional[str] = Form(None),
-    user: dict = Depends(get_current_user),  # Use proper auth dependency
+    user: dict = Depends(get_current_user),
 ):
     """
     Transcribe audio using local faster-whisper.
@@ -123,9 +135,7 @@ async def voice_transcribe_ws(
 
     if token:
         try:
-            import jwt
-            from api import SECRET_KEY
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            jwt.decode(token, SECRET_KEY, algorithms=[JWT_ALGORITHM])
         except Exception:
             await websocket.send_json({"type": "error", "message": "Invalid token"})
             await websocket.close()
@@ -174,7 +184,6 @@ async def voice_transcribe_ws(
                             pass
 
             elif "text" in message:
-                import json
                 try:
                     data = json.loads(message["text"])
                     if data.get("type") == "end":
@@ -251,9 +260,7 @@ async def voice_set_model(
     return {"status": "ok", "model": whisper_model}
 
 
-# ═══════════════════════════════════════════════════════════
 # TTS ENDPOINTS
-# ═══════════════════════════════════════════════════════════
 
 @router.post("/synthesize")
 async def voice_synthesize(
@@ -303,7 +310,7 @@ async def voice_synthesize(
             content=audio_bytes,
             media_type="audio/wav",
             headers={
-                "Content-Disposition": f'inline; filename="speech.wav"',
+                "Content-Disposition": 'inline; filename="speech.wav"',
                 "X-Sample-Rate": str(tts._voice.config.sample_rate if tts._voice else 22050),
             },
         )
@@ -420,9 +427,7 @@ async def voice_set_voice(
     return {"status": "ok", "voice": voice}
 
 
-# ═══════════════════════════════════════════════════════════
 # VOICE GATEWAY WEBSOCKET (Phone Client <-> Maya)
-# ═══════════════════════════════════════════════════════════
 
 @router.websocket("/gateway")
 async def voice_gateway_ws(

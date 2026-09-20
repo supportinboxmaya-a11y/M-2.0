@@ -3,9 +3,9 @@ from .base import BaseAgent
 
 _SPEC = [
     # name, role, skills(routing keywords), permissions(tool categories)
-    ("planner", "Planner", ("plan", "goal", "decompose", "strategy"), ()),
+    ("planner", "Planner", ("plan", "goal", "decompose", "strategy"), ("meta",)),
     ("research", "Research", ("search", "research", "find", "news", "lookup"), ("web", "memory")),
-    ("coding", "Coding", ("code", "script", "function", "implement", "python", "api"), ("code", "file")),
+    ("coding", "Coding", ("code", "script", "function", "implement", "python", "api"), ("code", "file", "meta")),
     ("reviewer", "Reviewer", ("review", "critique", "quality", "refactor"), ("file",)),
     ("testing", "Testing", ("test", "verify", "validate", "qa"), ("code", "shell")),
     ("security", "Security", ("security", "vulnerability", "permission", "audit"), ("file",)),
@@ -13,16 +13,12 @@ _SPEC = [
     ("documentation", "Documentation", ("document", "readme", "docs", "explain"), ("file",)),
     ("database", "Database", ("database", "sql", "schema", "query", "migration"), ("code", "file")),
     ("frontend", "Frontend", ("frontend", "ui", "react", "css", "component"), ("code", "file")),
-    ("backend", "Backend", ("backend", "endpoint", "fastapi", "route", "service"), ("code", "file", "shell")),
-    # Phase 20 — Business agents (pure LLM, no tool permissions)
-    ("pricing", "Pricing", ("pricing", "price", "cost", "subscription",
-     "tier", "licensing", "revenue"), ()),
-    ("finance", "Finance", ("finance", "financial", "budget", "forecast",
-     "cashflow", "profit", "expense"), ()),
-    ("marketing", "Marketing", ("marketing", "campaign", "brand", "content",
-     "seo", "social", "ad", "growth"), ()),
-    ("strategy", "Strategy", ("strategy", "strategic", "roadmap",
-     "competitive", "swot", "positioning"), ()),
+    ("backend", "Backend", ("backend", "endpoint", "fastapi", "route", "service"), ("code", "file", "shell", "meta")),
+    # Phase 20 — Business agents (now with tool access for research/data)
+    ("pricing", "Pricing", ("pricing", "price", "cost", "subscription", "tier", "licensing", "revenue"), ("web", "file")),
+    ("finance", "Finance", ("finance", "financial", "budget", "forecast", "cashflow", "profit", "expense"), ("web", "file", "code")),
+    ("marketing", "Marketing", ("marketing", "campaign", "brand", "content", "seo", "social", "ad", "growth"), ("web", "file")),
+    ("strategy", "Strategy", ("strategy", "strategic", "roadmap", "competitive", "swot", "positioning"), ("web", "file", "code")),
 ]
 
 

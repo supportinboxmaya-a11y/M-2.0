@@ -152,3 +152,10 @@ def validate():
 
 
 validate()
+
+# Auth / JWT (read from .env)
+SECRET_KEY = os.environ.get("SECRET_KEY", "maya-secret-key-change-in-production")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM", "HS256")
+JWT_EXPIRATION_DAYS = int(os.environ.get("JWT_EXPIRATION_DAYS", "7"))
+
+# Workspace (already defined above as WORKSPACE_DIR)

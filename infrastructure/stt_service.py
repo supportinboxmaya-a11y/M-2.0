@@ -46,7 +46,7 @@ class STTService:
         self.model_size = model_size
         self.device = device
         self.compute_type = compute_type
-        self.download_root = download_root or os.getenv("WHISPER_MODEL_DIR", "/home/ubuntu/M-2.0/models/whisper")
+        self.download_root = download_root or os.getenv("WHISPER_MODEL_DIR", "/opt/maya/models/whisper")
         self.language = language
         self._model = None
         self._model_loaded = False

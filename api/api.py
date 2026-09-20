@@ -805,8 +805,10 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
 # VOICE ROUTES (Local faster-whisper STT)
 # ═══════════════════════════════════════════════
 from infrastructure.voice_routes import router as voice_router
+from agents.learner.routes import router as learner_router
 
 app.include_router(voice_router)
+app.include_router(learner_router)
 
 # ═══════════════════════════════════════════════
 # MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
@@ -5513,6 +5515,52 @@ import base64
 import time
 
 router = APIRouter(prefix="/api/v1", tags=["multimodal"])
+@router.post("/camera/process-frame")
+async def camera_process_frame(
+    image: str = Form(...),  # base64 encoded image
+    prompt: str = Form("Analyze this image and describe what you see in detail."),
+    user=Depends(get_current_user)
+):
+    """Process an incoming image frame with AI vision analysis.
+    Accepts base64 encoded image from mobile/web clients.
+    Returns AI vision analysis of the image."""
+    from tools.media.camera_tool import CameraTool
+    
+    camera = CameraTool()
+    result = camera.process_frame(image_base64=image, prompt=prompt)
+    
+    if result.get("success"):
+        return {"success": True, "analysis": result["analysis"]}
+    else:
+        raise HTTPException(status_code=400, detail=result.get("error", "Processing failed"))
+
+@router.post("/camera/process-frame/multipart")
+async def camera_process_frame_multipart(
+    file: UploadFile = File(...),
+    prompt: str = Form("Analyze this image and describe what you see in detail."),
+    user=Depends(get_current_user)
+):
+    """Process an uploaded image file with AI vision analysis.
+    Accepts multipart/form-data with image file.
+    Returns AI vision analysis of the image."""
+    from tools.media.camera_tool import CameraTool
+    
+    camera = CameraTool()
+    
+    image_data = await file.read()
+    import base64
+    image_base64 = base64.b64encode(image_data).decode()
+    
+    camera = CameraTool()
+    result = camera.process_frame(image_base64=image_base64, prompt=prompt)
+    
+    if result.get("success"):
+        return {"success": True, "analysis": result["analysis"]}
+    else:
+        raise HTTPException(status_code=400, detail=result.get("error", "Processing failed"))
+
+
+app.include_router(router)
 
 class ImageGenRequest(BaseModel):
     prompt: str
@@ -5599,35 +5647,6 @@ async def get_file(filename: str, user=Depends(get_current_user)):
     if not file_path.exists():
         raise HTTPException(404, "File not found")
     return FileResponse(str(file_path), filename=filename)
-
-@router.post("/camera/capture")
-async def camera_capture(
-    image: str = Form(...),  # base64 encoded image
-    user=Depends(get_current_user)
-):
-    """Capture photo from camera (base64 encoded)."""
-    import base64
-    from pathlib import Path
-    from config.settings import WORKSPACE_DIR
-    
-    try:
-        # Remove data URL prefix if present
-        if "," in image:
-            image = image.split(",")[1]
-        image_bytes = base64.b64decode(image)
-        
-        captures_dir = Path(WORKSPACE_DIR) / "captures"
-        captures_dir.mkdir(parents=True, exist_ok=True)
-        
-        filename = f"capture_{int(time.time() * 1000)}.jpg"
-        file_path = Path(WORKSPACE_DIR) / "captures" / filename
-        
-        async with aiofiles.open(captures_dir / filename, "wb") as f:
-            await f.write(image_bytes)
-        
-        return {"filename": filename, "path": str(file_path)}
-    except Exception as e:
-        raise HTTPException(400, f"Invalid image data: {e}")
 
 @router.post("/images/generate")
 async def generate_image(

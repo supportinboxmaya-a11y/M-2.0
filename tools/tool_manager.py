@@ -17,6 +17,7 @@ from .files.csv_tool import CsvTool
 from .files.json_tool import JsonTool
 from .files.excel_tool import ExcelTool
 from .data.database_tool import DatabaseTool
+from .data.database_extended import DatabaseExtendedTool
 from .code.code_runner import CodeRunner
 from .code.calculator_tool import CalculatorTool
 from .code.git_tool import GitTool
@@ -24,13 +25,20 @@ from .code.web_builder_tool import WebBuilderTool
 from .system.shell import ShellTool
 from .system.terminal import TerminalTool
 from .system.process_manager import ProcessManager
+from .system.system_manager import SystemManagerTool
 from .media.media_tool import MediaTool
 from .media.image_gen_tool import ImageGenTool
 from .media.vision_tool import VisionTool
 from .media.tts_tool import TTSTool
+from .media.stt_tool import STTTool
+from .media.audio_tool import AudioTool
+from .media.camera_tool import CameraTool
+from .media.voice_stream import VoiceStreamTool
 from .communication.email_tool import EmailTool
 from .communication.webhook_tool import WebhookTool
 from .infrastructure.api_key_provisioner import APIKeyProvisioner
+from .security.auth_vault_tool import AuthVaultTool
+from .deploy.build_deploy_tool import BuildDeployTool
 
 class ToolManager:
     def __init__(self):
@@ -56,17 +64,25 @@ class ToolManager:
         json_tool = JsonTool()
         excel_tool = ExcelTool()
         db_tool = DatabaseTool()
+        db_ext = DatabaseExtendedTool()
         code = CodeRunner()
         calc = CalculatorTool()
         shell = ShellTool()
         terminal = TerminalTool()
         pm = ProcessManager()
+        sys_mgr = SystemManagerTool()
         media = MediaTool()
         image_gen = ImageGenTool()
         vision = VisionTool()
         tts = TTSTool()
+        stt = STTTool()
+        audio = AudioTool()
+        camera = CameraTool()
+        voice_stream = VoiceStreamTool()
         email_tool = EmailTool()
         webhook_tool = WebhookTool()
+        auth_vault = AuthVaultTool()
+        build_deploy = BuildDeployTool()
 
         self.registry.register("web_search", search.search, "Search the web", category="web")
         self.registry.register("web_scrape", scraper.scrape, "Scrape a web page", category="web")
@@ -112,16 +128,39 @@ class ToolManager:
         self.registry.register("excel_write", excel_tool.write, "Write rows to an Excel (.xlsx) file", category="file")
         self.registry.register("database_query", db_tool.run_query, "Run a SQL query against the agent's own database", category="developer")
         self.registry.register("database_list_tables", db_tool.list_tables, "List tables in the agent's own database", category="developer")
+        self.registry.register("db_execute_sql", db_ext.db_execute_sql, "Execute any SQL statement (INSERT, UPDATE, DELETE, CREATE, etc.)", category="developer")
+        self.registry.register("db_fetch_all", db_ext.db_fetch_all, "Fetch all rows from a SELECT query", category="developer")
+        self.registry.register("db_fetch_one", db_ext.db_fetch_one, "Fetch a single row from a SELECT query", category="developer")
+        self.registry.register("db_backup", db_ext.db_backup, "Create a backup of the database", category="developer")
+        self.registry.register("db_schema_info", db_ext.db_schema_info, "Get schema information for tables", category="developer")
+        self.registry.register("wal_mode_checkpoint", db_ext.wal_mode_checkpoint, "Perform WAL checkpoint for better concurrency", category="developer")
+        self.registry.register("cache_purge", db_ext.cache_purge, "Purge database cache and optimize", category="developer")
         self.registry.register("run_code", code.run, "Execute Python code", category="developer")
         self.registry.register("calculate", calc.run, "Calculate math", category="developer")
         self.registry.register("run_shell", shell.run, "Run shell command", category="system")
         self.registry.register("run_terminal", terminal.execute, "Execute terminal", category="system")
         self.registry.register("list_processes", pm.list_processes, "List processes", category="system")
+        self.registry.register("check_service_status", sys_mgr.check_service_status, "Check systemd service status", category="system")
+        self.registry.register("restart_service", sys_mgr.restart_service, "Restart a systemd service (requires sudo)", category="system")
+        self.registry.register("system_stats", sys_mgr.system_stats, "Get comprehensive system statistics (CPU, memory, disk, network)", category="system")
+        self.registry.register("manage_ports", sys_mgr.manage_ports, "Manage firewall ports (list, open, close)", category="system")
+        self.registry.register("kill_process", sys_mgr.kill_process, "Kill a process by PID", category="system")
+        self.registry.register("check_port", sys_mgr.check_port, "Check if a port is listening", category="system")
         self.registry.register("image_tool", media.run, "Image operations", category="media")
         self.registry.register("generate_image", image_gen.run, "Generate AI image (saved to workspace)", category="media")
         self.registry.register("vision_analyze", vision.run, "Analyze an image with a multimodal LLM (base64/data URL/workspace path)", category="media")
         self.registry.register("ocr_image", lambda image: vision.run(action="ocr", image=image), "Extract text from an image (OCR)", category="media")
         self.registry.register("text_to_speech", tts.run, "Convert text to spoken audio (saved to workspace/audio)", category="media")
+        self.registry.register("speech_to_text", stt.run, "Convert speech to text using Whisper (local or OpenAI fallback)", category="media")
+        self.registry.register("record_audio", audio.record, "Record audio from microphone", category="media")
+        self.registry.register("play_audio", audio.play, "Play audio from base64", category="media")
+        self.registry.register("save_audio", audio.save, "Save base64 audio to file", category="media")
+        self.registry.register("camera_capture", camera.capture, "Capture image from camera", category="media")
+        self.registry.register("camera_stream", camera.stream, "Start camera stream", category="media")
+        self.registry.register("camera_frame", camera.frame, "Capture frame from camera stream", category="media")
+        self.registry.register("voice_stream", voice_stream.record_audio, "Real-time voice streaming", category="media")
+        self.registry.register("stt_stream", voice_stream.transcribe_stream, "Real-time speech-to-text streaming", category="media")
+        self.registry.register("tts_stream", voice_stream.synthesize_speech, "Streaming text-to-speech", category="media")
         self.registry.register("email", email_tool.run,
             "Send email via SMTP. Args: action=send, to, subject, body. "
             "Use action=test to check configuration. "
@@ -134,6 +173,55 @@ class ToolManager:
             "Set WEBHOOK_SLACK_URL, WEBHOOK_DISCORD_URL, or "
             "WEBHOOK_GENERIC_URL in .env.",
             category="communication")
+
+        # ── Auth & Vault ───────────────────────────────────────────────
+        self.registry.register("generate_jwt", auth_vault.generate_jwt,
+            "Generate a JWT token. Args: payload (dict), expires_days (int, optional).",
+            category="security")
+        self.registry.register("verify_jwt", auth_vault.verify_jwt,
+            "Verify a JWT token. Args: token (str).",
+            category="security")
+        self.registry.register("hash_password", auth_vault.hash_password,
+            "Hash a password using PBKDF2. Args: password (str).",
+            category="security")
+        self.registry.register("verify_password", auth_vault.verify_password,
+            "Verify a password against hash. Args: password (str), hash_hex (str), salt_hex (str).",
+            category="security")
+        self.registry.register("role_based_access", auth_vault.role_based_access,
+            "Check if user role has required access. Args: user_role (str), required_role (str).",
+            category="security")
+        self.registry.register("api_key_vault", auth_vault.api_key_vault,
+            "Manage API keys in local vault. Args: action=get|set|delete|list, key_name (str), key_value (str).",
+            category="security")
+        self.registry.register("rate_limit_check", auth_vault.rate_limit_check,
+            "Check rate limit for an identifier. Args: identifier (str), max_requests (int), window_seconds (int).",
+            category="security")
+        self.registry.register("session_revoke", auth_vault.session_revoke,
+            "Revoke a session. Args: session_id (str).",
+            category="security")
+
+        # ── Build & Deploy ─────────────────────────────────────────────
+        self.registry.register("apk_build_status", build_deploy.apk_build_status,
+            "Check APK build status. Args: project_path (str, optional).",
+            category="deploy")
+        self.registry.register("apk_serve", build_deploy.apk_serve,
+            "Serve APK file via HTTP for download. Args: port (int), apk_path (str, optional).",
+            category="deploy")
+        self.registry.register("code_lint", build_deploy.code_lint,
+            "Lint Python code using ruff/flake8. Args: path (str, optional), fix (bool).",
+            category="deploy")
+        self.registry.register("log_tail", build_deploy.log_tail,
+            "Tail log files. Args: log_path (str, optional), lines (int), follow (bool).",
+            category="deploy")
+        self.registry.register("config_update", build_deploy.config_update,
+            "Update configuration in .env or config file. Args: key (str), value (str), config_file (str, optional).",
+            category="deploy")
+        self.registry.register("health_check_all", build_deploy.health_check_all,
+            "Comprehensive health check of all services.",
+            category="deploy")
+        self.registry.register("agent_router", build_deploy.agent_router,
+            "Route task to best agent. Args: task (str), preferred_agent (str, optional).",
+            category="deploy")
 
         # ── API Key Provisioner ──────────────────────────────────────
         provisioner = APIKeyProvisioner()
