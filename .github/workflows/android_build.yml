@@ -50,7 +50,6 @@ jobs:
           build-tools-version: '35.0.0'
           ndk-version: r26c
           cmdline-tools-version: 'latest'
-          cache: true
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
