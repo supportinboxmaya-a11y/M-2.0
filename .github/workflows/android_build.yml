@@ -19,10 +19,6 @@ permissions:
   contents: write
   packages: write
 
-env:
-  ANDROID_HOME: /opt/android-sdk
-  ANDROID_SDK_ROOT: /opt/android-sdk
-
 jobs:
   build:
     name: Build Release APK
@@ -44,7 +40,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: actions/setup-android@v3
         with:
           api-level: 34
           build-tools-version: '35.0.0'
