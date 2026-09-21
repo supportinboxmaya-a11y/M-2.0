@@ -50,6 +50,7 @@ jobs:
           build-tools-version: '35.0.0'
           ndk-version: r26c
           cmdline-tools-version: 'latest'
+          cache: true
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -60,10 +61,10 @@ jobs:
       - name: Create keystore from secrets
         if: github.event_name != 'pull_request'
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore/maya-release.keystore
-          echo "storepass=${{ secrets.KEYSTORE_PASSWORD }}" > local.properties
-          echo "keypass=${{ secrets.KEY_PASSWORD }}" >> local.properties
-          echo "keyalias=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > MayaApp/app/keystore/maya-release.keystore
+          echo "storepass=${{ secrets.KEYSTORE_PASSWORD }}" > MayaApp/local.properties
+          echo "keypass=${{ secrets.KEY_PASSWORD }}" >> MayaApp/local.properties
+          echo "keyalias=${{ secrets.KEY_ALIAS }}" >> MayaApp/local.properties
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -93,7 +94,7 @@ jobs:
           if [ -f "$APK_PATH" ]; then
             $ANDROID_HOME/build-tools/35.0.0/apksigner verify --print-certs "$APK_PATH" || \
             $ANDROID_HOME/build-tools/35.0.0/apksigner sign \
-              --ks app/keystore/maya-release.keystore \
+              --ks MayaApp/app/keystore/maya-release.keystore \
               --ks-pass env:KEYSTORE_PASSWORD \
               --key-pass env:KEY_PASSWORD \
               --ks-key-alias ${{ secrets.KEY_ALIAS }} \
@@ -124,13 +125,13 @@ jobs:
       - name: Commit and Push APK
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
           
           APK_PATH="MayaApp/app/build/outputs/apk/release/app-release.apk"
           if [ -f "$APK_PATH" ]; then
             git add "$APK_PATH"
-            git commit -m "chore: update release APK [skip ci]" || echo "No changes to commit"
+            git commit -m 'chore: update release APK [skip ci]' || echo 'No changes to commit'
             git push origin HEAD:main
           fi
         env:
@@ -149,7 +150,7 @@ jobs:
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           
           if [ "$STATUS" = "success" ]; then
-            echo "✅ Build succeeded: $RUN_URL"
+            echo "Build succeeded: $RUN_URL"
           else
-            echo "❌ Build failed: $RUN_URL"
+            echo "Build failed: $RUN_URL"
           fi
