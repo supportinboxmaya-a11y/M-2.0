@@ -7,8 +7,18 @@ workflows:
       java: 17
     scripts:
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter pub get
+          else
+            cd $(find . -name "pubspec.yaml" -exec dirname {} \;)
+            flutter pub get
+          fi
       - name: Build Android Release APK
-        script: flutter build apk --release
+        script: |
+          if [ ! -f "pubspec.yaml" ]; then
+            cd $(find . -name "pubspec.yaml" -exec dirname {} \;)
+          fi
+          flutter build apk --release
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
+      - "**/build/app/outputs/flutter-apk/app-release.apk"
