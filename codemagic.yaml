@@ -1,87 +1,20 @@
 workflows:
   android-release:
-    name: Maya Pro Native Release APK
+    name: Maya Pro Native Release
     max_build_duration: 60
+    instance_type: linux_x64
     environment:
       flutter: stable
       java: 17
-      groups:
-        - keystore_credentials
     triggering:
       events:
         - push
       branch_patterns:
-        - pattern: main
-          include: true
-          pattern_type: regex
+        - pattern: 'main'
     scripts:
-      - name: Setup environment
-        script: |
-          echo "Setting up build environment..."
-          echo "Flutter version: $(flutter --version)"
-          echo "Java version: $(java -version)"
-      - name: Install dependencies
-        script: |
-          cd MayaApp
-          flutter clean
-          flutter pub get
-      - name: Build release APK
-        script: |
-          cd MayaApp
-          flutter build apk --release --no-tree-shake-icons
-      - name: Verify APK
-        script: |
-          APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
-          if [ -f "$APK_PATH" ]; then
-            SIZE_MB=$(du -h "$APK_PATH" | cut -f1)
-            echo "✅ APK built successfully!"
-            echo "Size: $SIZE_MB"
-            echo "Path: $APK_PATH"
-          else
-            echo "❌ APK not found!"
-            find . -name "*.apk" -type f
-            exit 1
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Build Android APK
+        script: flutter build apk --release
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
-    publishing:
-      email:
-        recipients:
-          - build@codemagic.io
-        notify:
-          success: true
-          failure: true
-
-  android-debug:
-    name: Maya Pro Debug APK
-    max_build_duration: 30
-    environment:
-      flutter: stable
-      java: 17
-    triggering:
-      events:
-        - pull_request
-      branch_patterns:
-        - pattern: '*'
-          include: true
-          pattern_type: regex
-    scripts:
-      - name: Install dependencies
-        script: |
-          cd MayaApp
-          flutter clean
-          flutter pub get
-      - name: Build debug APK
-        script: |
-          cd MayaApp
-          flutter build apk --debug --no-tree-shake-icons
-      - name: Verify APK
-        script: |
-          APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
-          if [ -f "$APK_PATH" ]; then
-            SIZE_MB=$(du -h "$APK_PATH" | cut -f1)
-            echo "✅ Debug APK built: $SIZE_MB"
-          else
-            echo "❌ Debug APK not found!"
-            exit 1
-    artifacts:
-      - build/app/outputs/flutter-apk/app-debug.apk
+      - build/app/outputs/flutter-apk/*.apk
