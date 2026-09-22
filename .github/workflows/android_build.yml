@@ -98,6 +98,17 @@ jobs:
             cp app-release-signed.apk app-release.apk
           fi
 
+      - name: Upload APK to transfer.sh
+        if: github.event_name != 'pull_request'
+        run: |
+          APK_PATH="MayaApp/app/build/outputs/flutter-apk/app-release.apk"
+          if [ -f "$APK_PATH" ]; then
+            echo "Uploading APK to transfer.sh..."
+            UPLOAD_URL=$(curl --silent --upload-file "$APK_PATH" "https://transfer.sh/maya_pro_release_$(date +%s).apk" -H "Max-Days: 14" -H "Max-Downloads: 100")
+            echo "DOWNLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
+            echo "DOWNLOAD_URL=$UPLOAD_URL"
+          fi
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -146,6 +157,7 @@ jobs:
           
           if [ "$STATUS" = "success" ]; then
             echo "Build succeeded: $RUN_URL"
+            echo "Download: ${{ env.DOWNLOAD_URL }}"
           else
             echo "Build failed: $RUN_URL"
           fi
