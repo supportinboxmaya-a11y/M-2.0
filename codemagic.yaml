@@ -7,8 +7,15 @@ workflows:
       java: 17
     scripts:
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          TARGET_DIR=$(dirname $(find . -name "pubspec.yaml" -not -path "*/.*" | head -n 1))
+          echo "Navigating to Flutter project root: $TARGET_DIR"
+          cd "$TARGET_DIR"
+          flutter pub get
       - name: Build Android Release APK
-        script: flutter build apk --release
+        script: |
+          TARGET_DIR=$(dirname $(find . -name "pubspec.yaml" -not -path "*/.*" | head -n 1))
+          cd "$TARGET_DIR"
+          flutter build apk --release
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
+      - "**/build/app/outputs/flutter-apk/*.apk"
