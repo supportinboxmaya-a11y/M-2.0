@@ -1,0 +1,102 @@
+name: maya_pro
+description: Maya 2.0 ULTRA - Pro Level AI Assistant with Glassmorphism UI, Voice Control, Camera AI, and System Automation
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  equatable: ^2.0.5
+
+  # UI / Glassmorphism
+  glassmorphism: ^3.0.0
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  rive: ^0.13.2
+  lottie: ^3.1.0
+
+  # Networking
+  dio: ^5.4.3+1
+  web_socket_channel: ^3.0.3
+
+  # Voice
+  record: ^5.0.4
+  just_audio: ^0.9.36
+  just_audio_background: ^0.0.1-beta.9
+  flutter_sound: ^9.2.13
+  speech_to_text: ^6.6.2
+
+  # Camera & Vision
+  camera: ^0.10.5+9
+  image_picker: ^1.0.7
+
+  # System Control
+  permission_handler: ^11.3.1
+  device_info_plus: ^10.1.0
+  battery_plus: ^6.0.1
+  volume_controller: ^2.0.0
+  wifi_scan: ^0.4.0
+  app_settings: ^5.0.1
+  url_launcher: ^6.2.5
+
+  # Storage & Utils
+  shared_preferences: ^2.2.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.3
+  crypto: ^3.0.3
+  uuid: ^4.4.0
+  intl: ^0.19.0
+  logger: ^2.4.0
+
+  # Charts & Visualization
+  fl_chart: ^0.68.0
+  syncfusion_flutter_gauges: ^26.1.35
+
+  # Notifications
+  flutter_local_notifications: ^17.2.2
+
+  # Background
+  workmanager: ^0.5.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  riverpod_generator: ^2.4.0
+  freezed: ^2.5.2
+  build_runner: ^2.4.11
+  json_serializable: ^6.8.0
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.10
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/animations/
+    - assets/fonts/
+  fonts:
+    - family: SpaceGrotesk
+      fonts:
+        - asset: assets/fonts/SpaceGrotesk-Regular.ttf
+        - asset: assets/fonts/SpaceGrotesk-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/SpaceGrotesk-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/SpaceGrotesk-Bold.ttf
+          weight: 700
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+        - asset: assets/fonts/JetBrainsMono-Medium.ttf
+          weight: 500
