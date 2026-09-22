@@ -2,14 +2,17 @@ workflows:
   android-release:
     name: Maya Pro Native Release
     max_build_duration: 60
-    working_directory: maya_flutter
     environment:
       flutter: stable
       java: 17
     scripts:
       - name: Get Flutter dependencies
-        script: flutter pub get
+        script: |
+          cd maya_flutter
+          flutter pub get
       - name: Build Android Release APK
-        script: flutter build apk --release
+        script: |
+          cd maya_flutter
+          flutter build apk --release
     artifacts:
-      - "**/build/app/outputs/flutter-apk/*.apk"
+      - maya_flutter/build/app/outputs/flutter-apk/*.apk
