@@ -33,7 +33,7 @@ dependencies:
   just_audio: ^0.9.36
   just_audio_background: ^0.0.1-beta.9
   flutter_sound: ^9.2.13
-  speech_to_text: ^6.6.2
+  speech_to_text: ^7.5.0
 
   # Camera & Vision
   camera: ^0.10.5+9
