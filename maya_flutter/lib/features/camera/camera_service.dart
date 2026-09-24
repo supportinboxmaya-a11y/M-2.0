@@ -24,7 +24,7 @@ class CameraService {
   final ApiService _apiService;
   final ImagePicker _picker = ImagePicker();
   final TextRecognizer _textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
-  final ObjectDetector _objectDetector = ObjectDetector(options: ObjectDetectorOptions(mode: DetectionMode.single));
+  final ObjectDetector _objectDetector = ObjectDetector(options: ObjectDetectorOptions(mode: DetectionMode.single, classifyObjects: false));
 
   CameraController? _controller;
   List<CameraDescription> _cameras = [];

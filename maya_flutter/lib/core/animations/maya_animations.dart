@@ -265,8 +265,8 @@ class MayaAnimations {
   // Staggered List Animation
   static List<Widget> staggerChildren(
     List<Widget> children, {
-    Duration delay = Duration(milliseconds: 100),
-    Duration duration = Duration(milliseconds: 400),
+    Duration delay = const Duration(milliseconds: 100),
+    Duration duration = const Duration(milliseconds: 400),
     Curve curve = Curves.easeOutCubic,
     Offset beginOffset = const Offset(0, 30),
   }) {
@@ -486,8 +486,8 @@ class _TypewriterTextState extends State<_TypewriterText> {
 // Extension for stagger
 extension StaggerExtension on List<Widget> {
   List<Widget> stagger({
-    Duration delay = Duration(milliseconds: 100),
-    Duration duration = Duration(milliseconds: 400),
+    Duration delay = const Duration(milliseconds: 100),
+    Duration duration = const Duration(milliseconds: 400),
     Curve curve = Curves.easeOutCubic,
     Offset beginOffset = const Offset(0, 30),
   }) {

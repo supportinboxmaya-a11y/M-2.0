@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 
-import 'maya_theme.dart';
-import 'maya_animations.dart';
+import '../theme/maya_theme.dart';
+import '../animations/maya_animations.dart';
 import 'package:flutter/services.dart';
 
 class MayaLogo extends StatefulWidget {
@@ -203,6 +203,63 @@ class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
       size: Size(widget.size * 0.8, widget.size * 0.8),
       painter: _MLetterPainter(),
     );
+  }
+}
+
+class _MayaLogoPainter extends CustomPainter {
+  final double progress;
+  final Color glowColor;
+  final double rotation;
+
+  const _MayaLogoPainter({
+    required this.progress,
+    required this.glowColor,
+    required this.rotation,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // Draw outer glow
+    if (glowColor != Colors.transparent) {
+      final glowPaint = Paint()
+        ..color = glowColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
+
+      canvas.drawCircle(center, radius, glowPaint);
+    }
+
+    // Draw rotating ring
+    final ringPaint = Paint()
+      ..color = MayaTheme.neonCyan
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+    final sweepAngle = progress * 2 * 3.14159;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius * 0.8),
+      rotation * 2 * 3.14159,
+      sweepAngle,
+      false,
+      ringPaint,
+    );
+
+    // Center dot
+    final dotPaint = Paint()..color = MayaTheme.neonEmerald;
+    canvas.drawCircle(center, 4, dotPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate is _MayaLogoPainter &&
+        (oldDelegate.progress != progress ||
+            oldDelegate.glowColor != glowColor ||
+            oldDelegate.rotation != rotation);
   }
 }
 

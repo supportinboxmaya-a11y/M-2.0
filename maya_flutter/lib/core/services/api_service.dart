@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:logger/logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:riverpod/riverpod.dart';
@@ -12,10 +13,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../config/app_config.dart';
-import '../utils/logger.dart';
 
 part 'api_service.freezed.dart';
 part 'api_service.g.dart';
+
+final _logger = Logger();
 
 class RectConverter implements JsonConverter<Rect, Map<String, double>> {
   const RectConverter();
@@ -120,7 +122,7 @@ class ApiService {
         return true;
       }
     } catch (e) {
-      logger.e('Token refresh failed: $e');
+      _logger.e('Token refresh failed: $e');
     }
     return false;
   }
@@ -248,7 +250,7 @@ class ApiService {
               yield ChatStreamChunk(done: true);
             }
           } catch (e) {
-            logger.w('Failed to parse SSE chunk: $e');
+            _logger.w('Failed to parse SSE chunk: $e');
           }
         }
       }
@@ -331,15 +333,15 @@ class ApiService {
             final json = jsonDecode(data.toString());
             _wsController.add(json);
           } catch (e) {
-            logger.w('Failed to parse WS message: $e');
+            _logger.w('Failed to parse WS message: $e');
           }
         },
         onError: (error) {
-          logger.e('WebSocket error: $error');
+          _logger.e('WebSocket error: $error');
           _scheduleReconnect();
         },
         onDone: () {
-          logger.i('WebSocket disconnected');
+          _logger.i('WebSocket disconnected');
           _isConnected = false;
           _scheduleReconnect();
         },
@@ -347,7 +349,7 @@ class ApiService {
 
       _isConnected = true;
     } catch (e) {
-      logger.e('Failed to connect WebSocket: $e');
+      _logger.e('Failed to connect WebSocket: $e');
       _scheduleReconnect();
     }
   }

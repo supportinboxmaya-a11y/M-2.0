@@ -342,7 +342,6 @@ class MayaTheme {
         hintStyle: bodyMedium.copyWith(color: Colors.white30),
         floatingLabelStyle: labelMedium.copyWith(color: neonCyan),
         errorStyle: bodySmall.copyWith(color: const Color(0xFFFF3366)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: slate800.withValues(alpha: 0.95),
@@ -505,7 +504,6 @@ class MayaTheme {
         checkColor: WidgetStateProperty.all(const Color(0xFF0B0F19)),
         side: BorderSide(color: neonCyan.withValues(alpha: 0.4), width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        shapeRadius: 4,
       ),
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith<Color>(
@@ -546,13 +544,6 @@ class MayaTheme {
         actionTextColor: neonEmerald,
         actionOverflowThreshold: 0.5,
       ),
-      dividerTheme: const DividerThemeData(
-        color: Color(0x1A00F2FE),
-        thickness: 1,
-        space: 1,
-        indent: 16,
-        endIndent: 16,
-      ),
       iconTheme: const IconThemeData(
         color: Colors.white,
         size: 24,
@@ -568,17 +559,6 @@ class MayaTheme {
           padding: const EdgeInsets.all(12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-          ),
-          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) {
-              if (states.contains(WidgetState.hovered)) {
-                return neonCyan.withValues(alpha: 0.1);
-              }
-              if (states.contains(WidgetState.pressed)) {
-                return neonCyan.withValues(alpha: 0.2);
-              }
-              return null;
-            },
           ),
         ),
       ),
@@ -639,9 +619,6 @@ class MayaTheme {
         leadingAndTrailingTextStyle: bodySmall,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        selectedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
