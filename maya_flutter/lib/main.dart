@@ -878,7 +878,7 @@ class _CameraShutterButton extends StatelessWidget {
           ),
         ),
       )
-          .animate(onPlay: (c) => c.repeat())
+.animate(onPlay: (c) => c.repeat())
           .scale(duration: 1000.ms, curve: Curves.easeInOut);
     }
   }

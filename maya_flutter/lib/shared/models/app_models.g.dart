@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'api_service.dart';
+part of 'app_models.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -80,16 +80,20 @@ Map<String, dynamic> _$$TranscriptionSegmentImplToJson(
 
 _$TtsResultImpl _$$TtsResultImplFromJson(Map<String, dynamic> json) =>
     _$TtsResultImpl(
-      audioBase64: json['audioBase64'] as String,
-      format: json['format'] as String,
-      provider: json['provider'] as String,
+      success: json['success'] as bool,
+      audioBase64: json['audioBase64'] as String?,
+      format: json['format'] as String?,
+      provider: json['provider'] as String?,
+      error: json['error'] as String?,
     );
 
 Map<String, dynamic> _$$TtsResultImplToJson(_$TtsResultImpl instance) =>
     <String, dynamic>{
+      'success': instance.success,
       'audioBase64': instance.audioBase64,
       'format': instance.format,
       'provider': instance.provider,
+      'error': instance.error,
     };
 
 _$AgentChatResponseImpl _$$AgentChatResponseImplFromJson(
@@ -106,6 +110,22 @@ Map<String, dynamic> _$$AgentChatResponseImplToJson(
       'reply': instance.reply,
       'timestamp': instance.timestamp,
       'taskId': instance.taskId,
+    };
+
+_$ChatStreamChunkImpl _$$ChatStreamChunkImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ChatStreamChunkImpl(
+      delta: json['delta'] as String?,
+      done: json['done'] as bool?,
+      error: json['error'] as String?,
+    );
+
+Map<String, dynamic> _$$ChatStreamChunkImplToJson(
+        _$ChatStreamChunkImpl instance) =>
+    <String, dynamic>{
+      'delta': instance.delta,
+      'done': instance.done,
+      'error': instance.error,
     };
 
 _$AgentRunResponseImpl _$$AgentRunResponseImplFromJson(
@@ -195,12 +215,16 @@ _$SystemStatusImpl _$$SystemStatusImplFromJson(Map<String, dynamic> json) =>
     _$SystemStatusImpl(
       status: json['status'] as String,
       maya: json['maya'] as String,
+      version: json['version'] as String?,
+      uptime: (json['uptime'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$SystemStatusImplToJson(_$SystemStatusImpl instance) =>
     <String, dynamic>{
       'status': instance.status,
       'maya': instance.maya,
+      'version': instance.version,
+      'uptime': instance.uptime,
     };
 
 _$SystemStatsImpl _$$SystemStatsImplFromJson(Map<String, dynamic> json) =>
@@ -290,24 +314,3 @@ Map<String, dynamic> _$$NetworkStatsImplToJson(_$NetworkStatsImpl instance) =>
       'bytesSent': instance.bytesSent,
       'bytesRecv': instance.bytesRecv,
     };
-
-// **************************************************************************
-// RiverpodGenerator
-// **************************************************************************
-
-String _$apiServiceHash() => r'd76dea2a3d4afd840c19952cd59fe889ce36151d';
-
-/// See also [apiService].
-@ProviderFor(apiService)
-final apiServiceProvider = AutoDisposeProvider<ApiService>.internal(
-  apiService,
-  name: r'apiServiceProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$apiServiceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef ApiServiceRef = AutoDisposeProviderRef<ApiService>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

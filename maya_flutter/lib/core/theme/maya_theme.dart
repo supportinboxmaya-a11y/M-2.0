@@ -289,6 +289,7 @@ class MayaTheme {
             },
           ),
         ),
+      ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: neonCyan,

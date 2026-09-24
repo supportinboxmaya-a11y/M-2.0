@@ -2110,6 +2110,7 @@ OcrRegion _$OcrRegionFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$OcrRegion {
   String get text => throw _privateConstructorUsedError;
+  @RectConverter()
   Rect get bounds => throw _privateConstructorUsedError;
   double? get confidence => throw _privateConstructorUsedError;
 
@@ -2124,7 +2125,7 @@ abstract class $OcrRegionCopyWith<$Res> {
   factory $OcrRegionCopyWith(OcrRegion value, $Res Function(OcrRegion) then) =
       _$OcrRegionCopyWithImpl<$Res, OcrRegion>;
   @useResult
-  $Res call({String text, Rect bounds, double? confidence});
+  $Res call({String text, @RectConverter() Rect bounds, double? confidence});
 }
 
 /// @nodoc
@@ -2141,7 +2142,7 @@ class _$OcrRegionCopyWithImpl<$Res, $Val extends OcrRegion>
   @override
   $Res call({
     Object? text = null,
-    Object? bounds = freezed,
+    Object? bounds = null,
     Object? confidence = freezed,
   }) {
     return _then(_value.copyWith(
@@ -2149,7 +2150,7 @@ class _$OcrRegionCopyWithImpl<$Res, $Val extends OcrRegion>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
-      bounds: freezed == bounds
+      bounds: null == bounds
           ? _value.bounds
           : bounds // ignore: cast_nullable_to_non_nullable
               as Rect,
@@ -2169,7 +2170,7 @@ abstract class _$$OcrRegionImplCopyWith<$Res>
       __$$OcrRegionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String text, Rect bounds, double? confidence});
+  $Res call({String text, @RectConverter() Rect bounds, double? confidence});
 }
 
 /// @nodoc
@@ -2184,7 +2185,7 @@ class __$$OcrRegionImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? text = null,
-    Object? bounds = freezed,
+    Object? bounds = null,
     Object? confidence = freezed,
   }) {
     return _then(_$OcrRegionImpl(
@@ -2192,7 +2193,7 @@ class __$$OcrRegionImplCopyWithImpl<$Res>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String,
-      bounds: freezed == bounds
+      bounds: null == bounds
           ? _value.bounds
           : bounds // ignore: cast_nullable_to_non_nullable
               as Rect,
@@ -2208,7 +2209,9 @@ class __$$OcrRegionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$OcrRegionImpl implements _OcrRegion {
   const _$OcrRegionImpl(
-      {required this.text, required this.bounds, this.confidence});
+      {required this.text,
+      @RectConverter() required this.bounds,
+      this.confidence});
 
   factory _$OcrRegionImpl.fromJson(Map<String, dynamic> json) =>
       _$$OcrRegionImplFromJson(json);
@@ -2216,6 +2219,7 @@ class _$OcrRegionImpl implements _OcrRegion {
   @override
   final String text;
   @override
+  @RectConverter()
   final Rect bounds;
   @override
   final double? confidence;
@@ -2231,15 +2235,14 @@ class _$OcrRegionImpl implements _OcrRegion {
         (other.runtimeType == runtimeType &&
             other is _$OcrRegionImpl &&
             (identical(other.text, text) || other.text == text) &&
-            const DeepCollectionEquality().equals(other.bounds, bounds) &&
+            (identical(other.bounds, bounds) || other.bounds == bounds) &&
             (identical(other.confidence, confidence) ||
                 other.confidence == confidence));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, text,
-      const DeepCollectionEquality().hash(bounds), confidence);
+  int get hashCode => Object.hash(runtimeType, text, bounds, confidence);
 
   @JsonKey(ignore: true)
   @override
@@ -2258,7 +2261,7 @@ class _$OcrRegionImpl implements _OcrRegion {
 abstract class _OcrRegion implements OcrRegion {
   const factory _OcrRegion(
       {required final String text,
-      required final Rect bounds,
+      @RectConverter() required final Rect bounds,
       final double? confidence}) = _$OcrRegionImpl;
 
   factory _OcrRegion.fromJson(Map<String, dynamic> json) =
@@ -2267,6 +2270,7 @@ abstract class _OcrRegion implements OcrRegion {
   @override
   String get text;
   @override
+  @RectConverter()
   Rect get bounds;
   @override
   double? get confidence;
