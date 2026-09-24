@@ -9,8 +9,8 @@ import 'package:web_socket_channel/io.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../config/app_config.dart';
-import '../../utils/logger.dart';
+import '../../config/app_config.dart';
+import '../utils/logger.dart';
 
 part 'api_service.freezed.dart';
 part 'api_service.g.dart';
