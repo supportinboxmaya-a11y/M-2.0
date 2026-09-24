@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:rive/rive.dart' hide LinearGradient;
 
-import 'maya_theme.dart';
+import 'package:maya_pro/core/theme/maya_theme.dart';
 
 class MayaAnimations {
   // Breathing Animation (for idle state)
@@ -176,8 +176,8 @@ class MayaAnimations {
           )
               .animate()
               .scaleY(
-                delay: (index * 50).ms,
-                duration: 100.ms,
+                delay: Duration(milliseconds: index * 50),
+                duration: Duration(milliseconds: 100),
                 curve: Curves.easeOutBack,
               );
         }),
@@ -265,8 +265,8 @@ class MayaAnimations {
   // Staggered List Animation
   static List<Widget> staggerChildren(
     List<Widget> children, {
-    Duration delay = 100.ms,
-    Duration duration = 400.ms,
+    Duration delay = Duration(milliseconds: 100),
+    Duration duration = Duration(milliseconds: 400),
     Curve curve = Curves.easeOutCubic,
     Offset beginOffset = const Offset(0, 30),
   }) {
@@ -276,13 +276,13 @@ class MayaAnimations {
       return child
           .animate()
           .fadeIn(
-            delay: (index * delay.inMilliseconds).ms,
+            delay: Duration(milliseconds: index * delay.inMilliseconds),
             duration: duration,
             curve: curve,
           )
           .slideY(
             begin: beginOffset.dy / 100,
-            delay: (index * delay.inMilliseconds).ms,
+            delay: Duration(milliseconds: index * delay.inMilliseconds),
             duration: duration,
             curve: curve,
           );
@@ -486,8 +486,8 @@ class _TypewriterTextState extends State<_TypewriterText> {
 // Extension for stagger
 extension StaggerExtension on List<Widget> {
   List<Widget> stagger({
-    Duration delay = 100.ms,
-    Duration duration = 400.ms,
+    Duration delay = Duration(milliseconds: 100),
+    Duration duration = Duration(milliseconds: 400),
     Curve curve = Curves.easeOutCubic,
     Offset beginOffset = const Offset(0, 30),
   }) {

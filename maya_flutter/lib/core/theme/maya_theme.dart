@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:glassmorphism/glassmorphism.dart';
 
 class MayaTheme {
   // Core Colors - Deep Slate Base
@@ -216,13 +215,13 @@ class MayaTheme {
       scaffoldBackgroundColor: slate900,
       canvasColor: slate800,
       cardColor: slate800,
-      dividerColor: Color(0x1A00F2FE),
-      dividerTheme: DividerThemeData(
+      dividerColor: const Color(0x1A00F2FE),
+      dividerTheme: const DividerThemeData(
         color: Color(0x1A00F2FE),
         thickness: 1,
         space: 1,
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         displayLarge: headlineLarge,
         displayMedium: headlineMedium,
         displaySmall: headlineSmall,
@@ -242,24 +241,24 @@ class MayaTheme {
         bodyColor: Colors.white,
         displayColor: Colors.white,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: titleLarge,
-        iconTheme: const IconThemeData(color: Colors.white, size: 24),
-        actionsIconTheme: const IconThemeData(color: Colors.white, size: 24),
+        iconTheme: IconThemeData(color: Colors.white, size: 24),
+        actionsIconTheme: IconThemeData(color: Colors.white, size: 24),
       ),
       cardTheme: CardThemeData(
-        color: slate800.withOpacity(0.8),
+        color: slate800.withValues(alpha: 0.8),
         elevation: 0,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: neonCyan.withOpacity(0.2),
+            color: neonCyan.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -270,7 +269,7 @@ class MayaTheme {
           backgroundColor: neonCyan,
           foregroundColor: slate900,
           elevation: 0,
-          shadowColor: neonCyan.withOpacity(0.4),
+          shadowColor: neonCyan.withValues(alpha: 0.4),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -281,10 +280,10 @@ class MayaTheme {
           overlayColor: WidgetStateProperty.resolveWith<Color?>(
             (states) {
               if (states.contains(WidgetState.pressed)) {
-                return neonCyan.withOpacity(0.8);
+                return neonCyan.withValues(alpha: 0.8);
               }
               if (states.contains(WidgetState.hovered)) {
-                return neonCyan.withOpacity(0.9);
+                return neonCyan.withValues(alpha: 0.9);
               }
               return null;
             },
@@ -312,15 +311,15 @@ class MayaTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: slate700.withOpacity(0.5),
+        fillColor: slate700.withValues(alpha: 0.5),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: neonCyan.withOpacity(0.3), width: 1),
+          borderSide: BorderSide(color: neonCyan.withValues(alpha: 0.3), width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: neonCyan.withOpacity(0.2), width: 1),
+          borderSide: BorderSide(color: neonCyan.withValues(alpha: 0.2), width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -336,22 +335,22 @@ class MayaTheme {
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1), width: 1),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1),
         ),
         labelStyle: bodyMedium.copyWith(color: Colors.white54),
         hintStyle: bodyMedium.copyWith(color: Colors.white30),
         floatingLabelStyle: labelMedium.copyWith(color: neonCyan),
-        errorStyle: bodySmall.copyWith(color: Color(0xFFFF3366)),
+        errorStyle: bodySmall.copyWith(color: const Color(0xFFFF3366)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: slate800.withOpacity(0.95),
+        backgroundColor: slate800.withValues(alpha: 0.95),
         surfaceTintColor: Colors.transparent,
         elevation: 24,
-        shadowColor: neonCyan.withOpacity(0.1),
+        shadowColor: neonCyan.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: neonCyan.withOpacity(0.2), width: 1),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.2), width: 1),
         ),
         titleTextStyle: titleLarge,
         contentTextStyle: bodyMedium,
@@ -359,14 +358,14 @@ class MayaTheme {
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: slate800,
         elevation: 24,
-        shadowColor: neonCyan.withOpacity(0.1),
+        shadowColor: neonCyan.withValues(alpha: 0.1),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         modalBackgroundColor: slate800,
         surfaceTintColor: Colors.transparent,
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: slate900,
         elevation: 16,
         selectedItemColor: neonCyan,
@@ -387,24 +386,24 @@ class MayaTheme {
         overlayColor: WidgetStateProperty.resolveWith<Color?>(
           (states) {
             if (states.contains(WidgetState.pressed)) {
-              return neonCyan.withOpacity(0.1);
+              return neonCyan.withValues(alpha: 0.1);
             }
             return null;
           },
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: slate700.withOpacity(0.5),
-        selectedColor: neonCyan.withOpacity(0.2),
+        backgroundColor: slate700.withValues(alpha: 0.5),
+        selectedColor: neonCyan.withValues(alpha: 0.2),
         disabledColor: Colors.white10,
         labelStyle: labelMedium,
         secondaryLabelStyle: labelMedium.copyWith(color: slate900),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: neonCyan.withOpacity(0.2)),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.2)),
         ),
-        side: BorderSide(color: neonCyan.withOpacity(0.2)),
+        side: BorderSide(color: neonCyan.withValues(alpha: 0.2)),
         brightness: Brightness.dark,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -421,7 +420,7 @@ class MayaTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: slate900,
         elevation: 16,
-        indicatorColor: neonCyan.withOpacity(0.15),
+        indicatorColor: neonCyan.withValues(alpha: 0.15),
         surfaceTintColor: Colors.transparent,
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
           (states) {
@@ -440,7 +439,7 @@ class MayaTheme {
           },
         ),
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: neonCyan,
         linearTrackColor: slate700,
         circularTrackColor: slate700,
@@ -448,9 +447,9 @@ class MayaTheme {
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: neonCyan,
-        inactiveTrackColor: neonCyan.withOpacity(0.2),
+        inactiveTrackColor: neonCyan.withValues(alpha: 0.2),
         thumbColor: neonCyan,
-        overlayColor: neonCyan.withOpacity(0.1),
+        overlayColor: neonCyan.withValues(alpha: 0.1),
         valueIndicatorColor: neonCyan,
         valueIndicatorTextStyle: labelSmall.copyWith(color: slate900),
         activeTickMarkColor: neonCyan,
@@ -471,7 +470,7 @@ class MayaTheme {
         trackColor: WidgetStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(WidgetState.selected)) {
-              return neonCyan.withOpacity(0.3);
+              return neonCyan.withValues(alpha: 0.3);
             }
             return Colors.white10;
           },
@@ -481,7 +480,7 @@ class MayaTheme {
             if (states.contains(WidgetState.selected)) {
               return neonCyan;
             }
-            return neonCyan.withOpacity(0.2);
+            return neonCyan.withValues(alpha: 0.2);
           },
         ),
         thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
@@ -502,8 +501,8 @@ class MayaTheme {
             return Colors.transparent;
           },
         ),
-        checkColor: WidgetStateProperty.all(Color(0xFF0B0F19)),
-        side: BorderSide(color: neonCyan.withOpacity(0.4), width: 1.5),
+        checkColor: WidgetStateProperty.all(const Color(0xFF0B0F19)),
+        side: BorderSide(color: neonCyan.withValues(alpha: 0.4), width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         shapeRadius: 4,
       ),
@@ -521,10 +520,10 @@ class MayaTheme {
         decoration: BoxDecoration(
           color: slate800,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: neonCyan.withOpacity(0.2)),
+          border: Border.all(color: neonCyan.withValues(alpha: 0.2)),
           boxShadow: [
             BoxShadow(
-              color: neonCyan.withOpacity(0.1),
+              color: neonCyan.withValues(alpha: 0.1),
               blurRadius: 12,
               spreadRadius: 2,
             ),
@@ -540,13 +539,13 @@ class MayaTheme {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: neonCyan.withOpacity(0.3)),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.3)),
         ),
         contentTextStyle: bodyMedium,
         actionTextColor: neonEmerald,
         actionOverflowThreshold: 0.5,
       ),
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: Color(0x1A00F2FE),
         thickness: 1,
         space: 1,
@@ -572,10 +571,10 @@ class MayaTheme {
           overlayColor: WidgetStateProperty.resolveWith<Color?>(
             (states) {
               if (states.contains(WidgetState.hovered)) {
-                return neonCyan.withOpacity(0.1);
+                return neonCyan.withValues(alpha: 0.1);
               }
               if (states.contains(WidgetState.pressed)) {
-                return neonCyan.withOpacity(0.2);
+                return neonCyan.withValues(alpha: 0.2);
               }
               return null;
             },
@@ -584,34 +583,34 @@ class MayaTheme {
       ),
       menuTheme: MenuThemeData(
         style: MenuStyle(
-          backgroundColor: WidgetStateProperty.all(slate800.withOpacity(0.95)),
+          backgroundColor: WidgetStateProperty.all(slate800.withValues(alpha: 0.95)),
           surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
           elevation: WidgetStateProperty.all(16),
-          shadowColor: WidgetStateProperty.all(neonCyan.withOpacity(0.1)),
+          shadowColor: WidgetStateProperty.all(neonCyan.withValues(alpha: 0.1)),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: neonCyan.withOpacity(0.2)),
+              side: BorderSide(color: neonCyan.withValues(alpha: 0.2)),
             ),
           ),
           padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 8)),
         ),
       ),
       popupMenuTheme: PopupMenuThemeData(
-        color: slate800.withOpacity(0.95),
+        color: slate800.withValues(alpha: 0.95),
         elevation: 16,
-        shadowColor: neonCyan.withOpacity(0.1),
+        shadowColor: neonCyan.withValues(alpha: 0.1),
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: neonCyan.withOpacity(0.2)),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.2)),
         ),
         textStyle: bodyMedium,
         labelTextStyle: WidgetStateProperty.all(labelMedium),
         enableFeedback: true,
       ),
       expansionTileTheme: ExpansionTileThemeData(
-        backgroundColor: slate700.withOpacity(0.3),
+        backgroundColor: slate700.withValues(alpha: 0.3),
         collapsedBackgroundColor: Colors.transparent,
         textColor: Colors.white,
         collapsedTextColor: Colors.white70,
@@ -619,18 +618,18 @@ class MayaTheme {
         collapsedIconColor: Colors.white54,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: neonCyan.withOpacity(0.1)),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.1)),
         ),
         collapsedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: neonCyan.withOpacity(0.1)),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.1)),
         ),
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
       listTileTheme: ListTileThemeData(
         tileColor: Colors.transparent,
-        selectedTileColor: neonCyan.withOpacity(0.1),
+        selectedTileColor: neonCyan.withValues(alpha: 0.1),
         selectedColor: neonCyan,
         iconColor: Colors.white70,
         textColor: Colors.white,
@@ -658,22 +657,22 @@ class MayaTheme {
     List<BoxShadow>? shadows,
   }) {
     return BoxDecoration(
-      color: color ?? Colors.white.withOpacity(opacity),
+      color: color ?? Colors.white.withValues(alpha: opacity),
       borderRadius: borderRadius ?? BorderRadius.circular(16),
       border: Border.all(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         width: 1,
       ),
       boxShadow: shadows ??
           [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: blur,
               spreadRadius: -5,
               offset: const Offset(0, 10),
             ),
             BoxShadow(
-              color: neonCyan.withOpacity(0.05),
+              color: neonCyan.withValues(alpha: 0.05),
               blurRadius: blur / 2,
               spreadRadius: -2,
               offset: const Offset(0, 4),
@@ -689,20 +688,20 @@ class MayaTheme {
     BorderRadius? borderRadius,
   }) {
     return BoxDecoration(
-      color: Colors.white.withOpacity(0.05),
+      color: Colors.white.withValues(alpha: 0.05),
       borderRadius: borderRadius ?? BorderRadius.circular(16),
       border: Border.all(
-        color: glowColor.withOpacity(0.3),
+        color: glowColor.withValues(alpha: 0.3),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: glowColor.withOpacity(opacity),
+          color: glowColor.withValues(alpha: opacity),
           blurRadius: blur,
           spreadRadius: 5,
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
           blurRadius: blur,
           spreadRadius: -5,
           offset: const Offset(0, 10),
@@ -722,7 +721,7 @@ class MayaTheme {
       border: Border.all(color: color, width: width),
       boxShadow: [
         BoxShadow(
-          color: color.withOpacity(glowOpacity),
+          color: color.withValues(alpha: glowOpacity),
           blurRadius: 20,
           spreadRadius: 2,
         ),

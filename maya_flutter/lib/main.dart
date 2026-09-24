@@ -478,7 +478,6 @@ class _HomeScreen extends StatelessWidget {
     );
     }
   }
-}
 
 class _StatusItem extends StatelessWidget {
   final String label;
@@ -553,7 +552,8 @@ class _ActionCard extends StatelessWidget {
       )
           .animate()
           .fadeIn(delay: 200.ms)
-          .slideY(begin: 0.2, duration: 500.ms, curve: Curves.easeOutCubic);
+          .slideY(begin: 0.2, duration: 500.ms, curve: Curves.easeOutCubic),
+    );
   }
 }
 
@@ -709,14 +709,13 @@ class _VoiceScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  ],
                 ),
               ),
             ],
           ),
         ),
-      ),
-    )
+      },
+    );
   }
 }
 
