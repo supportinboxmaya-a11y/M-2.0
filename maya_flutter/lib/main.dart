@@ -89,10 +89,6 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
     _pageController = PageController();
   }
 
-  @override
-  void activate() {
-    super.activate();
-  }
 
   @override
   void dispose() {
@@ -164,7 +160,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    MayaTheme.neonCyan.withOpacity(0.03),
+                    MayaTheme.neonCyan.withValues(alpha: 0.03),
                     Colors.transparent,
                   ],
                 ),
@@ -180,7 +176,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
     return Positioned(
       top: 50,
       right: 20,
-      child: MayaLogo(
+      child: const MayaLogo(
         size: 80,
         state: MayaLogoState.idle,
         showPulse: true,
@@ -203,7 +199,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: MayaTheme.glassCard(
-              color: MayaTheme.slate800.withOpacity(0.8),
+              color: MayaTheme.slate800.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -217,7 +213,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
                     color: isOnline ? MayaTheme.neonEmerald : MayaTheme.error,
                     boxShadow: [
                       BoxShadow(
-                        color: (isOnline ? MayaTheme.neonEmerald : MayaTheme.error).withOpacity(0.5),
+                        color: (isOnline ? MayaTheme.neonEmerald : MayaTheme.error).withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -242,7 +238,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
   Widget _buildBottomNav() {
     return Container(
       decoration: MayaTheme.glassCard(
-        color: MayaTheme.slate900.withOpacity(0.9),
+        color: MayaTheme.slate900.withValues(alpha: 0.9),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -331,9 +327,9 @@ class _NavItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: isSelected ? MayaTheme.neonCyan.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? MayaTheme.neonCyan.withValues(alpha: 0.1) : Colors.transparent,
           border: Border.all(
-            color: isSelected ? MayaTheme.neonCyan.withOpacity(0.3) : Colors.transparent,
+            color: isSelected ? MayaTheme.neonCyan.withValues(alpha: 0.3) : Colors.transparent,
             width: 1,
           ),
         ),
@@ -359,7 +355,7 @@ class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = MayaTheme.neonCyan.withOpacity(0.02)
+      ..color = MayaTheme.neonCyan.withValues(alpha: 0.02)
       ..strokeWidth = 0.5
       .style = PaintingStyle.stroke;
 
@@ -393,7 +389,7 @@ class _HomeScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Maya Pro', style: MayaTheme.headlineLarge),
+                const Text('Maya Pro', style: MayaTheme.headlineLarge),
                 IconButton(
                   icon: const Icon(Icons.notifications_rounded),
                   onPressed: () {},
@@ -404,7 +400,7 @@ class _HomeScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Your autonomous AI assistant',
               style: MayaTheme.bodyMedium,
             ),
@@ -412,7 +408,7 @@ class _HomeScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Maya Logo Center
-            Center(
+            const Center(
               child: MayaLogo(
                 size: 180,
                 state: MayaLogoState.idle,
@@ -424,7 +420,7 @@ class _HomeScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Quick Actions
-            Text('Quick Actions', style: MayaTheme.titleMedium),
+            const Text('Quick Actions', style: MayaTheme.titleMedium),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -467,7 +463,7 @@ class _HomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: MayaTheme.glassCard(),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _StatusItem(label: 'Voice', value: 'Ready', color: MayaTheme.neonCyan),
@@ -537,7 +533,7 @@ class _ActionCard extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [color.withOpacity(0.2), color.withOpacity(0.05)],
+                  colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.05)],
                 ),
               ),
               child: Icon(Icons.mic_rounded, color: color, size: 32),
@@ -576,7 +572,7 @@ class _VoiceScreen extends ConsumerWidget {
         child: Column(
           children: [
             // Header
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Voice Control', style: MayaTheme.headlineLarge),
@@ -605,7 +601,7 @@ class _VoiceScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: MayaTheme.neonCyan.withOpacity(0.3 - index * 0.08),
+                                color: MayaTheme.neonCyan.withValues(alpha: 0.3 - index * 0.08),
                                 width: 2,
                               ),
                             ),
@@ -616,7 +612,7 @@ class _VoiceScreen extends ConsumerWidget {
                               .scale(duration: 2000.ms);
                         }),
                         // Central Logo
-                        MayaLogo(
+                        const MayaLogo(
                           size: 160,
                           state: MayaLogoState.idle,
                           showPulse: true,
@@ -643,18 +639,18 @@ class _VoiceScreen extends ConsumerWidget {
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: MayaTheme.neonCyan.withOpacity(0.4),
+                              color: MayaTheme.neonCyan.withValues(alpha: 0.4),
                               blurRadius: 30,
                               spreadRadius: 5,
                             ),
                           ],
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Icon(
                             Icons.mic_rounded,
                             size: 40,
@@ -720,7 +716,7 @@ class _VoiceScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
+    )
   }
 }
 
@@ -739,7 +735,7 @@ class _CameraScreen extends ConsumerWidget {
               builder: (context, ref, _) {
                 final cameraService = ref.read(cameraServiceProvider);
                 if (!cameraService.isInitialized || cameraService.controller == null) {
-                  return Center(
+                  return const Center(
                     child: Text('Initializing camera...', style: MayaTheme.bodyMedium),
                   );
                 }
@@ -893,7 +889,7 @@ class _CameraGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -912,7 +908,7 @@ class _CameraGridPainter extends CustomPainter {
 
     // Center crosshair
     final crosshairPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -921,13 +917,13 @@ class _CameraGridPainter extends CustomPainter {
     const crossSize = 30.0;
 
     canvas.drawLine(
-      Offset(centerX - crossSize, centerY),
-      Offset(centerX + crossSize, centerY),
+      const Offset(centerX - crossSize, centerY),
+      const Offset(centerX + crossSize, centerY),
       crosshairPaint,
     );
     canvas.drawLine(
-      Offset(centerX, centerY - crossSize),
-      Offset(centerX, centerY + crossSize),
+      const Offset(centerX, centerY - crossSize),
+      const Offset(centerX, centerY + crossSize),
       crosshairPaint,
     );
 
@@ -958,12 +954,12 @@ class _ChatScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: MayaTheme.neonCyan.withOpacity(0.1)),
+                  bottom: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
                 ),
               ),
               child: Row(
                 children: [
-                  Text('Chat', style: MayaTheme.headlineLarge),
+                  const Text('Chat', style: MayaTheme.headlineLarge),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.add_rounded),
@@ -980,7 +976,7 @@ class _ChatScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 reverse: true,
                 children: [
-                  _ChatBubble(
+                  const _ChatBubble(
                     text: 'Hello! How can I help you today?',
                     isUser: false,
                     time: '10:30',
@@ -988,7 +984,7 @@ class _ChatScreen extends ConsumerWidget {
                       .animate()
                       .fadeIn()
                       .slideY(begin: 0.2),
-                  _ChatBubble(
+                  const _ChatBubble(
                     text: 'Can you help me create a Python script?',
                     isUser: true,
                     time: '10:31',
@@ -1005,7 +1001,7 @@ class _ChatScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: MayaTheme.neonCyan.withOpacity(0.1)),
+                  top: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
                 ),
               ),
               child: Row(
@@ -1032,7 +1028,7 @@ class _ChatScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: MayaTheme.slate700,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: MayaTheme.neonCyan.withOpacity(0.2)),
+                        border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.2)),
                       ),
                       child: TextField(
                         decoration: InputDecoration(
@@ -1089,7 +1085,7 @@ class _ChatBubble extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: (isUser ? MayaTheme.neonCyan : MayaTheme.neonViolet).withOpacity(0.2),
+              color: (isUser ? MayaTheme.neonCyan : MayaTheme.neonViolet).withValues(alpha: 0.2),
               blurRadius: 12,
               spreadRadius: 2,
             ),
@@ -1106,7 +1102,7 @@ class _ChatBubble extends StatelessWidget {
               children: [
                 Text(time, style: MayaTheme.labelSmall.copyWith(color: Colors.white38)),
                 const SizedBox(width: 8),
-                Icon(Icons.done_all_rounded, size: 14, color: Colors.white38),
+                const Icon(Icons.done_all_rounded, size: 14, color: Colors.white38),
               ],
             ),
           ],
@@ -1125,7 +1121,7 @@ class _SettingsScreen extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text('Settings', style: MayaTheme.headlineLarge),
+          const Text('Settings', style: MayaTheme.headlineLarge),
           const SizedBox(height: 32),
 
           _SettingsSection(
@@ -1207,10 +1203,10 @@ class _SettingsScreen extends ConsumerWidget {
           _SettingsSection(
             title: 'About',
             children: [
-              _SettingsTile(
+              const _SettingsTile(
                 title: 'Version',
                 subtitle: '1.0.0 (build 1)',
-                trailing: const SizedBox(),
+                trailing: SizedBox(),
               ),
               _SettingsTile(
                 title: 'Clear Cache',
@@ -1222,7 +1218,7 @@ class _SettingsScreen extends ConsumerWidget {
                 subtitle: 'Restore default settings',
                 trailing: TextButton(
                   onPressed: () {},
-                  child: Text('Reset', style: TextStyle(color: Colors.red)),
+                  child: const Text('Reset', style: TextStyle(color: Colors.red)),
                 ),
               ),
             ],
