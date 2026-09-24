@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:record/record.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -13,6 +15,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'api_service.dart';
 import 'app_config.dart';
 
+part 'voice_service.freezed.dart';
 part 'voice_service.g.dart';
 
 @riverpod

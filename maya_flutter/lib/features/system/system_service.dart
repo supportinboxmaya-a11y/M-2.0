@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:battery_plus/battery_plus.dart';
@@ -11,10 +12,12 @@ import 'package:flashlight/flashlight.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'api_service.dart';
 import 'app_config.dart';
 
+part 'system_service.freezed.dart';
 part 'system_service.g.dart';
 
 @riverpod
@@ -30,19 +33,19 @@ class SystemService {
 
   StreamController<SystemState>? _stateController;
   StreamController<BatteryState>? _batteryController;
-  StreamController<ConnectivityResult>? _connectivityController;
+  StreamController<List<ConnectivityResult>>? _connectivityController;
   Timer? _statusTimer;
 
   SystemService(this._apiService);
 
   Stream<SystemState> get stateStream => _stateController?.stream ?? const Stream.empty();
   Stream<BatteryState> get batteryStream => _batteryController?.stream ?? const Stream.empty();
-  Stream<ConnectivityResult> get connectivityStream => _connectivityController?.stream ?? const Stream.empty();
+  Stream<List<ConnectivityResult>> get connectivityStream => _connectivityController?.stream ?? const Stream.empty();
 
   Future<void> initialize() async {
     _stateController = StreamController<SystemState>.broadcast();
     _batteryController = StreamController<BatteryState>.broadcast();
-    _connectivityController = StreamController<ConnectivityResult>.broadcast();
+    _connectivityController = StreamController<List<ConnectivityResult>>.broadcast();
 
     await _requestPermissions();
     _startStatusMonitoring();
@@ -63,8 +66,8 @@ class SystemService {
       _batteryController?.add(state);
     });
 
-    // Connectivity
-    _connectivityController = StreamController<ConnectivityResult>.broadcast();
+    // Connectivity (v6.x returns List<ConnectivityResult>)
+    _connectivityController = StreamController<List<ConnectivityResult>>.broadcast();
     _connectivity.onConnectivityChanged.listen((result) {
       _connectivityController?.add(result);
     });
@@ -77,14 +80,6 @@ class SystemService {
 
     // Initial status
     getSystemStatus().then((status) => _stateController?.add(status));
-  }
-
-  Future<void> _requestPermissions() async {
-    await Permission.locationWhenInUse.request();
-    await Permission.bluetooth.request();
-    await Permission.bluetoothConnect.request();
-    await Permission.bluetoothScan.request();
-    await Permission.nearbyWifiDevices.request();
   }
 
   // System Status
@@ -229,13 +224,13 @@ class SystemService {
     return info;
   }
 
-  Future<ConnectivityResult> getConnectivity() async {
+  Future<List<ConnectivityResult>> getConnectivity() async {
     return await _connectivity.checkConnectivity();
   }
 
-  bool isOnline() async {
-    final result = await _connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+  Future<bool> isOnline() async {
+    final results = await _connectivity.checkConnectivity();
+    return results.any((r) => r != ConnectivityResult.none);
   }
 
   void dispose() {

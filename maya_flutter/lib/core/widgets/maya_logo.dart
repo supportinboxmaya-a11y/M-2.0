@@ -383,7 +383,7 @@ class _RiveMayaLogoState extends State<RiveMayaLogo> {
         width: widget.size,
         height: widget.size,
         child: Rive(artboard: _artboard!),
-      );
-    }
+      ),
+    );
   }
 }

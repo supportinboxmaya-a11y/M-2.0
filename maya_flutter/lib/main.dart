@@ -13,6 +13,10 @@ final voiceServiceProvider = Provider((ref) => VoiceService());
 final cameraServiceProvider = Provider((ref) => CameraService());
 final systemServiceProvider = Provider((ref) => SystemService());
 
+void main() {
+  runApp(const ProviderScope(child: MayaApp()));
+}
+
 class MayaApp extends ConsumerStatefulWidget {
   const MayaApp({super.key});
 
@@ -86,15 +90,26 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
   }
 
   @override
+  void activate() {
+    super.activate();
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
 
   @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('currentIndex', _currentIndex));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final systemState = ref.watch(systemServiceProvider.stateStream).value;
-    final isOnline = ref.watch(systemServiceProvider.connectivityStream).value != ConnectivityResult.none;
+    final isOnline = (ref.watch(systemServiceProvider.connectivityStream).value ?? []).any((r) => r != ConnectivityResult.none);
 
     return Scaffold(
       backgroundColor: MayaTheme.slate900,
@@ -179,9 +194,8 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
   Widget _buildConnectionBadge() {
     return Consumer(
       builder: (context, ref, _) {
-        final isOnline = ref.watch(
-          systemServiceProvider.select((s) => s.connectivityStream.value != ConnectivityResult.none),
-        );
+        final connectivity = ref.watch(systemServiceProvider.connectivityStream).value ?? [];
+        final isOnline = connectivity.any((r) => r != ConnectivityResult.none);
 
         return Positioned(
           top: 50,
@@ -200,15 +214,10 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
                   height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: ref.watch(systemServiceProvider.connectivityStream).value != ConnectivityResult.none
-                        ? MayaTheme.neonEmerald
-                        : MayaTheme.error,
+                    color: isOnline ? MayaTheme.neonEmerald : MayaTheme.error,
                     boxShadow: [
                       BoxShadow(
-                        color: (ref.watch(systemServiceProvider.connectivityStream).value != ConnectivityResult.none
-                                ? MayaTheme.neonEmerald
-                                : MayaTheme.error)
-                            .withOpacity(0.5),
+                        color: (isOnline ? MayaTheme.neonEmerald : MayaTheme.error).withOpacity(0.5),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -219,9 +228,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
                 Text(
                   'Online',
                   style: MayaTheme.labelSmall.copyWith(
-                    color: ref.watch(systemServiceProvider.connectivityStream).value != ConnectivityResult.none
-                        ? MayaTheme.neonEmerald
-                        : MayaTheme.error,
+                    color: isOnline ? MayaTheme.neonEmerald : MayaTheme.error,
                   ),
                 ),
               ],
@@ -329,7 +336,6 @@ class _NavItem extends StatelessWidget {
             color: isSelected ? MayaTheme.neonCyan.withOpacity(0.3) : Colors.transparent,
             width: 1,
           ),
-          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -471,8 +477,9 @@ class _HomeScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      );
+),
+      ),
+    );
     }
   }
 }
@@ -711,8 +718,8 @@ class _VoiceScreen extends ConsumerWidget {
               ),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -778,6 +785,7 @@ class _CameraScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+            ),
 
             // Bottom Controls
             Align(
@@ -814,7 +822,6 @@ class _CameraScreen extends ConsumerWidget {
       );
     }
   }
-}
 
 class _CameraActionButton extends StatelessWidget {
   final IconData icon;
@@ -1052,7 +1059,6 @@ class _ChatScreen extends ConsumerWidget {
       },
     );
   }
-}
 
 class _ChatBubble extends StatelessWidget {
   final String text;

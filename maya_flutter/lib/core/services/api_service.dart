@@ -3,14 +3,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'app_config.dart';
-import '../utils/logger.dart';
+import '../config/app_config.dart';
+import '../../utils/logger.dart';
 
+part 'api_service.freezed.dart';
 part 'api_service.g.dart';
 
 @riverpod
@@ -341,7 +343,6 @@ class ApiService {
   }
 
   void dispose() {
-    dispose();
     _wsController.close();
     _reconnectTimer?.cancel();
     disconnectWebSocket();

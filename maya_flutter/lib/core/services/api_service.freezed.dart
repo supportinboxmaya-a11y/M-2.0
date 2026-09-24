@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'app_models.dart';
+part of 'api_service.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -857,11 +857,9 @@ TtsResult _$TtsResultFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TtsResult {
-  bool get success => throw _privateConstructorUsedError;
-  String? get audioBase64 => throw _privateConstructorUsedError;
-  String? get format => throw _privateConstructorUsedError;
-  String? get provider => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
+  String get audioBase64 => throw _privateConstructorUsedError;
+  String get format => throw _privateConstructorUsedError;
+  String get provider => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -874,12 +872,7 @@ abstract class $TtsResultCopyWith<$Res> {
   factory $TtsResultCopyWith(TtsResult value, $Res Function(TtsResult) then) =
       _$TtsResultCopyWithImpl<$Res, TtsResult>;
   @useResult
-  $Res call(
-      {bool success,
-      String? audioBase64,
-      String? format,
-      String? provider,
-      String? error});
+  $Res call({String audioBase64, String format, String provider});
 }
 
 /// @nodoc
@@ -895,33 +888,23 @@ class _$TtsResultCopyWithImpl<$Res, $Val extends TtsResult>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? success = null,
-    Object? audioBase64 = freezed,
-    Object? format = freezed,
-    Object? provider = freezed,
-    Object? error = freezed,
+    Object? audioBase64 = null,
+    Object? format = null,
+    Object? provider = null,
   }) {
     return _then(_value.copyWith(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      audioBase64: freezed == audioBase64
+      audioBase64: null == audioBase64
           ? _value.audioBase64
           : audioBase64 // ignore: cast_nullable_to_non_nullable
-              as String?,
-      format: freezed == format
+              as String,
+      format: null == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
-              as String?,
-      provider: freezed == provider
+              as String,
+      provider: null == provider
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ) as $Val);
   }
 }
@@ -934,12 +917,7 @@ abstract class _$$TtsResultImplCopyWith<$Res>
       __$$TtsResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool success,
-      String? audioBase64,
-      String? format,
-      String? provider,
-      String? error});
+  $Res call({String audioBase64, String format, String provider});
 }
 
 /// @nodoc
@@ -953,33 +931,23 @@ class __$$TtsResultImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? success = null,
-    Object? audioBase64 = freezed,
-    Object? format = freezed,
-    Object? provider = freezed,
-    Object? error = freezed,
+    Object? audioBase64 = null,
+    Object? format = null,
+    Object? provider = null,
   }) {
     return _then(_$TtsResultImpl(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      audioBase64: freezed == audioBase64
+      audioBase64: null == audioBase64
           ? _value.audioBase64
           : audioBase64 // ignore: cast_nullable_to_non_nullable
-              as String?,
-      format: freezed == format
+              as String,
+      format: null == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
-              as String?,
-      provider: freezed == provider
+              as String,
+      provider: null == provider
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ));
   }
 }
@@ -988,29 +956,23 @@ class __$$TtsResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TtsResultImpl implements _TtsResult {
   const _$TtsResultImpl(
-      {required this.success,
-      this.audioBase64,
-      this.format,
-      this.provider,
-      this.error});
+      {required this.audioBase64,
+      required this.format,
+      required this.provider});
 
   factory _$TtsResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$TtsResultImplFromJson(json);
 
   @override
-  final bool success;
+  final String audioBase64;
   @override
-  final String? audioBase64;
+  final String format;
   @override
-  final String? format;
-  @override
-  final String? provider;
-  @override
-  final String? error;
+  final String provider;
 
   @override
   String toString() {
-    return 'TtsResult(success: $success, audioBase64: $audioBase64, format: $format, provider: $provider, error: $error)';
+    return 'TtsResult(audioBase64: $audioBase64, format: $format, provider: $provider)';
   }
 
   @override
@@ -1018,19 +980,16 @@ class _$TtsResultImpl implements _TtsResult {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TtsResultImpl &&
-            (identical(other.success, success) || other.success == success) &&
             (identical(other.audioBase64, audioBase64) ||
                 other.audioBase64 == audioBase64) &&
             (identical(other.format, format) || other.format == format) &&
             (identical(other.provider, provider) ||
-                other.provider == provider) &&
-            (identical(other.error, error) || other.error == error));
+                other.provider == provider));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, success, audioBase64, format, provider, error);
+  int get hashCode => Object.hash(runtimeType, audioBase64, format, provider);
 
   @JsonKey(ignore: true)
   @override
@@ -1048,25 +1007,19 @@ class _$TtsResultImpl implements _TtsResult {
 
 abstract class _TtsResult implements TtsResult {
   const factory _TtsResult(
-      {required final bool success,
-      final String? audioBase64,
-      final String? format,
-      final String? provider,
-      final String? error}) = _$TtsResultImpl;
+      {required final String audioBase64,
+      required final String format,
+      required final String provider}) = _$TtsResultImpl;
 
   factory _TtsResult.fromJson(Map<String, dynamic> json) =
       _$TtsResultImpl.fromJson;
 
   @override
-  bool get success;
+  String get audioBase64;
   @override
-  String? get audioBase64;
+  String get format;
   @override
-  String? get format;
-  @override
-  String? get provider;
-  @override
-  String? get error;
+  String get provider;
   @override
   @JsonKey(ignore: true)
   _$$TtsResultImplCopyWith<_$TtsResultImpl> get copyWith =>
@@ -1247,17 +1200,12 @@ abstract class _AgentChatResponse implements AgentChatResponse {
       throw _privateConstructorUsedError;
 }
 
-ChatStreamChunk _$ChatStreamChunkFromJson(Map<String, dynamic> json) {
-  return _ChatStreamChunk.fromJson(json);
-}
-
 /// @nodoc
 mixin _$ChatStreamChunk {
   String? get delta => throw _privateConstructorUsedError;
   bool? get done => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ChatStreamChunkCopyWith<ChatStreamChunk> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1350,12 +1298,9 @@ class __$$ChatStreamChunkImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$ChatStreamChunkImpl implements _ChatStreamChunk {
   const _$ChatStreamChunkImpl({this.delta, this.done, this.error});
-
-  factory _$ChatStreamChunkImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ChatStreamChunkImplFromJson(json);
 
   @override
   final String? delta;
@@ -1379,7 +1324,6 @@ class _$ChatStreamChunkImpl implements _ChatStreamChunk {
             (identical(other.error, error) || other.error == error));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, delta, done, error);
 
@@ -1389,13 +1333,6 @@ class _$ChatStreamChunkImpl implements _ChatStreamChunk {
   _$$ChatStreamChunkImplCopyWith<_$ChatStreamChunkImpl> get copyWith =>
       __$$ChatStreamChunkImplCopyWithImpl<_$ChatStreamChunkImpl>(
           this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ChatStreamChunkImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _ChatStreamChunk implements ChatStreamChunk {
@@ -1403,9 +1340,6 @@ abstract class _ChatStreamChunk implements ChatStreamChunk {
       {final String? delta,
       final bool? done,
       final String? error}) = _$ChatStreamChunkImpl;
-
-  factory _ChatStreamChunk.fromJson(Map<String, dynamic> json) =
-      _$ChatStreamChunkImpl.fromJson;
 
   @override
   String? get delta;
@@ -2176,7 +2110,6 @@ OcrRegion _$OcrRegionFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$OcrRegion {
   String get text => throw _privateConstructorUsedError;
-  @RectConverter()
   Rect get bounds => throw _privateConstructorUsedError;
   double? get confidence => throw _privateConstructorUsedError;
 
@@ -2191,7 +2124,7 @@ abstract class $OcrRegionCopyWith<$Res> {
   factory $OcrRegionCopyWith(OcrRegion value, $Res Function(OcrRegion) then) =
       _$OcrRegionCopyWithImpl<$Res, OcrRegion>;
   @useResult
-  $Res call({String text, @RectConverter() Rect bounds, double? confidence});
+  $Res call({String text, Rect bounds, double? confidence});
 }
 
 /// @nodoc
@@ -2236,7 +2169,7 @@ abstract class _$$OcrRegionImplCopyWith<$Res>
       __$$OcrRegionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String text, @RectConverter() Rect bounds, double? confidence});
+  $Res call({String text, Rect bounds, double? confidence});
 }
 
 /// @nodoc
@@ -2275,9 +2208,7 @@ class __$$OcrRegionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$OcrRegionImpl implements _OcrRegion {
   const _$OcrRegionImpl(
-      {required this.text,
-      @RectConverter() required this.bounds,
-      this.confidence});
+      {required this.text, required this.bounds, this.confidence});
 
   factory _$OcrRegionImpl.fromJson(Map<String, dynamic> json) =>
       _$$OcrRegionImplFromJson(json);
@@ -2285,7 +2216,6 @@ class _$OcrRegionImpl implements _OcrRegion {
   @override
   final String text;
   @override
-  @RectConverter()
   final Rect bounds;
   @override
   final double? confidence;
@@ -2328,7 +2258,7 @@ class _$OcrRegionImpl implements _OcrRegion {
 abstract class _OcrRegion implements OcrRegion {
   const factory _OcrRegion(
       {required final String text,
-      @RectConverter() required final Rect bounds,
+      required final Rect bounds,
       final double? confidence}) = _$OcrRegionImpl;
 
   factory _OcrRegion.fromJson(Map<String, dynamic> json) =
@@ -2337,7 +2267,6 @@ abstract class _OcrRegion implements OcrRegion {
   @override
   String get text;
   @override
-  @RectConverter()
   Rect get bounds;
   @override
   double? get confidence;
@@ -2355,8 +2284,6 @@ SystemStatus _$SystemStatusFromJson(Map<String, dynamic> json) {
 mixin _$SystemStatus {
   String get status => throw _privateConstructorUsedError;
   String get maya => throw _privateConstructorUsedError;
-  String? get version => throw _privateConstructorUsedError;
-  int? get uptime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2370,7 +2297,7 @@ abstract class $SystemStatusCopyWith<$Res> {
           SystemStatus value, $Res Function(SystemStatus) then) =
       _$SystemStatusCopyWithImpl<$Res, SystemStatus>;
   @useResult
-  $Res call({String status, String maya, String? version, int? uptime});
+  $Res call({String status, String maya});
 }
 
 /// @nodoc
@@ -2388,8 +2315,6 @@ class _$SystemStatusCopyWithImpl<$Res, $Val extends SystemStatus>
   $Res call({
     Object? status = null,
     Object? maya = null,
-    Object? version = freezed,
-    Object? uptime = freezed,
   }) {
     return _then(_value.copyWith(
       status: null == status
@@ -2400,14 +2325,6 @@ class _$SystemStatusCopyWithImpl<$Res, $Val extends SystemStatus>
           ? _value.maya
           : maya // ignore: cast_nullable_to_non_nullable
               as String,
-      version: freezed == version
-          ? _value.version
-          : version // ignore: cast_nullable_to_non_nullable
-              as String?,
-      uptime: freezed == uptime
-          ? _value.uptime
-          : uptime // ignore: cast_nullable_to_non_nullable
-              as int?,
     ) as $Val);
   }
 }
@@ -2420,7 +2337,7 @@ abstract class _$$SystemStatusImplCopyWith<$Res>
       __$$SystemStatusImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String status, String maya, String? version, int? uptime});
+  $Res call({String status, String maya});
 }
 
 /// @nodoc
@@ -2436,8 +2353,6 @@ class __$$SystemStatusImplCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? maya = null,
-    Object? version = freezed,
-    Object? uptime = freezed,
   }) {
     return _then(_$SystemStatusImpl(
       status: null == status
@@ -2448,14 +2363,6 @@ class __$$SystemStatusImplCopyWithImpl<$Res>
           ? _value.maya
           : maya // ignore: cast_nullable_to_non_nullable
               as String,
-      version: freezed == version
-          ? _value.version
-          : version // ignore: cast_nullable_to_non_nullable
-              as String?,
-      uptime: freezed == uptime
-          ? _value.uptime
-          : uptime // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }
@@ -2463,8 +2370,7 @@ class __$$SystemStatusImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$SystemStatusImpl implements _SystemStatus {
-  const _$SystemStatusImpl(
-      {required this.status, required this.maya, this.version, this.uptime});
+  const _$SystemStatusImpl({required this.status, required this.maya});
 
   factory _$SystemStatusImpl.fromJson(Map<String, dynamic> json) =>
       _$$SystemStatusImplFromJson(json);
@@ -2473,14 +2379,10 @@ class _$SystemStatusImpl implements _SystemStatus {
   final String status;
   @override
   final String maya;
-  @override
-  final String? version;
-  @override
-  final int? uptime;
 
   @override
   String toString() {
-    return 'SystemStatus(status: $status, maya: $maya, version: $version, uptime: $uptime)';
+    return 'SystemStatus(status: $status, maya: $maya)';
   }
 
   @override
@@ -2489,14 +2391,12 @@ class _$SystemStatusImpl implements _SystemStatus {
         (other.runtimeType == runtimeType &&
             other is _$SystemStatusImpl &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.maya, maya) || other.maya == maya) &&
-            (identical(other.version, version) || other.version == version) &&
-            (identical(other.uptime, uptime) || other.uptime == uptime));
+            (identical(other.maya, maya) || other.maya == maya));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, status, maya, version, uptime);
+  int get hashCode => Object.hash(runtimeType, status, maya);
 
   @JsonKey(ignore: true)
   @override
@@ -2515,9 +2415,7 @@ class _$SystemStatusImpl implements _SystemStatus {
 abstract class _SystemStatus implements SystemStatus {
   const factory _SystemStatus(
       {required final String status,
-      required final String maya,
-      final String? version,
-      final int? uptime}) = _$SystemStatusImpl;
+      required final String maya}) = _$SystemStatusImpl;
 
   factory _SystemStatus.fromJson(Map<String, dynamic> json) =
       _$SystemStatusImpl.fromJson;
@@ -2526,10 +2424,6 @@ abstract class _SystemStatus implements SystemStatus {
   String get status;
   @override
   String get maya;
-  @override
-  String? get version;
-  @override
-  int? get uptime;
   @override
   @JsonKey(ignore: true)
   _$$SystemStatusImplCopyWith<_$SystemStatusImpl> get copyWith =>
