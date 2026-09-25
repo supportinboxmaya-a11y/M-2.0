@@ -13,6 +13,7 @@ class AppConfig {
   static const String authLogin = '/api/v1/auth/login';
   static const String authRegister = '/api/v1/auth/register';
   static const String authRefresh = '/api/v1/auth/refresh';
+  static const String authLogout = '/api/v1/auth/logout';
   static const String authMe = '/api/v1/users/me';
 
   static const String voiceTranscribe = '/api/v1/voice/transcribe';

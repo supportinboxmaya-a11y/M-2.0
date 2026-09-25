@@ -13,6 +13,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'api_service.dart';
 import 'app_config.dart';
 
+part 'camera_service.freezed.dart';
 part 'camera_service.g.dart';
 
 @riverpod
@@ -31,6 +32,7 @@ class CameraService {
   int _selectedCameraIndex = 0;
   bool _isInitialized = false;
   bool _isProcessing = false;
+  String? _lastError;
 
   CameraService(this._apiService);
 

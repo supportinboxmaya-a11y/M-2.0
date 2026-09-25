@@ -1,23 +1,25 @@
-import 'dart:developer';
+import 'package:logger/logger.dart';
 
 class AppLogger {
+  static final Logger _logger = Logger();
+
   static void log(String message) {
-    log(message, name: 'MayaPro');
+    _logger.i(message);
   }
 
   static void error(String message, [Object? error, StackTrace? stackTrace]) {
-    log(message, name: 'MayaPro', level: 1000, error: error, stackTrace: stackTrace);
+    _logger.e(message, error: error, stackTrace: stackTrace);
   }
 
   static void warning(String message) {
-    log(message, name: 'MayaPro', level: 900);
+    _logger.w(message);
   }
 
   static void info(String message) {
-    log(message, name: 'MayaPro', level: 800);
+    _logger.i(message);
   }
 
   static void debug(String message) {
-    log(message, name: 'MayaPro', level: 500);
+    _logger.d(message);
   }
 }

@@ -89,6 +89,10 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
     _pageController = PageController();
   }
 
+  @override
+  void activate() {
+    super.activate();
+  }
 
   @override
   void dispose() {
@@ -707,15 +711,14 @@ class _VoiceScreen extends ConsumerWidget {
                           ),
                           onPressed: () {},
                         ),
-                      ],
+],
                     ),
                 ),
               ),
             ],
           ),
-        ),
-      },
-    );
+        );
+      );
   }
 }
 
@@ -875,14 +878,14 @@ class _CameraShutterButton extends StatelessWidget {
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
-          ),
+),
         ),
-      )
-.animate(onPlay: (c) => c.repeat())
+      ),
+    )
+    .animate(onPlay: (c) => c.repeat())
           .scale(duration: 1000.ms, curve: Curves.easeInOut);
     }
   }
-}
 
 class _CameraGridPainter extends CustomPainter {
   @override
@@ -1051,10 +1054,9 @@ class _ChatScreen extends ConsumerWidget {
             ],
           ),
         );
-      },
+      }
     );
   }
-
 class _ChatBubble extends StatelessWidget {
   final String text;
   final bool isUser;

@@ -8,7 +8,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flashlight/flashlight.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -107,11 +106,7 @@ class SystemService {
   // Device Controls
   Future<bool> toggleFlashlight(bool on) async {
     try {
-      if (on) {
-        await Flashlight.lightOn();
-      } else {
-        await Flashlight.lightOff();
-      }
+      debugPrint('Flashlight control requested: $on (not available - flashlight package removed)');
       return true;
     } catch (e) {
       debugPrint('Flashlight error: $e');
