@@ -164,11 +164,12 @@ class SystemService {
     await AppSettings.openLocationSettings();
   }
 
-  Future<void> launchUrl(String url) async {
+Future<void> launchUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await url_launcher.launchUrl(uri);
     }
+  }
   }
 
   Future<void> openApp(String packageName) async {
@@ -214,12 +215,11 @@ class SystemService {
         'buildNumber': windowsInfo.buildNumber,
         'version': windowsInfo.productName,
       };
-    } else if (Platform.isMacOS) {
+} else if (Platform.isMacOS) {
       final macInfo = await deviceInfo.macOsInfo;
       info = {
         'model': macInfo.model,
         'version': macInfo.osRelease,
-        'buildNumber': macInfo.buildNumber,
       };
     }
 

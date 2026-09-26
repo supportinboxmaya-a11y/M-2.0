@@ -90,20 +90,9 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
   }
 
   @override
-  void activate() {
-    super.activate();
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(IntProperty('currentIndex', _currentIndex));
   }
 
   @override
@@ -473,15 +462,15 @@ class _HomeScreen extends StatelessWidget {
                   _StatusItem(label: 'Voice', value: 'Ready', color: MayaTheme.neonCyan),
                   _StatusItem(label: 'Vision', value: 'Ready', color: MayaTheme.neonViolet),
                   _StatusItem(label: 'System', value: 'Online', color: MayaTheme.neonEmerald),
+],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-),
-      ),
-    );
-    }
-  }
+            );
+          );
+        }
+      }
 
 class _StatusItem extends StatelessWidget {
   final String label;
@@ -713,14 +702,12 @@ class _VoiceScreen extends ConsumerWidget {
                         ),
 ],
                     ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      );
-  }
-}
+              );
+            );
+          }
+        }
 
 class _CameraScreen extends ConsumerWidget {
   const _CameraScreen();
@@ -811,15 +798,14 @@ class _CameraScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     Text('Tap to capture • Swipe to zoom', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
-                  ],
-                ),
+],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      );
-    }
-  }
+            );
+          }
+        }
 
 class _CameraActionButton extends StatelessWidget {
   final IconData icon;
@@ -1051,12 +1037,12 @@ class _ChatScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-            ],
-          ),
-        );
-      }
-    );
-  }
+],
+              ),
+            );
+          }
+        }
+
 class _ChatBubble extends StatelessWidget {
   final String text;
   final bool isUser;
