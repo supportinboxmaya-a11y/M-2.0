@@ -4,6 +4,7 @@ import 'package:rive/rive.dart' hide LinearGradient;
 
 import '../theme/maya_theme.dart';
 import '../animations/maya_animations.dart';
+
 import 'package:flutter/services.dart';
 
 class MayaLogo extends StatefulWidget {
@@ -32,13 +33,7 @@ class MayaLogo extends StatefulWidget {
   State<MayaLogo> createState() => _MayaLogoState();
 }
 
-enum MayaLogoState {
-  idle,
-  listening,
-  processing,
-  speaking,
-  error,
-}
+enum MayaLogoState { idle, listening, processing, speaking, error }
 
 class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
   late AnimationController _pulseController;
@@ -145,9 +140,7 @@ class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
         glowColor: widget.showGlow ? _getGlowColor() : Colors.transparent,
         rotation: widget.showRotation ? 1.0 : 0,
       ),
-      child: Center(
-        child: _buildMLogo(),
-      ),
+      child: Center(child: _buildMLogo()),
     );
 
     if (widget.showGlow) {
@@ -166,10 +159,7 @@ class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
     }
 
     if (widget.onTap != null) {
-      logo = GestureDetector(
-        onTap: widget.onTap,
-        child: logo,
-      );
+      logo = GestureDetector(onTap: widget.onTap, child: logo);
     }
 
     return AnimatedSwitcher(
@@ -178,23 +168,20 @@ class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
       switchOutCurve: Curves.easeInBack,
       child: widget.state == MayaLogoState.processing
           ? logo
-              .animate()
-              .rotate(
-                duration: const Duration(seconds: 2),
-                curve: Curves.linear,
-              )
-              .then()
-              .shimmer(
-                duration: 1000.ms,
-                color: MayaTheme.neonViolet.withOpacity(0.3),
-              )
+                .animate()
+                .rotate(
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.linear,
+                )
+                .then()
+                .shimmer(
+                  duration: 1000.ms,
+                  color: MayaTheme.neonViolet.withOpacity(0.3),
+                )
           : logo
-              .animate()
-              .scale(
-                duration: 300.ms,
-                curve: Curves.easeOutBack,
-              )
-              .shimmer(duration: 2000.ms),
+                .animate()
+                .scale(duration: 300.ms, curve: Curves.easeOutBack)
+                .shimmer(duration: 2000.ms),
     );
   }
 
@@ -273,18 +260,12 @@ class _MLetterPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
 
     final gradient = LinearGradient(
-      colors: [
-        MayaTheme.neonCyan,
-        MayaTheme.neonViolet,
-        MayaTheme.neonEmerald,
-      ],
+      colors: [MayaTheme.neonCyan, MayaTheme.neonViolet, MayaTheme.neonEmerald],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
 
-    paint.shader = gradient.createShader(
-      Rect.fromLTWH(0, 0, 100, 100),
-    );
+    paint.shader = gradient.createShader(Rect.fromLTWH(0, 0, 100, 100));
 
     final w = 100.0;
     final h = 100.0;

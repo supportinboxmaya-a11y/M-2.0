@@ -62,7 +62,11 @@ class MayaAnimations {
   static Widget rotatingBorder({
     required Widget child,
     Duration duration = const Duration(seconds: 4),
-    List<Color> colors = const [MayaTheme.neonCyan, MayaTheme.neonViolet, MayaTheme.neonEmerald],
+    List<Color> colors = const [
+      MayaTheme.neonCyan,
+      MayaTheme.neonViolet,
+      MayaTheme.neonEmerald,
+    ],
     double borderWidth = 2,
     BorderRadius? borderRadius,
   }) {
@@ -79,10 +83,7 @@ class MayaAnimations {
               endAngle: 2 * math.pi,
               tileMode: TileMode.repeated,
             ),
-            border: Border.all(
-              color: Colors.transparent,
-              width: 2,
-            ),
+            border: Border.all(color: Colors.transparent, width: 2),
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -101,7 +102,11 @@ class MayaAnimations {
   static Widget rotatingGlowBorder({
     required Widget child,
     Duration duration = const Duration(seconds: 4),
-    List<Color> colors = const [MayaTheme.neonCyan, MayaTheme.neonViolet, MayaTheme.neonEmerald],
+    List<Color> colors = const [
+      MayaTheme.neonCyan,
+      MayaTheme.neonViolet,
+      MayaTheme.neonEmerald,
+    ],
     double borderWidth = 2,
     BorderRadius? borderRadius,
   }) {
@@ -173,13 +178,11 @@ class MayaAnimations {
                 ),
               ],
             ),
-          )
-              .animate()
-              .scaleY(
-                delay: Duration(milliseconds: index * 50),
-                duration: Duration(milliseconds: 100),
-                curve: Curves.easeOutBack,
-              );
+          ).animate().scaleY(
+            delay: Duration(milliseconds: index * 50),
+            duration: Duration(milliseconds: 100),
+            curve: Curves.easeOutBack,
+          );
         }),
       ),
     );
@@ -303,13 +306,12 @@ class MayaAnimations {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
           position: animation.drive(
-            Tween(begin: beginOffset, end: Offset.zero)
-                .chain(CurveTween(curve: curve)),
+            Tween(
+              begin: beginOffset,
+              end: Offset.zero,
+            ).chain(CurveTween(curve: curve)),
           ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -329,12 +331,12 @@ class MayaAnimations {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return ScaleTransition(
           scale: animation.drive(
-            Tween(begin: 0.8, end: 1.0).chain(CurveTween(curve: Curves.easeOutBack)),
+            Tween(
+              begin: 0.8,
+              end: 1.0,
+            ).chain(CurveTween(curve: Curves.easeOutBack)),
           ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -354,8 +356,10 @@ class MayaAnimations {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
           position: animation.drive(
-            Tween(begin: const Offset(0, 1), end: Offset.zero)
-                .chain(CurveTween(curve: curve)),
+            Tween(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).chain(CurveTween(curve: curve)),
           ),
           child: child,
         );
@@ -476,10 +480,7 @@ class _TypewriterTextState extends State<_TypewriterText> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _displayedText,
-      style: widget.style,
-    );
+    return Text(_displayedText, style: widget.style);
   }
 }
 

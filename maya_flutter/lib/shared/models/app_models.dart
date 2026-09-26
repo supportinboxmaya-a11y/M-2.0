@@ -35,7 +35,8 @@ class AuthResponse with _$AuthResponse {
     required UserProfile user,
   }) = _AuthResponse;
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
+  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseFromJson(json);
 }
 
 @freezed
@@ -48,7 +49,8 @@ class UserProfile with _$UserProfile {
     String? role,
   }) = _UserProfile;
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) => _UserProfileFromJson(json);
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      _UserProfileFromJson(json);
 }
 
 @freezed
@@ -61,7 +63,8 @@ class TranscriptionResult with _$TranscriptionResult {
     List<TranscriptionSegment>? segments,
   }) = _TranscriptionResult;
 
-  factory TranscriptionResult.fromJson(Map<String, dynamic> json) => _$TranscriptionResultFromJson(json);
+  factory TranscriptionResult.fromJson(Map<String, dynamic> json) =>
+      _$TranscriptionResultFromJson(json);
 }
 
 @freezed
@@ -73,7 +76,8 @@ class TranscriptionSegment with _$TranscriptionSegment {
     double? avgLogprob,
   }) = _TranscriptionSegment;
 
-  factory TranscriptionSegment.fromJson(Map<String, dynamic> json) => _TranscriptionSegmentFromJson(json);
+  factory TranscriptionSegment.fromJson(Map<String, dynamic> json) =>
+      _TranscriptionSegmentFromJson(json);
 }
 
 @freezed
@@ -86,7 +90,8 @@ class TtsResult with _$TtsResult {
     String? error,
   }) = _TtsResult;
 
-  factory TtsResult.fromJson(Map<String, dynamic> json) => _$TtsResultFromJson(json);
+  factory TtsResult.fromJson(Map<String, dynamic> json) =>
+      _$TtsResultFromJson(json);
 }
 
 @freezed
@@ -97,18 +102,17 @@ class AgentChatResponse with _$AgentChatResponse {
     String? taskId,
   }) = _AgentChatResponse;
 
-  factory AgentChatResponse.fromJson(Map<String, dynamic> json) => _AgentChatResponseFromJson(json);
+  factory AgentChatResponse.fromJson(Map<String, dynamic> json) =>
+      _AgentChatResponseFromJson(json);
 }
 
 @freezed
 class ChatStreamChunk with _$ChatStreamChunk {
-  const factory ChatStreamChunk({
-    String? delta,
-    bool? done,
-    String? error,
-  }) = _ChatStreamChunk;
+  const factory ChatStreamChunk({String? delta, bool? done, String? error}) =
+      _ChatStreamChunk;
 
-  factory ChatStreamChunk.fromJson(Map<String, dynamic> json) => _ChatStreamChunkFromJson(json);
+  factory ChatStreamChunk.fromJson(Map<String, dynamic> json) =>
+      _ChatStreamChunkFromJson(json);
 }
 
 @freezed
@@ -120,7 +124,8 @@ class AgentRunResponse with _$AgentRunResponse {
     String? error,
   }) = _AgentRunResponse;
 
-  factory AgentRunResponse.fromJson(Map<String, dynamic> json) => _AgentRunResponseFromJson(json);
+  factory AgentRunResponse.fromJson(Map<String, dynamic> json) =>
+      _AgentRunResponseFromJson(json);
 }
 
 @freezed
@@ -131,7 +136,8 @@ class AgentThinkResponse with _$AgentThinkResponse {
     List<String>? steps,
   }) = _AgentThinkResponse;
 
-  factory AgentThinkResponse.fromJson(Map<String, dynamic> json) => _AgentThinkResponseFromJson(json);
+  factory AgentThinkResponse.fromJson(Map<String, dynamic> json) =>
+      _AgentThinkResponseFromJson(json);
 }
 
 @freezed
@@ -143,17 +149,17 @@ class VisionAnalysisResult with _$VisionAnalysisResult {
     String? analysis,
   }) = _VisionAnalysisResult;
 
-  factory VisionAnalysisResult.fromJson(Map<String, dynamic> json) => _VisionAnalysisResultFromJson(json);
+  factory VisionAnalysisResult.fromJson(Map<String, dynamic> json) =>
+      _VisionAnalysisResultFromJson(json);
 }
 
 @freezed
 class OcrResult with _$OcrResult {
-  const factory OcrResult({
-    required String text,
-    List<OcrRegion>? regions,
-  }) = _OcrResult;
+  const factory OcrResult({required String text, List<OcrRegion>? regions}) =
+      _OcrResult;
 
-  factory OcrResult.fromJson(Map<String, dynamic> json) => _OcrResultFromJson(json);
+  factory OcrResult.fromJson(Map<String, dynamic> json) =>
+      _OcrResultFromJson(json);
 }
 
 @freezed
@@ -164,7 +170,8 @@ class OcrRegion with _$OcrRegion {
     double? confidence,
   }) = _OcrRegion;
 
-  factory OcrRegion.fromJson(Map<String, dynamic> json) => _OcrRegionFromJson(json);
+  factory OcrRegion.fromJson(Map<String, dynamic> json) =>
+      _OcrRegionFromJson(json);
 }
 
 @freezed
@@ -176,7 +183,8 @@ class SystemStatus with _$SystemStatus {
     int? uptime,
   }) = _SystemStatus;
 
-  factory SystemStatus.fromJson(Map<String, dynamic> json) => _SystemStatusFromJson(json);
+  factory SystemStatus.fromJson(Map<String, dynamic> json) =>
+      _SystemStatusFromJson(json);
 }
 
 @freezed
@@ -189,17 +197,17 @@ class SystemStats with _$SystemStats {
     NetworkStats? network,
   }) = _SystemStats;
 
-  factory SystemStats.fromJson(Map<String, dynamic> json) => _SystemStatsFromJson(json);
+  factory SystemStats.fromJson(Map<String, dynamic> json) =>
+      _SystemStatsFromJson(json);
 }
 
 @freezed
 class CpuStats with _$CpuStats {
-  const factory CpuStats({
-    required double percent,
-    required int count,
-  }) = _CpuStats;
+  const factory CpuStats({required double percent, required int count}) =
+      _CpuStats;
 
-  factory CpuStats.fromJson(Map<String, dynamic> json) => _CpuStatsFromJson(json);
+  factory CpuStats.fromJson(Map<String, dynamic> json) =>
+      _CpuStatsFromJson(json);
 }
 
 @freezed
@@ -211,7 +219,8 @@ class MemoryStats with _$MemoryStats {
     required double percent,
   }) = _MemoryStats;
 
-  factory MemoryStats.fromJson(Map<String, dynamic> json) => _MemoryStatsFromJson(json);
+  factory MemoryStats.fromJson(Map<String, dynamic> json) =>
+      _MemoryStatsFromJson(json);
 }
 
 @freezed
@@ -223,24 +232,23 @@ class DiskStats with _$DiskStats {
     required double percent,
   }) = _DiskStats;
 
-  factory DiskStats.fromJson(Map<String, dynamic> json) => _DiskStatsFromJson(json);
+  factory DiskStats.fromJson(Map<String, dynamic> json) =>
+      _DiskStatsFromJson(json);
 }
 
 @freezed
 class LoadStats with _$LoadStats {
-  const factory LoadStats({
-    required List<double> loadAvg,
-  }) = _LoadStats;
+  const factory LoadStats({required List<double> loadAvg}) = _LoadStats;
 
-  factory LoadStats.fromJson(Map<String, dynamic> json) => _LoadStatsFromJson(json);
+  factory LoadStats.fromJson(Map<String, dynamic> json) =>
+      _LoadStatsFromJson(json);
 }
 
 @freezed
 class NetworkStats with _$NetworkStats {
-  const factory NetworkStats({
-    required int bytesSent,
-    required int bytesRecv,
-  }) = _NetworkStats;
+  const factory NetworkStats({required int bytesSent, required int bytesRecv}) =
+      _NetworkStats;
 
-  factory NetworkStats.fromJson(Map<String, dynamic> json) => _NetworkStatsFromJson(json);
+  factory NetworkStats.fromJson(Map<String, dynamic> json) =>
+      _NetworkStatsFromJson(json);
 }

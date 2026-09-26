@@ -64,21 +64,13 @@ class MayaTheme {
   static const LinearGradient bgGradientVoice = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF0F0F1A),
-      Color(0xFF1A0A2E),
-      Color(0xFF0D0D2B),
-    ],
+    colors: [Color(0xFF0F0F1A), Color(0xFF1A0A2E), Color(0xFF0D0D2B)],
   );
 
   static const LinearGradient bgGradientCamera = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF0A1A2F),
-      Color(0xFF0D2B3E),
-      Color(0xFF0F1A2E),
-    ],
+    colors: [Color(0xFF0A1A2F), Color(0xFF0D2B3E), Color(0xFF0F1A2E)],
   );
 
   // Text Styles
@@ -237,10 +229,7 @@ class MayaTheme {
         labelLarge: labelLarge,
         labelMedium: labelMedium,
         labelSmall: labelSmall,
-      ).apply(
-        bodyColor: Colors.white,
-        displayColor: Colors.white,
-      ),
+      ).apply(bodyColor: Colors.white, displayColor: Colors.white),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -257,38 +246,34 @@ class MayaTheme {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: neonCyan.withValues(alpha: 0.2),
-            width: 1,
-          ),
+          side: BorderSide(color: neonCyan.withValues(alpha: 0.2), width: 1),
         ),
         margin: const EdgeInsets.all(8),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: neonCyan,
-          foregroundColor: slate900,
-          elevation: 0,
-          shadowColor: neonCyan.withValues(alpha: 0.4),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          textStyle: labelLarge,
-          minimumSize: const Size(88, 48),
-        ).copyWith(
-          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) {
-              if (states.contains(WidgetState.pressed)) {
-                return neonCyan.withValues(alpha: 0.8);
-              }
-              if (states.contains(WidgetState.hovered)) {
-                return neonCyan.withValues(alpha: 0.9);
-              }
-              return null;
-            },
-          ),
-        ),
+        style:
+            ElevatedButton.styleFrom(
+              backgroundColor: neonCyan,
+              foregroundColor: slate900,
+              elevation: 0,
+              shadowColor: neonCyan.withValues(alpha: 0.4),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textStyle: labelLarge,
+              minimumSize: const Size(88, 48),
+            ).copyWith(
+              overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return neonCyan.withValues(alpha: 0.8);
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return neonCyan.withValues(alpha: 0.9);
+                }
+                return null;
+              }),
+            ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -313,14 +298,23 @@ class MayaTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: slate700.withValues(alpha: 0.5),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: neonCyan.withValues(alpha: 0.3), width: 1),
+          borderSide: BorderSide(
+            color: neonCyan.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: neonCyan.withValues(alpha: 0.2), width: 1),
+          borderSide: BorderSide(
+            color: neonCyan.withValues(alpha: 0.2),
+            width: 1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -336,7 +330,10 @@ class MayaTheme {
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1),
+          borderSide: BorderSide(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
         labelStyle: bodyMedium.copyWith(color: Colors.white54),
         hintStyle: bodyMedium.copyWith(color: Colors.white30),
@@ -383,14 +380,12 @@ class MayaTheme {
         labelStyle: labelLarge,
         unselectedLabelStyle: labelMedium,
         dividerColor: Colors.transparent,
-        overlayColor: WidgetStateProperty.resolveWith<Color?>(
-          (states) {
-            if (states.contains(WidgetState.pressed)) {
-              return neonCyan.withValues(alpha: 0.1);
-            }
-            return null;
-          },
-        ),
+        overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+          if (states.contains(WidgetState.pressed)) {
+            return neonCyan.withValues(alpha: 0.1);
+          }
+          return null;
+        }),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: slate700.withValues(alpha: 0.5),
@@ -413,31 +408,25 @@ class MayaTheme {
         focusElevation: 12,
         hoverElevation: 12,
         highlightElevation: 16,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: slate900,
         elevation: 16,
         indicatorColor: neonCyan.withValues(alpha: 0.15),
         surfaceTintColor: Colors.transparent,
-        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return labelMedium.copyWith(color: neonCyan);
-            }
-            return labelSmall.copyWith(color: Colors.white38);
-          },
-        ),
-        iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(color: neonCyan, size: 24);
-            }
-            return const IconThemeData(color: Colors.white38, size: 24);
-          },
-        ),
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return labelMedium.copyWith(color: neonCyan);
+          }
+          return labelSmall.copyWith(color: Colors.white38);
+        }),
+        iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: neonCyan, size: 24);
+          }
+          return const IconThemeData(color: Colors.white38, size: 24);
+        }),
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: neonCyan,
@@ -459,61 +448,49 @@ class MayaTheme {
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith<Color>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return neonCyan;
-            }
-            return Colors.white38;
-          },
-        ),
-        trackColor: WidgetStateProperty.resolveWith<Color>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return neonCyan.withValues(alpha: 0.3);
-            }
-            return Colors.white10;
-          },
-        ),
-        trackOutlineColor: WidgetStateProperty.resolveWith<Color?>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return neonCyan;
-            }
-            return neonCyan.withValues(alpha: 0.2);
-          },
-        ),
-        thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return const Icon(Icons.check, size: 18, color: Color(0xFF0B0F19));
-            }
-            return null;
-          },
-        ),
+        thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return neonCyan;
+          }
+          return Colors.white38;
+        }),
+        trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return neonCyan.withValues(alpha: 0.3);
+          }
+          return Colors.white10;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return neonCyan;
+          }
+          return neonCyan.withValues(alpha: 0.2);
+        }),
+        thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Icon(Icons.check, size: 18, color: Color(0xFF0B0F19));
+          }
+          return null;
+        }),
       ),
       checkboxTheme: CheckboxThemeData(
-        fillColor: WidgetStateProperty.resolveWith<Color>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return neonCyan;
-            }
-            return Colors.transparent;
-          },
-        ),
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return neonCyan;
+          }
+          return Colors.transparent;
+        }),
         checkColor: WidgetStateProperty.all(const Color(0xFF0B0F19)),
         side: BorderSide(color: neonCyan.withValues(alpha: 0.4), width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       radioTheme: RadioThemeData(
-        fillColor: WidgetStateProperty.resolveWith<Color>(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return neonCyan;
-            }
-            return Colors.white10;
-          },
-        ),
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
+            return neonCyan;
+          }
+          return Colors.white10;
+        }),
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
@@ -544,14 +521,8 @@ class MayaTheme {
         actionTextColor: neonEmerald,
         actionOverflowThreshold: 0.5,
       ),
-      iconTheme: const IconThemeData(
-        color: Colors.white,
-        size: 24,
-      ),
-      primaryIconTheme: const IconThemeData(
-        color: neonCyan,
-        size: 24,
-      ),
+      iconTheme: const IconThemeData(color: Colors.white, size: 24),
+      primaryIconTheme: const IconThemeData(color: neonCyan, size: 24),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: Colors.white,
@@ -564,7 +535,9 @@ class MayaTheme {
       ),
       menuTheme: MenuThemeData(
         style: MenuStyle(
-          backgroundColor: WidgetStateProperty.all(slate800.withValues(alpha: 0.95)),
+          backgroundColor: WidgetStateProperty.all(
+            slate800.withValues(alpha: 0.95),
+          ),
           surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
           elevation: WidgetStateProperty.all(16),
           shadowColor: WidgetStateProperty.all(neonCyan.withValues(alpha: 0.1)),
@@ -574,7 +547,9 @@ class MayaTheme {
               side: BorderSide(color: neonCyan.withValues(alpha: 0.2)),
             ),
           ),
-          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 8)),
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(vertical: 8),
+          ),
         ),
       ),
       popupMenuTheme: PopupMenuThemeData(
@@ -606,7 +581,10 @@ class MayaTheme {
           side: BorderSide(color: neonCyan.withValues(alpha: 0.1)),
         ),
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        childrenPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
       ),
       listTileTheme: ListTileThemeData(
         tileColor: Colors.transparent,
@@ -618,9 +596,7 @@ class MayaTheme {
         subtitleTextStyle: bodyMedium,
         leadingAndTrailingTextStyle: bodySmall,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
@@ -637,11 +613,9 @@ class MayaTheme {
     return BoxDecoration(
       color: color ?? Colors.white.withValues(alpha: opacity),
       borderRadius: borderRadius ?? BorderRadius.circular(16),
-      border: Border.all(
-        color: Colors.white.withValues(alpha: 0.1),
-        width: 1,
-      ),
-      boxShadow: shadows ??
+      border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+      boxShadow:
+          shadows ??
           [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.3),
@@ -668,10 +642,7 @@ class MayaTheme {
     return BoxDecoration(
       color: Colors.white.withValues(alpha: 0.05),
       borderRadius: borderRadius ?? BorderRadius.circular(16),
-      border: Border.all(
-        color: glowColor.withValues(alpha: 0.3),
-        width: 1.5,
-      ),
+      border: Border.all(color: glowColor.withValues(alpha: 0.3), width: 1.5),
       boxShadow: [
         BoxShadow(
           color: glowColor.withValues(alpha: opacity),
@@ -712,11 +683,7 @@ class MayaTheme {
     Alignment begin = Alignment.topLeft,
     Alignment end = Alignment.bottomRight,
   }) {
-    return LinearGradient(
-      colors: colors,
-      begin: begin,
-      end: end,
-    );
+    return LinearGradient(colors: colors, begin: begin, end: end);
   }
 
   static LinearGradient textGradient({

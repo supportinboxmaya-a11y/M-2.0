@@ -37,14 +37,18 @@ class SystemService {
 
   SystemService(this._apiService);
 
-  Stream<SystemState> get stateStream => _stateController?.stream ?? const Stream.empty();
-  Stream<BatteryState> get batteryStream => _batteryController?.stream ?? const Stream.empty();
-  Stream<List<ConnectivityResult>> get connectivityStream => _connectivityController?.stream ?? const Stream.empty();
+  Stream<SystemState> get stateStream =>
+      _stateController?.stream ?? const Stream.empty();
+  Stream<BatteryState> get batteryStream =>
+      _batteryController?.stream ?? const Stream.empty();
+  Stream<List<ConnectivityResult>> get connectivityStream =>
+      _connectivityController?.stream ?? const Stream.empty();
 
   Future<void> initialize() async {
     _stateController = StreamController<SystemState>.broadcast();
     _batteryController = StreamController<BatteryState>.broadcast();
-    _connectivityController = StreamController<List<ConnectivityResult>>.broadcast();
+    _connectivityController =
+        StreamController<List<ConnectivityResult>>.broadcast();
 
     await _requestPermissions();
     _startStatusMonitoring();
@@ -66,7 +70,8 @@ class SystemService {
     });
 
     // Connectivity (v6.x returns List<ConnectivityResult>)
-    _connectivityController = StreamController<List<ConnectivityResult>>.broadcast();
+    _connectivityController =
+        StreamController<List<ConnectivityResult>>.broadcast();
     _connectivity.onConnectivityChanged.listen((result) {
       _connectivityController?.add(result);
     });
@@ -106,7 +111,9 @@ class SystemService {
   // Device Controls
   Future<bool> toggleFlashlight(bool on) async {
     try {
-      debugPrint('Flashlight control requested: $on (not available - flashlight package removed)');
+      debugPrint(
+        'Flashlight control requested: $on (not available - flashlight package removed)',
+      );
       return true;
     } catch (e) {
       debugPrint('Flashlight error: $e');
@@ -245,5 +252,6 @@ class SystemState with _$SystemState {
     int? uptime,
   }) = _SystemState;
 
-  factory SystemState.fromJson(Map<String, dynamic> json) => _$SystemStateFromJson(json);
+  factory SystemState.fromJson(Map<String, dynamic> json) =>
+      _$SystemStateFromJson(json);
 }

@@ -43,9 +43,12 @@ class VoiceService {
 
   VoiceService(this._apiService);
 
-  Stream<VoiceState> get stateStream => _stateController?.stream ?? const Stream.empty();
-  Stream<String> get transcriptStream => _transcriptController?.stream ?? const Stream.empty();
-  Stream<double> get amplitudeStream => _amplitudeController?.stream ?? const Stream.empty();
+  Stream<VoiceState> get stateStream =>
+      _stateController?.stream ?? const Stream.empty();
+  Stream<String> get transcriptStream =>
+      _transcriptController?.stream ?? const Stream.empty();
+  Stream<double> get amplitudeStream =>
+      _amplitudeController?.stream ?? const Stream.empty();
 
   bool get isRecording => _isRecording;
   bool get isPlaying => _isPlaying;
@@ -58,7 +61,9 @@ class VoiceService {
     _amplitudeController = StreamController<double>.broadcast();
 
     await _recorder.open();
-    await _player.setAudioSource(AudioSource.uri(Uri.parse('asset:///assets/silence.mp3')));
+    await _player.setAudioSource(
+      AudioSource.uri(Uri.parse('asset:///assets/silence.mp3')),
+    );
     await _flutterRecorder.openRecorder();
     await _speechToText.initialize();
 
@@ -101,7 +106,9 @@ class VoiceService {
     _isRecording = true;
     _stateController?.add(VoiceState.recording);
 
-    _amplitudeTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _amplitudeTimer = Timer.periodic(const Duration(milliseconds: 100), (
+      timer,
+    ) {
       _amplitudeController?.add(0.5); // Placeholder
     });
   }
@@ -120,7 +127,9 @@ class VoiceService {
         path: 'recording_${DateTime.now().millisecondsSinceEpoch}.wav',
       );
 
-      _amplitudeTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) async {
+      _amplitudeTimer = Timer.periodic(const Duration(milliseconds: 100), (
+        timer,
+      ) async {
         final amplitude = await _recorder.getAmplitude();
         _amplitudeController?.add(amplitude.current ?? 0.0);
       });
@@ -172,7 +181,9 @@ class VoiceService {
       final result = await _apiService.speakText(text, voice: voice);
       if (result.success && result.audioBase64 != null) {
         final bytes = base64Decode(result.audioBase64!);
-        final tempFile = File('${Directory.systemTemp.path}/tts_${DateTime.now().millisecondsSinceEpoch}.mp3');
+        final tempFile = File(
+          '${Directory.systemTemp.path}/tts_${DateTime.now().millisecondsSinceEpoch}.mp3',
+        );
         await tempFile.writeAsBytes(bytes);
         await _player.setFilePath(tempFile.path);
         await _player.play();
@@ -197,7 +208,9 @@ class VoiceService {
     _isSpeaking = true;
     _stateController?.add(VoiceState.speaking);
 
-    final tempFile = File('${Directory.systemTemp.path}/tts_${DateTime.now().millisecondsSinceEpoch}.mp3');
+    final tempFile = File(
+      '${Directory.systemTemp.path}/tts_${DateTime.now().millisecondsSinceEpoch}.mp3',
+    );
     await tempFile.writeAsBytes(bytes);
     await _player.setFilePath(tempFile.path);
     await _player.play();
@@ -252,5 +265,6 @@ class TtsResult with _$TtsResult {
     String? error,
   }) = _TtsResult;
 
-  factory TtsResult.fromJson(Map<String, dynamic> json) => _$TtsResultFromJson(json);
+  factory TtsResult.fromJson(Map<String, dynamic> json) =>
+      _$TtsResultFromJson(json);
 }

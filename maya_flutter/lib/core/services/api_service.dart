@@ -60,41 +60,45 @@ class ApiService {
   }
 
   void _initDio() {
-    _dio = Dio(BaseOptions(
-      baseUrl: AppConfig.apiBaseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 60),
-      sendTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: AppConfig.apiBaseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 60),
+        sendTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        final token = _getToken();
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        handler.next(options);
-      },
-      onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
-          final refreshed = await _refreshToken();
-          if (refreshed) {
-            final options = error.requestOptions;
-            options.headers['Authorization'] = 'Bearer ${_getToken()}';
-            final retry = await _dio.fetch(options);
-            return handler.resolve(retry);
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final token = _getToken();
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
           }
-        }
-        handler.next(error);
-      },
-      onResponse: (response, handler) {
-        handler.next(response);
-      },
-    ));
+          handler.next(options);
+        },
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401) {
+            final refreshed = await _refreshToken();
+            if (refreshed) {
+              final options = error.requestOptions;
+              options.headers['Authorization'] = 'Bearer ${_getToken()}';
+              final retry = await _dio.fetch(options);
+              return handler.resolve(retry);
+            }
+          }
+          handler.next(error);
+        },
+        onResponse: (response, handler) {
+          handler.next(response);
+        },
+      ),
+    );
   }
 
   String? _getToken() {
@@ -139,19 +143,22 @@ class ApiService {
 
   // Auth
   Future<AuthResponse> login(String email, String password) async {
-    final response = await _dio.post(AppConfig.authLogin, data: {
-      'email': email,
-      'password': password,
-    });
+    final response = await _dio.post(
+      AppConfig.authLogin,
+      data: {'email': email, 'password': password},
+    );
     return AuthResponse.fromJson(response.data);
   }
 
-  Future<AuthResponse> register(String name, String email, String password) async {
-    final response = await _dio.post(AppConfig.authRegister, data: {
-      'name': name,
-      'email': email,
-      'password': password,
-    });
+  Future<AuthResponse> register(
+    String name,
+    String email,
+    String password,
+  ) async {
+    final response = await _dio.post(
+      AppConfig.authRegister,
+      data: {'name': name, 'email': email, 'password': password},
+    );
     return AuthResponse.fromJson(response.data);
   }
 
@@ -168,7 +175,10 @@ class ApiService {
   // Voice
   Future<TranscriptionResult> transcribeAudio(File audioFile) async {
     final formData = FormData.fromMap({
-      'audio': await MultipartFile.fromFile(audioFile.path, filename: 'recording.webm'),
+      'audio': await MultipartFile.fromFile(
+        audioFile.path,
+        filename: 'recording.webm',
+      ),
     });
 
     final response = await _dio.post(
@@ -187,7 +197,10 @@ class ApiService {
     return TtsResult.fromJson(response.data);
   }
 
-  Future<TtsResult> speakText(String text, {String voice = 'en-US-AriaNeural'}) async {
+  Future<TtsResult> speakText(
+    String text, {
+    String voice = 'en-US-AriaNeural',
+  }) async {
     final response = await _dio.post(
       AppConfig.voiceSpeak,
       data: {'text': text, 'voice': voice},
@@ -196,29 +209,26 @@ class ApiService {
   }
 
   // Agent
-  Future<AgentChatResponse> chat(String message, {
+  Future<AgentChatResponse> chat(
+    String message, {
     String? chatId,
     String? instanceId,
   }) async {
-    final response = await _dio.post(AppConfig.agentChat, data: {
-      'message': message,
-      'chat_id': chatId,
-      'instance_id': instanceId,
-    });
+    final response = await _dio.post(
+      AppConfig.agentChat,
+      data: {'message': message, 'chat_id': chatId, 'instance_id': instanceId},
+    );
     return AgentChatResponse.fromJson(response.data);
   }
 
-  Stream<ChatStreamChunk> chatStream(String message, {
+  Stream<ChatStreamChunk> chatStream(
+    String message, {
     String? chatId,
     String? instanceId,
   }) async* {
     final response = await _dio.post(
       AppConfig.agentChatStream,
-      data: {
-        'message': message,
-        'chat_id': chatId,
-        'instance_id': instanceId,
-      },
+      data: {'message': message, 'chat_id': chatId, 'instance_id': instanceId},
       options: Options(
         responseType: ResponseType.stream,
         headers: {'Accept': 'text/event-stream'},
@@ -257,24 +267,33 @@ class ApiService {
     }
   }
 
-  Future<AgentRunResponse> runAgent(String goal, {double budgetUsd = 1.0}) async {
-    final response = await _dio.post(AppConfig.agentRun, data: {
-      'goal': goal,
-      'budget_usd': budgetUsd,
-    });
+  Future<AgentRunResponse> runAgent(
+    String goal, {
+    double budgetUsd = 1.0,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.agentRun,
+      data: {'goal': goal, 'budget_usd': budgetUsd},
+    );
     return AgentRunResponse.fromJson(response.data);
   }
 
-  Future<AgentThinkResponse> think(String problem, {String depth = 'normal'}) async {
-    final response = await _dio.post(AppConfig.agentThink, data: {
-      'problem': problem,
-      'depth': depth,
-    });
+  Future<AgentThinkResponse> think(
+    String problem, {
+    String depth = 'normal',
+  }) async {
+    final response = await _dio.post(
+      AppConfig.agentThink,
+      data: {'problem': problem, 'depth': depth},
+    );
     return AgentThinkResponse.fromJson(response.data);
   }
 
   // Vision/Camera
-  Future<VisionAnalysisResult> analyzeImage(File imageFile, {String? prompt}) async {
+  Future<VisionAnalysisResult> analyzeImage(
+    File imageFile, {
+    String? prompt,
+  }) async {
     final formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(imageFile.path),
       if (prompt != null) 'prompt': prompt,
@@ -387,7 +406,8 @@ class AuthResponse with _$AuthResponse {
     required UserProfile user,
   }) = _AuthResponse;
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
+  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseFromJson(json);
 }
 
 @freezed
@@ -400,7 +420,8 @@ class UserProfile with _$UserProfile {
     String? role,
   }) = _UserProfile;
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) => _$UserProfileFromJson(json);
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      _$UserProfileFromJson(json);
 }
 
 @freezed
@@ -413,7 +434,8 @@ class TranscriptionResult with _$TranscriptionResult {
     List<TranscriptionSegment>? segments,
   }) = _TranscriptionResult;
 
-  factory TranscriptionResult.fromJson(Map<String, dynamic> json) => _$TranscriptionResultFromJson(json);
+  factory TranscriptionResult.fromJson(Map<String, dynamic> json) =>
+      _$TranscriptionResultFromJson(json);
 }
 
 @freezed
@@ -425,7 +447,8 @@ class TranscriptionSegment with _$TranscriptionSegment {
     double? avgLogprob,
   }) = _TranscriptionSegment;
 
-  factory TranscriptionSegment.fromJson(Map<String, dynamic> json) => _$TranscriptionSegmentFromJson(json);
+  factory TranscriptionSegment.fromJson(Map<String, dynamic> json) =>
+      _$TranscriptionSegmentFromJson(json);
 }
 
 @freezed
@@ -436,7 +459,8 @@ class TtsResult with _$TtsResult {
     required String provider,
   }) = _TtsResult;
 
-  factory TtsResult.fromJson(Map<String, dynamic> json) => _$TtsResultFromJson(json);
+  factory TtsResult.fromJson(Map<String, dynamic> json) =>
+      _$TtsResultFromJson(json);
 }
 
 @freezed
@@ -447,16 +471,14 @@ class AgentChatResponse with _$AgentChatResponse {
     String? taskId,
   }) = _AgentChatResponse;
 
-  factory AgentChatResponse.fromJson(Map<String, dynamic> json) => _$AgentChatResponseFromJson(json);
+  factory AgentChatResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentChatResponseFromJson(json);
 }
 
 @freezed
 class ChatStreamChunk with _$ChatStreamChunk {
-  const factory ChatStreamChunk({
-    String? delta,
-    bool? done,
-    String? error,
-  }) = _ChatStreamChunk;
+  const factory ChatStreamChunk({String? delta, bool? done, String? error}) =
+      _ChatStreamChunk;
 }
 
 @freezed
@@ -468,7 +490,8 @@ class AgentRunResponse with _$AgentRunResponse {
     String? error,
   }) = _AgentRunResponse;
 
-  factory AgentRunResponse.fromJson(Map<String, dynamic> json) => _$AgentRunResponseFromJson(json);
+  factory AgentRunResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentRunResponseFromJson(json);
 }
 
 @freezed
@@ -479,7 +502,8 @@ class AgentThinkResponse with _$AgentThinkResponse {
     List<String>? steps,
   }) = _AgentThinkResponse;
 
-  factory AgentThinkResponse.fromJson(Map<String, dynamic> json) => _$AgentThinkResponseFromJson(json);
+  factory AgentThinkResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentThinkResponseFromJson(json);
 }
 
 @freezed
@@ -491,17 +515,17 @@ class VisionAnalysisResult with _$VisionAnalysisResult {
     String? analysis,
   }) = _VisionAnalysisResult;
 
-  factory VisionAnalysisResult.fromJson(Map<String, dynamic> json) => _$VisionAnalysisResultFromJson(json);
+  factory VisionAnalysisResult.fromJson(Map<String, dynamic> json) =>
+      _$VisionAnalysisResultFromJson(json);
 }
 
 @freezed
 class OcrResult with _$OcrResult {
-  const factory OcrResult({
-    required String text,
-    List<OcrRegion>? regions,
-  }) = _OcrResult;
+  const factory OcrResult({required String text, List<OcrRegion>? regions}) =
+      _OcrResult;
 
-  factory OcrResult.fromJson(Map<String, dynamic> json) => _$OcrResultFromJson(json);
+  factory OcrResult.fromJson(Map<String, dynamic> json) =>
+      _$OcrResultFromJson(json);
 }
 
 @freezed
@@ -512,17 +536,17 @@ class OcrRegion with _$OcrRegion {
     double? confidence,
   }) = _OcrRegion;
 
-  factory OcrRegion.fromJson(Map<String, dynamic> json) => _$OcrRegionFromJson(json);
+  factory OcrRegion.fromJson(Map<String, dynamic> json) =>
+      _$OcrRegionFromJson(json);
 }
 
 @freezed
 class SystemStatus with _$SystemStatus {
-  const factory SystemStatus({
-    required String status,
-    required String maya,
-  }) = _SystemStatus;
+  const factory SystemStatus({required String status, required String maya}) =
+      _SystemStatus;
 
-  factory SystemStatus.fromJson(Map<String, dynamic> json) => _$SystemStatusFromJson(json);
+  factory SystemStatus.fromJson(Map<String, dynamic> json) =>
+      _$SystemStatusFromJson(json);
 }
 
 @freezed
@@ -535,17 +559,17 @@ class SystemStats with _$SystemStats {
     NetworkStats? network,
   }) = _SystemStats;
 
-  factory SystemStats.fromJson(Map<String, dynamic> json) => _$SystemStatsFromJson(json);
+  factory SystemStats.fromJson(Map<String, dynamic> json) =>
+      _$SystemStatsFromJson(json);
 }
 
 @freezed
 class CpuStats with _$CpuStats {
-  const factory CpuStats({
-    required double percent,
-    required int count,
-  }) = _CpuStats;
+  const factory CpuStats({required double percent, required int count}) =
+      _CpuStats;
 
-  factory CpuStats.fromJson(Map<String, dynamic> json) => _$CpuStatsFromJson(json);
+  factory CpuStats.fromJson(Map<String, dynamic> json) =>
+      _$CpuStatsFromJson(json);
 }
 
 @freezed
@@ -557,7 +581,8 @@ class MemoryStats with _$MemoryStats {
     required double percent,
   }) = _MemoryStats;
 
-  factory MemoryStats.fromJson(Map<String, dynamic> json) => _$MemoryStatsFromJson(json);
+  factory MemoryStats.fromJson(Map<String, dynamic> json) =>
+      _$MemoryStatsFromJson(json);
 }
 
 @freezed
@@ -569,24 +594,23 @@ class DiskStats with _$DiskStats {
     required double percent,
   }) = _DiskStats;
 
-  factory DiskStats.fromJson(Map<String, dynamic> json) => _$DiskStatsFromJson(json);
+  factory DiskStats.fromJson(Map<String, dynamic> json) =>
+      _$DiskStatsFromJson(json);
 }
 
 @freezed
 class LoadStats with _$LoadStats {
-  const factory LoadStats({
-    required List<double> loadAvg,
-  }) = _LoadStats;
+  const factory LoadStats({required List<double> loadAvg}) = _LoadStats;
 
-  factory LoadStats.fromJson(Map<String, dynamic> json) => _$LoadStatsFromJson(json);
+  factory LoadStats.fromJson(Map<String, dynamic> json) =>
+      _$LoadStatsFromJson(json);
 }
 
 @freezed
 class NetworkStats with _$NetworkStats {
-  const factory NetworkStats({
-    required int bytesSent,
-    required int bytesRecv,
-  }) = _NetworkStats;
+  const factory NetworkStats({required int bytesSent, required int bytesRecv}) =
+      _NetworkStats;
 
-  factory NetworkStats.fromJson(Map<String, dynamic> json) => _$NetworkStatsFromJson(json);
+  factory NetworkStats.fromJson(Map<String, dynamic> json) =>
+      _$NetworkStatsFromJson(json);
 }

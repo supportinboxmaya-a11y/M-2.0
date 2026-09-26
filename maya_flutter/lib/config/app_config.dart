@@ -4,9 +4,11 @@ class AppConfig {
   static const String buildNumber = '1';
 
   // Backend API
-  static const String apiBaseUrl = 'https://spread-citizen-quizzes-promise.trycloudflare.com';
+  static const String apiBaseUrl =
+      'https://spread-citizen-quizzes-promise.trycloudflare.com';
   static const String apiBaseUrlLocal = 'http://130.210.46.182:8000';
-  static const String wsBaseUrl = 'wss://spread-citizen-quizzes-promise.trycloudflare.com';
+  static const String wsBaseUrl =
+      'wss://spread-citizen-quizzes-promise.trycloudflare.com';
   static const String wsBaseUrlLocal = 'ws://130.210.46.182:8000';
 
   // API Endpoints

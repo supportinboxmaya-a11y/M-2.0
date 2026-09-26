@@ -24,8 +24,15 @@ CameraService cameraService(Ref ref) {
 class CameraService {
   final ApiService _apiService;
   final ImagePicker _picker = ImagePicker();
-  final TextRecognizer _textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
-  final ObjectDetector _objectDetector = ObjectDetector(options: ObjectDetectorOptions(mode: DetectionMode.single, classifyObjects: false));
+  final TextRecognizer _textRecognizer = TextRecognizer(
+    script: TextRecognitionScript.latin,
+  );
+  final ObjectDetector _objectDetector = ObjectDetector(
+    options: ObjectDetectorOptions(
+      mode: DetectionMode.single,
+      classifyObjects: false,
+    ),
+  );
 
   CameraController? _controller;
   List<CameraDescription> _cameras = [];
@@ -47,7 +54,9 @@ class CameraService {
     _cameras = await availableCameras();
 
     if (_cameras.isNotEmpty) {
-      _selectedCameraIndex = _cameras.indexWhere((c) => c.lensDirection == CameraLensDirection.back);
+      _selectedCameraIndex = _cameras.indexWhere(
+        (c) => c.lensDirection == CameraLensDirection.back,
+      );
       if (_selectedCameraIndex == -1) _selectedCameraIndex = 0;
       await _initializeController();
     }
@@ -93,7 +102,10 @@ class CameraService {
     }
   }
 
-  Future<VisionAnalysisResult?> analyzePhoto(XFile photo, {String? prompt}) async {
+  Future<VisionAnalysisResult?> analyzePhoto(
+    XFile photo, {
+    String? prompt,
+  }) async {
     try {
       return await _apiService.analyzeImage(File(photo.path), prompt: prompt);
     } catch (e) {
@@ -109,16 +121,20 @@ class CameraService {
 
       return OcrResult(
         text: recognizedText.text,
-        regions: recognizedText.blocks.map((block) => OcrRegion(
-          text: block.text,
-          bounds: Rect.fromLTRB(
-            block.boundingBox.left.toDouble(),
-            block.boundingBox.top.toDouble(),
-            block.boundingBox.right.toDouble(),
-            block.boundingBox.bottom.toDouble(),
-          ),
-          confidence: 1.0,
-        )).toList(),
+        regions: recognizedText.blocks
+            .map(
+              (block) => OcrRegion(
+                text: block.text,
+                bounds: Rect.fromLTRB(
+                  block.boundingBox.left.toDouble(),
+                  block.boundingBox.top.toDouble(),
+                  block.boundingBox.right.toDouble(),
+                  block.boundingBox.bottom.toDouble(),
+                ),
+                confidence: 1.0,
+              ),
+            )
+            .toList(),
       );
     } catch (e) {
       debugPrint('OCR error: $e');
@@ -153,10 +169,12 @@ class CameraService {
   }
 
   void setZoomLevel(double zoom) {
-    _controller?.setZoomLevel(zoom.clamp(
-      _controller!.value.minAvailableZoom,
-      _controller!.value.maxAvailableZoom,
-    ));
+    _controller?.setZoomLevel(
+      zoom.clamp(
+        _controller!.value.minAvailableZoom,
+        _controller!.value.maxAvailableZoom,
+      ),
+    );
   }
 
   double get maxZoomLevel => _controller?.value.maxAvailableZoom ?? 1.0;
