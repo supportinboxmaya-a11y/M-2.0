@@ -82,8 +82,7 @@ class MayaHomeScreen extends ConsumerStatefulWidget {
   ConsumerState<MayaHomeScreen> createState() => _MayaHomeScreenState();
 }
 
-class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen>
-    with TickerProviderStateMixin {
+class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> {
   int _currentIndex = 0;
   late PageController _pageController;
 
