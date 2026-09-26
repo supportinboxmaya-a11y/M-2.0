@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,12 +9,11 @@ import 'package:flutter_riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:record/record.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound/flutter_sound.dart' hide AudioSource;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:just_audio_background/just_audio_background.dart';
 
-import 'api_service.dart';
-import 'app_config.dart';
+import '../../core/services/api_service.dart';
 
 part 'voice_service.freezed.dart';
 part 'voice_service.g.dart';
@@ -60,7 +60,6 @@ class VoiceService {
     _transcriptController = StreamController<String>.broadcast();
     _amplitudeController = StreamController<double>.broadcast();
 
-    await _recorder.open();
     await _player.setAudioSource(
       AudioSource.uri(Uri.parse('asset:///assets/silence.mp3')),
     );
@@ -68,7 +67,7 @@ class VoiceService {
     await _speechToText.initialize();
 
     if (kIsWeb) {
-      await just_audio_background.JustAudioBackground.init(
+      await JustAudioBackground.init(
         androidNotificationChannelId: 'com.maya.voice',
         androidNotificationChannelName: 'Maya Voice',
         androidNotificationOngoing: true,
@@ -89,7 +88,7 @@ class VoiceService {
   void _startSpeechToText() async {
     _isRecording = true;
     _currentTranscript = '';
-    _stateController?.add(VoiceState.recording);
+    _stateController?.add(VoiceState.recording());
 
     await _speechToText.listen(
       onResult: (result) {
@@ -104,7 +103,7 @@ class VoiceService {
     );
 
     _isRecording = true;
-    _stateController?.add(VoiceState.recording);
+    _stateController?.add(VoiceState.recording());
 
     _amplitudeTimer = Timer.periodic(const Duration(milliseconds: 100), (
       timer,
@@ -116,7 +115,7 @@ class VoiceService {
   void _startAudioRecording() async {
     if (await _recorder.hasPermission()) {
       _isRecording = true;
-      _stateController?.add(VoiceState.recording);
+      _stateController?.add(VoiceState.recording());
 
       await _recorder.start(
         const RecordConfig(
@@ -155,7 +154,7 @@ class VoiceService {
     }
 
     _isRecording = false;
-    _stateController?.add(VoiceState.idle);
+    _stateController?.add(VoiceState.idle());
     return null;
   }
 
@@ -175,7 +174,7 @@ class VoiceService {
     if (_isSpeaking) return;
 
     _isSpeaking = true;
-    _stateController?.add(VoiceState.speaking);
+    _stateController?.add(VoiceState.speaking());
 
     try {
       final result = await _apiService.speakText(text, voice: voice);
@@ -191,14 +190,14 @@ class VoiceService {
         _player.playerStateStream.listen((state) {
           if (state.processingState == ProcessingState.completed) {
             _isSpeaking = false;
-            _stateController?.add(VoiceState.idle);
+            _stateController?.add(VoiceState.idle());
           }
         });
       }
     } catch (e) {
       debugPrint('TTS error: $e');
       _isSpeaking = false;
-      _stateController?.add(VoiceState.idle);
+      _stateController?.add(VoiceState.idle());
     }
   }
 
@@ -206,7 +205,7 @@ class VoiceService {
     if (_isSpeaking) return;
 
     _isSpeaking = true;
-    _stateController?.add(VoiceState.speaking);
+    _stateController?.add(VoiceState.speaking());
 
     final tempFile = File(
       '${Directory.systemTemp.path}/tts_${DateTime.now().millisecondsSinceEpoch}.mp3',
@@ -218,7 +217,7 @@ class VoiceService {
     _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         _isSpeaking = false;
-        _stateController?.add(VoiceState.idle);
+        _stateController?.add(VoiceState.idle());
       }
     });
   }
@@ -226,7 +225,7 @@ class VoiceService {
   Future<void> stopSpeaking() async {
     await _player.stop();
     _isSpeaking = false;
-    _stateController?.add(VoiceState.idle);
+    _stateController?.add(VoiceState.idle());
   }
 
   Future<void> connectVoiceGateway() async {
@@ -239,7 +238,7 @@ class VoiceService {
     _transcriptController?.close();
     _amplitudeController?.close();
     _amplitudeTimer?.cancel();
-    _recorder.close();
+    _recorder.dispose();
     _player.dispose();
     _flutterRecorder.closeRecorder();
     _speechToText.stop();

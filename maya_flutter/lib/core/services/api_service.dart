@@ -454,9 +454,11 @@ class TranscriptionSegment with _$TranscriptionSegment {
 @freezed
 class TtsResult with _$TtsResult {
   const factory TtsResult({
-    required String audioBase64,
-    required String format,
-    required String provider,
+    required bool success,
+    String? audioBase64,
+    String? format,
+    String? provider,
+    String? error,
   }) = _TtsResult;
 
   factory TtsResult.fromJson(Map<String, dynamic> json) =>
@@ -509,10 +511,9 @@ class AgentThinkResponse with _$AgentThinkResponse {
 @freezed
 class VisionAnalysisResult with _$VisionAnalysisResult {
   const factory VisionAnalysisResult({
-    required String description,
-    List<String>? objects,
-    String? text,
-    String? analysis,
+    required String analysis,
+    List<String>? tags,
+    Map<String, dynamic>? metadata,
   }) = _VisionAnalysisResult;
 
   factory VisionAnalysisResult.fromJson(Map<String, dynamic> json) =>

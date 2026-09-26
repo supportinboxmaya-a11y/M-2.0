@@ -80,16 +80,20 @@ Map<String, dynamic> _$$TranscriptionSegmentImplToJson(
 
 _$TtsResultImpl _$$TtsResultImplFromJson(Map<String, dynamic> json) =>
     _$TtsResultImpl(
-      audioBase64: json['audioBase64'] as String,
-      format: json['format'] as String,
-      provider: json['provider'] as String,
+      success: json['success'] as bool,
+      audioBase64: json['audioBase64'] as String?,
+      format: json['format'] as String?,
+      provider: json['provider'] as String?,
+      error: json['error'] as String?,
     );
 
 Map<String, dynamic> _$$TtsResultImplToJson(_$TtsResultImpl instance) =>
     <String, dynamic>{
+      'success': instance.success,
       'audioBase64': instance.audioBase64,
       'format': instance.format,
       'provider': instance.provider,
+      'error': instance.error,
     };
 
 _$AgentChatResponseImpl _$$AgentChatResponseImplFromJson(
@@ -146,20 +150,17 @@ Map<String, dynamic> _$$AgentThinkResponseImplToJson(
 _$VisionAnalysisResultImpl _$$VisionAnalysisResultImplFromJson(
         Map<String, dynamic> json) =>
     _$VisionAnalysisResultImpl(
-      description: json['description'] as String,
-      objects:
-          (json['objects'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      text: json['text'] as String?,
-      analysis: json['analysis'] as String?,
+      analysis: json['analysis'] as String,
+      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      metadata: json['metadata'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$$VisionAnalysisResultImplToJson(
         _$VisionAnalysisResultImpl instance) =>
     <String, dynamic>{
-      'description': instance.description,
-      'objects': instance.objects,
-      'text': instance.text,
       'analysis': instance.analysis,
+      'tags': instance.tags,
+      'metadata': instance.metadata,
     };
 
 _$OcrResultImpl _$$OcrResultImplFromJson(Map<String, dynamic> json) =>

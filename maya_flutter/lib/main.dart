@@ -1,3 +1,5 @@
+import 'package:camera/camera.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -63,7 +65,8 @@ class _MayaAppState extends ConsumerState<MayaApp> with WidgetsBindingObserver {
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(MediaQuery.of(context).textScaler.scale(1.0).clamp(0.8, 1.2)),
+            textScaler: TextScaler.linear(
+                MediaQuery.of(context).textScaler.scale(1.0).clamp(0.8, 1.2)),
           ),
           child: child!,
         );
@@ -79,7 +82,8 @@ class MayaHomeScreen extends ConsumerStatefulWidget {
   ConsumerState<MayaHomeScreen> createState() => _MayaHomeScreenState();
 }
 
-class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProviderStateMixin {
+class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen>
+    with TickerProviderStateMixin {
   int _currentIndex = 0;
   late PageController _pageController;
 
@@ -98,7 +102,9 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
   @override
   Widget build(BuildContext context) {
     final systemState = ref.watch(systemServiceProvider.stateStream).value;
-    final isOnline = (ref.watch(systemServiceProvider.connectivityStream).value ?? []).any((r) => r != ConnectivityResult.none);
+    final isOnline =
+        (ref.watch(systemServiceProvider.connectivityStream).value ?? [])
+            .any((r) => r != ConnectivityResult.none);
 
     return Scaffold(
       backgroundColor: MayaTheme.slate900,
@@ -174,16 +180,18 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
         state: MayaLogoState.idle,
         showPulse: true,
         showGlow: true,
-      ).animate()
-        .fadeIn(duration: 800.ms, delay: 300.ms)
-        .slideY(begin: -0.3, duration: 600.ms, curve: Curves.easeOutCubic),
+      )
+          .animate()
+          .fadeIn(duration: 800.ms, delay: 300.ms)
+          .slideY(begin: -0.3, duration: 600.ms, curve: Curves.easeOutCubic),
     );
   }
 
   Widget _buildConnectionBadge() {
     return Consumer(
       builder: (context, ref, _) {
-        final connectivity = ref.watch(systemServiceProvider.connectivityStream).value ?? [];
+        final connectivity =
+            ref.watch(systemServiceProvider.connectivityStream).value ?? [];
         final isOnline = connectivity.any((r) => r != ConnectivityResult.none);
 
         return Positioned(
@@ -206,7 +214,9 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProv
                     color: isOnline ? MayaTheme.neonEmerald : MayaTheme.error,
                     boxShadow: [
                       BoxShadow(
-                        color: (isOnline ? MayaTheme.neonEmerald : MayaTheme.error).withValues(alpha: 0.5),
+                        color:
+                            (isOnline ? MayaTheme.neonEmerald : MayaTheme.error)
+                                .withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -320,16 +330,22 @@ class _NavItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: isSelected ? MayaTheme.neonCyan.withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? MayaTheme.neonCyan.withValues(alpha: 0.1)
+              : Colors.transparent,
           border: Border.all(
-            color: isSelected ? MayaTheme.neonCyan.withValues(alpha: 0.3) : Colors.transparent,
+            color: isSelected
+                ? MayaTheme.neonCyan.withValues(alpha: 0.3)
+                : Colors.transparent,
             width: 1,
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: isSelected ? MayaTheme.neonCyan : Colors.white54, size: 24),
+            Icon(icon,
+                color: isSelected ? MayaTheme.neonCyan : Colors.white54,
+                size: 24),
             const SizedBox(height: 4),
             Text(
               label,
@@ -350,7 +366,7 @@ class _GridPainter extends CustomPainter {
     final paint = Paint()
       ..color = MayaTheme.neonCyan.withValues(alpha: 0.02)
       ..strokeWidth = 0.5
-      .style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke;
 
     const spacing = 40.0;
 
@@ -459,18 +475,27 @@ class _HomeScreen extends StatelessWidget {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _StatusItem(label: 'Voice', value: 'Ready', color: MayaTheme.neonCyan),
-                  _StatusItem(label: 'Vision', value: 'Ready', color: MayaTheme.neonViolet),
-                  _StatusItem(label: 'System', value: 'Online', color: MayaTheme.neonEmerald),
-],
-                    ),
-                  ),
+                  _StatusItem(
+                      label: 'Voice',
+                      value: 'Ready',
+                      color: MayaTheme.neonCyan),
+                  _StatusItem(
+                      label: 'Vision',
+                      value: 'Ready',
+                      color: MayaTheme.neonViolet),
+                  _StatusItem(
+                      label: 'System',
+                      value: 'Online',
+                      color: MayaTheme.neonEmerald),
                 ],
               ),
-            );
-          );
-        }
-      }
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _StatusItem extends StatelessWidget {
   final String label;
@@ -525,13 +550,14 @@ class _ActionCard extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.05)],
+                  colors: [
+                    color.withValues(alpha: 0.2),
+                    color.withValues(alpha: 0.05)
+                  ],
                 ),
               ),
               child: Icon(Icons.mic_rounded, color: color, size: 32),
-            )
-                .animate()
-                .scale(duration: 600.ms, curve: Curves.elasticOut),
+            ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
             const SizedBox(height: 16),
             Text(
               label,
@@ -594,12 +620,14 @@ class _VoiceScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: MayaTheme.neonCyan.withValues(alpha: 0.3 - index * 0.08),
+                                color: MayaTheme.neonCyan
+                                    .withValues(alpha: 0.3 - index * 0.08),
                                 width: 2,
                               ),
                             ),
                           )
-                              .animate(onPlay: (controller) => controller.repeat())
+                              .animate(
+                                  onPlay: (controller) => controller.repeat())
                               .scale(duration: 2000.ms, curve: Curves.easeInOut)
                               .then()
                               .scale(duration: 2000.ms);
@@ -619,7 +647,8 @@ class _VoiceScreen extends ConsumerWidget {
                     // Status Text
                     Text(
                       'Tap to speak',
-                      style: MayaTheme.titleMedium.copyWith(color: Colors.white70),
+                      style:
+                          MayaTheme.titleMedium.copyWith(color: Colors.white70),
                     ),
 
                     const SizedBox(height: 32),
@@ -663,7 +692,8 @@ class _VoiceScreen extends ConsumerWidget {
                       decoration: MayaTheme.glassCard(),
                       child: Text(
                         'Say something...',
-                        style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                        style: MayaTheme.bodyMedium
+                            .copyWith(color: Colors.white54),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -700,14 +730,18 @@ class _VoiceScreen extends ConsumerWidget {
                           ),
                           onPressed: () {},
                         ),
-],
+                      ],
                     ),
                   ],
                 ),
-              );
-            );
-          }
-        }
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _CameraScreen extends ConsumerWidget {
   const _CameraScreen();
@@ -723,9 +757,11 @@ class _CameraScreen extends ConsumerWidget {
             Consumer(
               builder: (context, ref, _) {
                 final cameraService = ref.read(cameraServiceProvider);
-                if (!cameraService.isInitialized || cameraService.controller == null) {
+                if (!cameraService.isInitialized ||
+                    cameraService.controller == null) {
                   return const Center(
-                    child: Text('Initializing camera...', style: MayaTheme.bodyMedium),
+                    child: Text('Initializing camera...',
+                        style: MayaTheme.bodyMedium),
                   );
                 }
                 return CameraPreview(cameraService.controller!);
@@ -745,25 +781,30 @@ class _CameraScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Vision AI', style: MayaTheme.headlineMedium.copyWith(color: Colors.white)),
+                    Text('Vision AI',
+                        style: MayaTheme.headlineMedium
+                            .copyWith(color: Colors.white)),
                     Row(
                       children: [
                         IconButton(
                           icon: const Icon(Icons.flash_on_rounded),
                           onPressed: () {},
-                          style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                          style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54),
                         ),
                         const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.cameraswitch_rounded),
                           onPressed: () {},
-                          style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                          style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54),
                         ),
                         const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.grid_on_rounded),
                           onPressed: () {},
-                          style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                          style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54),
                         ),
                       ],
                     ),
@@ -797,15 +838,19 @@ class _CameraScreen extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Text('Tap to capture • Swipe to zoom', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
-],
-                    ),
-                  ),
-                ],
+                    Text('Tap to capture • Swipe to zoom',
+                        style: MayaTheme.bodySmall
+                            .copyWith(color: Colors.white54)),
+                  ],
+                ),
               ),
-            );
-          }
-        }
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _CameraActionButton extends StatelessWidget {
   final IconData icon;
@@ -864,14 +909,14 @@ class _CameraShutterButton extends StatelessWidget {
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
-),
+          ),
         ),
       ),
     )
-    .animate(onPlay: (c) => c.repeat())
-          .scale(duration: 1000.ms, curve: Curves.easeInOut);
-    }
+        .animate(onPlay: (c) => c.repeat())
+        .scale(duration: 1000.ms, curve: Curves.easeInOut);
   }
+}
 
 class _CameraGridPainter extends CustomPainter {
   @override
@@ -881,17 +926,27 @@ class _CameraGridPainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
-    const spacing = size.width / 3;
+    final spacing = size.width / 3;
 
     // Rule of thirds grid
     for (int i = 1; i < 3; i++) {
       final x = i * spacing;
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), Paint()..color = Colors.white12..strokeWidth = 0.5);
+      canvas.drawLine(
+          Offset(x, 0),
+          Offset(x, size.height),
+          Paint()
+            ..color = Colors.white12
+            ..strokeWidth = 0.5);
     }
 
     for (int i = 1; i < 3; i++) {
       final y = i * size.height / 3;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), Paint()..color = Colors.white12..strokeWidth = 0.5);
+      canvas.drawLine(
+          Offset(0, y),
+          Offset(size.width, y),
+          Paint()
+            ..color = Colors.white12
+            ..strokeWidth = 0.5);
     }
 
     // Center crosshair
@@ -900,18 +955,18 @@ class _CameraGridPainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
-    const centerX = size.width / 2;
-    const centerY = size.height / 2;
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
     const crossSize = 30.0;
 
     canvas.drawLine(
-      const Offset(centerX - crossSize, centerY),
-      const Offset(centerX + crossSize, centerY),
+      Offset(centerX - crossSize, centerY),
+      Offset(centerX + crossSize, centerY),
       crosshairPaint,
     );
     canvas.drawLine(
-      const Offset(centerX, centerY - crossSize),
-      const Offset(centerX, centerY + crossSize),
+      Offset(centerX, centerY - crossSize),
+      Offset(centerX, centerY + crossSize),
       crosshairPaint,
     );
 
@@ -919,7 +974,11 @@ class _CameraGridPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(size.width / 2, size.height / 2),
       30,
-      Paint()..color = Colors.transparent..style = PaintingStyle.stroke..strokeWidth = 1..color = Colors.white30,
+      Paint()
+        ..color = Colors.transparent
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = Colors.white30,
     );
   }
 
@@ -942,7 +1001,8 @@ class _ChatScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
+                  bottom: BorderSide(
+                      color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
                 ),
               ),
               child: Row(
@@ -952,7 +1012,8 @@ class _ChatScreen extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.add_rounded),
                     onPressed: () {},
-                    style: IconButton.styleFrom(backgroundColor: MayaTheme.glassWhite10),
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
                   ),
                 ],
               ),
@@ -968,18 +1029,12 @@ class _ChatScreen extends ConsumerWidget {
                     text: 'Hello! How can I help you today?',
                     isUser: false,
                     time: '10:30',
-                  )
-                      .animate()
-                      .fadeIn()
-                      .slideY(begin: 0.2),
+                  ).animate().fadeIn().slideY(begin: 0.2),
                   const _ChatBubble(
                     text: 'Can you help me create a Python script?',
                     isUser: true,
                     time: '10:31',
-                  )
-                      .animate()
-                      .fadeIn(delay: 100.ms)
-                      .slideY(begin: 0.2),
+                  ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.2),
                 ],
               ),
             ),
@@ -989,7 +1044,8 @@ class _ChatScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
+                  top: BorderSide(
+                      color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
                 ),
               ),
               child: Row(
@@ -997,17 +1053,20 @@ class _ChatScreen extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.add_rounded),
                     onPressed: () {},
-                    style: IconButton.styleFrom(backgroundColor: MayaTheme.glassWhite10),
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
                   ),
                   IconButton(
                     icon: const Icon(Icons.image_rounded),
                     onPressed: () {},
-                    style: IconButton.styleFrom(backgroundColor: MayaTheme.glassWhite10),
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
                   ),
                   IconButton(
                     icon: const Icon(Icons.mic_rounded),
                     onPressed: () {},
-                    style: IconButton.styleFrom(backgroundColor: MayaTheme.glassWhite10),
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
                   ),
                   Expanded(
                     child: Container(
@@ -1016,12 +1075,14 @@ class _ChatScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: MayaTheme.slate700,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.2)),
+                        border: Border.all(
+                            color: MayaTheme.neonCyan.withValues(alpha: 0.2)),
                       ),
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Message Maya...',
-                          hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                          hintStyle: MayaTheme.bodyMedium
+                              .copyWith(color: Colors.white38),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -1030,18 +1091,21 @@ class _ChatScreen extends ConsumerWidget {
                         onSubmitted: (value) {},
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.send_rounded, color: MayaTheme.neonCyan),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send_rounded,
+                        color: MayaTheme.neonCyan),
+                    onPressed: () {},
+                  ),
+                ],
               ),
-],
-              ),
-            );
-          }
-        }
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _ChatBubble extends StatelessWidget {
   final String text;
@@ -1061,7 +1125,8 @@ class _ChatBubble extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
           color: isUser ? MayaTheme.neonCyan : MayaTheme.slate700,
           borderRadius: BorderRadius.only(
@@ -1072,7 +1137,8 @@ class _ChatBubble extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: (isUser ? MayaTheme.neonCyan : MayaTheme.neonViolet).withValues(alpha: 0.2),
+              color: (isUser ? MayaTheme.neonCyan : MayaTheme.neonViolet)
+                  .withValues(alpha: 0.2),
               blurRadius: 12,
               spreadRadius: 2,
             ),
@@ -1082,14 +1148,19 @@ class _ChatBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(text, style: MayaTheme.bodyMedium.copyWith(color: isUser ? MayaTheme.slate900 : Colors.white)),
+            Text(text,
+                style: MayaTheme.bodyMedium.copyWith(
+                    color: isUser ? MayaTheme.slate900 : Colors.white)),
             const SizedBox(height: 4),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(time, style: MayaTheme.labelSmall.copyWith(color: Colors.white38)),
+                Text(time,
+                    style:
+                        MayaTheme.labelSmall.copyWith(color: Colors.white38)),
                 const SizedBox(width: 8),
-                const Icon(Icons.done_all_rounded, size: 14, color: Colors.white38),
+                const Icon(Icons.done_all_rounded,
+                    size: 14, color: Colors.white38),
               ],
             ),
           ],
@@ -1110,7 +1181,6 @@ class _SettingsScreen extends ConsumerWidget {
         children: [
           const Text('Settings', style: MayaTheme.headlineLarge),
           const SizedBox(height: 32),
-
           _SettingsSection(
             title: 'Voice',
             children: [
@@ -1122,14 +1192,19 @@ class _SettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 title: 'Voice Speed',
                 subtitle: 'Adjust speech rate',
-                trailing: Slider(value: 1.0, onChanged: (v) {}, min: 0.5, max: 2.0),
+                trailing:
+                    Slider(value: 1.0, onChanged: (v) {}, min: 0.5, max: 2.0),
               ),
               _SettingsTile(
                 title: 'Voice Selection',
                 subtitle: 'Choose TTS voice',
                 trailing: DropdownButton<String>(
                   value: 'en-US-AriaNeural',
-                  items: ['en-US-AriaNeural', 'en-US-GuyNeural', 'en-GB-RyanNeural']
+                  items: [
+                    'en-US-AriaNeural',
+                    'en-US-GuyNeural',
+                    'en-GB-RyanNeural'
+                  ]
                       .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                       .toList(),
                   onChanged: (v) {},
@@ -1137,9 +1212,7 @@ class _SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 24),
-
           _SettingsSection(
             title: 'Camera & Vision',
             children: [
@@ -1161,9 +1234,7 @@ class _SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 24),
-
           _SettingsSection(
             title: 'System Control',
             children: [
@@ -1184,9 +1255,7 @@ class _SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 24),
-
           _SettingsSection(
             title: 'About',
             children: [
@@ -1198,14 +1267,16 @@ class _SettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 title: 'Clear Cache',
                 subtitle: 'Remove temporary files',
-                trailing: TextButton(onPressed: () {}, child: const Text('Clear')),
+                trailing:
+                    TextButton(onPressed: () {}, child: const Text('Clear')),
               ),
               _SettingsTile(
                 title: 'Reset Settings',
                 subtitle: 'Restore default settings',
                 trailing: TextButton(
                   onPressed: () {},
-                  child: const Text('Reset', style: TextStyle(color: Colors.red)),
+                  child:
+                      const Text('Reset', style: TextStyle(color: Colors.red)),
                 ),
               ),
             ],
@@ -1260,7 +1331,8 @@ class _SettingsTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: MayaTheme.titleMedium),
-                Text(subtitle, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                Text(subtitle,
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
               ],
             ),
           ),

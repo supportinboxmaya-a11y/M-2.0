@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -10,8 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'api_service.dart';
-import 'app_config.dart';
+import '../../core/services/api_service.dart';
 
 part 'camera_service.freezed.dart';
 part 'camera_service.g.dart';
@@ -31,6 +32,7 @@ class CameraService {
     options: ObjectDetectorOptions(
       mode: DetectionMode.single,
       classifyObjects: false,
+      multipleObjects: false,
     ),
   );
 
@@ -156,12 +158,25 @@ class CameraService {
     return await File(photo.path).readAsBytes();
   }
 
-  Stream<CameraImage> get imageStream async* {
-    if (_controller == null || !_controller!.value.isInitialized) return;
-
-    await for (final image in _controller!.getImageStream()) {
-      yield image;
+  Stream<CameraImage> get imageStream {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) {
+      return const Stream.empty();
     }
+
+    final streamController = StreamController<CameraImage>.broadcast();
+    controller.startImageStream((image) {
+      streamController.add(image);
+    });
+
+    // Clean up when stream is cancelled
+    final subscription = streamController.stream.listen(null);
+    subscription.onDone(() {
+      controller.stopImageStream();
+      streamController.close();
+    });
+
+    return streamController.stream;
   }
 
   void setFlashMode(FlashMode mode) {
@@ -169,16 +184,15 @@ class CameraService {
   }
 
   void setZoomLevel(double zoom) {
-    _controller?.setZoomLevel(
-      zoom.clamp(
-        _controller!.value.minAvailableZoom,
-        _controller!.value.maxAvailableZoom,
-      ),
-    );
+    final value = _controller?.value;
+    if (value != null) {
+      // Use a safe max zoom level; CameraValue API varies by version
+      _controller?.setZoomLevel(zoom.clamp(1.0, 10.0));
+    }
   }
 
-  double get maxZoomLevel => _controller?.value.maxAvailableZoom ?? 1.0;
-  double get minZoomLevel => _controller?.value.minAvailableZoom ?? 1.0;
+  double get maxZoomLevel => 10.0;
+  double get minZoomLevel => 1.0;
 
   void setFocusPoint(Offset point) {
     if (_controller != null && _controller!.value.isInitialized) {

@@ -13,8 +13,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'api_service.dart';
-import 'app_config.dart';
+import '../core/services/api_service.dart';
 
 part 'system_service.freezed.dart';
 part 'system_service.g.dart';
@@ -63,9 +62,9 @@ class SystemService {
   }
 
   void _startStatusMonitoring() {
-    // Battery
+    // Battery - use onBatteryStateChanged stream (battery_plus v6+)
     _batteryController = StreamController<BatteryState>.broadcast();
-    _battery.batteryStateStream.listen((state) {
+    _battery.onBatteryStateChanged.listen((state) {
       _batteryController?.add(state);
     });
 
@@ -87,24 +86,24 @@ class SystemService {
   }
 
   // System Status
-  Future<SystemStatus> getSystemStatus() async {
+  Future<SystemState> getSystemStatus() async {
     try {
       return await _apiService.getSystemStatus();
     } catch (e) {
-      return SystemStatus(status: 'error', maya: 'offline');
+      return SystemState(status: 'error', maya: 'offline');
     }
   }
 
-  Future<SystemStats> getSystemStats() async {
+  Future<Map<String, dynamic>> getSystemStats() async {
     try {
       return await _apiService.getSystemStats();
     } catch (e) {
-      return SystemStats(
-        cpu: CpuStats(percent: 0, count: 0),
-        memory: MemoryStats(totalGb: 0, availableGb: 0, usedGb: 0, percent: 0),
-        disk: DiskStats(totalGb: 0, usedGb: 0, freeGb: 0, percent: 0),
-        load: LoadStats(loadAvg: [0, 0, 0]),
-      );
+      return {
+        'cpu': {'percent': 0, 'count': 0},
+        'memory': {'totalGb': 0, 'availableGb': 0, 'usedGb': 0, 'percent': 0},
+        'disk': {'totalGb': 0, 'usedGb': 0, 'freeGb': 0, 'percent': 0},
+        'load': {'loadAvg': [0, 0, 0]},
+      };
     }
   }
 
@@ -123,7 +122,7 @@ class SystemService {
 
   Future<bool> setVolume(double volume) async {
     try {
-      await VolumeController().setVolume(volume.clamp(0.0, 1.0));
+      VolumeController().setVolume(volume.clamp(0.0, 1.0));
       return true;
     } catch (e) {
       debugPrint('Volume error: $e');
@@ -153,23 +152,22 @@ class SystemService {
   }
 
   Future<void> openWifiSettings() async {
-    await AppSettings.openWIFISettings();
+    await AppSettings.openAppSettings(type: AppSettingsType.wifi);
   }
 
   Future<void> openBluetoothSettings() async {
-    await AppSettings.openBluetoothSettings();
+    await AppSettings.openAppSettings(type: AppSettingsType.bluetooth);
   }
 
   Future<void> openLocationSettings() async {
-    await AppSettings.openLocationSettings();
+    await AppSettings.openAppSettings(type: AppSettingsType.location);
   }
 
-Future<void> launchUrl(String url) async {
+  Future<void> launchUrlString(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await url_launcher.launchUrl(uri);
+      await launchUrl(uri);
     }
-  }
   }
 
   Future<void> openApp(String packageName) async {
@@ -215,7 +213,7 @@ Future<void> launchUrl(String url) async {
         'buildNumber': windowsInfo.buildNumber,
         'version': windowsInfo.productName,
       };
-} else if (Platform.isMacOS) {
+    } else if (Platform.isMacOS) {
       final macInfo = await deviceInfo.macOsInfo;
       info = {
         'model': macInfo.model,

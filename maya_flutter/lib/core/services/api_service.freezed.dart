@@ -857,9 +857,11 @@ TtsResult _$TtsResultFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TtsResult {
-  String get audioBase64 => throw _privateConstructorUsedError;
-  String get format => throw _privateConstructorUsedError;
-  String get provider => throw _privateConstructorUsedError;
+  bool get success => throw _privateConstructorUsedError;
+  String? get audioBase64 => throw _privateConstructorUsedError;
+  String? get format => throw _privateConstructorUsedError;
+  String? get provider => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -872,7 +874,12 @@ abstract class $TtsResultCopyWith<$Res> {
   factory $TtsResultCopyWith(TtsResult value, $Res Function(TtsResult) then) =
       _$TtsResultCopyWithImpl<$Res, TtsResult>;
   @useResult
-  $Res call({String audioBase64, String format, String provider});
+  $Res call(
+      {bool success,
+      String? audioBase64,
+      String? format,
+      String? provider,
+      String? error});
 }
 
 /// @nodoc
@@ -888,23 +895,33 @@ class _$TtsResultCopyWithImpl<$Res, $Val extends TtsResult>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? audioBase64 = null,
-    Object? format = null,
-    Object? provider = null,
+    Object? success = null,
+    Object? audioBase64 = freezed,
+    Object? format = freezed,
+    Object? provider = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
-      audioBase64: null == audioBase64
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      audioBase64: freezed == audioBase64
           ? _value.audioBase64
           : audioBase64 // ignore: cast_nullable_to_non_nullable
-              as String,
-      format: null == format
+              as String?,
+      format: freezed == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
-              as String,
-      provider: null == provider
+              as String?,
+      provider: freezed == provider
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -917,7 +934,12 @@ abstract class _$$TtsResultImplCopyWith<$Res>
       __$$TtsResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String audioBase64, String format, String provider});
+  $Res call(
+      {bool success,
+      String? audioBase64,
+      String? format,
+      String? provider,
+      String? error});
 }
 
 /// @nodoc
@@ -931,23 +953,33 @@ class __$$TtsResultImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? audioBase64 = null,
-    Object? format = null,
-    Object? provider = null,
+    Object? success = null,
+    Object? audioBase64 = freezed,
+    Object? format = freezed,
+    Object? provider = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$TtsResultImpl(
-      audioBase64: null == audioBase64
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      audioBase64: freezed == audioBase64
           ? _value.audioBase64
           : audioBase64 // ignore: cast_nullable_to_non_nullable
-              as String,
-      format: null == format
+              as String?,
+      format: freezed == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
-              as String,
-      provider: null == provider
+              as String?,
+      provider: freezed == provider
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -956,23 +988,29 @@ class __$$TtsResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TtsResultImpl implements _TtsResult {
   const _$TtsResultImpl(
-      {required this.audioBase64,
-      required this.format,
-      required this.provider});
+      {required this.success,
+      this.audioBase64,
+      this.format,
+      this.provider,
+      this.error});
 
   factory _$TtsResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$TtsResultImplFromJson(json);
 
   @override
-  final String audioBase64;
+  final bool success;
   @override
-  final String format;
+  final String? audioBase64;
   @override
-  final String provider;
+  final String? format;
+  @override
+  final String? provider;
+  @override
+  final String? error;
 
   @override
   String toString() {
-    return 'TtsResult(audioBase64: $audioBase64, format: $format, provider: $provider)';
+    return 'TtsResult(success: $success, audioBase64: $audioBase64, format: $format, provider: $provider, error: $error)';
   }
 
   @override
@@ -980,16 +1018,19 @@ class _$TtsResultImpl implements _TtsResult {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TtsResultImpl &&
+            (identical(other.success, success) || other.success == success) &&
             (identical(other.audioBase64, audioBase64) ||
                 other.audioBase64 == audioBase64) &&
             (identical(other.format, format) || other.format == format) &&
             (identical(other.provider, provider) ||
-                other.provider == provider));
+                other.provider == provider) &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, audioBase64, format, provider);
+  int get hashCode =>
+      Object.hash(runtimeType, success, audioBase64, format, provider, error);
 
   @JsonKey(ignore: true)
   @override
@@ -1007,19 +1048,25 @@ class _$TtsResultImpl implements _TtsResult {
 
 abstract class _TtsResult implements TtsResult {
   const factory _TtsResult(
-      {required final String audioBase64,
-      required final String format,
-      required final String provider}) = _$TtsResultImpl;
+      {required final bool success,
+      final String? audioBase64,
+      final String? format,
+      final String? provider,
+      final String? error}) = _$TtsResultImpl;
 
   factory _TtsResult.fromJson(Map<String, dynamic> json) =
       _$TtsResultImpl.fromJson;
 
   @override
-  String get audioBase64;
+  bool get success;
   @override
-  String get format;
+  String? get audioBase64;
   @override
-  String get provider;
+  String? get format;
+  @override
+  String? get provider;
+  @override
+  String? get error;
   @override
   @JsonKey(ignore: true)
   _$$TtsResultImplCopyWith<_$TtsResultImpl> get copyWith =>
@@ -1732,10 +1779,9 @@ VisionAnalysisResult _$VisionAnalysisResultFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$VisionAnalysisResult {
-  String get description => throw _privateConstructorUsedError;
-  List<String>? get objects => throw _privateConstructorUsedError;
-  String? get text => throw _privateConstructorUsedError;
-  String? get analysis => throw _privateConstructorUsedError;
+  String get analysis => throw _privateConstructorUsedError;
+  List<String>? get tags => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1750,10 +1796,7 @@ abstract class $VisionAnalysisResultCopyWith<$Res> {
       _$VisionAnalysisResultCopyWithImpl<$Res, VisionAnalysisResult>;
   @useResult
   $Res call(
-      {String description,
-      List<String>? objects,
-      String? text,
-      String? analysis});
+      {String analysis, List<String>? tags, Map<String, dynamic>? metadata});
 }
 
 /// @nodoc
@@ -1770,28 +1813,23 @@ class _$VisionAnalysisResultCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? description = null,
-    Object? objects = freezed,
-    Object? text = freezed,
-    Object? analysis = freezed,
+    Object? analysis = null,
+    Object? tags = freezed,
+    Object? metadata = freezed,
   }) {
     return _then(_value.copyWith(
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      objects: freezed == objects
-          ? _value.objects
-          : objects // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      text: freezed == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String?,
-      analysis: freezed == analysis
+      analysis: null == analysis
           ? _value.analysis
           : analysis // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
+      tags: freezed == tags
+          ? _value.tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -1805,10 +1843,7 @@ abstract class _$$VisionAnalysisResultImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String description,
-      List<String>? objects,
-      String? text,
-      String? analysis});
+      {String analysis, List<String>? tags, Map<String, dynamic>? metadata});
 }
 
 /// @nodoc
@@ -1822,28 +1857,23 @@ class __$$VisionAnalysisResultImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? description = null,
-    Object? objects = freezed,
-    Object? text = freezed,
-    Object? analysis = freezed,
+    Object? analysis = null,
+    Object? tags = freezed,
+    Object? metadata = freezed,
   }) {
     return _then(_$VisionAnalysisResultImpl(
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      objects: freezed == objects
-          ? _value._objects
-          : objects // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      text: freezed == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String?,
-      analysis: freezed == analysis
+      analysis: null == analysis
           ? _value.analysis
           : analysis // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
+      tags: freezed == tags
+          ? _value._tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ));
   }
 }
@@ -1852,35 +1882,40 @@ class __$$VisionAnalysisResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$VisionAnalysisResultImpl implements _VisionAnalysisResult {
   const _$VisionAnalysisResultImpl(
-      {required this.description,
-      final List<String>? objects,
-      this.text,
-      this.analysis})
-      : _objects = objects;
+      {required this.analysis,
+      final List<String>? tags,
+      final Map<String, dynamic>? metadata})
+      : _tags = tags,
+        _metadata = metadata;
 
   factory _$VisionAnalysisResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$VisionAnalysisResultImplFromJson(json);
 
   @override
-  final String description;
-  final List<String>? _objects;
+  final String analysis;
+  final List<String>? _tags;
   @override
-  List<String>? get objects {
-    final value = _objects;
+  List<String>? get tags {
+    final value = _tags;
     if (value == null) return null;
-    if (_objects is EqualUnmodifiableListView) return _objects;
+    if (_tags is EqualUnmodifiableListView) return _tags;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
 
+  final Map<String, dynamic>? _metadata;
   @override
-  final String? text;
-  @override
-  final String? analysis;
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'VisionAnalysisResult(description: $description, objects: $objects, text: $text, analysis: $analysis)';
+    return 'VisionAnalysisResult(analysis: $analysis, tags: $tags, metadata: $metadata)';
   }
 
   @override
@@ -1888,18 +1923,19 @@ class _$VisionAnalysisResultImpl implements _VisionAnalysisResult {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$VisionAnalysisResultImpl &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            const DeepCollectionEquality().equals(other._objects, _objects) &&
-            (identical(other.text, text) || other.text == text) &&
             (identical(other.analysis, analysis) ||
-                other.analysis == analysis));
+                other.analysis == analysis) &&
+            const DeepCollectionEquality().equals(other._tags, _tags) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, description,
-      const DeepCollectionEquality().hash(_objects), text, analysis);
+  int get hashCode => Object.hash(
+      runtimeType,
+      analysis,
+      const DeepCollectionEquality().hash(_tags),
+      const DeepCollectionEquality().hash(_metadata));
 
   @JsonKey(ignore: true)
   @override
@@ -1919,22 +1955,19 @@ class _$VisionAnalysisResultImpl implements _VisionAnalysisResult {
 
 abstract class _VisionAnalysisResult implements VisionAnalysisResult {
   const factory _VisionAnalysisResult(
-      {required final String description,
-      final List<String>? objects,
-      final String? text,
-      final String? analysis}) = _$VisionAnalysisResultImpl;
+      {required final String analysis,
+      final List<String>? tags,
+      final Map<String, dynamic>? metadata}) = _$VisionAnalysisResultImpl;
 
   factory _VisionAnalysisResult.fromJson(Map<String, dynamic> json) =
       _$VisionAnalysisResultImpl.fromJson;
 
   @override
-  String get description;
+  String get analysis;
   @override
-  List<String>? get objects;
+  List<String>? get tags;
   @override
-  String? get text;
-  @override
-  String? get analysis;
+  Map<String, dynamic>? get metadata;
   @override
   @JsonKey(ignore: true)
   _$$VisionAnalysisResultImplCopyWith<_$VisionAnalysisResultImpl>
