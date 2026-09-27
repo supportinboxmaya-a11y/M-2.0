@@ -1123,6 +1123,7 @@ class _ChatScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messages = ref.watch(chatMessagesProvider);
     final textController = TextEditingController();
+    final sidebarKey = GlobalKey<ScaffoldState>();
 
     void handleSend() {
       final text = textController.text.trim();
@@ -1134,7 +1135,9 @@ class _ChatScreen extends ConsumerWidget {
 
     return SafeArea(
       child: Scaffold(
+        key: sidebarKey,
         backgroundColor: Colors.transparent,
+        endDrawer: _ChatSidebar(),
         body: Column(
           children: [
             // Header
@@ -1151,8 +1154,8 @@ class _ChatScreen extends ConsumerWidget {
                   const Text('Chat', style: MayaTheme.headlineLarge),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.add_rounded),
-                    onPressed: () {},
+                    icon: const Icon(Icons.menu_rounded),
+                    onPressed: () => sidebarKey.currentState?.openEndDrawer(),
                     style: IconButton.styleFrom(
                         backgroundColor: MayaTheme.glassWhite10),
                   ),
@@ -1189,24 +1192,6 @@ class _ChatScreen extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.add_rounded),
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                        backgroundColor: MayaTheme.glassWhite10),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.image_rounded),
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                        backgroundColor: MayaTheme.glassWhite10),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.mic_rounded),
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                        backgroundColor: MayaTheme.glassWhite10),
-                  ),
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -1253,6 +1238,101 @@ class _ChatScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ChatSidebar extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Drawer(
+      width: 280,
+      backgroundColor: MayaTheme.slate900,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const Text('Features', style: MayaTheme.headlineMedium),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(context),
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: MayaTheme.glassWhite10),
+            _SidebarItem(
+              icon: Icons.psychology_rounded,
+              label: 'Agents',
+              subtitle: 'Select AI agent',
+              onTap: () => Navigator.pop(context),
+            ),
+            _SidebarItem(
+              icon: Icons.build_rounded,
+              label: 'Tools',
+              subtitle: 'Available tools',
+              onTap: () => Navigator.pop(context),
+            ),
+            _SidebarItem(
+              icon: Icons.memory_rounded,
+              label: 'Memory',
+              subtitle: 'RAG & context',
+              onTap: () => Navigator.pop(context),
+            ),
+            _SidebarItem(
+              icon: Icons.analytics_rounded,
+              label: 'Tasks',
+              subtitle: 'Active workflows',
+              onTap: () => Navigator.pop(context),
+            ),
+            _SidebarItem(
+              icon: Icons.settings_rounded,
+              label: 'Settings',
+              subtitle: 'Chat preferences',
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _SidebarItem({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: MayaTheme.neonCyan.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: MayaTheme.neonCyan, size: 22),
+      ),
+      title: Text(label, style: MayaTheme.titleMedium),
+      subtitle: Text(subtitle, style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     );
   }
 }
