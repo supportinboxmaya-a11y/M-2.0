@@ -13,7 +13,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../core/services/api_service.dart';
+import '../../core/services/api_service.dart';
 
 part 'system_service.freezed.dart';
 part 'system_service.g.dart';
@@ -78,32 +78,40 @@ class SystemService {
     // Periodic system status
     _statusTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
       final status = await getSystemStatus();
-      _stateController?.add(status);
+      _stateController?.add(SystemState(
+        status: status.status,
+        maya: status.maya,
+      ));
     });
 
     // Initial status
-    getSystemStatus().then((status) => _stateController?.add(status));
+    getSystemStatus().then((status) {
+      _stateController?.add(SystemState(
+        status: status.status,
+        maya: status.maya,
+      ));
+    });
   }
 
   // System Status
-  Future<SystemState> getSystemStatus() async {
+  Future<SystemStatus> getSystemStatus() async {
     try {
       return await _apiService.getSystemStatus();
     } catch (e) {
-      return SystemState(status: 'error', maya: 'offline');
+      return SystemStatus(status: 'error', maya: 'offline');
     }
   }
 
-  Future<Map<String, dynamic>> getSystemStats() async {
+  Future<SystemStats> getSystemStats() async {
     try {
       return await _apiService.getSystemStats();
     } catch (e) {
-      return {
-        'cpu': {'percent': 0, 'count': 0},
-        'memory': {'totalGb': 0, 'availableGb': 0, 'usedGb': 0, 'percent': 0},
-        'disk': {'totalGb': 0, 'usedGb': 0, 'freeGb': 0, 'percent': 0},
-        'load': {'loadAvg': [0, 0, 0]},
-      };
+      return SystemStats(
+        cpu: CpuStats(percent: 0, count: 0),
+        memory: MemoryStats(totalGb: 0, availableGb: 0, usedGb: 0, percent: 0),
+        disk: DiskStats(totalGb: 0, usedGb: 0, freeGb: 0, percent: 0),
+        load: LoadStats(loadAvg: [0, 0, 0]),
+      );
     }
   }
 
