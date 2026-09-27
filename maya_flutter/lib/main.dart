@@ -96,228 +96,9 @@ class MayaHomeScreen extends ConsumerStatefulWidget {
   const MayaHomeScreen({super.key});
 
   @override
-  ConsumerState<MayaHomeScreen> createState() => _MayaHomeScreenState();
+  ConsumerState<MayaHomeScreen> createState() => _HomeScreenState();
 }
 
-class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> {
-  int _currentIndex = 0;
-  late PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final systemStateAsync = ref.watch(systemStateStreamProvider);
-    final connectivityAsync = ref.watch(systemConnectivityStreamProvider);
-
-    final systemState = systemStateAsync.value;
-    final isOnline = (connectivityAsync.value ?? []).any((r) => r != ConnectivityResult.none);
-
-    return Scaffold(
-      backgroundColor: MayaTheme.slate900,
-      body: Stack(
-        children: [
-          // Background
-          _buildBackground(),
-
-          // Main Content
-          PageView(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => _currentIndex = index),
-            physics: const NeverScrollableScrollPhysics(),
-            children: const [
-              _HomeScreen(),
-              _VoiceScreen(),
-              _CameraScreen(),
-              _ChatScreen(),
-              _SettingsScreen(),
-            ],
-          ),
-
-          // Floating Maya Logo
-          _buildFloatingLogo(),
-
-          // Connection Status Badge
-          _buildConnectionBadge(),
-        ],
-      ),
-      bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  Widget _buildBackground() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: MayaTheme.bgGradientPrimary,
-      ),
-      child: Stack(
-        children: [
-          // Subtle grid pattern
-          CustomPaint(
-            painter: _GridPainter(),
-            size: Size.infinite,
-          ),
-          // Radial glow
-          Center(
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    MayaTheme.neonCyan.withValues(alpha: 0.03),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFloatingLogo() {
-    return Positioned(
-      top: 50,
-      right: 20,
-      child: const MayaLogo(
-        size: 80,
-        state: MayaLogoState.idle,
-        showPulse: true,
-        showGlow: true,
-      )
-          .animate()
-          .fadeIn(duration: 800.ms, delay: 300.ms)
-          .slideY(begin: -0.3, duration: 600.ms, curve: Curves.easeOutCubic),
-    );
-  }
-
-  Widget _buildConnectionBadge() {
-    return Consumer(
-      builder: (context, ref, _) {
-        final connectivityAsync = ref.watch(systemConnectivityStreamProvider);
-        final connectivity = connectivityAsync.value ?? [];
-        final isOnline = connectivity.any((r) => r != ConnectivityResult.none);
-
-        return Positioned(
-          top: 50,
-          left: 20,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: MayaTheme.glassCard(
-              color: MayaTheme.slate800.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isOnline ? MayaTheme.neonEmerald : MayaTheme.error,
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            (isOnline ? MayaTheme.neonEmerald : MayaTheme.error)
-                                .withValues(alpha: 0.5),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Online',
-                  style: MayaTheme.labelSmall.copyWith(
-                    color: isOnline ? MayaTheme.neonEmerald : MayaTheme.error,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: MayaTheme.glassCard(
-        color: MayaTheme.slate900.withValues(alpha: 0.9),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(
-                icon: Icons.home_rounded,
-                label: 'Home',
-                index: 0,
-                currentIndex: _currentIndex,
-                onTap: () => _navigate(0),
-              ),
-              _NavItem(
-                icon: Icons.mic_rounded,
-                label: 'Voice',
-                index: 1,
-                currentIndex: _currentIndex,
-                onTap: () => _navigate(1),
-              ),
-              _NavItem(
-                icon: Icons.camera_alt_rounded,
-                label: 'Vision',
-                index: 2,
-                currentIndex: _currentIndex,
-                onTap: () => _navigate(2),
-              ),
-              _NavItem(
-                icon: Icons.chat_bubble_rounded,
-                label: 'Chat',
-                index: 3,
-                currentIndex: _currentIndex,
-                onTap: () => _navigate(3),
-              ),
-              _NavItem(
-                icon: Icons.settings_rounded,
-                label: 'Settings',
-                index: 4,
-                currentIndex: _currentIndex,
-                onTap: () => _navigate(4),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _navigate(int index) {
-    setState(() => _currentIndex = index);
-    _pageController.animateToPage(
-      index,
-      duration: 400.ms,
-      curve: Curves.easeInOutCubic,
-    );
-  }
-}
 
 class _NavItem extends StatelessWidget {
   final IconData icon;
@@ -400,116 +181,132 @@ class _GridPainter extends CustomPainter {
 }
 
 // Screens
-class _HomeScreen extends StatelessWidget {
+class _HomeScreen extends ConsumerStatefulWidget {
   const _HomeScreen();
+
+  @override
+  ConsumerState<MayaHomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Maya Pro', style: MayaTheme.headlineLarge),
-                IconButton(
-                  icon: const Icon(Icons.notifications_rounded),
-                  onPressed: () {},
-                  style: IconButton.styleFrom(
-                    backgroundColor: MayaTheme.glassWhite10,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Your autonomous AI assistant',
-              style: MayaTheme.bodyMedium,
-            ),
-
-            const SizedBox(height: 32),
-
-            // Maya Logo Center
-            const Center(
-              child: MayaLogo(
-                size: 180,
-                state: MayaLogoState.idle,
-                showPulse: true,
-                showGlow: true,
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Quick Actions
-            const Text('Quick Actions', style: MayaTheme.titleMedium),
-            const SizedBox(height: 16),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.2,
-              children: [
-                _ActionCard(
-                  icon: Icons.mic_rounded,
-                  label: 'Voice Chat',
-                  color: MayaTheme.neonCyan,
-                  onTap: () {},
-                ),
-                _ActionCard(
-                  icon: Icons.camera_alt_rounded,
-                  label: 'Vision AI',
-                  color: MayaTheme.neonViolet,
-                  onTap: () {},
-                ),
-                _ActionCard(
-                  icon: Icons.chat_bubble_rounded,
-                  label: 'Chat',
-                  color: MayaTheme.neonEmerald,
-                  onTap: () {},
-                ),
-                _ActionCard(
-                  icon: Icons.settings_rounded,
-                  label: 'System',
-                  color: MayaTheme.neonOrange,
-                  onTap: () {},
-                ),
-              ],
-            ),
-
-            const Spacer(),
-
-            // Status Bar
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.transparent,
+        drawer: _AppDrawer(),
+        body: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _StatusItem(
-                      label: 'Voice',
-                      value: 'Ready',
-                      color: MayaTheme.neonCyan),
-                  _StatusItem(
+                  const Text('Maya Pro', style: MayaTheme.headlineLarge),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications_rounded),
+                        onPressed: () {},
+                        style: IconButton.styleFrom(
+                          backgroundColor: MayaTheme.glassWhite10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Your autonomous AI assistant',
+                style: MayaTheme.bodyMedium,
+              ),
+
+              const SizedBox(height: 32),
+
+              // Maya Logo Center
+              const Center(
+                child: MayaLogo(
+                  size: 180,
+                  state: MayaLogoState.idle,
+                  showPulse: true,
+                  showGlow: true,
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Quick Actions
+              const Text('Quick Actions', style: MayaTheme.titleMedium),
+              const SizedBox(height: 16),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.2,
+                children: [
+                  _ActionCard(
+                    icon: Icons.mic_rounded,
+                    label: 'Voice Chat',
+                    color: MayaTheme.neonCyan,
+                    onTap: () {},
+                  ),
+                  _ActionCard(
+                    icon: Icons.camera_alt_rounded,
+                    label: 'Vision AI',
+                    color: MayaTheme.neonViolet,
+                    onTap: () {},
+                  ),
+                  _ActionCard(
+                    icon: Icons.chat_bubble_rounded,
+                    label: 'Chat',
+                    color: MayaTheme.neonEmerald,
+                    onTap: () {},
+                  ),
+                  _ActionCard(
+                    icon: Icons.settings_rounded,
+                    label: 'System',
+                    color: MayaTheme.neonOrange,
+                    onTap: () {},
+                  ),
+                ],
+              ),
+
+              const Spacer(),
+
+// Status Bar
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _StatusItem(
+                        label: 'Voice',
+                        value: 'Ready',
+                        color: MayaTheme.neonCyan),
+                    _StatusItem(
                       label: 'Vision',
                       value: 'Ready',
                       color: MayaTheme.neonViolet),
-                  _StatusItem(
+                    _StatusItem(
                       label: 'System',
                       value: 'Online',
                       color: MayaTheme.neonEmerald),
-                ],
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
+    ),
     );
   }
 }
@@ -1116,6 +913,212 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
   }
 }
 
+class _AppDrawer extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Drawer(
+      width: 300,
+      backgroundColor: MayaTheme.slate900,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  const MayaLogo(size: 40, state: MayaLogoState.idle),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Maya Pro', style: MayaTheme.headlineSmall),
+                      Text('AI Assistant', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: MayaTheme.glassWhite10, height: 1),
+
+            // Section 1: Agent Selector & Management
+            _DrawerSection(
+              title: 'Agent Selector & Management',
+              icon: Icons.psychology_rounded,
+              children: [
+                _DrawerActionTile(
+                  icon: Icons.psychology_rounded,
+                  label: 'Select Agent',
+                  subtitle: 'Choose active AI agent',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.add_rounded,
+                  label: 'Create Agent',
+                  subtitle: 'Build custom agent',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.manage_accounts_rounded,
+                  label: 'Manage Agents',
+                  subtitle: 'View & edit agents',
+                  onTap: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+
+            // Section 2: Tools & Integrations
+            _DrawerSection(
+              title: 'Tools & Integrations',
+              icon: Icons.build_rounded,
+              children: [
+                _DrawerActionTile(
+                  icon: Icons.build_rounded,
+                  label: 'Available Tools',
+                  subtitle: 'Browse all tools',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.integration_instructions_rounded,
+                  label: 'Integrations',
+                  subtitle: 'Connected services',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.extension_rounded,
+                  label: 'MCP Servers',
+                  subtitle: 'Model Context Protocol',
+                  onTap: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+
+            // Section 3: Quick Settings & VPS Status
+            _DrawerSection(
+              title: 'Quick Settings & VPS Status',
+              icon: Icons.settings_rounded,
+              children: [
+                _DrawerActionTile(
+                  icon: Icons.memory_rounded,
+                  label: 'Memory & RAG',
+                  subtitle: 'Knowledge & context',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.analytics_rounded,
+                  label: 'Tasks & Workflows',
+                  subtitle: 'Active workflows',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.dns_rounded,
+                  label: 'VPS Status',
+                  subtitle: 'Connection: Online',
+                  trailing: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonEmerald,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.tune_rounded,
+                  label: 'Settings',
+                  subtitle: 'Preferences & config',
+                  onTap: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+
+            const Spacer(),
+
+            // Footer
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'Maya Pro v1.0.0',
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DrawerSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
+
+  const _DrawerSection({
+    required this.title,
+    required this.icon,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: MayaTheme.neonCyan),
+              const SizedBox(width: 8),
+              Text(title, style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan)),
+            ],
+          ),
+        ),
+        ...children,
+      ],
+    );
+  }
+}
+
+class _DrawerActionTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final VoidCallback onTap;
+  final Widget? trailing;
+
+  const _DrawerActionTile({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: MayaTheme.neonCyan.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: MayaTheme.neonCyan, size: 20),
+      ),
+      title: Text(label, style: MayaTheme.titleSmall),
+      subtitle: Text(subtitle, style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      trailing: trailing,
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      dense: true,
+    );
+  }
+}
+
 class _ChatScreen extends ConsumerWidget {
   const _ChatScreen();
 
@@ -1123,7 +1126,7 @@ class _ChatScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messages = ref.watch(chatMessagesProvider);
     final textController = TextEditingController();
-    final sidebarKey = GlobalKey<ScaffoldState>();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
     void handleSend() {
       final text = textController.text.trim();
@@ -1135,9 +1138,9 @@ class _ChatScreen extends ConsumerWidget {
 
     return SafeArea(
       child: Scaffold(
-        key: sidebarKey,
+        key: scaffoldKey,
         backgroundColor: Colors.transparent,
-        endDrawer: _ChatSidebar(),
+        drawer: _AppDrawer(),
         body: Column(
           children: [
             // Header
@@ -1151,14 +1154,13 @@ class _ChatScreen extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Text('Chat', style: MayaTheme.headlineLarge),
-                  const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.menu_rounded),
-                    onPressed: () => sidebarKey.currentState?.openEndDrawer(),
+                    onPressed: () => scaffoldKey.currentState?.openDrawer(),
                     style: IconButton.styleFrom(
                         backgroundColor: MayaTheme.glassWhite10),
                   ),
+                  const Text('Chat', style: MayaTheme.headlineLarge),
                 ],
               ),
             ),
