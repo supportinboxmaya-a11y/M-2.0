@@ -11,9 +11,9 @@ import 'features/camera/camera_service.dart';
 import 'features/system/system_service.dart';
 import 'config/app_config.dart';
 
-final voiceServiceProvider = Provider((ref) => VoiceService());
-final cameraServiceProvider = Provider((ref) => CameraService());
-final systemServiceProvider = Provider((ref) => SystemService());
+final voiceServiceProvider = Provider((ref) => VoiceService(ref.read(apiServiceProvider)));
+final cameraServiceProvider = Provider((ref) => CameraService(ref.read(apiServiceProvider)));
+final systemServiceProvider = Provider((ref) => SystemService(ref.read(apiServiceProvider)));
 
 void main() {
   runApp(const ProviderScope(child: MayaApp()));
@@ -100,9 +100,9 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final systemState = ref.watch(systemServiceProvider.stateStream).value;
+    final systemState = ref.watch(systemServiceProvider).stateStream.value;
     final isOnline =
-        (ref.watch(systemServiceProvider.connectivityStream).value ?? [])
+        (ref.watch(systemServiceProvider).connectivityStream.value ?? [])
             .any((r) => r != ConnectivityResult.none);
 
     return Scaffold(
@@ -190,7 +190,7 @@ class _MayaHomeScreenState extends ConsumerState<MayaHomeScreen> {
     return Consumer(
       builder: (context, ref, _) {
         final connectivity =
-            ref.watch(systemServiceProvider.connectivityStream).value ?? [];
+            ref.watch(systemServiceProvider).connectivityStream.value ?? [];
         final isOnline = connectivity.any((r) => r != ConnectivityResult.none);
 
         return Positioned(
@@ -580,7 +580,7 @@ class _VoiceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final voiceState = ref.watch(voiceServiceProvider.stateStream);
+    final voiceState = ref.watch(voiceServiceProvider).stateStream;
     final isRecording = voiceState == VoiceState.recording;
     final isSpeaking = voiceState == VoiceState.speaking;
 
