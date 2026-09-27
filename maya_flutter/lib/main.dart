@@ -1004,11 +1004,134 @@ class _CameraGridPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+final chatMessagesProvider = StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>((ref) {
+  return ChatMessagesNotifier(ref);
+});
+
+class ChatMessage {
+  final String text;
+  final bool isUser;
+  final String time;
+  final bool isStreaming;
+
+  ChatMessage({
+    required this.text,
+    required this.isUser,
+    required this.time,
+    this.isStreaming = false,
+  });
+
+  ChatMessage copyWith({
+    String? text,
+    bool? isStreaming,
+  }) {
+    return ChatMessage(
+      text: text ?? this.text,
+      isUser: this.isUser,
+      time: this.time,
+      isStreaming: isStreaming ?? this.isStreaming,
+    );
+  }
+}
+
+class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
+  final Ref ref;
+
+  ChatMessagesNotifier(this.ref) : super([
+    ChatMessage(
+      text: 'Hello! How can I help you today?',
+      isUser: false,
+      time: _formatTime(DateTime.now()),
+    ),
+  ]);
+
+  static String _formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  void sendMessage(String text) {
+    if (text.trim().isEmpty) return;
+
+    final userMessage = ChatMessage(
+      text: text.trim(),
+      isUser: true,
+      time: _formatTime(DateTime.now()),
+    );
+    state = [...state, userMessage];
+
+    // Add a streaming assistant message
+    final assistantMessage = ChatMessage(
+      text: '',
+      isUser: false,
+      time: _formatTime(DateTime.now()),
+      isStreaming: true,
+    );
+    state = [...state, assistantMessage];
+
+    _streamChatResponse(text.trim());
+  }
+
+  void _streamChatResponse(String message) async {
+    final apiService = ref.read(apiServiceProvider);
+    int messageIndex = state.length - 1;
+
+    try {
+      await for (final chunk in apiService.chatStream(message)) {
+        if (chunk.error != null) {
+          state = [
+            ...state.sublist(0, messageIndex),
+            state[messageIndex].copyWith(
+              text: 'Error: ${chunk.error}',
+              isStreaming: false,
+            ),
+          ];
+          break;
+        }
+
+        if (chunk.delta != null && chunk.delta!.isNotEmpty) {
+          final currentText = state[messageIndex].text;
+          state = [
+            ...state.sublist(0, messageIndex),
+            state[messageIndex].copyWith(text: currentText + chunk.delta!),
+          ];
+        }
+
+        if (chunk.done == true) {
+          state = [
+            ...state.sublist(0, messageIndex),
+            state[messageIndex].copyWith(isStreaming: false),
+          ];
+          break;
+        }
+      }
+    } catch (e) {
+      state = [
+        ...state.sublist(0, messageIndex),
+        state[messageIndex].copyWith(
+          text: 'Error: $e',
+          isStreaming: false,
+        ),
+      ];
+    }
+  }
+}
+
 class _ChatScreen extends ConsumerWidget {
   const _ChatScreen();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final messages = ref.watch(chatMessagesProvider);
+    final textController = TextEditingController();
+
+    void handleSend() {
+      final text = textController.text.trim();
+      if (text.isNotEmpty) {
+        textController.clear();
+        ref.read(chatMessagesProvider.notifier).sendMessage(text);
+      }
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -1039,21 +1162,19 @@ class _ChatScreen extends ConsumerWidget {
 
             // Messages
             Expanded(
-              child: ListView(
+              child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 reverse: true,
-                children: [
-                  const _ChatBubble(
-                    text: 'Hello! How can I help you today?',
-                    isUser: false,
-                    time: '10:30',
-                  ).animate().fadeIn().slideY(begin: 0.2),
-                  const _ChatBubble(
-                    text: 'Can you help me create a Python script?',
-                    isUser: true,
-                    time: '10:31',
-                  ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.2),
-                ],
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[messages.length - 1 - index];
+                  return _ChatBubble(
+                    text: message.text,
+                    isUser: message.isUser,
+                    time: message.time,
+                    isStreaming: message.isStreaming,
+                  ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
+                },
               ),
             ),
 
@@ -1097,6 +1218,7 @@ class _ChatScreen extends ConsumerWidget {
                             color: MayaTheme.neonCyan.withValues(alpha: 0.2)),
                       ),
                       child: TextField(
+                        controller: textController,
                         decoration: InputDecoration(
                           hintText: 'Message Maya...',
                           hintStyle: MayaTheme.bodyMedium
@@ -1106,14 +1228,24 @@ class _ChatScreen extends ConsumerWidget {
                         ),
                         style: MayaTheme.bodyMedium,
                         maxLines: null,
-                        onSubmitted: (value) {},
+                        onSubmitted: (value) {
+                          if (value.trim().isNotEmpty) {
+                            ref.read(chatMessagesProvider.notifier).sendMessage(value);
+                          }
+                        },
                       ),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.send_rounded,
                         color: MayaTheme.neonCyan),
-                    onPressed: () {},
+                    onPressed: () {
+                      final text = textController.text;
+                      if (text.trim().isNotEmpty) {
+                        textController.clear();
+                        ref.read(chatMessagesProvider.notifier).sendMessage(text);
+                      }
+                    },
                   ),
                 ],
               ),
@@ -1129,11 +1261,13 @@ class _ChatBubble extends StatelessWidget {
   final String text;
   final bool isUser;
   final String time;
+  final bool isStreaming;
 
   const _ChatBubble({
     required this.text,
     required this.isUser,
     required this.time,
+    this.isStreaming = false,
   });
 
   @override
@@ -1169,6 +1303,27 @@ class _ChatBubble extends StatelessWidget {
             Text(text,
                 style: MayaTheme.bodyMedium.copyWith(
                     color: isUser ? MayaTheme.slate900 : Colors.white)),
+            if (isStreaming && !isUser) ...[
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          isUser ? MayaTheme.slate900 : Colors.white70),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text('Typing...',
+                      style: MayaTheme.labelSmall
+                          .copyWith(color: Colors.white54)),
+                ],
+              ),
+            ],
             const SizedBox(height: 4),
             Row(
               mainAxisSize: MainAxisSize.min,
