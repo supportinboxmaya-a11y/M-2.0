@@ -11,7 +11,6 @@ dependencies:
     sdk: flutter
 
   # Core
-  flutter_riverpod: ^2.5.1
   riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
   freezed_annotation: ^2.4.1
@@ -72,6 +71,8 @@ dependencies:
 
   # Background
   workmanager: ^0.5.2
+  flutter_riverpod: ^2.6.1
+  hooks_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:
