@@ -5,6 +5,12 @@ workflows:
     environment:
       flutter: stable
       java: 17
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
     scripts:
       - name: Get Flutter dependencies
         script: |
