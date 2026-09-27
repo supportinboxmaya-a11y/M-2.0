@@ -203,13 +203,38 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
+              // Header with Hamburger Menu & Status Indicators
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Hamburger Menu Button
+                  IconButton(
+                    icon: const Icon(Icons.menu_rounded),
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                    style: IconButton.styleFrom(
+                      backgroundColor: MayaTheme.glassWhite10,
+                    ),
+                    tooltip: 'Open Menu',
+                  ),
                   const Text('Maya Pro', style: MayaTheme.headlineLarge),
+                  // Status Indicators: Active Agent & Tools
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      _StatusChip(
+                        label: 'Agent',
+                        value: 'Maya Core',
+                        color: MayaTheme.neonCyan,
+                        icon: Icons.psychology_rounded,
+                      ),
+                      const SizedBox(width: 8),
+                      _StatusChip(
+                        label: 'Tools',
+                        value: '3 Active',
+                        color: MayaTheme.neonViolet,
+                        icon: Icons.build_rounded,
+                      ),
+                      const SizedBox(width: 8),
                       IconButton(
                         icon: const Icon(Icons.notifications_rounded),
                         onPressed: () {},
@@ -330,6 +355,43 @@ class _StatusItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(value, style: MayaTheme.titleMedium.copyWith(color: color)),
       ],
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _StatusChip({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            '$label: $value',
+            style: MayaTheme.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
     );
   }
 }
