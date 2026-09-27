@@ -253,9 +253,13 @@ class _MayaLogoPainter extends CustomPainter {
 class _MLetterPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+    final scale = size.width / 100.0;
+    canvas.scale(scale, scale);
+    
+    // Main M shape with gradient stroke
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
+      ..strokeWidth = 5
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
@@ -267,24 +271,49 @@ class _MLetterPainter extends CustomPainter {
 
     paint.shader = gradient.createShader(Rect.fromLTWH(0, 0, 100, 100));
 
-    final w = 100.0;
-    final h = 100.0;
-    final strokeWidth = 6.0;
-
     final path = Path()
-      ..moveTo(10, 90)
-      ..lineTo(10, 10)
-      ..lineTo(50, 50)
-      ..lineTo(90, 10)
-      ..lineTo(90, 90);
+      // Left stem
+      ..moveTo(12, 88)
+      ..lineTo(12, 12)
+      // Left diagonal up to center peak
+      ..lineTo(38, 45)
+      // Right diagonal down
+      ..lineTo(62, 45)
+      // Right stem
+      ..lineTo(62, 12)
+      ..lineTo(62, 88);
 
     canvas.drawPath(path, paint);
 
-    // Center dot
-    final dotPaint = Paint()
+    // Inner accent line
+    final accentPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round
+      ..color = MayaTheme.neonEmerald.withOpacity(0.6);
+
+    final accentPath = Path()
+      ..moveTo(22, 78)
+      ..lineTo(30, 35)
+      ..lineTo(50, 60)
+      ..lineTo(70, 35)
+      ..lineTo(78, 78);
+
+    canvas.drawPath(accentPath, accentPaint);
+
+    // Center diamond accent
+    final diamondPaint = Paint()
       ..color = MayaTheme.neonEmerald
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(const Offset(50, 50), 4, dotPaint);
+    
+    final diamondPath = Path()
+      ..moveTo(50, 40)
+      ..lineTo(54, 45)
+      ..lineTo(50, 50)
+      ..lineTo(46, 45)
+      ..close();
+    
+    canvas.drawPath(diamondPath, diamondPaint);
   }
 
   @override
