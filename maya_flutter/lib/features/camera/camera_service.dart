@@ -14,7 +14,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/services/api_service.dart';
 
-part 'camera_service.freezed.dart';
 part 'camera_service.g.dart';
 
 @riverpod
