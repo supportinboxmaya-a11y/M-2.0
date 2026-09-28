@@ -6,23 +6,39 @@ part of 'voice_service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TtsResultImpl _$$TtsResultImplFromJson(Map<String, dynamic> json) =>
-    _$TtsResultImpl(
-      success: json['success'] as bool,
-      audioBase64: json['audioBase64'] as String?,
-      format: json['format'] as String?,
-      provider: json['provider'] as String?,
-      error: json['error'] as String?,
+_$TtsResultImpl _$$TtsResultImplFromJson(Map json) => $checkedCreate(
+      r'_$TtsResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$TtsResultImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          audioBase64: $checkedConvert('audio_base64', (v) => v as String?),
+          format: $checkedConvert('format', (v) => v as String?),
+          provider: $checkedConvert('provider', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'audioBase64': 'audio_base64'},
     );
 
-Map<String, dynamic> _$$TtsResultImplToJson(_$TtsResultImpl instance) =>
-    <String, dynamic>{
-      'success': instance.success,
-      'audioBase64': instance.audioBase64,
-      'format': instance.format,
-      'provider': instance.provider,
-      'error': instance.error,
-    };
+Map<String, dynamic> _$$TtsResultImplToJson(_$TtsResultImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('audio_base64', instance.audioBase64);
+  writeNotNull('format', instance.format);
+  writeNotNull('provider', instance.provider);
+  writeNotNull('error', instance.error);
+  return val;
+}
 
 // **************************************************************************
 // RiverpodGenerator

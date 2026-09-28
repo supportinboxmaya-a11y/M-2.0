@@ -6,196 +6,382 @@ part of 'api_service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AuthResponseImpl _$$AuthResponseImplFromJson(Map<String, dynamic> json) =>
-    _$AuthResponseImpl(
-      accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String,
-      user: UserProfile.fromJson(json['user'] as Map<String, dynamic>),
+_$AuthResponseImpl _$$AuthResponseImplFromJson(Map json) => $checkedCreate(
+      r'_$AuthResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AuthResponseImpl(
+          accessToken: $checkedConvert('access_token', (v) => v as String),
+          refreshToken: $checkedConvert('refresh_token', (v) => v as String),
+          user: $checkedConvert('user',
+              (v) => UserProfile.fromJson(Map<String, dynamic>.from(v as Map))),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'accessToken': 'access_token',
+        'refreshToken': 'refresh_token'
+      },
     );
 
 Map<String, dynamic> _$$AuthResponseImplToJson(_$AuthResponseImpl instance) =>
     <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
+      'access_token': instance.accessToken,
+      'refresh_token': instance.refreshToken,
       'user': instance.user,
     };
 
-_$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
-    _$UserProfileImpl(
-      id: json['id'] as String,
-      email: json['email'] as String,
-      name: json['name'] as String,
-      avatar: json['avatar'] as String?,
-      role: json['role'] as String?,
+_$UserProfileImpl _$$UserProfileImplFromJson(Map json) => $checkedCreate(
+      r'_$UserProfileImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$UserProfileImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          email: $checkedConvert('email', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          avatar: $checkedConvert('avatar', (v) => v as String?),
+          role: $checkedConvert('role', (v) => v as String?),
+        );
+        return val;
+      },
     );
 
-Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'email': instance.email,
-      'name': instance.name,
-      'avatar': instance.avatar,
-      'role': instance.role,
-    };
+Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'email': instance.email,
+    'name': instance.name,
+  };
 
-_$TranscriptionResultImpl _$$TranscriptionResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TranscriptionResultImpl(
-      transcript: json['transcript'] as String,
-      language: json['language'] as String,
-      languageProbability: (json['languageProbability'] as num).toDouble(),
-      duration: (json['duration'] as num).toDouble(),
-      segments: (json['segments'] as List<dynamic>?)
-          ?.map((e) => TranscriptionSegment.fromJson(e as Map<String, dynamic>))
-          .toList(),
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('avatar', instance.avatar);
+  writeNotNull('role', instance.role);
+  return val;
+}
+
+_$TranscriptionResultImpl _$$TranscriptionResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$TranscriptionResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$TranscriptionResultImpl(
+          transcript: $checkedConvert('transcript', (v) => v as String),
+          language: $checkedConvert('language', (v) => v as String),
+          languageProbability: $checkedConvert(
+              'language_probability', (v) => (v as num).toDouble()),
+          duration: $checkedConvert('duration', (v) => (v as num).toDouble()),
+          segments: $checkedConvert(
+              'segments',
+              (v) => (v as List<dynamic>?)
+                  ?.map((e) => TranscriptionSegment.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'languageProbability': 'language_probability'},
     );
 
 Map<String, dynamic> _$$TranscriptionResultImplToJson(
-        _$TranscriptionResultImpl instance) =>
-    <String, dynamic>{
-      'transcript': instance.transcript,
-      'language': instance.language,
-      'languageProbability': instance.languageProbability,
-      'duration': instance.duration,
-      'segments': instance.segments,
-    };
+    _$TranscriptionResultImpl instance) {
+  final val = <String, dynamic>{
+    'transcript': instance.transcript,
+    'language': instance.language,
+    'language_probability': instance.languageProbability,
+    'duration': instance.duration,
+  };
 
-_$TranscriptionSegmentImpl _$$TranscriptionSegmentImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TranscriptionSegmentImpl(
-      start: (json['start'] as num).toDouble(),
-      end: (json['end'] as num).toDouble(),
-      text: json['text'] as String,
-      avgLogprob: (json['avgLogprob'] as num?)?.toDouble(),
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('segments', instance.segments);
+  return val;
+}
+
+_$TranscriptionSegmentImpl _$$TranscriptionSegmentImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$TranscriptionSegmentImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$TranscriptionSegmentImpl(
+          start: $checkedConvert('start', (v) => (v as num).toDouble()),
+          end: $checkedConvert('end', (v) => (v as num).toDouble()),
+          text: $checkedConvert('text', (v) => v as String),
+          avgLogprob:
+              $checkedConvert('avg_logprob', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'avgLogprob': 'avg_logprob'},
     );
 
 Map<String, dynamic> _$$TranscriptionSegmentImplToJson(
-        _$TranscriptionSegmentImpl instance) =>
-    <String, dynamic>{
-      'start': instance.start,
-      'end': instance.end,
-      'text': instance.text,
-      'avgLogprob': instance.avgLogprob,
-    };
+    _$TranscriptionSegmentImpl instance) {
+  final val = <String, dynamic>{
+    'start': instance.start,
+    'end': instance.end,
+    'text': instance.text,
+  };
 
-_$TtsResultImpl _$$TtsResultImplFromJson(Map<String, dynamic> json) =>
-    _$TtsResultImpl(
-      success: json['success'] as bool,
-      audioBase64: json['audioBase64'] as String?,
-      format: json['format'] as String?,
-      provider: json['provider'] as String?,
-      error: json['error'] as String?,
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('avg_logprob', instance.avgLogprob);
+  return val;
+}
+
+_$TtsResultImpl _$$TtsResultImplFromJson(Map json) => $checkedCreate(
+      r'_$TtsResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$TtsResultImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          audioBase64: $checkedConvert('audio_base64', (v) => v as String?),
+          format: $checkedConvert('format', (v) => v as String?),
+          provider: $checkedConvert('provider', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'audioBase64': 'audio_base64'},
     );
 
-Map<String, dynamic> _$$TtsResultImplToJson(_$TtsResultImpl instance) =>
-    <String, dynamic>{
-      'success': instance.success,
-      'audioBase64': instance.audioBase64,
-      'format': instance.format,
-      'provider': instance.provider,
-      'error': instance.error,
-    };
+Map<String, dynamic> _$$TtsResultImplToJson(_$TtsResultImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
 
-_$AgentChatResponseImpl _$$AgentChatResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AgentChatResponseImpl(
-      reply: json['reply'] as String,
-      timestamp: json['timestamp'] as String,
-      taskId: json['taskId'] as String?,
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('audio_base64', instance.audioBase64);
+  writeNotNull('format', instance.format);
+  writeNotNull('provider', instance.provider);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$AgentChatResponseImpl _$$AgentChatResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AgentChatResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentChatResponseImpl(
+          reply: $checkedConvert('reply', (v) => v as String),
+          timestamp: $checkedConvert('timestamp', (v) => v as String),
+          taskId: $checkedConvert('task_id', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id'},
     );
 
 Map<String, dynamic> _$$AgentChatResponseImplToJson(
-        _$AgentChatResponseImpl instance) =>
-    <String, dynamic>{
-      'reply': instance.reply,
-      'timestamp': instance.timestamp,
-      'taskId': instance.taskId,
-    };
+    _$AgentChatResponseImpl instance) {
+  final val = <String, dynamic>{
+    'reply': instance.reply,
+    'timestamp': instance.timestamp,
+  };
 
-_$AgentRunResponseImpl _$$AgentRunResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AgentRunResponseImpl(
-      taskId: json['taskId'] as String,
-      status: json['status'] as String,
-      result: json['result'] as String?,
-      error: json['error'] as String?,
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('task_id', instance.taskId);
+  return val;
+}
+
+_$AgentRunResponseImpl _$$AgentRunResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AgentRunResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentRunResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          result: $checkedConvert('result', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id'},
     );
 
 Map<String, dynamic> _$$AgentRunResponseImplToJson(
-        _$AgentRunResponseImpl instance) =>
-    <String, dynamic>{
-      'taskId': instance.taskId,
-      'status': instance.status,
-      'result': instance.result,
-      'error': instance.error,
-    };
+    _$AgentRunResponseImpl instance) {
+  final val = <String, dynamic>{
+    'task_id': instance.taskId,
+    'status': instance.status,
+  };
 
-_$AgentThinkResponseImpl _$$AgentThinkResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AgentThinkResponseImpl(
-      analysis: json['analysis'] as String,
-      plan: json['plan'] as String?,
-      steps:
-          (json['steps'] as List<dynamic>?)?.map((e) => e as String).toList(),
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$AgentThinkResponseImpl _$$AgentThinkResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AgentThinkResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentThinkResponseImpl(
+          analysis: $checkedConvert('analysis', (v) => v as String),
+          plan: $checkedConvert('plan', (v) => v as String?),
+          steps: $checkedConvert('steps',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+        );
+        return val;
+      },
     );
 
 Map<String, dynamic> _$$AgentThinkResponseImplToJson(
-        _$AgentThinkResponseImpl instance) =>
-    <String, dynamic>{
-      'analysis': instance.analysis,
-      'plan': instance.plan,
-      'steps': instance.steps,
-    };
+    _$AgentThinkResponseImpl instance) {
+  final val = <String, dynamic>{
+    'analysis': instance.analysis,
+  };
 
-_$VisionAnalysisResultImpl _$$VisionAnalysisResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$VisionAnalysisResultImpl(
-      analysis: json['analysis'] as String,
-      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      metadata: json['metadata'] as Map<String, dynamic>?,
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('plan', instance.plan);
+  writeNotNull('steps', instance.steps);
+  return val;
+}
+
+_$VisionAnalysisResultImpl _$$VisionAnalysisResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$VisionAnalysisResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$VisionAnalysisResultImpl(
+          analysis: $checkedConvert('analysis', (v) => v as String),
+          tags: $checkedConvert('tags',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
     );
 
 Map<String, dynamic> _$$VisionAnalysisResultImplToJson(
-        _$VisionAnalysisResultImpl instance) =>
-    <String, dynamic>{
-      'analysis': instance.analysis,
-      'tags': instance.tags,
-      'metadata': instance.metadata,
-    };
+    _$VisionAnalysisResultImpl instance) {
+  final val = <String, dynamic>{
+    'analysis': instance.analysis,
+  };
 
-_$OcrResultImpl _$$OcrResultImplFromJson(Map<String, dynamic> json) =>
-    _$OcrResultImpl(
-      text: json['text'] as String,
-      regions: (json['regions'] as List<dynamic>?)
-          ?.map((e) => OcrRegion.fromJson(e as Map<String, dynamic>))
-          .toList(),
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('tags', instance.tags);
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
+_$OcrResultImpl _$$OcrResultImplFromJson(Map json) => $checkedCreate(
+      r'_$OcrResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$OcrResultImpl(
+          text: $checkedConvert('text', (v) => v as String),
+          regions: $checkedConvert(
+              'regions',
+              (v) => (v as List<dynamic>?)
+                  ?.map((e) =>
+                      OcrRegion.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
     );
 
-Map<String, dynamic> _$$OcrResultImplToJson(_$OcrResultImpl instance) =>
-    <String, dynamic>{
-      'text': instance.text,
-      'regions': instance.regions,
-    };
+Map<String, dynamic> _$$OcrResultImplToJson(_$OcrResultImpl instance) {
+  final val = <String, dynamic>{
+    'text': instance.text,
+  };
 
-_$OcrRegionImpl _$$OcrRegionImplFromJson(Map<String, dynamic> json) =>
-    _$OcrRegionImpl(
-      text: json['text'] as String,
-      bounds:
-          const RectConverter().fromJson(json['bounds'] as Map<String, double>),
-      confidence: (json['confidence'] as num?)?.toDouble(),
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('regions', instance.regions);
+  return val;
+}
+
+_$OcrRegionImpl _$$OcrRegionImplFromJson(Map json) => $checkedCreate(
+      r'_$OcrRegionImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$OcrRegionImpl(
+          text: $checkedConvert('text', (v) => v as String),
+          bounds: $checkedConvert('bounds',
+              (v) => const RectConverter().fromJson(v as Map<String, double>)),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
     );
 
-Map<String, dynamic> _$$OcrRegionImplToJson(_$OcrRegionImpl instance) =>
-    <String, dynamic>{
-      'text': instance.text,
-      'bounds': const RectConverter().toJson(instance.bounds),
-      'confidence': instance.confidence,
-    };
+Map<String, dynamic> _$$OcrRegionImplToJson(_$OcrRegionImpl instance) {
+  final val = <String, dynamic>{
+    'text': instance.text,
+    'bounds': const RectConverter().toJson(instance.bounds),
+  };
 
-_$SystemStatusImpl _$$SystemStatusImplFromJson(Map<String, dynamic> json) =>
-    _$SystemStatusImpl(
-      status: json['status'] as String,
-      maya: json['maya'] as String,
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('confidence', instance.confidence);
+  return val;
+}
+
+_$SystemStatusImpl _$$SystemStatusImplFromJson(Map json) => $checkedCreate(
+      r'_$SystemStatusImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SystemStatusImpl(
+          status: $checkedConvert('status', (v) => v as String),
+          maya: $checkedConvert('maya', (v) => v as String),
+        );
+        return val;
+      },
     );
 
 Map<String, dynamic> _$$SystemStatusImplToJson(_$SystemStatusImpl instance) =>
@@ -204,30 +390,57 @@ Map<String, dynamic> _$$SystemStatusImplToJson(_$SystemStatusImpl instance) =>
       'maya': instance.maya,
     };
 
-_$SystemStatsImpl _$$SystemStatsImplFromJson(Map<String, dynamic> json) =>
-    _$SystemStatsImpl(
-      cpu: CpuStats.fromJson(json['cpu'] as Map<String, dynamic>),
-      memory: MemoryStats.fromJson(json['memory'] as Map<String, dynamic>),
-      disk: DiskStats.fromJson(json['disk'] as Map<String, dynamic>),
-      load: LoadStats.fromJson(json['load'] as Map<String, dynamic>),
-      network: json['network'] == null
-          ? null
-          : NetworkStats.fromJson(json['network'] as Map<String, dynamic>),
+_$SystemStatsImpl _$$SystemStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$SystemStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SystemStatsImpl(
+          cpu: $checkedConvert('cpu',
+              (v) => CpuStats.fromJson(Map<String, dynamic>.from(v as Map))),
+          memory: $checkedConvert('memory',
+              (v) => MemoryStats.fromJson(Map<String, dynamic>.from(v as Map))),
+          disk: $checkedConvert('disk',
+              (v) => DiskStats.fromJson(Map<String, dynamic>.from(v as Map))),
+          load: $checkedConvert('load',
+              (v) => LoadStats.fromJson(Map<String, dynamic>.from(v as Map))),
+          network: $checkedConvert(
+              'network',
+              (v) => v == null
+                  ? null
+                  : NetworkStats.fromJson(Map<String, dynamic>.from(v as Map))),
+        );
+        return val;
+      },
     );
 
-Map<String, dynamic> _$$SystemStatsImplToJson(_$SystemStatsImpl instance) =>
-    <String, dynamic>{
-      'cpu': instance.cpu,
-      'memory': instance.memory,
-      'disk': instance.disk,
-      'load': instance.load,
-      'network': instance.network,
-    };
+Map<String, dynamic> _$$SystemStatsImplToJson(_$SystemStatsImpl instance) {
+  final val = <String, dynamic>{
+    'cpu': instance.cpu,
+    'memory': instance.memory,
+    'disk': instance.disk,
+    'load': instance.load,
+  };
 
-_$CpuStatsImpl _$$CpuStatsImplFromJson(Map<String, dynamic> json) =>
-    _$CpuStatsImpl(
-      percent: (json['percent'] as num).toDouble(),
-      count: (json['count'] as num).toInt(),
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('network', instance.network);
+  return val;
+}
+
+_$CpuStatsImpl _$$CpuStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$CpuStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CpuStatsImpl(
+          percent: $checkedConvert('percent', (v) => (v as num).toDouble()),
+          count: $checkedConvert('count', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
     );
 
 Map<String, dynamic> _$$CpuStatsImplToJson(_$CpuStatsImpl instance) =>
@@ -236,60 +449,99 @@ Map<String, dynamic> _$$CpuStatsImplToJson(_$CpuStatsImpl instance) =>
       'count': instance.count,
     };
 
-_$MemoryStatsImpl _$$MemoryStatsImplFromJson(Map<String, dynamic> json) =>
-    _$MemoryStatsImpl(
-      totalGb: (json['totalGb'] as num).toDouble(),
-      availableGb: (json['availableGb'] as num).toDouble(),
-      usedGb: (json['usedGb'] as num).toDouble(),
-      percent: (json['percent'] as num).toDouble(),
+_$MemoryStatsImpl _$$MemoryStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$MemoryStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MemoryStatsImpl(
+          totalGb: $checkedConvert('total_gb', (v) => (v as num).toDouble()),
+          availableGb:
+              $checkedConvert('available_gb', (v) => (v as num).toDouble()),
+          usedGb: $checkedConvert('used_gb', (v) => (v as num).toDouble()),
+          percent: $checkedConvert('percent', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalGb': 'total_gb',
+        'availableGb': 'available_gb',
+        'usedGb': 'used_gb'
+      },
     );
 
 Map<String, dynamic> _$$MemoryStatsImplToJson(_$MemoryStatsImpl instance) =>
     <String, dynamic>{
-      'totalGb': instance.totalGb,
-      'availableGb': instance.availableGb,
-      'usedGb': instance.usedGb,
+      'total_gb': instance.totalGb,
+      'available_gb': instance.availableGb,
+      'used_gb': instance.usedGb,
       'percent': instance.percent,
     };
 
-_$DiskStatsImpl _$$DiskStatsImplFromJson(Map<String, dynamic> json) =>
-    _$DiskStatsImpl(
-      totalGb: (json['totalGb'] as num).toDouble(),
-      usedGb: (json['usedGb'] as num).toDouble(),
-      freeGb: (json['freeGb'] as num).toDouble(),
-      percent: (json['percent'] as num).toDouble(),
+_$DiskStatsImpl _$$DiskStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$DiskStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DiskStatsImpl(
+          totalGb: $checkedConvert('total_gb', (v) => (v as num).toDouble()),
+          usedGb: $checkedConvert('used_gb', (v) => (v as num).toDouble()),
+          freeGb: $checkedConvert('free_gb', (v) => (v as num).toDouble()),
+          percent: $checkedConvert('percent', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalGb': 'total_gb',
+        'usedGb': 'used_gb',
+        'freeGb': 'free_gb'
+      },
     );
 
 Map<String, dynamic> _$$DiskStatsImplToJson(_$DiskStatsImpl instance) =>
     <String, dynamic>{
-      'totalGb': instance.totalGb,
-      'usedGb': instance.usedGb,
-      'freeGb': instance.freeGb,
+      'total_gb': instance.totalGb,
+      'used_gb': instance.usedGb,
+      'free_gb': instance.freeGb,
       'percent': instance.percent,
     };
 
-_$LoadStatsImpl _$$LoadStatsImplFromJson(Map<String, dynamic> json) =>
-    _$LoadStatsImpl(
-      loadAvg: (json['loadAvg'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
-          .toList(),
+_$LoadStatsImpl _$$LoadStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$LoadStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LoadStatsImpl(
+          loadAvg: $checkedConvert(
+              'load_avg',
+              (v) => (v as List<dynamic>)
+                  .map((e) => (e as num).toDouble())
+                  .toList()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'loadAvg': 'load_avg'},
     );
 
 Map<String, dynamic> _$$LoadStatsImplToJson(_$LoadStatsImpl instance) =>
     <String, dynamic>{
-      'loadAvg': instance.loadAvg,
+      'load_avg': instance.loadAvg,
     };
 
-_$NetworkStatsImpl _$$NetworkStatsImplFromJson(Map<String, dynamic> json) =>
-    _$NetworkStatsImpl(
-      bytesSent: (json['bytesSent'] as num).toInt(),
-      bytesRecv: (json['bytesRecv'] as num).toInt(),
+_$NetworkStatsImpl _$$NetworkStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$NetworkStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NetworkStatsImpl(
+          bytesSent: $checkedConvert('bytes_sent', (v) => (v as num).toInt()),
+          bytesRecv: $checkedConvert('bytes_recv', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'bytesSent': 'bytes_sent', 'bytesRecv': 'bytes_recv'},
     );
 
 Map<String, dynamic> _$$NetworkStatsImplToJson(_$NetworkStatsImpl instance) =>
     <String, dynamic>{
-      'bytesSent': instance.bytesSent,
-      'bytesRecv': instance.bytesRecv,
+      'bytes_sent': instance.bytesSent,
+      'bytes_recv': instance.bytesRecv,
     };
 
 // **************************************************************************

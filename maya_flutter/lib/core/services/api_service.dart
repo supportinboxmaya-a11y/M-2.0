@@ -11,6 +11,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../config/app_config.dart';
 
@@ -55,9 +56,42 @@ class ApiService {
   Timer? _reconnectTimer;
   bool _isConnected = false;
 
+  static const _secureStorage = FlutterSecureStorage();
+  static const _tokenKey = 'maya_auth_token';
+  static const _refreshTokenKey = 'maya_refresh_token';
+
   ApiService() {
     _initDio();
+    _loadTokens();
   }
+
+  Future<void> _loadTokens() async {
+    _storedToken = await _secureStorage.read(key: _tokenKey);
+    _storedRefreshToken = await _secureStorage.read(key: _refreshTokenKey);
+  }
+
+  Future<void> _saveTokens() async {
+    if (_storedToken != null) {
+      await _secureStorage.write(key: _tokenKey, value: _storedToken!);
+    }
+    if (_storedRefreshToken != null) {
+      await _secureStorage.write(key: _refreshTokenKey, value: _storedRefreshToken!);
+    }
+  }
+
+  Future<void> _clearTokens() async {
+    await _secureStorage.delete(key: _tokenKey);
+    await _secureStorage.delete(key: _refreshTokenKey);
+    _storedToken = null;
+    _storedRefreshToken = null;
+  }
+
+  String? _getToken() {
+    return _storedToken;
+  }
+
+  String? _storedToken;
+  String? _storedRefreshToken;
 
   void _initDio() {
     _dio = Dio(
@@ -101,15 +135,6 @@ class ApiService {
     );
   }
 
-  String? _getToken() {
-    // In a real app, this would come from secure storage
-    // For now, we'll use a simple in-memory approach
-    return _storedToken;
-  }
-
-  String? _storedToken;
-  String? _storedRefreshToken;
-
   Future<bool> _refreshToken() async {
     if (_storedRefreshToken == null) return false;
 
@@ -123,6 +148,7 @@ class ApiService {
         final data = response.data;
         _storedToken = data['access_token'];
         _storedRefreshToken = data['refresh_token'] ?? _storedRefreshToken;
+        await _saveTokens();
         return true;
       }
     } catch (e) {
@@ -131,14 +157,14 @@ class ApiService {
     return false;
   }
 
-  void setTokens(String accessToken, String refreshToken) {
+  Future<void> setTokens(String accessToken, String refreshToken) async {
     _storedToken = accessToken;
     _storedRefreshToken = refreshToken;
+    await _saveTokens();
   }
 
-  void clearTokens() {
-    _storedToken = null;
-    _storedRefreshToken = null;
+  Future<void> clearTokens() async {
+    await _clearTokens();
   }
 
   // Auth
