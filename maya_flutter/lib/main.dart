@@ -190,22 +190,56 @@ class _HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _sendMessage() {
+    final text = _textController.text.trim();
+    if (text.isNotEmpty) {
+      _textController.clear();
+      ref.read(chatMessagesProvider.notifier).sendMessage(text);
+      // Scroll to bottom after sending
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final messages = ref.watch(chatMessagesProvider);
+
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.transparent,
         drawer: _AppDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with Hamburger Menu & Status Indicators
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Column(
+          children: [
+            // Slim App Bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: MayaTheme.neonCyan.withValues(alpha: 0.1),
+                  ),
+                ),
+              ),
+              child: Row(
                 children: [
                   // Hamburger Menu Button
                   IconButton(
@@ -216,7 +250,9 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
                     ),
                     tooltip: 'Open Menu',
                   ),
-                  const Text('Maya Pro', style: MayaTheme.headlineLarge),
+                  const SizedBox(width: 8),
+                  const Text('Maya Pro', style: MayaTheme.headlineMedium),
+                  const Spacer(),
                   // Status Indicators: Active Agent & Tools
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -236,102 +272,128 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
                       ),
                       const SizedBox(width: 8),
                       IconButton(
-                        icon: const Icon(Icons.notifications_rounded),
+                        icon: const Icon(Icons.more_vert_rounded),
                         onPressed: () {},
                         style: IconButton.styleFrom(
                           backgroundColor: MayaTheme.glassWhite10,
                         ),
+                        tooltip: 'More options',
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Your autonomous AI assistant',
-                style: MayaTheme.bodyMedium,
-              ),
+            ),
 
-              const SizedBox(height: 32),
+            // Messages List
+            Expanded(
+              child: messages.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MayaLogo(
+                            size: 80,
+                            state: MayaLogoState.idle,
+                            showPulse: true,
+                            showGlow: true,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Welcome to Maya Pro',
+                            style: MayaTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Start a conversation with your AI assistant',
+                            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(16),
+                      reverse: true,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[messages.length - 1 - index];
+                        return _ChatBubble(
+                          text: message.text,
+                          isUser: message.isUser,
+                          time: message.time,
+                          isStreaming: message.isStreaming,
+                        ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
+                      },
+                    ),
+            ),
 
-              // Maya Logo Center
-              const Center(
-                child: MayaLogo(
-                  size: 180,
-                  state: MayaLogoState.idle,
-                  showPulse: true,
-                  showGlow: true,
+            // Input Bar
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: MayaTheme.neonCyan.withValues(alpha: 0.1),
+                  ),
                 ),
               ),
-
-              const SizedBox(height: 32),
-
-              // Quick Actions
-              const Text('Quick Actions', style: MayaTheme.titleMedium),
-              const SizedBox(height: 16),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
+              child: Row(
                 children: [
-                  _ActionCard(
-                    icon: Icons.mic_rounded,
-                    label: 'Voice Chat',
-                    color: MayaTheme.neonCyan,
-                    onTap: () {},
+                  IconButton(
+                    icon: const Icon(Icons.add_rounded),
+                    onPressed: () {},
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
                   ),
-                  _ActionCard(
-                    icon: Icons.camera_alt_rounded,
-                    label: 'Vision AI',
-                    color: MayaTheme.neonViolet,
-                    onTap: () {},
+                  IconButton(
+                    icon: const Icon(Icons.mic_rounded),
+                    onPressed: () {},
+                    style: IconButton.styleFrom(
+                        backgroundColor: MayaTheme.glassWhite10),
+                    tooltip: 'Voice input',
                   ),
-                  _ActionCard(
-                    icon: Icons.chat_bubble_rounded,
-                    label: 'Chat',
-                    color: MayaTheme.neonEmerald,
-                    onTap: () {},
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: MayaTheme.slate700,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          hintText: 'Message Maya...',
+                          hintStyle: MayaTheme.bodyMedium
+                              .copyWith(color: Colors.white38),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        style: MayaTheme.bodyMedium,
+                        maxLines: null,
+                        onSubmitted: (value) => _sendMessage(),
+                      ),
+                    ),
                   ),
-                  _ActionCard(
-                    icon: Icons.settings_rounded,
-                    label: 'System',
-                    color: MayaTheme.neonOrange,
-                    onTap: () {},
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.send_rounded, color: MayaTheme.neonCyan),
+                    onPressed: _sendMessage,
+                    tooltip: 'Send',
                   ),
                 ],
               ),
-
-              const Spacer(),
-
-// Status Bar
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: MayaTheme.glassCard(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _StatusItem(
-                        label: 'Voice',
-                        value: 'Ready',
-                        color: MayaTheme.neonCyan),
-                    _StatusItem(
-                      label: 'Vision',
-                      value: 'Ready',
-                      color: MayaTheme.neonViolet),
-                    _StatusItem(
-                      label: 'System',
-                      value: 'Online',
-                      color: MayaTheme.neonEmerald),
-                  ],
-                ),
-              ),
+            ),
           ],
         ),
       ),
-    ),
     );
   }
 }
