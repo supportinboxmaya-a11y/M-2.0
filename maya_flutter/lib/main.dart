@@ -188,15 +188,44 @@ class _HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<MayaHomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
+class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  // Voice state management
+  MayaLogoState _orbState = MayaLogoState.idle;
+  bool _isVoiceMode = true;
+  bool _isListening = false;
+  bool _speakerOn = true;
+  late AnimationController _pulseController;
+  late AnimationController _spinController;
+  late AnimationController _waveController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _spinController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _waveController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+  }
 
   @override
   void dispose() {
     _textController.dispose();
     _scrollController.dispose();
+    _pulseController.dispose();
+    _spinController.dispose();
+    _waveController.dispose();
     super.dispose();
   }
 
@@ -205,7 +234,6 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
     if (text.isNotEmpty) {
       _textController.clear();
       ref.read(chatMessagesProvider.notifier).sendMessage(text);
-      // Scroll to bottom after sending
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
           _scrollController.animateTo(
@@ -218,6 +246,67 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
     }
   }
 
+  void _toggleListening() {
+    setState(() {
+      _isListening = !_isListening;
+      if (_isListening) {
+        _orbState = MayaLogoState.listening;
+        _pulseController.duration = const Duration(milliseconds: 800);
+        _pulseController.repeat(reverse: true);
+      } else {
+        _orbState = MayaLogoState.idle;
+        _pulseController.duration = const Duration(milliseconds: 1500);
+        _pulseController.repeat(reverse: true);
+      }
+    }
+    // TODO: Start/stop STT
+  }
+
+  void _toggleSpeaker() {
+    setState(() {
+      _speakerOn = !_speakerOn;
+    });
+  }
+
+  void _setOrbState(MayaLogoState state) {
+    setState(() {
+      _orbState = state;
+      switch (state) {
+        case MayaLogoState.idle:
+          _pulseController.duration = const Duration(milliseconds: 1500);
+          _pulseController.repeat(reverse: true);
+          _spinController.stop();
+          _waveController.stop();
+          break;
+        case MayaLogoState.listening:
+          _pulseController.duration = const Duration(milliseconds: 800);
+          _pulseController.repeat(reverse: true);
+          _spinController.stop();
+          _waveController.stop();
+          break;
+        case MayaLogoState.processing:
+          _pulseController.stop();
+          _spinController.duration = const Duration(seconds: 2);
+          _spinController.repeat();
+          _waveController.stop();
+          break;
+        case MayaLogoState.speaking:
+          _pulseController.duration = const Duration(milliseconds: 500);
+          _pulseController.repeat(reverse: true);
+          _spinController.stop();
+          _waveController.duration = const Duration(milliseconds: 800);
+          _waveController.repeat(reverse: true);
+          break;
+        case MayaLogoState.error:
+          _pulseController.duration = const Duration(milliseconds: 200);
+          _pulseController.repeat(reverse: true);
+          _spinController.stop();
+          _waveController.stop();
+          break;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(chatMessagesProvider);
@@ -225,14 +314,15 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.transparent,
+        backgroundColor: MayaTheme.slate900,
         drawer: _AppDrawer(),
         body: Column(
           children: [
             // Slim App Bar
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
+                color: MayaTheme.slate900,
                 border: Border(
                   bottom: BorderSide(
                     color: MayaTheme.neonCyan.withValues(alpha: 0.1),
@@ -241,7 +331,6 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
               ),
               child: Row(
                 children: [
-                  // Hamburger Menu Button
                   IconButton(
                     icon: const Icon(Icons.menu_rounded),
                     onPressed: () => _scaffoldKey.currentState?.openDrawer(),
@@ -253,7 +342,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
                   const SizedBox(width: 8),
                   const Text('Maya Pro', style: MayaTheme.headlineMedium),
                   const Spacer(),
-                  // Status Indicators: Active Agent & Tools
+                  // Agent & Tools status chips
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -285,54 +374,60 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
               ),
             ),
 
-            // Messages List
+            // Conversation List
             Expanded(
-              child: messages.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          MayaLogo(
-                            size: 80,
-                            state: MayaLogoState.idle,
-                            showPulse: true,
-                            showGlow: true,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Welcome to Maya Pro',
-                            style: MayaTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Start a conversation with your AI assistant',
-                            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+              child: Container(
+                color: MayaTheme.slate900,
+                child: messages.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            MayaLogo(
+                              size: 120,
+                              state: _orbState,
+                              showPulse: true,
+                              showGlow: true,
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              'Welcome to Maya Pro',
+                              style: MayaTheme.headlineSmall,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _isVoiceMode
+                                  ? 'Tap mic to speak or type a message'
+                                  : 'Type a message or tap mic to enable voice',
+                              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        reverse: true,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final message = messages[messages.length - 1 - index];
+                          return _ChatBubble(
+                            text: message.text,
+                            isUser: message.isUser,
+                            time: message.time,
+                            isStreaming: message.isStreaming,
+                            isVoice: message.isVoice ?? false,
+                          ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
+                        },
                       ),
-                    )
-                  : ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(16),
-                      reverse: true,
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[messages.length - 1 - index];
-                        return _ChatBubble(
-                          text: message.text,
-                          isUser: message.isUser,
-                          time: message.time,
-                          isStreaming: message.isStreaming,
-                        ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
-                      },
-                    ),
             ),
 
             // Input Bar
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
+                color: MayaTheme.slate900,
                 border: Border(
                   top: BorderSide(
                     color: MayaTheme.neonCyan.withValues(alpha: 0.1),
@@ -341,18 +436,22 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
               ),
               child: Row(
                 children: [
+                  // Voice Mode Toggle
                   IconButton(
-                    icon: const Icon(Icons.add_rounded),
-                    onPressed: () {},
+                    icon: Icon(
+                      _isVoiceMode ? Icons.record_voice_over_rounded : Icons.keyboard_rounded,
+                      color: _isVoiceMode ? MayaTheme.neonCyan : Colors.white54,
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isVoiceMode = !_isVoiceMode;
+                      });
+                    },
                     style: IconButton.styleFrom(
-                        backgroundColor: MayaTheme.glassWhite10),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.mic_rounded),
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                        backgroundColor: MayaTheme.glassWhite10),
-                    tooltip: 'Voice input',
+                      backgroundColor: _isVoiceMode ? MayaTheme.neonCyan.withValues(alpha: 0.1) : MayaTheme.glassWhite10,
+                    ),
+                    tooltip: _isVoiceMode ? 'Switch to text mode' : 'Switch to voice mode',
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -367,14 +466,10 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
                       child: TextField(
                         controller: _textController,
                         decoration: InputDecoration(
-                          hintText: 'Message Maya...',
-                          hintStyle: MayaTheme.bodyMedium
-                              .copyWith(color: Colors.white38),
+                          hintText: _isVoiceMode ? 'Type a message...' : 'Message Maya...',
+                          hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         style: MayaTheme.bodyMedium,
                         maxLines: null,
@@ -383,10 +478,63 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
+                  // Large Mic Button
+                  GestureDetector(
+                    onTapDown: (_) => _toggleListening(),
+                    onTapUp: (_) => _toggleListening(),
+                    onTapCancel: () => _toggleListening(),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: _isListening
+                            ? LinearGradient(
+                                colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
+                              )
+                            : LinearGradient(
+                                colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
+                              ),
+                        boxShadow: _isListening
+                            ? [
+                                BoxShadow(
+                                  color: MayaTheme.error.withValues(alpha: 0.5),
+                                  blurRadius: 20,
+                                  spreadRadius: 5,
+                                ),
+                              ]
+                            : [
+                                BoxShadow(
+                                  color: MayaTheme.neonCyan.withValues(alpha: 0.4),
+                                  blurRadius: 15,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          _isListening ? Icons.stop_rounded : Icons.mic_rounded,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                    ).animate(target: _isListening ? 1 : 0).scale(
+                      duration: const Duration(milliseconds: 200),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Speaker Toggle
                   IconButton(
-                    icon: const Icon(Icons.send_rounded, color: MayaTheme.neonCyan),
-                    onPressed: _sendMessage,
-                    tooltip: 'Send',
+                    icon: Icon(
+                      _speakerOn ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                      color: _speakerOn ? MayaTheme.neonCyan : Colors.white54,
+                    ),
+                    onPressed: _toggleSpeaker,
+                    style: IconButton.styleFrom(
+                      backgroundColor: MayaTheme.glassWhite10,
+                    ),
+                    tooltip: _speakerOn ? 'Speaker on' : 'Speaker off',
                   ),
                 ],
               ),
@@ -934,23 +1082,27 @@ class ChatMessage {
   final bool isUser;
   final String time;
   final bool isStreaming;
+  final bool isVoice;
 
   ChatMessage({
     required this.text,
     required this.isUser,
     required this.time,
     this.isStreaming = false,
+    this.isVoice = false,
   });
 
   ChatMessage copyWith({
     String? text,
     bool? isStreaming,
+    bool? isVoice,
   }) {
     return ChatMessage(
       text: text ?? this.text,
       isUser: this.isUser,
       time: this.time,
       isStreaming: isStreaming ?? this.isStreaming,
+      isVoice: isVoice ?? this.isVoice,
     );
   }
 }
@@ -1044,9 +1196,10 @@ class _AppDrawer extends ConsumerWidget {
       width: 300,
       backgroundColor: MayaTheme.slate900,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Header
             Padding(
               padding: const EdgeInsets.all(20),
@@ -1158,7 +1311,7 @@ class _AppDrawer extends ConsumerWidget {
               ],
             ),
 
-            const Spacer(),
+            const SizedBox(height: 24),
 
             // Footer
             Padding(
@@ -1168,6 +1321,7 @@ class _AppDrawer extends ConsumerWidget {
                 style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
               ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -1302,6 +1456,7 @@ class _ChatScreen extends ConsumerWidget {
                     isUser: message.isUser,
                     time: message.time,
                     isStreaming: message.isStreaming,
+                    isVoice: message.isVoice ?? false,
                   ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
                 },
               ),
@@ -1468,12 +1623,14 @@ class _ChatBubble extends StatelessWidget {
   final bool isUser;
   final String time;
   final bool isStreaming;
+  final bool isVoice;
 
   const _ChatBubble({
     required this.text,
     required this.isUser,
     required this.time,
     this.isStreaming = false,
+    this.isVoice = false,
   });
 
   @override
