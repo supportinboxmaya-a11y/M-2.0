@@ -1728,6 +1728,60 @@ Map<String, dynamic> _$$WorkflowExecuteResponseImplToJson(
   return val;
 }
 
+_$AutonomousRunResponseImpl _$$AutonomousRunResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AutonomousRunResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AutonomousRunResponseImpl(
+          goal: $checkedConvert('goal', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          progress: $checkedConvert(
+              'progress', (v) => Map<String, dynamic>.from(v as Map)),
+          results: $checkedConvert('results', (v) => v as List<dynamic>),
+          recoveryLog:
+              $checkedConvert('recovery_log', (v) => v as List<dynamic>),
+          replansUsed:
+              $checkedConvert('replans_used', (v) => (v as num).toInt()),
+          planConfidence: $checkedConvert(
+              'plan_confidence', (v) => (v as num?)?.toDouble()),
+          shouldReplan: $checkedConvert('should_replan', (v) => v as bool?),
+          stepCount: $checkedConvert('step_count', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'recoveryLog': 'recovery_log',
+        'replansUsed': 'replans_used',
+        'planConfidence': 'plan_confidence',
+        'shouldReplan': 'should_replan',
+        'stepCount': 'step_count'
+      },
+    );
+
+Map<String, dynamic> _$$AutonomousRunResponseImplToJson(
+    _$AutonomousRunResponseImpl instance) {
+  final val = <String, dynamic>{
+    'goal': instance.goal,
+    'status': instance.status,
+    'progress': instance.progress,
+    'results': instance.results,
+    'recovery_log': instance.recoveryLog,
+    'replans_used': instance.replansUsed,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('plan_confidence', instance.planConfidence);
+  writeNotNull('should_replan', instance.shouldReplan);
+  writeNotNull('step_count', instance.stepCount);
+  return val;
+}
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

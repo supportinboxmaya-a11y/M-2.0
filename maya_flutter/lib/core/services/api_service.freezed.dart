@@ -11662,3 +11662,344 @@ abstract class _WorkflowExecuteResponse implements WorkflowExecuteResponse {
   _$$WorkflowExecuteResponseImplCopyWith<_$WorkflowExecuteResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+AutonomousRunResponse _$AutonomousRunResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AutonomousRunResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AutonomousRunResponse {
+  String get goal => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  Map<String, dynamic> get progress => throw _privateConstructorUsedError;
+  List<dynamic> get results => throw _privateConstructorUsedError;
+  List<dynamic> get recoveryLog => throw _privateConstructorUsedError;
+  int get replansUsed => throw _privateConstructorUsedError;
+  double? get planConfidence => throw _privateConstructorUsedError;
+  bool? get shouldReplan => throw _privateConstructorUsedError;
+  int? get stepCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AutonomousRunResponseCopyWith<AutonomousRunResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AutonomousRunResponseCopyWith<$Res> {
+  factory $AutonomousRunResponseCopyWith(AutonomousRunResponse value,
+          $Res Function(AutonomousRunResponse) then) =
+      _$AutonomousRunResponseCopyWithImpl<$Res, AutonomousRunResponse>;
+  @useResult
+  $Res call(
+      {String goal,
+      String status,
+      Map<String, dynamic> progress,
+      List<dynamic> results,
+      List<dynamic> recoveryLog,
+      int replansUsed,
+      double? planConfidence,
+      bool? shouldReplan,
+      int? stepCount});
+}
+
+/// @nodoc
+class _$AutonomousRunResponseCopyWithImpl<$Res,
+        $Val extends AutonomousRunResponse>
+    implements $AutonomousRunResponseCopyWith<$Res> {
+  _$AutonomousRunResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goal = null,
+    Object? status = null,
+    Object? progress = null,
+    Object? results = null,
+    Object? recoveryLog = null,
+    Object? replansUsed = null,
+    Object? planConfidence = freezed,
+    Object? shouldReplan = freezed,
+    Object? stepCount = freezed,
+  }) {
+    return _then(_value.copyWith(
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      recoveryLog: null == recoveryLog
+          ? _value.recoveryLog
+          : recoveryLog // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      replansUsed: null == replansUsed
+          ? _value.replansUsed
+          : replansUsed // ignore: cast_nullable_to_non_nullable
+              as int,
+      planConfidence: freezed == planConfidence
+          ? _value.planConfidence
+          : planConfidence // ignore: cast_nullable_to_non_nullable
+              as double?,
+      shouldReplan: freezed == shouldReplan
+          ? _value.shouldReplan
+          : shouldReplan // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      stepCount: freezed == stepCount
+          ? _value.stepCount
+          : stepCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AutonomousRunResponseImplCopyWith<$Res>
+    implements $AutonomousRunResponseCopyWith<$Res> {
+  factory _$$AutonomousRunResponseImplCopyWith(
+          _$AutonomousRunResponseImpl value,
+          $Res Function(_$AutonomousRunResponseImpl) then) =
+      __$$AutonomousRunResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String goal,
+      String status,
+      Map<String, dynamic> progress,
+      List<dynamic> results,
+      List<dynamic> recoveryLog,
+      int replansUsed,
+      double? planConfidence,
+      bool? shouldReplan,
+      int? stepCount});
+}
+
+/// @nodoc
+class __$$AutonomousRunResponseImplCopyWithImpl<$Res>
+    extends _$AutonomousRunResponseCopyWithImpl<$Res,
+        _$AutonomousRunResponseImpl>
+    implements _$$AutonomousRunResponseImplCopyWith<$Res> {
+  __$$AutonomousRunResponseImplCopyWithImpl(_$AutonomousRunResponseImpl _value,
+      $Res Function(_$AutonomousRunResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goal = null,
+    Object? status = null,
+    Object? progress = null,
+    Object? results = null,
+    Object? recoveryLog = null,
+    Object? replansUsed = null,
+    Object? planConfidence = freezed,
+    Object? shouldReplan = freezed,
+    Object? stepCount = freezed,
+  }) {
+    return _then(_$AutonomousRunResponseImpl(
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      progress: null == progress
+          ? _value._progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      recoveryLog: null == recoveryLog
+          ? _value._recoveryLog
+          : recoveryLog // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      replansUsed: null == replansUsed
+          ? _value.replansUsed
+          : replansUsed // ignore: cast_nullable_to_non_nullable
+              as int,
+      planConfidence: freezed == planConfidence
+          ? _value.planConfidence
+          : planConfidence // ignore: cast_nullable_to_non_nullable
+              as double?,
+      shouldReplan: freezed == shouldReplan
+          ? _value.shouldReplan
+          : shouldReplan // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      stepCount: freezed == stepCount
+          ? _value.stepCount
+          : stepCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AutonomousRunResponseImpl implements _AutonomousRunResponse {
+  const _$AutonomousRunResponseImpl(
+      {required this.goal,
+      required this.status,
+      required final Map<String, dynamic> progress,
+      required final List<dynamic> results,
+      required final List<dynamic> recoveryLog,
+      required this.replansUsed,
+      this.planConfidence,
+      this.shouldReplan,
+      this.stepCount})
+      : _progress = progress,
+        _results = results,
+        _recoveryLog = recoveryLog;
+
+  factory _$AutonomousRunResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AutonomousRunResponseImplFromJson(json);
+
+  @override
+  final String goal;
+  @override
+  final String status;
+  final Map<String, dynamic> _progress;
+  @override
+  Map<String, dynamic> get progress {
+    if (_progress is EqualUnmodifiableMapView) return _progress;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_progress);
+  }
+
+  final List<dynamic> _results;
+  @override
+  List<dynamic> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  final List<dynamic> _recoveryLog;
+  @override
+  List<dynamic> get recoveryLog {
+    if (_recoveryLog is EqualUnmodifiableListView) return _recoveryLog;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_recoveryLog);
+  }
+
+  @override
+  final int replansUsed;
+  @override
+  final double? planConfidence;
+  @override
+  final bool? shouldReplan;
+  @override
+  final int? stepCount;
+
+  @override
+  String toString() {
+    return 'AutonomousRunResponse(goal: $goal, status: $status, progress: $progress, results: $results, recoveryLog: $recoveryLog, replansUsed: $replansUsed, planConfidence: $planConfidence, shouldReplan: $shouldReplan, stepCount: $stepCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AutonomousRunResponseImpl &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._progress, _progress) &&
+            const DeepCollectionEquality().equals(other._results, _results) &&
+            const DeepCollectionEquality()
+                .equals(other._recoveryLog, _recoveryLog) &&
+            (identical(other.replansUsed, replansUsed) ||
+                other.replansUsed == replansUsed) &&
+            (identical(other.planConfidence, planConfidence) ||
+                other.planConfidence == planConfidence) &&
+            (identical(other.shouldReplan, shouldReplan) ||
+                other.shouldReplan == shouldReplan) &&
+            (identical(other.stepCount, stepCount) ||
+                other.stepCount == stepCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      goal,
+      status,
+      const DeepCollectionEquality().hash(_progress),
+      const DeepCollectionEquality().hash(_results),
+      const DeepCollectionEquality().hash(_recoveryLog),
+      replansUsed,
+      planConfidence,
+      shouldReplan,
+      stepCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AutonomousRunResponseImplCopyWith<_$AutonomousRunResponseImpl>
+      get copyWith => __$$AutonomousRunResponseImplCopyWithImpl<
+          _$AutonomousRunResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AutonomousRunResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AutonomousRunResponse implements AutonomousRunResponse {
+  const factory _AutonomousRunResponse(
+      {required final String goal,
+      required final String status,
+      required final Map<String, dynamic> progress,
+      required final List<dynamic> results,
+      required final List<dynamic> recoveryLog,
+      required final int replansUsed,
+      final double? planConfidence,
+      final bool? shouldReplan,
+      final int? stepCount}) = _$AutonomousRunResponseImpl;
+
+  factory _AutonomousRunResponse.fromJson(Map<String, dynamic> json) =
+      _$AutonomousRunResponseImpl.fromJson;
+
+  @override
+  String get goal;
+  @override
+  String get status;
+  @override
+  Map<String, dynamic> get progress;
+  @override
+  List<dynamic> get results;
+  @override
+  List<dynamic> get recoveryLog;
+  @override
+  int get replansUsed;
+  @override
+  double? get planConfidence;
+  @override
+  bool? get shouldReplan;
+  @override
+  int? get stepCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$AutonomousRunResponseImplCopyWith<_$AutonomousRunResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

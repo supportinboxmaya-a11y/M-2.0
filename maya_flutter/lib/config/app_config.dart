@@ -82,6 +82,9 @@ class AppConfig {
   static const String workflowsCancel = '/api/v1/workflows/runs/';
   static const String workflowsExecute = '/api/v1/workflows/runs/';
 
+  // Autonomous Mode
+  static const String autonomousRun = '/api/v1/autonomous/run';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

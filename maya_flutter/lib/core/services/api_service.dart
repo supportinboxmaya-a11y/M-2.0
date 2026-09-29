@@ -564,6 +564,19 @@ class ApiService {
     return WorkflowExecuteResponse.fromJson(response.data);
   }
 
+  // Autonomous Mode
+  Future<AutonomousRunResponse> runAutonomous({
+    required String goal,
+    bool approveDangerous = false,
+    int maxRetries = 3,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.autonomousRun,
+      data: {'goal': goal, 'approve_dangerous': approveDangerous, 'max_retries': maxRetries},
+    );
+    return AutonomousRunResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1375,4 +1388,23 @@ class WorkflowExecuteResponse with _$WorkflowExecuteResponse {
 
   factory WorkflowExecuteResponse.fromJson(Map<String, dynamic> json) =>
       _$WorkflowExecuteResponseFromJson(json);
+}
+
+// Autonomous Mode Models
+@freezed
+class AutonomousRunResponse with _$AutonomousRunResponse {
+  const factory AutonomousRunResponse({
+    required String goal,
+    required String status,
+    required Map<String, dynamic> progress,
+    required List<dynamic> results,
+    required List<dynamic> recoveryLog,
+    required int replansUsed,
+    double? planConfidence,
+    bool? shouldReplan,
+    int? stepCount,
+  }) = _AutonomousRunResponse;
+
+  factory AutonomousRunResponse.fromJson(Map<String, dynamic> json) =>
+      _$AutonomousRunResponseFromJson(json);
 }
