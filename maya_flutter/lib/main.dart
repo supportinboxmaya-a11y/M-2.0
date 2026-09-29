@@ -1344,9 +1344,17 @@ class _AppDrawer extends ConsumerWidget {
               children: [
                 _DrawerActionTile(
                   icon: Icons.build_rounded,
-                  label: 'Available Tools',
-                  subtitle: 'Browse all tools',
-                  onTap: () => Navigator.pop(context),
+                  label: 'Tools & Providers',
+                  subtitle: 'Manage tools, logs & LLM providers',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _ToolsProvidersScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _DrawerActionTile(
                   icon: Icons.integration_instructions_rounded,
@@ -3445,3 +3453,525 @@ final memorySearchProvider = FutureProvider<MemorySearchResponse>((ref) async {
 
 // Helper to trigger search
 final memorySearchTriggerProvider = StateProvider<String>((ref) => '');
+
+// Tools & Providers Screen
+class _ToolsProvidersScreen extends ConsumerStatefulWidget {
+  const _ToolsProvidersScreen();
+
+  @override
+  ConsumerState<_ToolsProvidersScreen> createState() => _ToolsProvidersScreenState();
+}
+
+class _ToolsProvidersScreenState extends ConsumerState<_ToolsProvidersScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(toolsListProvider);
+        ref.invalidate(toolsLogsProvider);
+        ref.invalidate(providersListProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Tools & Providers', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(toolsListProvider);
+                ref.invalidate(toolsLogsProvider);
+                ref.invalidate(providersListProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.build_rounded), text: 'Tools'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'Logs'),
+              Tab(icon: Icon(Icons.cloud_rounded), text: 'Providers'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildToolsTab(),
+            _buildLogsTab(),
+            _buildProvidersTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToolsTab() {
+    final toolsAsync = ref.watch(toolsListProvider);
+
+    return toolsAsync.when(
+      data: (response) {
+        if (response.tools.isEmpty) {
+          return const Center(
+            child: Text('No tools available', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.tools.length,
+          itemBuilder: (context, index) {
+            final tool = response.tools[index];
+            return _ToolTile(tool: tool);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading tools', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogsTab() {
+    final logsAsync = ref.watch(toolsLogsProvider);
+
+    return logsAsync.when(
+      data: (response) {
+        if (response.logs.isEmpty) {
+          return const Center(
+            child: Text('No tool logs yet', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.logs.length,
+          itemBuilder: (context, index) {
+            final log = response.logs[index];
+            return _LogTile(log: log);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading logs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProvidersTab() {
+    final providersAsync = ref.watch(providersListProvider);
+
+    return providersAsync.when(
+      data: (response) {
+        if (response.providers.isEmpty) {
+          return const Center(
+            child: Text('No providers configured', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.providers.length,
+          itemBuilder: (context, index) {
+            final provider = response.providers[index];
+            return _ProviderTile(provider: provider, onToggle: (enabled) async {
+              final success = await ref.read(apiServiceProvider).toggleProvider(provider.id, enabled);
+              if (success && mounted) {
+                ref.invalidate(providersListProvider);
+              }
+            });
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading providers', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ToolTile extends StatelessWidget {
+  final ToolInfo tool;
+
+  const _ToolTile({required this.tool});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.build_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(tool.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          tool.description,
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: tool.enabled
+                ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                : MayaTheme.neonOrange.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            tool.enabled ? 'Enabled' : 'Disabled',
+            style: MayaTheme.labelSmall.copyWith(
+              color: tool.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Category', value: tool.category),
+                if (tool.schema != null && tool.schema!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  const Text('Schema:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.slate900,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.glassWhite10),
+                    ),
+                    child: Text(
+                      tool.schema.toString(),
+                      style: MayaTheme.bodySmall.copyWith(
+                          color: Colors.white70, fontFamily: 'monospace'),
+                    ),
+                  ),
+                ],
+                if (tool.metadata != null && tool.metadata!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  const Text('Metadata:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.slate900,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.glassWhite10),
+                    ),
+                    child: Text(
+                      tool.metadata.toString(),
+                      style: MayaTheme.bodySmall.copyWith(
+                          color: Colors.white70, fontFamily: 'monospace'),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LogTile extends StatelessWidget {
+  final ToolLogEntry log;
+
+  const _LogTile({required this.log});
+
+  @override
+  Widget build(BuildContext context) {
+    final successRate = log.calls > 0
+        ? (log.successes / log.calls * 100).toStringAsFixed(1)
+        : '0.0';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.history_rounded, color: MayaTheme.neonViolet, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(log.tool, style: MayaTheme.titleMedium),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$successRate%',
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: MayaTheme.neonCyan,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _LogStat(label: 'Calls', value: log.calls.toString())),
+              Expanded(child: _LogStat(label: 'Success', value: log.successes.toString(), color: MayaTheme.neonEmerald)),
+              Expanded(child: _LogStat(label: 'Failed', value: log.failures.toString(), color: MayaTheme.error)),
+              Expanded(child: _LogStat(label: 'Avg (ms)', value: (log.avgTime * 1000).toStringAsFixed(1))),
+            ],
+          ),
+          if (log.lastError != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: MayaTheme.error.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                'Last Error: ${log.lastError}',
+                style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _LogStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? color;
+
+  const _LogStat({required this.label, required this.value, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(value, style: MayaTheme.titleSmall.copyWith(color: color ?? Colors.white)),
+        const SizedBox(height: 2),
+        Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+      ],
+    );
+  }
+}
+
+class _ProviderTile extends ConsumerWidget {
+  final ProviderInfo provider;
+  final Future<void> Function(bool) onToggle;
+
+  const _ProviderTile({required this.provider, required this.onToggle});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: provider.active
+                  ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                  : (provider.configured
+                      ? MayaTheme.neonOrange.withValues(alpha: 0.2)
+                      : Colors.white12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              provider.active
+                  ? Icons.cloud_done_rounded
+                  : (provider.configured ? Icons.cloud_off_rounded : Icons.cloud_queue_rounded),
+              color: provider.active
+                  ? MayaTheme.neonEmerald
+                  : (provider.configured ? MayaTheme.neonOrange : Colors.white38),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(provider.label, style: MayaTheme.titleMedium),
+                    const SizedBox(width: 8),
+                    Text(
+                      '(${provider.id})',
+                      style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    _ProviderStatusChip(
+                      label: provider.configured ? 'Configured' : 'Not Configured',
+                      color: provider.configured ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                    ),
+                    const SizedBox(width: 8),
+                    _ProviderStatusChip(
+                      label: provider.enabled ? 'Enabled' : 'Disabled',
+                      color: provider.enabled ? MayaTheme.neonCyan : Colors.white38,
+                    ),
+                    if (provider.errorCount > 0) ...[
+                      const SizedBox(width: 8),
+                      _ProviderStatusChip(
+                        label: 'Errors: ${provider.errorCount}',
+                        color: MayaTheme.error,
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: provider.enabled,
+            activeColor: MayaTheme.neonCyan,
+            onChanged: (value) => onToggle(value),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProviderStatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _ProviderStatusChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: MayaTheme.labelSmall.copyWith(
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+// Tools & Providers Providers
+final toolsListProvider = FutureProvider<ToolsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  final response = await apiService.getToolsList();
+  return ToolsListResponse(tools: response.tools);
+});
+
+final toolsLogsProvider = FutureProvider<ToolsLogsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  final response = await apiService.getToolsLogs();
+  return ToolsLogsResponse(logs: response.logs);
+});
+
+final providersListProvider = FutureProvider<ProvidersListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  final response = await apiService.getProvidersList();
+  return ProvidersListResponse(providers: response.providers);
+});

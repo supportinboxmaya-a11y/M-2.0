@@ -58,6 +58,14 @@ class AppConfig {
   static const String memoryCreate = '/api/v1/memory';
   static const String memoryStats = '/api/v1/memory/stats';
 
+  // Tools & Providers
+  static const String toolsList = '/api/v1/tools';
+  static const String toolsRun = '/api/v1/tools/';
+  static const String toolsLogs = '/api/v1/tools/logs';
+  static const String toolsFramework = '/api/v1/tools/framework';
+  static const String providersList = '/api/v1/providers';
+  static const String providersToggle = '/api/v1/providers/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

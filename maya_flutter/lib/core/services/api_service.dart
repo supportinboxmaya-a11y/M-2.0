@@ -445,6 +445,53 @@ class ApiService {
     return MemoryStatsResponse.fromJson(response.data);
   }
 
+  // Tools & Providers
+  Future<ToolsListResponse> getToolsList() async {
+    final response = await _dio.get(AppConfig.toolsList);
+    return ToolsListResponse.fromJson(response.data);
+  }
+
+  Future<ToolRunResponse> runTool({
+    required String toolName,
+    required Map<String, dynamic> input,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.toolsRun}$toolName/run',
+      data: {'input': input},
+    );
+    return ToolRunResponse.fromJson(response.data);
+  }
+
+  Future<ToolsLogsResponse> getToolsLogs({int limit = 50}) async {
+    final response = await _dio.get(
+      AppConfig.toolsLogs,
+      queryParameters: {'limit': limit},
+    );
+    return ToolsLogsResponse.fromJson(response.data);
+  }
+
+  Future<ToolsFrameworkResponse> getToolsFramework() async {
+    final response = await _dio.get(AppConfig.toolsFramework);
+    return ToolsFrameworkResponse.fromJson(response.data);
+  }
+
+  Future<ProvidersListResponse> getProvidersList() async {
+    final response = await _dio.get(AppConfig.providersList);
+    return ProvidersListResponse.fromJson(response.data);
+  }
+
+  Future<bool> toggleProvider(String providerId, bool enabled) async {
+    try {
+      final response = await _dio.put(
+        '${AppConfig.providersToggle}$providerId',
+        data: {'enabled': enabled},
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -931,4 +978,118 @@ class MemoryStatsResponse with _$MemoryStatsResponse {
 
   factory MemoryStatsResponse.fromJson(Map<String, dynamic> json) =>
       _$MemoryStatsResponseFromJson(json);
+}
+
+// Tools & Providers Models
+@freezed
+class ToolInfo with _$ToolInfo {
+  const factory ToolInfo({
+    required String name,
+    required String description,
+    required String category,
+    required bool enabled,
+    Map<String, dynamic>? schema,
+    Map<String, dynamic>? metadata,
+  }) = _ToolInfo;
+
+  factory ToolInfo.fromJson(Map<String, dynamic> json) =>
+      _$ToolInfoFromJson(json);
+}
+
+@freezed
+class ToolsListResponse with _$ToolsListResponse {
+  const factory ToolsListResponse({
+    required List<ToolInfo> tools,
+  }) = _ToolsListResponse;
+
+  factory ToolsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ToolsListResponseFromJson(json);
+}
+
+@freezed
+class ToolRunResponse with _$ToolRunResponse {
+  const factory ToolRunResponse({
+    required dynamic result,
+    String? error,
+  }) = _ToolRunResponse;
+
+  factory ToolRunResponse.fromJson(Map<String, dynamic> json) =>
+      _$ToolRunResponseFromJson(json);
+}
+
+@freezed
+class ToolLogEntry with _$ToolLogEntry {
+  const factory ToolLogEntry({
+    required String tool,
+    required int calls,
+    required int successes,
+    required int failures,
+    required double avgTime,
+    String? lastError,
+  }) = _ToolLogEntry;
+
+  factory ToolLogEntry.fromJson(Map<String, dynamic> json) =>
+      _$ToolLogEntryFromJson(json);
+}
+
+@freezed
+class ToolsLogsResponse with _$ToolsLogsResponse {
+  const factory ToolsLogsResponse({
+    required List<ToolLogEntry> logs,
+  }) = _ToolsLogsResponse;
+
+  factory ToolsLogsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ToolsLogsResponseFromJson(json);
+}
+
+@freezed
+class FrameworkTool with _$FrameworkTool {
+  const factory FrameworkTool({
+    required String name,
+    required String description,
+    required String category,
+    required bool enabled,
+    required String permission,
+    required int timeoutSeconds,
+    required int maxRetries,
+    required bool dangerous,
+  }) = _FrameworkTool;
+
+  factory FrameworkTool.fromJson(Map<String, dynamic> json) =>
+      _$FrameworkToolFromJson(json);
+}
+
+@freezed
+class ToolsFrameworkResponse with _$ToolsFrameworkResponse {
+  const factory ToolsFrameworkResponse({
+    required List<FrameworkTool> tools,
+  }) = _ToolsFrameworkResponse;
+
+  factory ToolsFrameworkResponse.fromJson(Map<String, dynamic> json) =>
+      _$ToolsFrameworkResponseFromJson(json);
+}
+
+@freezed
+class ProviderInfo with _$ProviderInfo {
+  const factory ProviderInfo({
+    required String id,
+    required String label,
+    required bool configured,
+    required bool enabled,
+    required bool active,
+    required int errorCount,
+  }) = _ProviderInfo;
+
+  factory ProviderInfo.fromJson(Map<String, dynamic> json) =>
+      _$ProviderInfoFromJson(json);
+}
+
+@freezed
+class ProvidersListResponse with _$ProvidersListResponse {
+  const factory ProvidersListResponse({
+    required List<ProviderInfo> providers,
+  }) = _ProvidersListResponse;
+
+  factory ProvidersListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProvidersListResponseFromJson(json);
 }

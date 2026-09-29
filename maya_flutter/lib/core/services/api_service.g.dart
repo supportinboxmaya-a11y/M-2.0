@@ -946,6 +946,267 @@ Map<String, dynamic> _$$MemoryStatsResponseImplToJson(
       'index_size_mb': instance.indexSizeMb,
     };
 
+_$ToolInfoImpl _$$ToolInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$ToolInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ToolInfoImpl(
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          category: $checkedConvert('category', (v) => v as String),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          schema: $checkedConvert(
+              'schema',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ToolInfoImplToJson(_$ToolInfoImpl instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+    'description': instance.description,
+    'category': instance.category,
+    'enabled': instance.enabled,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('schema', instance.schema);
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
+_$ToolsListResponseImpl _$$ToolsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ToolsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ToolsListResponseImpl(
+          tools: $checkedConvert(
+              'tools',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      ToolInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ToolsListResponseImplToJson(
+        _$ToolsListResponseImpl instance) =>
+    <String, dynamic>{
+      'tools': instance.tools,
+    };
+
+_$ToolRunResponseImpl _$$ToolRunResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ToolRunResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ToolRunResponseImpl(
+          result: $checkedConvert('result', (v) => v),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ToolRunResponseImplToJson(
+    _$ToolRunResponseImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$ToolLogEntryImpl _$$ToolLogEntryImplFromJson(Map json) => $checkedCreate(
+      r'_$ToolLogEntryImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ToolLogEntryImpl(
+          tool: $checkedConvert('tool', (v) => v as String),
+          calls: $checkedConvert('calls', (v) => (v as num).toInt()),
+          successes: $checkedConvert('successes', (v) => (v as num).toInt()),
+          failures: $checkedConvert('failures', (v) => (v as num).toInt()),
+          avgTime: $checkedConvert('avg_time', (v) => (v as num).toDouble()),
+          lastError: $checkedConvert('last_error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'avgTime': 'avg_time', 'lastError': 'last_error'},
+    );
+
+Map<String, dynamic> _$$ToolLogEntryImplToJson(_$ToolLogEntryImpl instance) {
+  final val = <String, dynamic>{
+    'tool': instance.tool,
+    'calls': instance.calls,
+    'successes': instance.successes,
+    'failures': instance.failures,
+    'avg_time': instance.avgTime,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('last_error', instance.lastError);
+  return val;
+}
+
+_$ToolsLogsResponseImpl _$$ToolsLogsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ToolsLogsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ToolsLogsResponseImpl(
+          logs: $checkedConvert(
+              'logs',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ToolLogEntry.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ToolsLogsResponseImplToJson(
+        _$ToolsLogsResponseImpl instance) =>
+    <String, dynamic>{
+      'logs': instance.logs,
+    };
+
+_$FrameworkToolImpl _$$FrameworkToolImplFromJson(Map json) => $checkedCreate(
+      r'_$FrameworkToolImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$FrameworkToolImpl(
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          category: $checkedConvert('category', (v) => v as String),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          permission: $checkedConvert('permission', (v) => v as String),
+          timeoutSeconds:
+              $checkedConvert('timeout_seconds', (v) => (v as num).toInt()),
+          maxRetries: $checkedConvert('max_retries', (v) => (v as num).toInt()),
+          dangerous: $checkedConvert('dangerous', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'timeoutSeconds': 'timeout_seconds',
+        'maxRetries': 'max_retries'
+      },
+    );
+
+Map<String, dynamic> _$$FrameworkToolImplToJson(_$FrameworkToolImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'description': instance.description,
+      'category': instance.category,
+      'enabled': instance.enabled,
+      'permission': instance.permission,
+      'timeout_seconds': instance.timeoutSeconds,
+      'max_retries': instance.maxRetries,
+      'dangerous': instance.dangerous,
+    };
+
+_$ToolsFrameworkResponseImpl _$$ToolsFrameworkResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ToolsFrameworkResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ToolsFrameworkResponseImpl(
+          tools: $checkedConvert(
+              'tools',
+              (v) => (v as List<dynamic>)
+                  .map((e) => FrameworkTool.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ToolsFrameworkResponseImplToJson(
+        _$ToolsFrameworkResponseImpl instance) =>
+    <String, dynamic>{
+      'tools': instance.tools,
+    };
+
+_$ProviderInfoImpl _$$ProviderInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$ProviderInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProviderInfoImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          label: $checkedConvert('label', (v) => v as String),
+          configured: $checkedConvert('configured', (v) => v as bool),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          active: $checkedConvert('active', (v) => v as bool),
+          errorCount: $checkedConvert('error_count', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'errorCount': 'error_count'},
+    );
+
+Map<String, dynamic> _$$ProviderInfoImplToJson(_$ProviderInfoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'label': instance.label,
+      'configured': instance.configured,
+      'enabled': instance.enabled,
+      'active': instance.active,
+      'error_count': instance.errorCount,
+    };
+
+_$ProvidersListResponseImpl _$$ProvidersListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProvidersListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProvidersListResponseImpl(
+          providers: $checkedConvert(
+              'providers',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ProviderInfo.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProvidersListResponseImplToJson(
+        _$ProvidersListResponseImpl instance) =>
+    <String, dynamic>{
+      'providers': instance.providers,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

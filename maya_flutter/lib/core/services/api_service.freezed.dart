@@ -6355,3 +6355,1791 @@ abstract class _MemoryStatsResponse implements MemoryStatsResponse {
   _$$MemoryStatsResponseImplCopyWith<_$MemoryStatsResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+ToolInfo _$ToolInfoFromJson(Map<String, dynamic> json) {
+  return _ToolInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ToolInfo {
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get category => throw _privateConstructorUsedError;
+  bool get enabled => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get schema => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ToolInfoCopyWith<ToolInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ToolInfoCopyWith<$Res> {
+  factory $ToolInfoCopyWith(ToolInfo value, $Res Function(ToolInfo) then) =
+      _$ToolInfoCopyWithImpl<$Res, ToolInfo>;
+  @useResult
+  $Res call(
+      {String name,
+      String description,
+      String category,
+      bool enabled,
+      Map<String, dynamic>? schema,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class _$ToolInfoCopyWithImpl<$Res, $Val extends ToolInfo>
+    implements $ToolInfoCopyWith<$Res> {
+  _$ToolInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? description = null,
+    Object? category = null,
+    Object? enabled = null,
+    Object? schema = freezed,
+    Object? metadata = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      schema: freezed == schema
+          ? _value.schema
+          : schema // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ToolInfoImplCopyWith<$Res>
+    implements $ToolInfoCopyWith<$Res> {
+  factory _$$ToolInfoImplCopyWith(
+          _$ToolInfoImpl value, $Res Function(_$ToolInfoImpl) then) =
+      __$$ToolInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String name,
+      String description,
+      String category,
+      bool enabled,
+      Map<String, dynamic>? schema,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class __$$ToolInfoImplCopyWithImpl<$Res>
+    extends _$ToolInfoCopyWithImpl<$Res, _$ToolInfoImpl>
+    implements _$$ToolInfoImplCopyWith<$Res> {
+  __$$ToolInfoImplCopyWithImpl(
+      _$ToolInfoImpl _value, $Res Function(_$ToolInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? description = null,
+    Object? category = null,
+    Object? enabled = null,
+    Object? schema = freezed,
+    Object? metadata = freezed,
+  }) {
+    return _then(_$ToolInfoImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      schema: freezed == schema
+          ? _value._schema
+          : schema // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ToolInfoImpl implements _ToolInfo {
+  const _$ToolInfoImpl(
+      {required this.name,
+      required this.description,
+      required this.category,
+      required this.enabled,
+      final Map<String, dynamic>? schema,
+      final Map<String, dynamic>? metadata})
+      : _schema = schema,
+        _metadata = metadata;
+
+  factory _$ToolInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ToolInfoImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String description;
+  @override
+  final String category;
+  @override
+  final bool enabled;
+  final Map<String, dynamic>? _schema;
+  @override
+  Map<String, dynamic>? get schema {
+    final value = _schema;
+    if (value == null) return null;
+    if (_schema is EqualUnmodifiableMapView) return _schema;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'ToolInfo(name: $name, description: $description, category: $category, enabled: $enabled, schema: $schema, metadata: $metadata)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ToolInfoImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            const DeepCollectionEquality().equals(other._schema, _schema) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      description,
+      category,
+      enabled,
+      const DeepCollectionEquality().hash(_schema),
+      const DeepCollectionEquality().hash(_metadata));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ToolInfoImplCopyWith<_$ToolInfoImpl> get copyWith =>
+      __$$ToolInfoImplCopyWithImpl<_$ToolInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ToolInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ToolInfo implements ToolInfo {
+  const factory _ToolInfo(
+      {required final String name,
+      required final String description,
+      required final String category,
+      required final bool enabled,
+      final Map<String, dynamic>? schema,
+      final Map<String, dynamic>? metadata}) = _$ToolInfoImpl;
+
+  factory _ToolInfo.fromJson(Map<String, dynamic> json) =
+      _$ToolInfoImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  String get category;
+  @override
+  bool get enabled;
+  @override
+  Map<String, dynamic>? get schema;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  @JsonKey(ignore: true)
+  _$$ToolInfoImplCopyWith<_$ToolInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ToolsListResponse _$ToolsListResponseFromJson(Map<String, dynamic> json) {
+  return _ToolsListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ToolsListResponse {
+  List<ToolInfo> get tools => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ToolsListResponseCopyWith<ToolsListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ToolsListResponseCopyWith<$Res> {
+  factory $ToolsListResponseCopyWith(
+          ToolsListResponse value, $Res Function(ToolsListResponse) then) =
+      _$ToolsListResponseCopyWithImpl<$Res, ToolsListResponse>;
+  @useResult
+  $Res call({List<ToolInfo> tools});
+}
+
+/// @nodoc
+class _$ToolsListResponseCopyWithImpl<$Res, $Val extends ToolsListResponse>
+    implements $ToolsListResponseCopyWith<$Res> {
+  _$ToolsListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tools = null,
+  }) {
+    return _then(_value.copyWith(
+      tools: null == tools
+          ? _value.tools
+          : tools // ignore: cast_nullable_to_non_nullable
+              as List<ToolInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ToolsListResponseImplCopyWith<$Res>
+    implements $ToolsListResponseCopyWith<$Res> {
+  factory _$$ToolsListResponseImplCopyWith(_$ToolsListResponseImpl value,
+          $Res Function(_$ToolsListResponseImpl) then) =
+      __$$ToolsListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ToolInfo> tools});
+}
+
+/// @nodoc
+class __$$ToolsListResponseImplCopyWithImpl<$Res>
+    extends _$ToolsListResponseCopyWithImpl<$Res, _$ToolsListResponseImpl>
+    implements _$$ToolsListResponseImplCopyWith<$Res> {
+  __$$ToolsListResponseImplCopyWithImpl(_$ToolsListResponseImpl _value,
+      $Res Function(_$ToolsListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tools = null,
+  }) {
+    return _then(_$ToolsListResponseImpl(
+      tools: null == tools
+          ? _value._tools
+          : tools // ignore: cast_nullable_to_non_nullable
+              as List<ToolInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ToolsListResponseImpl implements _ToolsListResponse {
+  const _$ToolsListResponseImpl({required final List<ToolInfo> tools})
+      : _tools = tools;
+
+  factory _$ToolsListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ToolsListResponseImplFromJson(json);
+
+  final List<ToolInfo> _tools;
+  @override
+  List<ToolInfo> get tools {
+    if (_tools is EqualUnmodifiableListView) return _tools;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tools);
+  }
+
+  @override
+  String toString() {
+    return 'ToolsListResponse(tools: $tools)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ToolsListResponseImpl &&
+            const DeepCollectionEquality().equals(other._tools, _tools));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_tools));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ToolsListResponseImplCopyWith<_$ToolsListResponseImpl> get copyWith =>
+      __$$ToolsListResponseImplCopyWithImpl<_$ToolsListResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ToolsListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ToolsListResponse implements ToolsListResponse {
+  const factory _ToolsListResponse({required final List<ToolInfo> tools}) =
+      _$ToolsListResponseImpl;
+
+  factory _ToolsListResponse.fromJson(Map<String, dynamic> json) =
+      _$ToolsListResponseImpl.fromJson;
+
+  @override
+  List<ToolInfo> get tools;
+  @override
+  @JsonKey(ignore: true)
+  _$$ToolsListResponseImplCopyWith<_$ToolsListResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ToolRunResponse _$ToolRunResponseFromJson(Map<String, dynamic> json) {
+  return _ToolRunResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ToolRunResponse {
+  dynamic get result => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ToolRunResponseCopyWith<ToolRunResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ToolRunResponseCopyWith<$Res> {
+  factory $ToolRunResponseCopyWith(
+          ToolRunResponse value, $Res Function(ToolRunResponse) then) =
+      _$ToolRunResponseCopyWithImpl<$Res, ToolRunResponse>;
+  @useResult
+  $Res call({dynamic result, String? error});
+}
+
+/// @nodoc
+class _$ToolRunResponseCopyWithImpl<$Res, $Val extends ToolRunResponse>
+    implements $ToolRunResponseCopyWith<$Res> {
+  _$ToolRunResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? result = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ToolRunResponseImplCopyWith<$Res>
+    implements $ToolRunResponseCopyWith<$Res> {
+  factory _$$ToolRunResponseImplCopyWith(_$ToolRunResponseImpl value,
+          $Res Function(_$ToolRunResponseImpl) then) =
+      __$$ToolRunResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({dynamic result, String? error});
+}
+
+/// @nodoc
+class __$$ToolRunResponseImplCopyWithImpl<$Res>
+    extends _$ToolRunResponseCopyWithImpl<$Res, _$ToolRunResponseImpl>
+    implements _$$ToolRunResponseImplCopyWith<$Res> {
+  __$$ToolRunResponseImplCopyWithImpl(
+      _$ToolRunResponseImpl _value, $Res Function(_$ToolRunResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? result = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$ToolRunResponseImpl(
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ToolRunResponseImpl implements _ToolRunResponse {
+  const _$ToolRunResponseImpl({required this.result, this.error});
+
+  factory _$ToolRunResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ToolRunResponseImplFromJson(json);
+
+  @override
+  final dynamic result;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'ToolRunResponse(result: $result, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ToolRunResponseImpl &&
+            const DeepCollectionEquality().equals(other.result, result) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(result), error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ToolRunResponseImplCopyWith<_$ToolRunResponseImpl> get copyWith =>
+      __$$ToolRunResponseImplCopyWithImpl<_$ToolRunResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ToolRunResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ToolRunResponse implements ToolRunResponse {
+  const factory _ToolRunResponse(
+      {required final dynamic result,
+      final String? error}) = _$ToolRunResponseImpl;
+
+  factory _ToolRunResponse.fromJson(Map<String, dynamic> json) =
+      _$ToolRunResponseImpl.fromJson;
+
+  @override
+  dynamic get result;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$ToolRunResponseImplCopyWith<_$ToolRunResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ToolLogEntry _$ToolLogEntryFromJson(Map<String, dynamic> json) {
+  return _ToolLogEntry.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ToolLogEntry {
+  String get tool => throw _privateConstructorUsedError;
+  int get calls => throw _privateConstructorUsedError;
+  int get successes => throw _privateConstructorUsedError;
+  int get failures => throw _privateConstructorUsedError;
+  double get avgTime => throw _privateConstructorUsedError;
+  String? get lastError => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ToolLogEntryCopyWith<ToolLogEntry> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ToolLogEntryCopyWith<$Res> {
+  factory $ToolLogEntryCopyWith(
+          ToolLogEntry value, $Res Function(ToolLogEntry) then) =
+      _$ToolLogEntryCopyWithImpl<$Res, ToolLogEntry>;
+  @useResult
+  $Res call(
+      {String tool,
+      int calls,
+      int successes,
+      int failures,
+      double avgTime,
+      String? lastError});
+}
+
+/// @nodoc
+class _$ToolLogEntryCopyWithImpl<$Res, $Val extends ToolLogEntry>
+    implements $ToolLogEntryCopyWith<$Res> {
+  _$ToolLogEntryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tool = null,
+    Object? calls = null,
+    Object? successes = null,
+    Object? failures = null,
+    Object? avgTime = null,
+    Object? lastError = freezed,
+  }) {
+    return _then(_value.copyWith(
+      tool: null == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String,
+      calls: null == calls
+          ? _value.calls
+          : calls // ignore: cast_nullable_to_non_nullable
+              as int,
+      successes: null == successes
+          ? _value.successes
+          : successes // ignore: cast_nullable_to_non_nullable
+              as int,
+      failures: null == failures
+          ? _value.failures
+          : failures // ignore: cast_nullable_to_non_nullable
+              as int,
+      avgTime: null == avgTime
+          ? _value.avgTime
+          : avgTime // ignore: cast_nullable_to_non_nullable
+              as double,
+      lastError: freezed == lastError
+          ? _value.lastError
+          : lastError // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ToolLogEntryImplCopyWith<$Res>
+    implements $ToolLogEntryCopyWith<$Res> {
+  factory _$$ToolLogEntryImplCopyWith(
+          _$ToolLogEntryImpl value, $Res Function(_$ToolLogEntryImpl) then) =
+      __$$ToolLogEntryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String tool,
+      int calls,
+      int successes,
+      int failures,
+      double avgTime,
+      String? lastError});
+}
+
+/// @nodoc
+class __$$ToolLogEntryImplCopyWithImpl<$Res>
+    extends _$ToolLogEntryCopyWithImpl<$Res, _$ToolLogEntryImpl>
+    implements _$$ToolLogEntryImplCopyWith<$Res> {
+  __$$ToolLogEntryImplCopyWithImpl(
+      _$ToolLogEntryImpl _value, $Res Function(_$ToolLogEntryImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tool = null,
+    Object? calls = null,
+    Object? successes = null,
+    Object? failures = null,
+    Object? avgTime = null,
+    Object? lastError = freezed,
+  }) {
+    return _then(_$ToolLogEntryImpl(
+      tool: null == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String,
+      calls: null == calls
+          ? _value.calls
+          : calls // ignore: cast_nullable_to_non_nullable
+              as int,
+      successes: null == successes
+          ? _value.successes
+          : successes // ignore: cast_nullable_to_non_nullable
+              as int,
+      failures: null == failures
+          ? _value.failures
+          : failures // ignore: cast_nullable_to_non_nullable
+              as int,
+      avgTime: null == avgTime
+          ? _value.avgTime
+          : avgTime // ignore: cast_nullable_to_non_nullable
+              as double,
+      lastError: freezed == lastError
+          ? _value.lastError
+          : lastError // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ToolLogEntryImpl implements _ToolLogEntry {
+  const _$ToolLogEntryImpl(
+      {required this.tool,
+      required this.calls,
+      required this.successes,
+      required this.failures,
+      required this.avgTime,
+      this.lastError});
+
+  factory _$ToolLogEntryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ToolLogEntryImplFromJson(json);
+
+  @override
+  final String tool;
+  @override
+  final int calls;
+  @override
+  final int successes;
+  @override
+  final int failures;
+  @override
+  final double avgTime;
+  @override
+  final String? lastError;
+
+  @override
+  String toString() {
+    return 'ToolLogEntry(tool: $tool, calls: $calls, successes: $successes, failures: $failures, avgTime: $avgTime, lastError: $lastError)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ToolLogEntryImpl &&
+            (identical(other.tool, tool) || other.tool == tool) &&
+            (identical(other.calls, calls) || other.calls == calls) &&
+            (identical(other.successes, successes) ||
+                other.successes == successes) &&
+            (identical(other.failures, failures) ||
+                other.failures == failures) &&
+            (identical(other.avgTime, avgTime) || other.avgTime == avgTime) &&
+            (identical(other.lastError, lastError) ||
+                other.lastError == lastError));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, tool, calls, successes, failures, avgTime, lastError);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ToolLogEntryImplCopyWith<_$ToolLogEntryImpl> get copyWith =>
+      __$$ToolLogEntryImplCopyWithImpl<_$ToolLogEntryImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ToolLogEntryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ToolLogEntry implements ToolLogEntry {
+  const factory _ToolLogEntry(
+      {required final String tool,
+      required final int calls,
+      required final int successes,
+      required final int failures,
+      required final double avgTime,
+      final String? lastError}) = _$ToolLogEntryImpl;
+
+  factory _ToolLogEntry.fromJson(Map<String, dynamic> json) =
+      _$ToolLogEntryImpl.fromJson;
+
+  @override
+  String get tool;
+  @override
+  int get calls;
+  @override
+  int get successes;
+  @override
+  int get failures;
+  @override
+  double get avgTime;
+  @override
+  String? get lastError;
+  @override
+  @JsonKey(ignore: true)
+  _$$ToolLogEntryImplCopyWith<_$ToolLogEntryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ToolsLogsResponse _$ToolsLogsResponseFromJson(Map<String, dynamic> json) {
+  return _ToolsLogsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ToolsLogsResponse {
+  List<ToolLogEntry> get logs => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ToolsLogsResponseCopyWith<ToolsLogsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ToolsLogsResponseCopyWith<$Res> {
+  factory $ToolsLogsResponseCopyWith(
+          ToolsLogsResponse value, $Res Function(ToolsLogsResponse) then) =
+      _$ToolsLogsResponseCopyWithImpl<$Res, ToolsLogsResponse>;
+  @useResult
+  $Res call({List<ToolLogEntry> logs});
+}
+
+/// @nodoc
+class _$ToolsLogsResponseCopyWithImpl<$Res, $Val extends ToolsLogsResponse>
+    implements $ToolsLogsResponseCopyWith<$Res> {
+  _$ToolsLogsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? logs = null,
+  }) {
+    return _then(_value.copyWith(
+      logs: null == logs
+          ? _value.logs
+          : logs // ignore: cast_nullable_to_non_nullable
+              as List<ToolLogEntry>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ToolsLogsResponseImplCopyWith<$Res>
+    implements $ToolsLogsResponseCopyWith<$Res> {
+  factory _$$ToolsLogsResponseImplCopyWith(_$ToolsLogsResponseImpl value,
+          $Res Function(_$ToolsLogsResponseImpl) then) =
+      __$$ToolsLogsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ToolLogEntry> logs});
+}
+
+/// @nodoc
+class __$$ToolsLogsResponseImplCopyWithImpl<$Res>
+    extends _$ToolsLogsResponseCopyWithImpl<$Res, _$ToolsLogsResponseImpl>
+    implements _$$ToolsLogsResponseImplCopyWith<$Res> {
+  __$$ToolsLogsResponseImplCopyWithImpl(_$ToolsLogsResponseImpl _value,
+      $Res Function(_$ToolsLogsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? logs = null,
+  }) {
+    return _then(_$ToolsLogsResponseImpl(
+      logs: null == logs
+          ? _value._logs
+          : logs // ignore: cast_nullable_to_non_nullable
+              as List<ToolLogEntry>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ToolsLogsResponseImpl implements _ToolsLogsResponse {
+  const _$ToolsLogsResponseImpl({required final List<ToolLogEntry> logs})
+      : _logs = logs;
+
+  factory _$ToolsLogsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ToolsLogsResponseImplFromJson(json);
+
+  final List<ToolLogEntry> _logs;
+  @override
+  List<ToolLogEntry> get logs {
+    if (_logs is EqualUnmodifiableListView) return _logs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_logs);
+  }
+
+  @override
+  String toString() {
+    return 'ToolsLogsResponse(logs: $logs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ToolsLogsResponseImpl &&
+            const DeepCollectionEquality().equals(other._logs, _logs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_logs));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ToolsLogsResponseImplCopyWith<_$ToolsLogsResponseImpl> get copyWith =>
+      __$$ToolsLogsResponseImplCopyWithImpl<_$ToolsLogsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ToolsLogsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ToolsLogsResponse implements ToolsLogsResponse {
+  const factory _ToolsLogsResponse({required final List<ToolLogEntry> logs}) =
+      _$ToolsLogsResponseImpl;
+
+  factory _ToolsLogsResponse.fromJson(Map<String, dynamic> json) =
+      _$ToolsLogsResponseImpl.fromJson;
+
+  @override
+  List<ToolLogEntry> get logs;
+  @override
+  @JsonKey(ignore: true)
+  _$$ToolsLogsResponseImplCopyWith<_$ToolsLogsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+FrameworkTool _$FrameworkToolFromJson(Map<String, dynamic> json) {
+  return _FrameworkTool.fromJson(json);
+}
+
+/// @nodoc
+mixin _$FrameworkTool {
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get category => throw _privateConstructorUsedError;
+  bool get enabled => throw _privateConstructorUsedError;
+  String get permission => throw _privateConstructorUsedError;
+  int get timeoutSeconds => throw _privateConstructorUsedError;
+  int get maxRetries => throw _privateConstructorUsedError;
+  bool get dangerous => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $FrameworkToolCopyWith<FrameworkTool> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $FrameworkToolCopyWith<$Res> {
+  factory $FrameworkToolCopyWith(
+          FrameworkTool value, $Res Function(FrameworkTool) then) =
+      _$FrameworkToolCopyWithImpl<$Res, FrameworkTool>;
+  @useResult
+  $Res call(
+      {String name,
+      String description,
+      String category,
+      bool enabled,
+      String permission,
+      int timeoutSeconds,
+      int maxRetries,
+      bool dangerous});
+}
+
+/// @nodoc
+class _$FrameworkToolCopyWithImpl<$Res, $Val extends FrameworkTool>
+    implements $FrameworkToolCopyWith<$Res> {
+  _$FrameworkToolCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? description = null,
+    Object? category = null,
+    Object? enabled = null,
+    Object? permission = null,
+    Object? timeoutSeconds = null,
+    Object? maxRetries = null,
+    Object? dangerous = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      permission: null == permission
+          ? _value.permission
+          : permission // ignore: cast_nullable_to_non_nullable
+              as String,
+      timeoutSeconds: null == timeoutSeconds
+          ? _value.timeoutSeconds
+          : timeoutSeconds // ignore: cast_nullable_to_non_nullable
+              as int,
+      maxRetries: null == maxRetries
+          ? _value.maxRetries
+          : maxRetries // ignore: cast_nullable_to_non_nullable
+              as int,
+      dangerous: null == dangerous
+          ? _value.dangerous
+          : dangerous // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$FrameworkToolImplCopyWith<$Res>
+    implements $FrameworkToolCopyWith<$Res> {
+  factory _$$FrameworkToolImplCopyWith(
+          _$FrameworkToolImpl value, $Res Function(_$FrameworkToolImpl) then) =
+      __$$FrameworkToolImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String name,
+      String description,
+      String category,
+      bool enabled,
+      String permission,
+      int timeoutSeconds,
+      int maxRetries,
+      bool dangerous});
+}
+
+/// @nodoc
+class __$$FrameworkToolImplCopyWithImpl<$Res>
+    extends _$FrameworkToolCopyWithImpl<$Res, _$FrameworkToolImpl>
+    implements _$$FrameworkToolImplCopyWith<$Res> {
+  __$$FrameworkToolImplCopyWithImpl(
+      _$FrameworkToolImpl _value, $Res Function(_$FrameworkToolImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? description = null,
+    Object? category = null,
+    Object? enabled = null,
+    Object? permission = null,
+    Object? timeoutSeconds = null,
+    Object? maxRetries = null,
+    Object? dangerous = null,
+  }) {
+    return _then(_$FrameworkToolImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: null == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      permission: null == permission
+          ? _value.permission
+          : permission // ignore: cast_nullable_to_non_nullable
+              as String,
+      timeoutSeconds: null == timeoutSeconds
+          ? _value.timeoutSeconds
+          : timeoutSeconds // ignore: cast_nullable_to_non_nullable
+              as int,
+      maxRetries: null == maxRetries
+          ? _value.maxRetries
+          : maxRetries // ignore: cast_nullable_to_non_nullable
+              as int,
+      dangerous: null == dangerous
+          ? _value.dangerous
+          : dangerous // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$FrameworkToolImpl implements _FrameworkTool {
+  const _$FrameworkToolImpl(
+      {required this.name,
+      required this.description,
+      required this.category,
+      required this.enabled,
+      required this.permission,
+      required this.timeoutSeconds,
+      required this.maxRetries,
+      required this.dangerous});
+
+  factory _$FrameworkToolImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FrameworkToolImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String description;
+  @override
+  final String category;
+  @override
+  final bool enabled;
+  @override
+  final String permission;
+  @override
+  final int timeoutSeconds;
+  @override
+  final int maxRetries;
+  @override
+  final bool dangerous;
+
+  @override
+  String toString() {
+    return 'FrameworkTool(name: $name, description: $description, category: $category, enabled: $enabled, permission: $permission, timeoutSeconds: $timeoutSeconds, maxRetries: $maxRetries, dangerous: $dangerous)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FrameworkToolImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.permission, permission) ||
+                other.permission == permission) &&
+            (identical(other.timeoutSeconds, timeoutSeconds) ||
+                other.timeoutSeconds == timeoutSeconds) &&
+            (identical(other.maxRetries, maxRetries) ||
+                other.maxRetries == maxRetries) &&
+            (identical(other.dangerous, dangerous) ||
+                other.dangerous == dangerous));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, description, category,
+      enabled, permission, timeoutSeconds, maxRetries, dangerous);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FrameworkToolImplCopyWith<_$FrameworkToolImpl> get copyWith =>
+      __$$FrameworkToolImplCopyWithImpl<_$FrameworkToolImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$FrameworkToolImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _FrameworkTool implements FrameworkTool {
+  const factory _FrameworkTool(
+      {required final String name,
+      required final String description,
+      required final String category,
+      required final bool enabled,
+      required final String permission,
+      required final int timeoutSeconds,
+      required final int maxRetries,
+      required final bool dangerous}) = _$FrameworkToolImpl;
+
+  factory _FrameworkTool.fromJson(Map<String, dynamic> json) =
+      _$FrameworkToolImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  String get category;
+  @override
+  bool get enabled;
+  @override
+  String get permission;
+  @override
+  int get timeoutSeconds;
+  @override
+  int get maxRetries;
+  @override
+  bool get dangerous;
+  @override
+  @JsonKey(ignore: true)
+  _$$FrameworkToolImplCopyWith<_$FrameworkToolImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ToolsFrameworkResponse _$ToolsFrameworkResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ToolsFrameworkResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ToolsFrameworkResponse {
+  List<FrameworkTool> get tools => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ToolsFrameworkResponseCopyWith<ToolsFrameworkResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ToolsFrameworkResponseCopyWith<$Res> {
+  factory $ToolsFrameworkResponseCopyWith(ToolsFrameworkResponse value,
+          $Res Function(ToolsFrameworkResponse) then) =
+      _$ToolsFrameworkResponseCopyWithImpl<$Res, ToolsFrameworkResponse>;
+  @useResult
+  $Res call({List<FrameworkTool> tools});
+}
+
+/// @nodoc
+class _$ToolsFrameworkResponseCopyWithImpl<$Res,
+        $Val extends ToolsFrameworkResponse>
+    implements $ToolsFrameworkResponseCopyWith<$Res> {
+  _$ToolsFrameworkResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tools = null,
+  }) {
+    return _then(_value.copyWith(
+      tools: null == tools
+          ? _value.tools
+          : tools // ignore: cast_nullable_to_non_nullable
+              as List<FrameworkTool>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ToolsFrameworkResponseImplCopyWith<$Res>
+    implements $ToolsFrameworkResponseCopyWith<$Res> {
+  factory _$$ToolsFrameworkResponseImplCopyWith(
+          _$ToolsFrameworkResponseImpl value,
+          $Res Function(_$ToolsFrameworkResponseImpl) then) =
+      __$$ToolsFrameworkResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<FrameworkTool> tools});
+}
+
+/// @nodoc
+class __$$ToolsFrameworkResponseImplCopyWithImpl<$Res>
+    extends _$ToolsFrameworkResponseCopyWithImpl<$Res,
+        _$ToolsFrameworkResponseImpl>
+    implements _$$ToolsFrameworkResponseImplCopyWith<$Res> {
+  __$$ToolsFrameworkResponseImplCopyWithImpl(
+      _$ToolsFrameworkResponseImpl _value,
+      $Res Function(_$ToolsFrameworkResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tools = null,
+  }) {
+    return _then(_$ToolsFrameworkResponseImpl(
+      tools: null == tools
+          ? _value._tools
+          : tools // ignore: cast_nullable_to_non_nullable
+              as List<FrameworkTool>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ToolsFrameworkResponseImpl implements _ToolsFrameworkResponse {
+  const _$ToolsFrameworkResponseImpl({required final List<FrameworkTool> tools})
+      : _tools = tools;
+
+  factory _$ToolsFrameworkResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ToolsFrameworkResponseImplFromJson(json);
+
+  final List<FrameworkTool> _tools;
+  @override
+  List<FrameworkTool> get tools {
+    if (_tools is EqualUnmodifiableListView) return _tools;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tools);
+  }
+
+  @override
+  String toString() {
+    return 'ToolsFrameworkResponse(tools: $tools)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ToolsFrameworkResponseImpl &&
+            const DeepCollectionEquality().equals(other._tools, _tools));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_tools));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ToolsFrameworkResponseImplCopyWith<_$ToolsFrameworkResponseImpl>
+      get copyWith => __$$ToolsFrameworkResponseImplCopyWithImpl<
+          _$ToolsFrameworkResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ToolsFrameworkResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ToolsFrameworkResponse implements ToolsFrameworkResponse {
+  const factory _ToolsFrameworkResponse(
+          {required final List<FrameworkTool> tools}) =
+      _$ToolsFrameworkResponseImpl;
+
+  factory _ToolsFrameworkResponse.fromJson(Map<String, dynamic> json) =
+      _$ToolsFrameworkResponseImpl.fromJson;
+
+  @override
+  List<FrameworkTool> get tools;
+  @override
+  @JsonKey(ignore: true)
+  _$$ToolsFrameworkResponseImplCopyWith<_$ToolsFrameworkResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProviderInfo _$ProviderInfoFromJson(Map<String, dynamic> json) {
+  return _ProviderInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProviderInfo {
+  String get id => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
+  bool get configured => throw _privateConstructorUsedError;
+  bool get enabled => throw _privateConstructorUsedError;
+  bool get active => throw _privateConstructorUsedError;
+  int get errorCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProviderInfoCopyWith<ProviderInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProviderInfoCopyWith<$Res> {
+  factory $ProviderInfoCopyWith(
+          ProviderInfo value, $Res Function(ProviderInfo) then) =
+      _$ProviderInfoCopyWithImpl<$Res, ProviderInfo>;
+  @useResult
+  $Res call(
+      {String id,
+      String label,
+      bool configured,
+      bool enabled,
+      bool active,
+      int errorCount});
+}
+
+/// @nodoc
+class _$ProviderInfoCopyWithImpl<$Res, $Val extends ProviderInfo>
+    implements $ProviderInfoCopyWith<$Res> {
+  _$ProviderInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? label = null,
+    Object? configured = null,
+    Object? enabled = null,
+    Object? active = null,
+    Object? errorCount = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: null == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorCount: null == errorCount
+          ? _value.errorCount
+          : errorCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProviderInfoImplCopyWith<$Res>
+    implements $ProviderInfoCopyWith<$Res> {
+  factory _$$ProviderInfoImplCopyWith(
+          _$ProviderInfoImpl value, $Res Function(_$ProviderInfoImpl) then) =
+      __$$ProviderInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String label,
+      bool configured,
+      bool enabled,
+      bool active,
+      int errorCount});
+}
+
+/// @nodoc
+class __$$ProviderInfoImplCopyWithImpl<$Res>
+    extends _$ProviderInfoCopyWithImpl<$Res, _$ProviderInfoImpl>
+    implements _$$ProviderInfoImplCopyWith<$Res> {
+  __$$ProviderInfoImplCopyWithImpl(
+      _$ProviderInfoImpl _value, $Res Function(_$ProviderInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? label = null,
+    Object? configured = null,
+    Object? enabled = null,
+    Object? active = null,
+    Object? errorCount = null,
+  }) {
+    return _then(_$ProviderInfoImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: null == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorCount: null == errorCount
+          ? _value.errorCount
+          : errorCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProviderInfoImpl implements _ProviderInfo {
+  const _$ProviderInfoImpl(
+      {required this.id,
+      required this.label,
+      required this.configured,
+      required this.enabled,
+      required this.active,
+      required this.errorCount});
+
+  factory _$ProviderInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProviderInfoImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String label;
+  @override
+  final bool configured;
+  @override
+  final bool enabled;
+  @override
+  final bool active;
+  @override
+  final int errorCount;
+
+  @override
+  String toString() {
+    return 'ProviderInfo(id: $id, label: $label, configured: $configured, enabled: $enabled, active: $active, errorCount: $errorCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProviderInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.label, label) || other.label == label) &&
+            (identical(other.configured, configured) ||
+                other.configured == configured) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.active, active) || other.active == active) &&
+            (identical(other.errorCount, errorCount) ||
+                other.errorCount == errorCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, label, configured, enabled, active, errorCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProviderInfoImplCopyWith<_$ProviderInfoImpl> get copyWith =>
+      __$$ProviderInfoImplCopyWithImpl<_$ProviderInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProviderInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProviderInfo implements ProviderInfo {
+  const factory _ProviderInfo(
+      {required final String id,
+      required final String label,
+      required final bool configured,
+      required final bool enabled,
+      required final bool active,
+      required final int errorCount}) = _$ProviderInfoImpl;
+
+  factory _ProviderInfo.fromJson(Map<String, dynamic> json) =
+      _$ProviderInfoImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get label;
+  @override
+  bool get configured;
+  @override
+  bool get enabled;
+  @override
+  bool get active;
+  @override
+  int get errorCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProviderInfoImplCopyWith<_$ProviderInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ProvidersListResponse _$ProvidersListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProvidersListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProvidersListResponse {
+  List<ProviderInfo> get providers => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProvidersListResponseCopyWith<ProvidersListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProvidersListResponseCopyWith<$Res> {
+  factory $ProvidersListResponseCopyWith(ProvidersListResponse value,
+          $Res Function(ProvidersListResponse) then) =
+      _$ProvidersListResponseCopyWithImpl<$Res, ProvidersListResponse>;
+  @useResult
+  $Res call({List<ProviderInfo> providers});
+}
+
+/// @nodoc
+class _$ProvidersListResponseCopyWithImpl<$Res,
+        $Val extends ProvidersListResponse>
+    implements $ProvidersListResponseCopyWith<$Res> {
+  _$ProvidersListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? providers = null,
+  }) {
+    return _then(_value.copyWith(
+      providers: null == providers
+          ? _value.providers
+          : providers // ignore: cast_nullable_to_non_nullable
+              as List<ProviderInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProvidersListResponseImplCopyWith<$Res>
+    implements $ProvidersListResponseCopyWith<$Res> {
+  factory _$$ProvidersListResponseImplCopyWith(
+          _$ProvidersListResponseImpl value,
+          $Res Function(_$ProvidersListResponseImpl) then) =
+      __$$ProvidersListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ProviderInfo> providers});
+}
+
+/// @nodoc
+class __$$ProvidersListResponseImplCopyWithImpl<$Res>
+    extends _$ProvidersListResponseCopyWithImpl<$Res,
+        _$ProvidersListResponseImpl>
+    implements _$$ProvidersListResponseImplCopyWith<$Res> {
+  __$$ProvidersListResponseImplCopyWithImpl(_$ProvidersListResponseImpl _value,
+      $Res Function(_$ProvidersListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? providers = null,
+  }) {
+    return _then(_$ProvidersListResponseImpl(
+      providers: null == providers
+          ? _value._providers
+          : providers // ignore: cast_nullable_to_non_nullable
+              as List<ProviderInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProvidersListResponseImpl implements _ProvidersListResponse {
+  const _$ProvidersListResponseImpl(
+      {required final List<ProviderInfo> providers})
+      : _providers = providers;
+
+  factory _$ProvidersListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProvidersListResponseImplFromJson(json);
+
+  final List<ProviderInfo> _providers;
+  @override
+  List<ProviderInfo> get providers {
+    if (_providers is EqualUnmodifiableListView) return _providers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_providers);
+  }
+
+  @override
+  String toString() {
+    return 'ProvidersListResponse(providers: $providers)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProvidersListResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._providers, _providers));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_providers));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProvidersListResponseImplCopyWith<_$ProvidersListResponseImpl>
+      get copyWith => __$$ProvidersListResponseImplCopyWithImpl<
+          _$ProvidersListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProvidersListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProvidersListResponse implements ProvidersListResponse {
+  const factory _ProvidersListResponse(
+          {required final List<ProviderInfo> providers}) =
+      _$ProvidersListResponseImpl;
+
+  factory _ProvidersListResponse.fromJson(Map<String, dynamic> json) =
+      _$ProvidersListResponseImpl.fromJson;
+
+  @override
+  List<ProviderInfo> get providers;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProvidersListResponseImplCopyWith<_$ProvidersListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
