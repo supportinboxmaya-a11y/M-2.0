@@ -1393,6 +1393,34 @@ class _AppDrawer extends ConsumerWidget {
                   },
                 ),
                 _DrawerActionTile(
+                  icon: Icons.analytics_rounded,
+                  label: 'Metrics Dashboard',
+                  subtitle: 'Uptime, counters, latency',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _MetricsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.flag_rounded,
+                  label: 'Feature Flags',
+                  subtitle: 'Runtime feature toggles',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _FlagsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
                   icon: Icons.dns_rounded,
                   label: 'VPS Status',
                   subtitle: 'Connection: Online',
@@ -2413,3 +2441,453 @@ class _SettingsTile extends StatelessWidget {
     );
   }
 }
+
+// Metrics Dashboard Screen
+class _MetricsScreen extends ConsumerStatefulWidget {
+  const _MetricsScreen();
+
+  @override
+  ConsumerState<_MetricsScreen> createState() => _MetricsScreenState();
+}
+
+class _MetricsScreenState extends ConsumerState<_MetricsScreen> {
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(metricsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final metricsAsync = ref.watch(metricsProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Metrics Dashboard', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(metricsProvider),
+            ),
+          ],
+        ),
+        body: metricsAsync.when(
+          data: (metrics) => SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Uptime Card
+                _MetricsCard(
+                  title: 'Uptime',
+                  value: _formatUptime(metrics.uptimeS),
+                  icon: Icons.timer_rounded,
+                  color: MayaTheme.neonCyan,
+                ),
+                const SizedBox(height: 16),
+
+                // Counters Section
+                const Text('Counters', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                _buildCountersGrid(metrics.counters),
+                const SizedBox(height: 24),
+
+                // Latency Section
+                const Text('Latency (ms)', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                if (metrics.latency.isEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: MayaTheme.glassCard(),
+                    child: const Center(
+                      child: Text('No latency data yet',
+                          style: MayaTheme.bodyMedium),
+                    ),
+                  )
+                else
+                  _buildLatencyTable(metrics.latency),
+              ],
+            ),
+          ),
+          loading: () => const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
+            ),
+          ),
+          error: (err, _) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                const SizedBox(height: 16),
+                Text('Error loading metrics',
+                    style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                const SizedBox(height: 8),
+                Text(err.toString(),
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                    textAlign: TextAlign.center),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatUptime(double seconds) {
+    final d = seconds ~/ 86400;
+    final h = (seconds % 86400) ~/ 3600;
+    final m = (seconds % 3600) ~/ 60;
+    final s = seconds % 60;
+    if (d > 0) return '${d}d ${h}h ${m}m';
+    if (h > 0) return '${h}h ${m}m ${s.toInt()}s';
+    if (m > 0) return '${m}m ${s.toInt()}s';
+    return '${s.toStringAsFixed(1)}s';
+  }
+
+  Widget _buildCountersGrid(Map<String, dynamic> counters) {
+    if (counters.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: MayaTheme.glassCard(),
+        child: const Center(
+          child: Text('No counters yet', style: MayaTheme.bodyMedium),
+        ),
+      );
+    }
+
+    final entries = counters.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 2.2,
+      ),
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: MayaTheme.glassCard(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                entry.key,
+                style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _formatNumber(entry.value),
+                style: MayaTheme.headlineMedium.copyWith(color: MayaTheme.neonCyan),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatNumber(dynamic value) {
+    if (value is int) {
+      if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}M';
+      if (value >= 1000) return '${(value / 1000).toStringAsFixed(1)}K';
+      return value.toString();
+    }
+    return value.toString();
+  }
+
+  Widget _buildLatencyTable(Map<String, dynamic> latency) {
+    final entries = latency.entries.toList()
+      ..sort((a, b) => (b.value['avg_ms'] as num).compareTo(a.value['avg_ms'] as num));
+
+    return Container(
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: const Row(
+              children: [
+                Expanded(flex: 3, child: Text('Endpoint', style: MayaTheme.labelMedium)),
+                Expanded(flex: 1, child: Text('Count', style: MayaTheme.labelMedium, textAlign: TextAlign.center)),
+                Expanded(flex: 1, child: Text('Avg (ms)', style: MayaTheme.labelMedium, textAlign: TextAlign.center)),
+                Expanded(flex: 1, child: Text('P95 (ms)', style: MayaTheme.labelMedium, textAlign: TextAlign.center)),
+              ],
+            ),
+          ),
+          // Rows
+          ...entries.map((entry) {
+            final stats = entry.value;
+            final count = stats['count'] as int? ?? 0;
+            final avgMs = (stats['avg_ms'] as num?)?.toDouble() ?? 0.0;
+            final p95Ms = (stats['p95_ms'] as num?)?.toDouble() ?? 0.0;
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: MayaTheme.glassWhite10)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(flex: 3, child: Text(entry.key, style: MayaTheme.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                  Expanded(flex: 1, child: Text(count.toString(), style: MayaTheme.bodySmall, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text(avgMs.toStringAsFixed(1), style: MayaTheme.bodySmall, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text(p95Ms.toStringAsFixed(1), style: MayaTheme.bodySmall, textAlign: TextAlign.center)),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetricsCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _MetricsCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: color, size: 32),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+                const SizedBox(height: 4),
+                Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Feature Flags Screen
+class _FlagsScreen extends ConsumerStatefulWidget {
+  const _FlagsScreen();
+
+  @override
+  ConsumerState<_FlagsScreen> createState() => _FlagsScreenState();
+}
+
+class _FlagsScreenState extends ConsumerState<_FlagsScreen> {
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(flagsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final flagsAsync = ref.watch(flagsProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Feature Flags', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(flagsProvider),
+            ),
+          ],
+        ),
+        body: flagsAsync.when(
+          data: (flags) {
+            final entries = flags.flags.entries.toList()
+              ..sort((a, b) => a.key.compareTo(b.key));
+
+            if (entries.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.flag_rounded, size: 64, color: Colors.white24),
+                    const SizedBox(height: 16),
+                    Text('No feature flags configured',
+                        style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
+                  ],
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: entries.length,
+              itemBuilder: (context, index) {
+                final entry = entries[index];
+                return _FlagTile(key: entry.key, value: entry.value);
+              },
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
+            ),
+          ),
+          error: (err, _) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                const SizedBox(height: 16),
+                Text('Error loading flags',
+                    style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                const SizedBox(height: 8),
+                Text(err.toString(),
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                    textAlign: TextAlign.center),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FlagTile extends StatelessWidget {
+  final String key;
+  final bool value;
+
+  const _FlagTile({required this.key, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: value
+                  ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                  : MayaTheme.neonOrange.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              value ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+              color: value ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(key, style: MayaTheme.titleMedium),
+                const SizedBox(height: 4),
+                Text(
+                  value ? 'Enabled' : 'Disabled',
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: value ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Metrics & Flags Providers
+final metricsProvider = FutureProvider<MetricsSnapshot>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMetrics();
+});
+
+final flagsProvider = FutureProvider<FlagsSnapshot>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getFlags();
+});

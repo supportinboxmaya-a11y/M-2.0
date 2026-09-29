@@ -397,6 +397,17 @@ class ApiService {
     }
   }
 
+  // Metrics & Flags
+  Future<MetricsSnapshot> getMetrics() async {
+    final response = await _dio.get(AppConfig.metrics);
+    return MetricsSnapshot.fromJson(response.data);
+  }
+
+  Future<FlagsSnapshot> getFlags() async {
+    final response = await _dio.get(AppConfig.flags);
+    return FlagsSnapshot.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -782,4 +793,39 @@ class QueueSubmitResult with _$QueueSubmitResult {
 
   factory QueueSubmitResult.fromJson(Map<String, dynamic> json) =>
       _$QueueSubmitResultFromJson(json);
+}
+
+// Metrics & Flags Models
+@freezed
+class MetricsSnapshot with _$MetricsSnapshot {
+  const factory MetricsSnapshot({
+    required double uptimeS,
+    required Map<String, dynamic> counters,
+    required Map<String, dynamic> latency,
+  }) = _MetricsSnapshot;
+
+  factory MetricsSnapshot.fromJson(Map<String, dynamic> json) =>
+      _$MetricsSnapshotFromJson(json);
+}
+
+@freezed
+class LatencyStats with _$LatencyStats {
+  const factory LatencyStats({
+    required int count,
+    required double avgMs,
+    required double p95Ms,
+  }) = _LatencyStats;
+
+  factory LatencyStats.fromJson(Map<String, dynamic> json) =>
+      _$LatencyStatsFromJson(json);
+}
+
+@freezed
+class FlagsSnapshot with _$FlagsSnapshot {
+  const factory FlagsSnapshot({
+    required Map<String, bool> flags,
+  }) = _FlagsSnapshot;
+
+  factory FlagsSnapshot.fromJson(Map<String, dynamic> json) =>
+      _$FlagsSnapshotFromJson(json);
 }

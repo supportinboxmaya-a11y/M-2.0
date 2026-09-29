@@ -4804,3 +4804,517 @@ abstract class _QueueSubmitResult implements QueueSubmitResult {
   _$$QueueSubmitResultImplCopyWith<_$QueueSubmitResultImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+MetricsSnapshot _$MetricsSnapshotFromJson(Map<String, dynamic> json) {
+  return _MetricsSnapshot.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MetricsSnapshot {
+  double get uptimeS => throw _privateConstructorUsedError;
+  Map<String, dynamic> get counters => throw _privateConstructorUsedError;
+  Map<String, dynamic> get latency => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MetricsSnapshotCopyWith<MetricsSnapshot> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MetricsSnapshotCopyWith<$Res> {
+  factory $MetricsSnapshotCopyWith(
+          MetricsSnapshot value, $Res Function(MetricsSnapshot) then) =
+      _$MetricsSnapshotCopyWithImpl<$Res, MetricsSnapshot>;
+  @useResult
+  $Res call(
+      {double uptimeS,
+      Map<String, dynamic> counters,
+      Map<String, dynamic> latency});
+}
+
+/// @nodoc
+class _$MetricsSnapshotCopyWithImpl<$Res, $Val extends MetricsSnapshot>
+    implements $MetricsSnapshotCopyWith<$Res> {
+  _$MetricsSnapshotCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uptimeS = null,
+    Object? counters = null,
+    Object? latency = null,
+  }) {
+    return _then(_value.copyWith(
+      uptimeS: null == uptimeS
+          ? _value.uptimeS
+          : uptimeS // ignore: cast_nullable_to_non_nullable
+              as double,
+      counters: null == counters
+          ? _value.counters
+          : counters // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      latency: null == latency
+          ? _value.latency
+          : latency // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MetricsSnapshotImplCopyWith<$Res>
+    implements $MetricsSnapshotCopyWith<$Res> {
+  factory _$$MetricsSnapshotImplCopyWith(_$MetricsSnapshotImpl value,
+          $Res Function(_$MetricsSnapshotImpl) then) =
+      __$$MetricsSnapshotImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {double uptimeS,
+      Map<String, dynamic> counters,
+      Map<String, dynamic> latency});
+}
+
+/// @nodoc
+class __$$MetricsSnapshotImplCopyWithImpl<$Res>
+    extends _$MetricsSnapshotCopyWithImpl<$Res, _$MetricsSnapshotImpl>
+    implements _$$MetricsSnapshotImplCopyWith<$Res> {
+  __$$MetricsSnapshotImplCopyWithImpl(
+      _$MetricsSnapshotImpl _value, $Res Function(_$MetricsSnapshotImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uptimeS = null,
+    Object? counters = null,
+    Object? latency = null,
+  }) {
+    return _then(_$MetricsSnapshotImpl(
+      uptimeS: null == uptimeS
+          ? _value.uptimeS
+          : uptimeS // ignore: cast_nullable_to_non_nullable
+              as double,
+      counters: null == counters
+          ? _value._counters
+          : counters // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      latency: null == latency
+          ? _value._latency
+          : latency // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MetricsSnapshotImpl implements _MetricsSnapshot {
+  const _$MetricsSnapshotImpl(
+      {required this.uptimeS,
+      required final Map<String, dynamic> counters,
+      required final Map<String, dynamic> latency})
+      : _counters = counters,
+        _latency = latency;
+
+  factory _$MetricsSnapshotImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MetricsSnapshotImplFromJson(json);
+
+  @override
+  final double uptimeS;
+  final Map<String, dynamic> _counters;
+  @override
+  Map<String, dynamic> get counters {
+    if (_counters is EqualUnmodifiableMapView) return _counters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_counters);
+  }
+
+  final Map<String, dynamic> _latency;
+  @override
+  Map<String, dynamic> get latency {
+    if (_latency is EqualUnmodifiableMapView) return _latency;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_latency);
+  }
+
+  @override
+  String toString() {
+    return 'MetricsSnapshot(uptimeS: $uptimeS, counters: $counters, latency: $latency)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MetricsSnapshotImpl &&
+            (identical(other.uptimeS, uptimeS) || other.uptimeS == uptimeS) &&
+            const DeepCollectionEquality().equals(other._counters, _counters) &&
+            const DeepCollectionEquality().equals(other._latency, _latency));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      uptimeS,
+      const DeepCollectionEquality().hash(_counters),
+      const DeepCollectionEquality().hash(_latency));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MetricsSnapshotImplCopyWith<_$MetricsSnapshotImpl> get copyWith =>
+      __$$MetricsSnapshotImplCopyWithImpl<_$MetricsSnapshotImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MetricsSnapshotImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MetricsSnapshot implements MetricsSnapshot {
+  const factory _MetricsSnapshot(
+      {required final double uptimeS,
+      required final Map<String, dynamic> counters,
+      required final Map<String, dynamic> latency}) = _$MetricsSnapshotImpl;
+
+  factory _MetricsSnapshot.fromJson(Map<String, dynamic> json) =
+      _$MetricsSnapshotImpl.fromJson;
+
+  @override
+  double get uptimeS;
+  @override
+  Map<String, dynamic> get counters;
+  @override
+  Map<String, dynamic> get latency;
+  @override
+  @JsonKey(ignore: true)
+  _$$MetricsSnapshotImplCopyWith<_$MetricsSnapshotImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LatencyStats _$LatencyStatsFromJson(Map<String, dynamic> json) {
+  return _LatencyStats.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LatencyStats {
+  int get count => throw _privateConstructorUsedError;
+  double get avgMs => throw _privateConstructorUsedError;
+  double get p95Ms => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LatencyStatsCopyWith<LatencyStats> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LatencyStatsCopyWith<$Res> {
+  factory $LatencyStatsCopyWith(
+          LatencyStats value, $Res Function(LatencyStats) then) =
+      _$LatencyStatsCopyWithImpl<$Res, LatencyStats>;
+  @useResult
+  $Res call({int count, double avgMs, double p95Ms});
+}
+
+/// @nodoc
+class _$LatencyStatsCopyWithImpl<$Res, $Val extends LatencyStats>
+    implements $LatencyStatsCopyWith<$Res> {
+  _$LatencyStatsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? count = null,
+    Object? avgMs = null,
+    Object? p95Ms = null,
+  }) {
+    return _then(_value.copyWith(
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+      avgMs: null == avgMs
+          ? _value.avgMs
+          : avgMs // ignore: cast_nullable_to_non_nullable
+              as double,
+      p95Ms: null == p95Ms
+          ? _value.p95Ms
+          : p95Ms // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LatencyStatsImplCopyWith<$Res>
+    implements $LatencyStatsCopyWith<$Res> {
+  factory _$$LatencyStatsImplCopyWith(
+          _$LatencyStatsImpl value, $Res Function(_$LatencyStatsImpl) then) =
+      __$$LatencyStatsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int count, double avgMs, double p95Ms});
+}
+
+/// @nodoc
+class __$$LatencyStatsImplCopyWithImpl<$Res>
+    extends _$LatencyStatsCopyWithImpl<$Res, _$LatencyStatsImpl>
+    implements _$$LatencyStatsImplCopyWith<$Res> {
+  __$$LatencyStatsImplCopyWithImpl(
+      _$LatencyStatsImpl _value, $Res Function(_$LatencyStatsImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? count = null,
+    Object? avgMs = null,
+    Object? p95Ms = null,
+  }) {
+    return _then(_$LatencyStatsImpl(
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+      avgMs: null == avgMs
+          ? _value.avgMs
+          : avgMs // ignore: cast_nullable_to_non_nullable
+              as double,
+      p95Ms: null == p95Ms
+          ? _value.p95Ms
+          : p95Ms // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LatencyStatsImpl implements _LatencyStats {
+  const _$LatencyStatsImpl(
+      {required this.count, required this.avgMs, required this.p95Ms});
+
+  factory _$LatencyStatsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LatencyStatsImplFromJson(json);
+
+  @override
+  final int count;
+  @override
+  final double avgMs;
+  @override
+  final double p95Ms;
+
+  @override
+  String toString() {
+    return 'LatencyStats(count: $count, avgMs: $avgMs, p95Ms: $p95Ms)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LatencyStatsImpl &&
+            (identical(other.count, count) || other.count == count) &&
+            (identical(other.avgMs, avgMs) || other.avgMs == avgMs) &&
+            (identical(other.p95Ms, p95Ms) || other.p95Ms == p95Ms));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, count, avgMs, p95Ms);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LatencyStatsImplCopyWith<_$LatencyStatsImpl> get copyWith =>
+      __$$LatencyStatsImplCopyWithImpl<_$LatencyStatsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LatencyStatsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LatencyStats implements LatencyStats {
+  const factory _LatencyStats(
+      {required final int count,
+      required final double avgMs,
+      required final double p95Ms}) = _$LatencyStatsImpl;
+
+  factory _LatencyStats.fromJson(Map<String, dynamic> json) =
+      _$LatencyStatsImpl.fromJson;
+
+  @override
+  int get count;
+  @override
+  double get avgMs;
+  @override
+  double get p95Ms;
+  @override
+  @JsonKey(ignore: true)
+  _$$LatencyStatsImplCopyWith<_$LatencyStatsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+FlagsSnapshot _$FlagsSnapshotFromJson(Map<String, dynamic> json) {
+  return _FlagsSnapshot.fromJson(json);
+}
+
+/// @nodoc
+mixin _$FlagsSnapshot {
+  Map<String, bool> get flags => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $FlagsSnapshotCopyWith<FlagsSnapshot> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $FlagsSnapshotCopyWith<$Res> {
+  factory $FlagsSnapshotCopyWith(
+          FlagsSnapshot value, $Res Function(FlagsSnapshot) then) =
+      _$FlagsSnapshotCopyWithImpl<$Res, FlagsSnapshot>;
+  @useResult
+  $Res call({Map<String, bool> flags});
+}
+
+/// @nodoc
+class _$FlagsSnapshotCopyWithImpl<$Res, $Val extends FlagsSnapshot>
+    implements $FlagsSnapshotCopyWith<$Res> {
+  _$FlagsSnapshotCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? flags = null,
+  }) {
+    return _then(_value.copyWith(
+      flags: null == flags
+          ? _value.flags
+          : flags // ignore: cast_nullable_to_non_nullable
+              as Map<String, bool>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$FlagsSnapshotImplCopyWith<$Res>
+    implements $FlagsSnapshotCopyWith<$Res> {
+  factory _$$FlagsSnapshotImplCopyWith(
+          _$FlagsSnapshotImpl value, $Res Function(_$FlagsSnapshotImpl) then) =
+      __$$FlagsSnapshotImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Map<String, bool> flags});
+}
+
+/// @nodoc
+class __$$FlagsSnapshotImplCopyWithImpl<$Res>
+    extends _$FlagsSnapshotCopyWithImpl<$Res, _$FlagsSnapshotImpl>
+    implements _$$FlagsSnapshotImplCopyWith<$Res> {
+  __$$FlagsSnapshotImplCopyWithImpl(
+      _$FlagsSnapshotImpl _value, $Res Function(_$FlagsSnapshotImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? flags = null,
+  }) {
+    return _then(_$FlagsSnapshotImpl(
+      flags: null == flags
+          ? _value._flags
+          : flags // ignore: cast_nullable_to_non_nullable
+              as Map<String, bool>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$FlagsSnapshotImpl implements _FlagsSnapshot {
+  const _$FlagsSnapshotImpl({required final Map<String, bool> flags})
+      : _flags = flags;
+
+  factory _$FlagsSnapshotImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FlagsSnapshotImplFromJson(json);
+
+  final Map<String, bool> _flags;
+  @override
+  Map<String, bool> get flags {
+    if (_flags is EqualUnmodifiableMapView) return _flags;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_flags);
+  }
+
+  @override
+  String toString() {
+    return 'FlagsSnapshot(flags: $flags)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FlagsSnapshotImpl &&
+            const DeepCollectionEquality().equals(other._flags, _flags));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_flags));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FlagsSnapshotImplCopyWith<_$FlagsSnapshotImpl> get copyWith =>
+      __$$FlagsSnapshotImplCopyWithImpl<_$FlagsSnapshotImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$FlagsSnapshotImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _FlagsSnapshot implements FlagsSnapshot {
+  const factory _FlagsSnapshot({required final Map<String, bool> flags}) =
+      _$FlagsSnapshotImpl;
+
+  factory _FlagsSnapshot.fromJson(Map<String, dynamic> json) =
+      _$FlagsSnapshotImpl.fromJson;
+
+  @override
+  Map<String, bool> get flags;
+  @override
+  @JsonKey(ignore: true)
+  _$$FlagsSnapshotImplCopyWith<_$FlagsSnapshotImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

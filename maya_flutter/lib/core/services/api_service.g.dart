@@ -709,6 +709,69 @@ Map<String, dynamic> _$$QueueSubmitResultImplToJson(
       'state': instance.state,
     };
 
+_$MetricsSnapshotImpl _$$MetricsSnapshotImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$MetricsSnapshotImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MetricsSnapshotImpl(
+          uptimeS: $checkedConvert('uptime_s', (v) => (v as num).toDouble()),
+          counters: $checkedConvert(
+              'counters', (v) => Map<String, dynamic>.from(v as Map)),
+          latency: $checkedConvert(
+              'latency', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'uptimeS': 'uptime_s'},
+    );
+
+Map<String, dynamic> _$$MetricsSnapshotImplToJson(
+        _$MetricsSnapshotImpl instance) =>
+    <String, dynamic>{
+      'uptime_s': instance.uptimeS,
+      'counters': instance.counters,
+      'latency': instance.latency,
+    };
+
+_$LatencyStatsImpl _$$LatencyStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$LatencyStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LatencyStatsImpl(
+          count: $checkedConvert('count', (v) => (v as num).toInt()),
+          avgMs: $checkedConvert('avg_ms', (v) => (v as num).toDouble()),
+          p95Ms: $checkedConvert('p95_ms', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'avgMs': 'avg_ms', 'p95Ms': 'p95_ms'},
+    );
+
+Map<String, dynamic> _$$LatencyStatsImplToJson(_$LatencyStatsImpl instance) =>
+    <String, dynamic>{
+      'count': instance.count,
+      'avg_ms': instance.avgMs,
+      'p95_ms': instance.p95Ms,
+    };
+
+_$FlagsSnapshotImpl _$$FlagsSnapshotImplFromJson(Map json) => $checkedCreate(
+      r'_$FlagsSnapshotImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$FlagsSnapshotImpl(
+          flags:
+              $checkedConvert('flags', (v) => Map<String, bool>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$FlagsSnapshotImplToJson(_$FlagsSnapshotImpl instance) =>
+    <String, dynamic>{
+      'flags': instance.flags,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

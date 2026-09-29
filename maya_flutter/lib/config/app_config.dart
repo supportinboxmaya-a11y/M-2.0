@@ -48,6 +48,10 @@ class AppConfig {
   static const String healthReady = '/health/ready';
   static const String healthSystem = '/health/system';
 
+  // Metrics & Flags
+  static const String metrics = '/api/v1/metrics';
+  static const String flags = '/api/v1/flags';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
