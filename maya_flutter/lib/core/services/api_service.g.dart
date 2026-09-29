@@ -583,6 +583,132 @@ Map<String, dynamic> _$$NetworkStatsImplToJson(_$NetworkStatsImpl instance) =>
       'bytes_recv': instance.bytesRecv,
     };
 
+_$QueueStatusImpl _$$QueueStatusImplFromJson(Map json) => $checkedCreate(
+      r'_$QueueStatusImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$QueueStatusImpl(
+          tasks: $checkedConvert(
+              'tasks', (v) => Map<String, dynamic>.from(v as Map)),
+          workers: $checkedConvert('workers', (v) => (v as num).toInt()),
+          running: $checkedConvert('running', (v) => v as bool),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$QueueStatusImplToJson(_$QueueStatusImpl instance) =>
+    <String, dynamic>{
+      'tasks': instance.tasks,
+      'workers': instance.workers,
+      'running': instance.running,
+    };
+
+_$QueueStatsImpl _$$QueueStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$QueueStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$QueueStatsImpl(
+          pending: $checkedConvert('pending', (v) => (v as num).toInt()),
+          running: $checkedConvert('running', (v) => (v as num).toInt()),
+          completed: $checkedConvert('completed', (v) => (v as num).toInt()),
+          failed: $checkedConvert('failed', (v) => (v as num).toInt()),
+          cancelled: $checkedConvert('cancelled', (v) => (v as num).toInt()),
+          total: $checkedConvert('total', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$QueueStatsImplToJson(_$QueueStatsImpl instance) =>
+    <String, dynamic>{
+      'pending': instance.pending,
+      'running': instance.running,
+      'completed': instance.completed,
+      'failed': instance.failed,
+      'cancelled': instance.cancelled,
+      'total': instance.total,
+    };
+
+_$QueueTaskStatusImpl _$$QueueTaskStatusImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$QueueTaskStatusImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$QueueTaskStatusImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          job: $checkedConvert('job', (v) => v as String),
+          state: $checkedConvert('state', (v) => v as String),
+          payload: $checkedConvert(
+              'payload', (v) => Map<String, dynamic>.from(v as Map)),
+          priority: $checkedConvert('priority', (v) => (v as num?)?.toInt()),
+          result: $checkedConvert('result', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+          createdAt: $checkedConvert('created_at', (v) => v as String?),
+          startedAt: $checkedConvert('started_at', (v) => v as String?),
+          completedAt: $checkedConvert('completed_at', (v) => v as String?),
+          workerId: $checkedConvert('worker_id', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'taskId': 'task_id',
+        'createdAt': 'created_at',
+        'startedAt': 'started_at',
+        'completedAt': 'completed_at',
+        'workerId': 'worker_id'
+      },
+    );
+
+Map<String, dynamic> _$$QueueTaskStatusImplToJson(
+    _$QueueTaskStatusImpl instance) {
+  final val = <String, dynamic>{
+    'task_id': instance.taskId,
+    'job': instance.job,
+    'state': instance.state,
+    'payload': instance.payload,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('priority', instance.priority);
+  writeNotNull('result', instance.result);
+  writeNotNull('error', instance.error);
+  writeNotNull('created_at', instance.createdAt);
+  writeNotNull('started_at', instance.startedAt);
+  writeNotNull('completed_at', instance.completedAt);
+  writeNotNull('worker_id', instance.workerId);
+  return val;
+}
+
+_$QueueSubmitResultImpl _$$QueueSubmitResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$QueueSubmitResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$QueueSubmitResultImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          job: $checkedConvert(
+              'job', (v) => Map<String, dynamic>.from(v as Map)),
+          state: $checkedConvert('state', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id'},
+    );
+
+Map<String, dynamic> _$$QueueSubmitResultImplToJson(
+        _$QueueSubmitResultImpl instance) =>
+    <String, dynamic>{
+      'task_id': instance.taskId,
+      'job': instance.job,
+      'state': instance.state,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

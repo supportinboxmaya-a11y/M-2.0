@@ -360,6 +360,43 @@ class ApiService {
     return SystemStats.fromJson(response.data);
   }
 
+  // Task Queue
+  Future<QueueStatus> getQueueStatus() async {
+    final response = await _dio.get(AppConfig.queueStatus);
+    return QueueStatus.fromJson(response.data);
+  }
+
+  Future<QueueStats> getQueueStats() async {
+    final response = await _dio.get(AppConfig.queueStats);
+    return QueueStats.fromJson(response.data);
+  }
+
+  Future<QueueTaskStatus> getQueueTask(String taskId) async {
+    final response = await _dio.get('${AppConfig.queueTask}$taskId');
+    return QueueTaskStatus.fromJson(response.data);
+  }
+
+  Future<QueueSubmitResult> submitQueueJob({
+    required String job,
+    required Map<String, dynamic> payload,
+    int priority = 0,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.queueSubmit,
+      data: {'job': job, 'payload': payload, 'priority': priority},
+    );
+    return QueueSubmitResult.fromJson(response.data);
+  }
+
+  Future<bool> cancelQueueTask(String taskId) async {
+    try {
+      final response = await _dio.post('${AppConfig.queueCancel}$taskId');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -685,4 +722,64 @@ class NetworkStats with _$NetworkStats {
 
   factory NetworkStats.fromJson(Map<String, dynamic> json) =>
       _$NetworkStatsFromJson(json);
+}
+
+// Task Queue Models
+@freezed
+class QueueStatus with _$QueueStatus {
+  const factory QueueStatus({
+    required Map<String, dynamic> tasks,
+    required int workers,
+    required bool running,
+  }) = _QueueStatus;
+
+  factory QueueStatus.fromJson(Map<String, dynamic> json) =>
+      _$QueueStatusFromJson(json);
+}
+
+@freezed
+class QueueStats with _$QueueStats {
+  const factory QueueStats({
+    required int pending,
+    required int running,
+    required int completed,
+    required int failed,
+    required int cancelled,
+    required int total,
+  }) = _QueueStats;
+
+  factory QueueStats.fromJson(Map<String, dynamic> json) =>
+      _$QueueStatsFromJson(json);
+}
+
+@freezed
+class QueueTaskStatus with _$QueueTaskStatus {
+  const factory QueueTaskStatus({
+    required String taskId,
+    required String job,
+    required String state,
+    required Map<String, dynamic> payload,
+    int? priority,
+    String? result,
+    String? error,
+    String? createdAt,
+    String? startedAt,
+    String? completedAt,
+    String? workerId,
+  }) = _QueueTaskStatus;
+
+  factory QueueTaskStatus.fromJson(Map<String, dynamic> json) =>
+      _$QueueTaskStatusFromJson(json);
+}
+
+@freezed
+class QueueSubmitResult with _$QueueSubmitResult {
+  const factory QueueSubmitResult({
+    required String taskId,
+    required Map<String, dynamic> job,
+    required String state,
+  }) = _QueueSubmitResult;
+
+  factory QueueSubmitResult.fromJson(Map<String, dynamic> json) =>
+      _$QueueSubmitResultFromJson(json);
 }

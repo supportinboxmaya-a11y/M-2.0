@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -1377,6 +1379,20 @@ class _AppDrawer extends ConsumerWidget {
                   onTap: () => Navigator.pop(context),
                 ),
                 _DrawerActionTile(
+                  icon: Icons.queue_rounded,
+                  label: 'Task Queue Monitor',
+                  subtitle: 'Live job list & workers',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _TaskQueueScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
                   icon: Icons.dns_rounded,
                   label: 'VPS Status',
                   subtitle: 'Connection: Online',
@@ -1796,6 +1812,434 @@ class _ChatBubble extends StatelessWidget {
     );
   }
 }
+
+// Task Queue Monitor Screen
+class _TaskQueueScreen extends ConsumerStatefulWidget {
+  const _TaskQueueScreen();
+
+  @override
+  ConsumerState<_TaskQueueScreen> createState() => _TaskQueueScreenState();
+}
+
+class _TaskQueueScreenState extends ConsumerState<_TaskQueueScreen> {
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (mounted) {
+        ref.invalidate(queueStatusProvider);
+        ref.invalidate(queueStatsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final queueStatusAsync = ref.watch(queueStatusProvider);
+    final queueStatsAsync = ref.watch(queueStatsProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Task Queue Monitor', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(queueStatusProvider);
+                ref.invalidate(queueStatsProvider);
+              },
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // Stats Cards
+            queueStatsAsync.when(
+              data: (stats) => Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    _StatCard(
+                      label: 'Pending',
+                      value: stats.pending.toString(),
+                      color: MayaTheme.neonOrange,
+                      icon: Icons.schedule_rounded,
+                    ),
+                    const SizedBox(width: 12),
+                    _StatCard(
+                      label: 'Running',
+                      value: stats.running.toString(),
+                      color: MayaTheme.neonCyan,
+                      icon: Icons.play_circle_rounded,
+                    ),
+                    const SizedBox(width: 12),
+                    _StatCard(
+                      label: 'Completed',
+                      value: stats.completed.toString(),
+                      color: MayaTheme.neonEmerald,
+                      icon: Icons.check_circle_rounded,
+                    ),
+                    const SizedBox(width: 12),
+                    _StatCard(
+                      label: 'Failed',
+                      value: stats.failed.toString(),
+                      color: MayaTheme.error,
+                      icon: Icons.error_rounded,
+                    ),
+                  ],
+                ),
+              ),
+              loading: () => const SizedBox(height: 100),
+              error: (_, __) => const SizedBox(height: 100),
+            ),
+
+            const Divider(color: MayaTheme.glassWhite10, height: 1),
+
+            // Task List
+            Expanded(
+              child: queueStatusAsync.when(
+                data: (status) {
+                  final tasks = status.tasks.values.toList()
+                    ..sort((a, b) {
+                      final aTime = a['createdAt'] ?? '';
+                      final bTime = b['createdAt'] ?? '';
+                      return bTime.compareTo(aTime);
+                    });
+
+                  if (tasks.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.queue_rounded,
+                              size: 64, color: Colors.white24),
+                          const SizedBox(height: 16),
+                          Text('No tasks in queue',
+                              style: MayaTheme.bodyMedium
+                                  .copyWith(color: Colors.white38)),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      return _TaskQueueTile(task: task);
+                    },
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
+                  ),
+                ),
+                error: (err, _) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_rounded,
+                          size: 48, color: MayaTheme.error),
+                      const SizedBox(height: 16),
+                      Text('Error loading queue',
+                          style: MayaTheme.bodyMedium
+                              .copyWith(color: MayaTheme.error)),
+                      const SizedBox(height: 8),
+                      Text(err.toString(),
+                          style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _StatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: MayaTheme.glassCardGlow(glowColor: color),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 8),
+            Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+            const SizedBox(height: 4),
+            Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TaskQueueTile extends ConsumerStatefulWidget {
+  final Map<String, dynamic> task;
+
+  const _TaskQueueTile({required this.task});
+
+  @override
+  ConsumerState<_TaskQueueTile> createState() => _TaskQueueTileState();
+}
+
+class _TaskQueueTileState extends ConsumerState<_TaskQueueTile> {
+  Color _getStateColor(String state) {
+    switch (state) {
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'running':
+        return MayaTheme.neonCyan;
+      case 'completed':
+        return MayaTheme.neonEmerald;
+      case 'failed':
+        return MayaTheme.error;
+      case 'cancelled':
+        return Colors.white38;
+      default:
+        return Colors.white54;
+    }
+  }
+
+  IconData _getStateIcon(String state) {
+    switch (state) {
+      case 'pending':
+        return Icons.schedule_rounded;
+      case 'running':
+        return Icons.play_circle_rounded;
+      case 'completed':
+        return Icons.check_circle_rounded;
+      case 'failed':
+        return Icons.error_rounded;
+      case 'cancelled':
+        return Icons.cancel_rounded;
+      default:
+        return Icons.help_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final task = widget.task;
+    final taskId = task['taskId'] ?? task['id'] ?? 'unknown';
+    final job = task['job'] ?? 'unknown';
+    final state = task['state'] ?? 'unknown';
+    final payload = task['payload'] ?? {};
+    final error = task['error'];
+    final createdAt = task['createdAt'] ?? '';
+    final startedAt = task['startedAt'];
+    final completedAt = task['completedAt'];
+    final workerId = task['workerId'];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _getStateColor(state).withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(_getStateIcon(state), color: _getStateColor(state), size: 20),
+        ),
+        title: Text(
+          job,
+          style: MayaTheme.titleMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: _getStateColor(state).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    state.toUpperCase(),
+                    style: MayaTheme.labelSmall.copyWith(
+                      color: _getStateColor(state),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                if (workerId != null) ...[
+                  const SizedBox(width: 8),
+                  Text(
+                    'Worker: $workerId',
+                    style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+        trailing: state == 'pending' || state == 'running'
+            ? IconButton(
+                icon: const Icon(Icons.cancel_rounded, color: MayaTheme.error),
+                onPressed: () async {
+                  final apiService = ref.read(apiServiceProvider);
+                  final success = await apiService.cancelQueueTask(taskId);
+                  if (success && mounted) {
+                    ref.invalidate(queueStatusProvider);
+                    ref.invalidate(queueStatsProvider);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Task $taskId cancelled'),
+                        backgroundColor: MayaTheme.neonEmerald,
+                      ),
+                    );
+                  } else if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to cancel task $taskId'),
+                        backgroundColor: MayaTheme.error,
+                      ),
+                    );
+                  }
+                },
+              )
+            : null,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Task ID', value: taskId),
+                _DetailRow(label: 'Job Type', value: job),
+                _DetailRow(label: 'State', value: state),
+                if (createdAt.isNotEmpty)
+                  _DetailRow(label: 'Created', value: createdAt),
+                if (startedAt != null)
+                  _DetailRow(label: 'Started', value: startedAt),
+                if (completedAt != null)
+                  _DetailRow(label: 'Completed', value: completedAt),
+                if (workerId != null)
+                  _DetailRow(label: 'Worker', value: workerId),
+                if (payload.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text('Payload:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.slate900,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.glassWhite10),
+                    ),
+                    child: Text(
+                      payload.toString(),
+                      style: MayaTheme.bodySmall.copyWith(
+                          color: Colors.white70, fontFamily: 'monospace'),
+                    ),
+                  ),
+                ],
+                if (error != null) ...[
+                  const SizedBox(height: 8),
+                  Text('Error:', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.error)),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.error.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(
+                      error,
+                      style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DetailRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Queue Providers
+final queueStatusProvider = FutureProvider<QueueStatus>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getQueueStatus();
+});
+
+final queueStatsProvider = FutureProvider<QueueStats>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getQueueStats();
+});
 
 class _SettingsScreen extends ConsumerWidget {
   const _SettingsScreen();

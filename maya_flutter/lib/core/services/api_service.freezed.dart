@@ -3831,3 +3831,976 @@ abstract class _NetworkStats implements NetworkStats {
   _$$NetworkStatsImplCopyWith<_$NetworkStatsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+QueueStatus _$QueueStatusFromJson(Map<String, dynamic> json) {
+  return _QueueStatus.fromJson(json);
+}
+
+/// @nodoc
+mixin _$QueueStatus {
+  Map<String, dynamic> get tasks => throw _privateConstructorUsedError;
+  int get workers => throw _privateConstructorUsedError;
+  bool get running => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $QueueStatusCopyWith<QueueStatus> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $QueueStatusCopyWith<$Res> {
+  factory $QueueStatusCopyWith(
+          QueueStatus value, $Res Function(QueueStatus) then) =
+      _$QueueStatusCopyWithImpl<$Res, QueueStatus>;
+  @useResult
+  $Res call({Map<String, dynamic> tasks, int workers, bool running});
+}
+
+/// @nodoc
+class _$QueueStatusCopyWithImpl<$Res, $Val extends QueueStatus>
+    implements $QueueStatusCopyWith<$Res> {
+  _$QueueStatusCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tasks = null,
+    Object? workers = null,
+    Object? running = null,
+  }) {
+    return _then(_value.copyWith(
+      tasks: null == tasks
+          ? _value.tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      workers: null == workers
+          ? _value.workers
+          : workers // ignore: cast_nullable_to_non_nullable
+              as int,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$QueueStatusImplCopyWith<$Res>
+    implements $QueueStatusCopyWith<$Res> {
+  factory _$$QueueStatusImplCopyWith(
+          _$QueueStatusImpl value, $Res Function(_$QueueStatusImpl) then) =
+      __$$QueueStatusImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Map<String, dynamic> tasks, int workers, bool running});
+}
+
+/// @nodoc
+class __$$QueueStatusImplCopyWithImpl<$Res>
+    extends _$QueueStatusCopyWithImpl<$Res, _$QueueStatusImpl>
+    implements _$$QueueStatusImplCopyWith<$Res> {
+  __$$QueueStatusImplCopyWithImpl(
+      _$QueueStatusImpl _value, $Res Function(_$QueueStatusImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tasks = null,
+    Object? workers = null,
+    Object? running = null,
+  }) {
+    return _then(_$QueueStatusImpl(
+      tasks: null == tasks
+          ? _value._tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      workers: null == workers
+          ? _value.workers
+          : workers // ignore: cast_nullable_to_non_nullable
+              as int,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$QueueStatusImpl implements _QueueStatus {
+  const _$QueueStatusImpl(
+      {required final Map<String, dynamic> tasks,
+      required this.workers,
+      required this.running})
+      : _tasks = tasks;
+
+  factory _$QueueStatusImpl.fromJson(Map<String, dynamic> json) =>
+      _$$QueueStatusImplFromJson(json);
+
+  final Map<String, dynamic> _tasks;
+  @override
+  Map<String, dynamic> get tasks {
+    if (_tasks is EqualUnmodifiableMapView) return _tasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_tasks);
+  }
+
+  @override
+  final int workers;
+  @override
+  final bool running;
+
+  @override
+  String toString() {
+    return 'QueueStatus(tasks: $tasks, workers: $workers, running: $running)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$QueueStatusImpl &&
+            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
+            (identical(other.workers, workers) || other.workers == workers) &&
+            (identical(other.running, running) || other.running == running));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_tasks), workers, running);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$QueueStatusImplCopyWith<_$QueueStatusImpl> get copyWith =>
+      __$$QueueStatusImplCopyWithImpl<_$QueueStatusImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$QueueStatusImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _QueueStatus implements QueueStatus {
+  const factory _QueueStatus(
+      {required final Map<String, dynamic> tasks,
+      required final int workers,
+      required final bool running}) = _$QueueStatusImpl;
+
+  factory _QueueStatus.fromJson(Map<String, dynamic> json) =
+      _$QueueStatusImpl.fromJson;
+
+  @override
+  Map<String, dynamic> get tasks;
+  @override
+  int get workers;
+  @override
+  bool get running;
+  @override
+  @JsonKey(ignore: true)
+  _$$QueueStatusImplCopyWith<_$QueueStatusImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+QueueStats _$QueueStatsFromJson(Map<String, dynamic> json) {
+  return _QueueStats.fromJson(json);
+}
+
+/// @nodoc
+mixin _$QueueStats {
+  int get pending => throw _privateConstructorUsedError;
+  int get running => throw _privateConstructorUsedError;
+  int get completed => throw _privateConstructorUsedError;
+  int get failed => throw _privateConstructorUsedError;
+  int get cancelled => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $QueueStatsCopyWith<QueueStats> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $QueueStatsCopyWith<$Res> {
+  factory $QueueStatsCopyWith(
+          QueueStats value, $Res Function(QueueStats) then) =
+      _$QueueStatsCopyWithImpl<$Res, QueueStats>;
+  @useResult
+  $Res call(
+      {int pending,
+      int running,
+      int completed,
+      int failed,
+      int cancelled,
+      int total});
+}
+
+/// @nodoc
+class _$QueueStatsCopyWithImpl<$Res, $Val extends QueueStats>
+    implements $QueueStatsCopyWith<$Res> {
+  _$QueueStatsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pending = null,
+    Object? running = null,
+    Object? completed = null,
+    Object? failed = null,
+    Object? cancelled = null,
+    Object? total = null,
+  }) {
+    return _then(_value.copyWith(
+      pending: null == pending
+          ? _value.pending
+          : pending // ignore: cast_nullable_to_non_nullable
+              as int,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as int,
+      completed: null == completed
+          ? _value.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as int,
+      failed: null == failed
+          ? _value.failed
+          : failed // ignore: cast_nullable_to_non_nullable
+              as int,
+      cancelled: null == cancelled
+          ? _value.cancelled
+          : cancelled // ignore: cast_nullable_to_non_nullable
+              as int,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$QueueStatsImplCopyWith<$Res>
+    implements $QueueStatsCopyWith<$Res> {
+  factory _$$QueueStatsImplCopyWith(
+          _$QueueStatsImpl value, $Res Function(_$QueueStatsImpl) then) =
+      __$$QueueStatsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int pending,
+      int running,
+      int completed,
+      int failed,
+      int cancelled,
+      int total});
+}
+
+/// @nodoc
+class __$$QueueStatsImplCopyWithImpl<$Res>
+    extends _$QueueStatsCopyWithImpl<$Res, _$QueueStatsImpl>
+    implements _$$QueueStatsImplCopyWith<$Res> {
+  __$$QueueStatsImplCopyWithImpl(
+      _$QueueStatsImpl _value, $Res Function(_$QueueStatsImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pending = null,
+    Object? running = null,
+    Object? completed = null,
+    Object? failed = null,
+    Object? cancelled = null,
+    Object? total = null,
+  }) {
+    return _then(_$QueueStatsImpl(
+      pending: null == pending
+          ? _value.pending
+          : pending // ignore: cast_nullable_to_non_nullable
+              as int,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as int,
+      completed: null == completed
+          ? _value.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as int,
+      failed: null == failed
+          ? _value.failed
+          : failed // ignore: cast_nullable_to_non_nullable
+              as int,
+      cancelled: null == cancelled
+          ? _value.cancelled
+          : cancelled // ignore: cast_nullable_to_non_nullable
+              as int,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$QueueStatsImpl implements _QueueStats {
+  const _$QueueStatsImpl(
+      {required this.pending,
+      required this.running,
+      required this.completed,
+      required this.failed,
+      required this.cancelled,
+      required this.total});
+
+  factory _$QueueStatsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$QueueStatsImplFromJson(json);
+
+  @override
+  final int pending;
+  @override
+  final int running;
+  @override
+  final int completed;
+  @override
+  final int failed;
+  @override
+  final int cancelled;
+  @override
+  final int total;
+
+  @override
+  String toString() {
+    return 'QueueStats(pending: $pending, running: $running, completed: $completed, failed: $failed, cancelled: $cancelled, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$QueueStatsImpl &&
+            (identical(other.pending, pending) || other.pending == pending) &&
+            (identical(other.running, running) || other.running == running) &&
+            (identical(other.completed, completed) ||
+                other.completed == completed) &&
+            (identical(other.failed, failed) || other.failed == failed) &&
+            (identical(other.cancelled, cancelled) ||
+                other.cancelled == cancelled) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, pending, running, completed, failed, cancelled, total);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$QueueStatsImplCopyWith<_$QueueStatsImpl> get copyWith =>
+      __$$QueueStatsImplCopyWithImpl<_$QueueStatsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$QueueStatsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _QueueStats implements QueueStats {
+  const factory _QueueStats(
+      {required final int pending,
+      required final int running,
+      required final int completed,
+      required final int failed,
+      required final int cancelled,
+      required final int total}) = _$QueueStatsImpl;
+
+  factory _QueueStats.fromJson(Map<String, dynamic> json) =
+      _$QueueStatsImpl.fromJson;
+
+  @override
+  int get pending;
+  @override
+  int get running;
+  @override
+  int get completed;
+  @override
+  int get failed;
+  @override
+  int get cancelled;
+  @override
+  int get total;
+  @override
+  @JsonKey(ignore: true)
+  _$$QueueStatsImplCopyWith<_$QueueStatsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+QueueTaskStatus _$QueueTaskStatusFromJson(Map<String, dynamic> json) {
+  return _QueueTaskStatus.fromJson(json);
+}
+
+/// @nodoc
+mixin _$QueueTaskStatus {
+  String get taskId => throw _privateConstructorUsedError;
+  String get job => throw _privateConstructorUsedError;
+  String get state => throw _privateConstructorUsedError;
+  Map<String, dynamic> get payload => throw _privateConstructorUsedError;
+  int? get priority => throw _privateConstructorUsedError;
+  String? get result => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
+  String? get startedAt => throw _privateConstructorUsedError;
+  String? get completedAt => throw _privateConstructorUsedError;
+  String? get workerId => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $QueueTaskStatusCopyWith<QueueTaskStatus> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $QueueTaskStatusCopyWith<$Res> {
+  factory $QueueTaskStatusCopyWith(
+          QueueTaskStatus value, $Res Function(QueueTaskStatus) then) =
+      _$QueueTaskStatusCopyWithImpl<$Res, QueueTaskStatus>;
+  @useResult
+  $Res call(
+      {String taskId,
+      String job,
+      String state,
+      Map<String, dynamic> payload,
+      int? priority,
+      String? result,
+      String? error,
+      String? createdAt,
+      String? startedAt,
+      String? completedAt,
+      String? workerId});
+}
+
+/// @nodoc
+class _$QueueTaskStatusCopyWithImpl<$Res, $Val extends QueueTaskStatus>
+    implements $QueueTaskStatusCopyWith<$Res> {
+  _$QueueTaskStatusCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? job = null,
+    Object? state = null,
+    Object? payload = null,
+    Object? priority = freezed,
+    Object? result = freezed,
+    Object? error = freezed,
+    Object? createdAt = freezed,
+    Object? startedAt = freezed,
+    Object? completedAt = freezed,
+    Object? workerId = freezed,
+  }) {
+    return _then(_value.copyWith(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      job: null == job
+          ? _value.job
+          : job // ignore: cast_nullable_to_non_nullable
+              as String,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+      payload: null == payload
+          ? _value.payload
+          : payload // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      priority: freezed == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as int?,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startedAt: freezed == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      completedAt: freezed == completedAt
+          ? _value.completedAt
+          : completedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      workerId: freezed == workerId
+          ? _value.workerId
+          : workerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$QueueTaskStatusImplCopyWith<$Res>
+    implements $QueueTaskStatusCopyWith<$Res> {
+  factory _$$QueueTaskStatusImplCopyWith(_$QueueTaskStatusImpl value,
+          $Res Function(_$QueueTaskStatusImpl) then) =
+      __$$QueueTaskStatusImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String taskId,
+      String job,
+      String state,
+      Map<String, dynamic> payload,
+      int? priority,
+      String? result,
+      String? error,
+      String? createdAt,
+      String? startedAt,
+      String? completedAt,
+      String? workerId});
+}
+
+/// @nodoc
+class __$$QueueTaskStatusImplCopyWithImpl<$Res>
+    extends _$QueueTaskStatusCopyWithImpl<$Res, _$QueueTaskStatusImpl>
+    implements _$$QueueTaskStatusImplCopyWith<$Res> {
+  __$$QueueTaskStatusImplCopyWithImpl(
+      _$QueueTaskStatusImpl _value, $Res Function(_$QueueTaskStatusImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? job = null,
+    Object? state = null,
+    Object? payload = null,
+    Object? priority = freezed,
+    Object? result = freezed,
+    Object? error = freezed,
+    Object? createdAt = freezed,
+    Object? startedAt = freezed,
+    Object? completedAt = freezed,
+    Object? workerId = freezed,
+  }) {
+    return _then(_$QueueTaskStatusImpl(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      job: null == job
+          ? _value.job
+          : job // ignore: cast_nullable_to_non_nullable
+              as String,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+      payload: null == payload
+          ? _value._payload
+          : payload // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      priority: freezed == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as int?,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startedAt: freezed == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      completedAt: freezed == completedAt
+          ? _value.completedAt
+          : completedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      workerId: freezed == workerId
+          ? _value.workerId
+          : workerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$QueueTaskStatusImpl implements _QueueTaskStatus {
+  const _$QueueTaskStatusImpl(
+      {required this.taskId,
+      required this.job,
+      required this.state,
+      required final Map<String, dynamic> payload,
+      this.priority,
+      this.result,
+      this.error,
+      this.createdAt,
+      this.startedAt,
+      this.completedAt,
+      this.workerId})
+      : _payload = payload;
+
+  factory _$QueueTaskStatusImpl.fromJson(Map<String, dynamic> json) =>
+      _$$QueueTaskStatusImplFromJson(json);
+
+  @override
+  final String taskId;
+  @override
+  final String job;
+  @override
+  final String state;
+  final Map<String, dynamic> _payload;
+  @override
+  Map<String, dynamic> get payload {
+    if (_payload is EqualUnmodifiableMapView) return _payload;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_payload);
+  }
+
+  @override
+  final int? priority;
+  @override
+  final String? result;
+  @override
+  final String? error;
+  @override
+  final String? createdAt;
+  @override
+  final String? startedAt;
+  @override
+  final String? completedAt;
+  @override
+  final String? workerId;
+
+  @override
+  String toString() {
+    return 'QueueTaskStatus(taskId: $taskId, job: $job, state: $state, payload: $payload, priority: $priority, result: $result, error: $error, createdAt: $createdAt, startedAt: $startedAt, completedAt: $completedAt, workerId: $workerId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$QueueTaskStatusImpl &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.job, job) || other.job == job) &&
+            (identical(other.state, state) || other.state == state) &&
+            const DeepCollectionEquality().equals(other._payload, _payload) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.result, result) || other.result == result) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.startedAt, startedAt) ||
+                other.startedAt == startedAt) &&
+            (identical(other.completedAt, completedAt) ||
+                other.completedAt == completedAt) &&
+            (identical(other.workerId, workerId) ||
+                other.workerId == workerId));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      taskId,
+      job,
+      state,
+      const DeepCollectionEquality().hash(_payload),
+      priority,
+      result,
+      error,
+      createdAt,
+      startedAt,
+      completedAt,
+      workerId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$QueueTaskStatusImplCopyWith<_$QueueTaskStatusImpl> get copyWith =>
+      __$$QueueTaskStatusImplCopyWithImpl<_$QueueTaskStatusImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$QueueTaskStatusImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _QueueTaskStatus implements QueueTaskStatus {
+  const factory _QueueTaskStatus(
+      {required final String taskId,
+      required final String job,
+      required final String state,
+      required final Map<String, dynamic> payload,
+      final int? priority,
+      final String? result,
+      final String? error,
+      final String? createdAt,
+      final String? startedAt,
+      final String? completedAt,
+      final String? workerId}) = _$QueueTaskStatusImpl;
+
+  factory _QueueTaskStatus.fromJson(Map<String, dynamic> json) =
+      _$QueueTaskStatusImpl.fromJson;
+
+  @override
+  String get taskId;
+  @override
+  String get job;
+  @override
+  String get state;
+  @override
+  Map<String, dynamic> get payload;
+  @override
+  int? get priority;
+  @override
+  String? get result;
+  @override
+  String? get error;
+  @override
+  String? get createdAt;
+  @override
+  String? get startedAt;
+  @override
+  String? get completedAt;
+  @override
+  String? get workerId;
+  @override
+  @JsonKey(ignore: true)
+  _$$QueueTaskStatusImplCopyWith<_$QueueTaskStatusImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+QueueSubmitResult _$QueueSubmitResultFromJson(Map<String, dynamic> json) {
+  return _QueueSubmitResult.fromJson(json);
+}
+
+/// @nodoc
+mixin _$QueueSubmitResult {
+  String get taskId => throw _privateConstructorUsedError;
+  Map<String, dynamic> get job => throw _privateConstructorUsedError;
+  String get state => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $QueueSubmitResultCopyWith<QueueSubmitResult> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $QueueSubmitResultCopyWith<$Res> {
+  factory $QueueSubmitResultCopyWith(
+          QueueSubmitResult value, $Res Function(QueueSubmitResult) then) =
+      _$QueueSubmitResultCopyWithImpl<$Res, QueueSubmitResult>;
+  @useResult
+  $Res call({String taskId, Map<String, dynamic> job, String state});
+}
+
+/// @nodoc
+class _$QueueSubmitResultCopyWithImpl<$Res, $Val extends QueueSubmitResult>
+    implements $QueueSubmitResultCopyWith<$Res> {
+  _$QueueSubmitResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? job = null,
+    Object? state = null,
+  }) {
+    return _then(_value.copyWith(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      job: null == job
+          ? _value.job
+          : job // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$QueueSubmitResultImplCopyWith<$Res>
+    implements $QueueSubmitResultCopyWith<$Res> {
+  factory _$$QueueSubmitResultImplCopyWith(_$QueueSubmitResultImpl value,
+          $Res Function(_$QueueSubmitResultImpl) then) =
+      __$$QueueSubmitResultImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String taskId, Map<String, dynamic> job, String state});
+}
+
+/// @nodoc
+class __$$QueueSubmitResultImplCopyWithImpl<$Res>
+    extends _$QueueSubmitResultCopyWithImpl<$Res, _$QueueSubmitResultImpl>
+    implements _$$QueueSubmitResultImplCopyWith<$Res> {
+  __$$QueueSubmitResultImplCopyWithImpl(_$QueueSubmitResultImpl _value,
+      $Res Function(_$QueueSubmitResultImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? job = null,
+    Object? state = null,
+  }) {
+    return _then(_$QueueSubmitResultImpl(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      job: null == job
+          ? _value._job
+          : job // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$QueueSubmitResultImpl implements _QueueSubmitResult {
+  const _$QueueSubmitResultImpl(
+      {required this.taskId,
+      required final Map<String, dynamic> job,
+      required this.state})
+      : _job = job;
+
+  factory _$QueueSubmitResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$QueueSubmitResultImplFromJson(json);
+
+  @override
+  final String taskId;
+  final Map<String, dynamic> _job;
+  @override
+  Map<String, dynamic> get job {
+    if (_job is EqualUnmodifiableMapView) return _job;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_job);
+  }
+
+  @override
+  final String state;
+
+  @override
+  String toString() {
+    return 'QueueSubmitResult(taskId: $taskId, job: $job, state: $state)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$QueueSubmitResultImpl &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            const DeepCollectionEquality().equals(other._job, _job) &&
+            (identical(other.state, state) || other.state == state));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, taskId, const DeepCollectionEquality().hash(_job), state);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$QueueSubmitResultImplCopyWith<_$QueueSubmitResultImpl> get copyWith =>
+      __$$QueueSubmitResultImplCopyWithImpl<_$QueueSubmitResultImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$QueueSubmitResultImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _QueueSubmitResult implements QueueSubmitResult {
+  const factory _QueueSubmitResult(
+      {required final String taskId,
+      required final Map<String, dynamic> job,
+      required final String state}) = _$QueueSubmitResultImpl;
+
+  factory _QueueSubmitResult.fromJson(Map<String, dynamic> json) =
+      _$QueueSubmitResultImpl.fromJson;
+
+  @override
+  String get taskId;
+  @override
+  Map<String, dynamic> get job;
+  @override
+  String get state;
+  @override
+  @JsonKey(ignore: true)
+  _$$QueueSubmitResultImplCopyWith<_$QueueSubmitResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

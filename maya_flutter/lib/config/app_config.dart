@@ -32,6 +32,13 @@ class AppConfig {
   static const String systemStatus = '/api/v1/system/status';
   static const String systemStats = '/api/v1/tools/system_stats/run';
 
+  // Task Queue
+  static const String queueStatus = '/api/v1/queue/status';
+  static const String queueStats = '/api/v1/queue/stats';
+  static const String queueTask = '/api/v1/queue/task/';
+  static const String queueSubmit = '/api/v1/queue/submit';
+  static const String queueCancel = '/api/v1/queue/cancel/';
+
   // WebSocket
   static const String wsEvents = '/api/v1/events';
   static const String wsAgentStream = '/ws/stream/';
