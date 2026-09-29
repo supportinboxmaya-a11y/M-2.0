@@ -1917,6 +1917,401 @@ Map<String, dynamic> _$$LLMStrategyResponseImplToJson(
       'order': instance.order,
     };
 
+_$RoleInfoImpl _$$RoleInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$RoleInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RoleInfoImpl(
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          permissions: $checkedConvert('permissions',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$RoleInfoImplToJson(_$RoleInfoImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'description': instance.description,
+      'permissions': instance.permissions,
+    };
+
+_$AdminRolesResponseImpl _$$AdminRolesResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminRolesResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminRolesResponseImpl(
+          roles: $checkedConvert(
+              'roles',
+              (v) => (v as Map).map(
+                    (k, e) => MapEntry(k as String,
+                        RoleInfo.fromJson(Map<String, dynamic>.from(e as Map))),
+                  )),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminRolesResponseImplToJson(
+        _$AdminRolesResponseImpl instance) =>
+    <String, dynamic>{
+      'roles': instance.roles,
+    };
+
+_$AdminOrgImpl _$$AdminOrgImplFromJson(Map json) => $checkedCreate(
+      r'_$AdminOrgImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminOrgImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+          memberCount:
+              $checkedConvert('member_count', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'createdAt': 'created_at',
+        'memberCount': 'member_count'
+      },
+    );
+
+Map<String, dynamic> _$$AdminOrgImplToJson(_$AdminOrgImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('member_count', instance.memberCount);
+  return val;
+}
+
+_$AdminOrgsResponseImpl _$$AdminOrgsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminOrgsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminOrgsResponseImpl(
+          orgs: $checkedConvert(
+              'orgs',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      AdminOrg.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminOrgsResponseImplToJson(
+        _$AdminOrgsResponseImpl instance) =>
+    <String, dynamic>{
+      'orgs': instance.orgs,
+    };
+
+_$AdminOrgResponseImpl _$$AdminOrgResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminOrgResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminOrgResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminOrgResponseImplToJson(
+        _$AdminOrgResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+_$OrgMemberImpl _$$OrgMemberImplFromJson(Map json) => $checkedCreate(
+      r'_$OrgMemberImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$OrgMemberImpl(
+          email: $checkedConvert('email', (v) => v as String),
+          role: $checkedConvert('role', (v) => v as String),
+          teamId: $checkedConvert('team_id', (v) => v as String?),
+          joinedAt: $checkedConvert('joined_at', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'teamId': 'team_id', 'joinedAt': 'joined_at'},
+    );
+
+Map<String, dynamic> _$$OrgMemberImplToJson(_$OrgMemberImpl instance) {
+  final val = <String, dynamic>{
+    'email': instance.email,
+    'role': instance.role,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('team_id', instance.teamId);
+  val['joined_at'] = instance.joinedAt;
+  return val;
+}
+
+_$AdminOrgMembersResponseImpl _$$AdminOrgMembersResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AdminOrgMembersResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminOrgMembersResponseImpl(
+          members: $checkedConvert(
+              'members',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      OrgMember.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminOrgMembersResponseImplToJson(
+        _$AdminOrgMembersResponseImpl instance) =>
+    <String, dynamic>{
+      'members': instance.members,
+    };
+
+_$AdminApiKeyImpl _$$AdminApiKeyImplFromJson(Map json) => $checkedCreate(
+      r'_$AdminApiKeyImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminApiKeyImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          prefix: $checkedConvert('prefix', (v) => v as String),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+          lastUsedAt: $checkedConvert('last_used_at', (v) => v as String?),
+          revoked: $checkedConvert('revoked', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'createdAt': 'created_at',
+        'lastUsedAt': 'last_used_at'
+      },
+    );
+
+Map<String, dynamic> _$$AdminApiKeyImplToJson(_$AdminApiKeyImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'prefix': instance.prefix,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('last_used_at', instance.lastUsedAt);
+  val['revoked'] = instance.revoked;
+  return val;
+}
+
+_$AdminApiKeysResponseImpl _$$AdminApiKeysResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminApiKeysResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminApiKeysResponseImpl(
+          keys: $checkedConvert(
+              'keys',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      AdminApiKey.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminApiKeysResponseImplToJson(
+        _$AdminApiKeysResponseImpl instance) =>
+    <String, dynamic>{
+      'keys': instance.keys,
+    };
+
+_$AdminApiKeyCreatedResponseImpl _$$AdminApiKeyCreatedResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AdminApiKeyCreatedResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminApiKeyCreatedResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          key: $checkedConvert('key', (v) => v as String),
+          prefix: $checkedConvert('prefix', (v) => v as String),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$AdminApiKeyCreatedResponseImplToJson(
+        _$AdminApiKeyCreatedResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'key': instance.key,
+      'prefix': instance.prefix,
+      'created_at': instance.createdAt,
+    };
+
+_$AuditEventImpl _$$AuditEventImplFromJson(Map json) => $checkedCreate(
+      r'_$AuditEventImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AuditEventImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          actor: $checkedConvert('actor', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          target: $checkedConvert('target', (v) => v as String),
+          details: $checkedConvert(
+              'details', (v) => Map<String, dynamic>.from(v as Map)),
+          timestamp: $checkedConvert('timestamp', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AuditEventImplToJson(_$AuditEventImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'actor': instance.actor,
+      'action': instance.action,
+      'target': instance.target,
+      'details': instance.details,
+      'timestamp': instance.timestamp,
+    };
+
+_$AdminAuditResponseImpl _$$AdminAuditResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminAuditResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminAuditResponseImpl(
+          events: $checkedConvert(
+              'events',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      AuditEvent.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminAuditResponseImplToJson(
+        _$AdminAuditResponseImpl instance) =>
+    <String, dynamic>{
+      'events': instance.events,
+    };
+
+_$AdminUsageResponseImpl _$$AdminUsageResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminUsageResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminUsageResponseImpl(
+          summary: $checkedConvert(
+              'summary', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminUsageResponseImplToJson(
+        _$AdminUsageResponseImpl instance) =>
+    <String, dynamic>{
+      'summary': instance.summary,
+    };
+
+_$AdminDashboardResponseImpl _$$AdminDashboardResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminDashboardResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminDashboardResponseImpl(
+          metrics: $checkedConvert(
+              'metrics', (v) => Map<String, dynamic>.from(v as Map)),
+          agents: $checkedConvert(
+              'agents', (v) => Map<String, dynamic>.from(v as Map)),
+          providers: $checkedConvert(
+              'providers', (v) => Map<String, dynamic>.from(v as Map)),
+          queueDepth: $checkedConvert('queue_depth', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'queueDepth': 'queue_depth'},
+    );
+
+Map<String, dynamic> _$$AdminDashboardResponseImplToJson(
+        _$AdminDashboardResponseImpl instance) =>
+    <String, dynamic>{
+      'metrics': instance.metrics,
+      'agents': instance.agents,
+      'providers': instance.providers,
+      'queue_depth': instance.queueDepth,
+    };
+
+_$AdminOwnerModeResponseImpl _$$AdminOwnerModeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AdminOwnerModeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AdminOwnerModeResponseImpl(
+          mode: $checkedConvert('mode', (v) => v as String),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AdminOwnerModeResponseImplToJson(
+    _$AdminOwnerModeResponseImpl instance) {
+  final val = <String, dynamic>{
+    'mode': instance.mode,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

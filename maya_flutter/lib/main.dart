@@ -1372,6 +1372,20 @@ class _AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
+                _DrawerActionTile(
+                  icon: Icons.business_rounded,
+                  label: 'Enterprise Layer',
+                  subtitle: 'RBAC, Orgs, API Keys, Audit',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _EnterpriseScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -7550,4 +7564,984 @@ final llmStatsProvider = FutureProvider<LLMStatsResponse>((ref) async {
 final llmStrategyProvider = FutureProvider.family<LLMStrategyResponse, String>((ref, strategy) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getLLMStrategy(strategy: strategy);
+});
+
+// Enterprise Layer Screen
+class _EnterpriseScreen extends ConsumerStatefulWidget {
+  const _EnterpriseScreen();
+
+  @override
+  ConsumerState<_EnterpriseScreen> createState() => _EnterpriseScreenState();
+}
+
+class _EnterpriseScreenState extends ConsumerState<_EnterpriseScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 5, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(adminRolesProvider);
+        ref.invalidate(adminOrgsProvider);
+        ref.invalidate(adminApiKeysProvider);
+        ref.invalidate(adminAuditProvider);
+        ref.invalidate(adminDashboardProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Enterprise Layer', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(adminRolesProvider);
+                ref.invalidate(adminOrgsProvider);
+                ref.invalidate(adminApiKeysProvider);
+                ref.invalidate(adminAuditProvider);
+                ref.invalidate(adminDashboardProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.security_rounded), text: 'RBAC'),
+              Tab(icon: Icon(Icons.groups_rounded), text: 'Organizations'),
+              Tab(icon: Icon(Icons.key_rounded), text: 'API Keys'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'Audit Log'),
+              Tab(icon: Icon(Icons.dashboard_rounded), text: 'Dashboard'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildRBTab(),
+            _buildOrgsTab(),
+            _buildApiKeysTab(),
+            _buildAuditTab(),
+            _buildDashboardTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRBTab() {
+    final rolesAsync = ref.watch(adminRolesProvider);
+
+    return rolesAsync.when(
+      data: (response) {
+        if (response.roles.isEmpty) {
+          return const Center(
+            child: Text('No roles found', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.roles.length,
+          itemBuilder: (context, index) {
+            final entry = response.roles.entries.elementAt(index);
+            final roleName = entry.key;
+            final role = entry.value;
+            return _RoleTile(roleName: roleName, role: role);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading roles', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrgsTab() {
+    final orgsAsync = ref.watch(adminOrgsProvider);
+
+    return orgsAsync.when(
+      data: (response) {
+        if (response.orgs.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.groups_rounded, size: 64, color: Colors.white24),
+                const SizedBox(height: 16),
+                Text('No organizations', style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: _showCreateOrgDialog,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Create Organization'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MayaTheme.neonCyan,
+                    foregroundColor: MayaTheme.slate900,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.orgs.length,
+          itemBuilder: (context, index) {
+            final org = response.orgs[index];
+            return _OrgTile(org: org);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading orgs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCreateOrgDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Create Organization', style: MayaTheme.headlineSmall),
+        content: TextField(
+          controller: controller,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            hintText: 'Organization name',
+            hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                Navigator.pop(context);
+                try {
+                  final apiService = ref.read(apiServiceProvider);
+                  await apiService.createAdminOrg(name);
+                  ref.invalidate(adminOrgsProvider);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Organization created'), backgroundColor: MayaTheme.neonEmerald),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                    );
+                  }
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildApiKeysTab() {
+    final keysAsync = ref.watch(adminApiKeysProvider);
+
+    return keysAsync.when(
+      data: (response) {
+        return Column(
+          children: [
+            if (response.keys.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(child: Text('No API keys yet', style: MayaTheme.bodyMedium)),
+              ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: response.keys.length,
+                itemBuilder: (context, index) {
+                  final key = response.keys[index];
+                  return _ApiKeyTile(key: key, onRevoke: () async {
+                    final success = await ref.read(apiServiceProvider).revokeAdminApiKey(key.id);
+                    if (success && mounted) {
+                      ref.invalidate(adminApiKeysProvider);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Key revoked'), backgroundColor: MayaTheme.neonEmerald),
+                      );
+                    }
+                  });
+                },
+              ),
+            ),
+            // Create key button
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _showCreateApiKeyDialog,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Create API Key'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MayaTheme.neonCyan,
+                    foregroundColor: MayaTheme.slate900,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading keys', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCreateApiKeyDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Create API Key', style: MayaTheme.headlineSmall),
+        content: TextField(
+          controller: controller,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            hintText: 'Key name (e.g., production, ci-cd)',
+            hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                Navigator.pop(context);
+                try {
+                  final apiService = ref.read(apiServiceProvider);
+                  final created = await apiService.createAdminApiKey(name);
+                  if (mounted) {
+                    // Show the key once - it won't be shown again
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: MayaTheme.slate800,
+                        title: Row(
+                          children: [
+                            Icon(Icons.key_rounded, color: MayaTheme.neonEmerald),
+                            const SizedBox(width: 8),
+                            const Text('API Key Created', style: MayaTheme.headlineSmall),
+                          ],
+                        ),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Save this key now - it will never be shown again:', style: MayaTheme.bodyMedium),
+                            const SizedBox(height: 12),
+                            SelectableText(
+                              created.key,
+                              style: MayaTheme.bodyMedium.copyWith(
+                                color: MayaTheme.neonEmerald,
+                                fontFamily: 'monospace',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Prefix: ${created.prefix}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Copied'),
+                          ),
+                        ],
+                      ),
+                    );
+                    ref.invalidate(adminApiKeysProvider);
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                    );
+                  }
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuditTab() {
+    final auditAsync = ref.watch(adminAuditProvider);
+
+    return auditAsync.when(
+      data: (response) {
+        if (response.events.isEmpty) {
+          return const Center(
+            child: Text('No audit events', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.events.length,
+          itemBuilder: (context, index) {
+            final event = response.events[index];
+            final time = DateTime.fromMillisecondsSinceEpoch((event.timestamp * 1000).round())
+                .toString()
+                .substring(0, 19);
+            return _AuditTile(event: event, time: time);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading audit', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardTab() {
+    final dashboardAsync = ref.watch(adminDashboardProvider);
+
+    return dashboardAsync.when(
+      data: (response) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // System Health
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.neonCyan),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(Icons.dashboard_rounded, color: MayaTheme.neonCyan, size: 32),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('System Dashboard', style: MayaTheme.titleLarge),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Real-time overview of Maya\'s health and activity',
+                            style: MayaTheme.bodyMedium.copyWith(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Queue Depth
+              _DashboardStatCard(
+                label: 'Queue Depth',
+                value: response.queueDepth.toString(),
+                color: MayaTheme.neonCyan,
+                icon: Icons.queue_rounded,
+              ),
+
+              const SizedBox(height: 24),
+
+              // Metrics
+              if (response.metrics.isNotEmpty) ...[
+                const Text('Metrics', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                ...response.metrics.entries.map((entry) => _DashboardMetricTile(
+                  label: entry.key,
+                  value: entry.value.toString(),
+                )),
+                const SizedBox(height: 24),
+              ],
+
+              // Agents
+              if (response.agents.isNotEmpty) ...[
+                const Text('Agents', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                ...response.agents.entries.map((entry) => _DashboardMetricTile(
+                  label: entry.key,
+                  value: entry.value.toString(),
+                )),
+                const SizedBox(height: 24),
+              ],
+
+              // Providers
+              if (response.providers.isNotEmpty) ...[
+                const Text('Providers', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                ...response.providers.entries.map((entry) => _DashboardMetricTile(
+                  label: entry.key,
+                  value: entry.value.toString(),
+                )),
+              ],
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading dashboard', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RoleTile extends StatelessWidget {
+  final String roleName;
+  final RoleInfo role;
+
+  const _RoleTile({required this.roleName, required this.role});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.security_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(roleName, style: MayaTheme.titleMedium),
+        subtitle: Text(role.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Permissions:', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: role.permissions.map((perm) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonViolet.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(perm, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                  )).toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrgTile extends ConsumerWidget {
+  final AdminOrg org;
+
+  const _OrgTile({required this.org});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.groups_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(org.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          'Members: ${org.memberCount ?? 0} • ID: ${org.id.substring(0, 8)}...',
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+        ),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) async {
+            if (value == 'delete') {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: MayaTheme.slate800,
+                  title: const Text('Delete Organization?'),
+                  content: Text('Delete "${org.name}" and all its members? This cannot be undone.'),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirmed == true) {
+                final success = await ref.read(apiServiceProvider).deleteAdminOrg(org.id);
+                if (success && mounted) {
+                  ref.invalidate(adminOrgsProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Organization deleted'), backgroundColor: MayaTheme.neonEmerald),
+                  );
+                }
+              }
+            },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: FutureBuilder<AdminOrgMembersResponse>(
+              future: ref.read(apiServiceProvider).getAdminOrgMembers(org.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)));
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error));
+                }
+                final members = snapshot.data?.members ?? [];
+                if (members.isEmpty) {
+                  return const Text('No members', style: MayaTheme.bodyMedium);
+                }
+                return Column(
+                  children: members.map((member) => _OrgMemberTile(member: member)).toList(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrgMemberTile extends StatelessWidget {
+  final OrgMember member;
+
+  const _OrgMemberTile({required this.member});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: MayaTheme.slate700,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MayaTheme.glassWhite10),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            child: Text(
+              member.email.substring(0, 1).toUpperCase(),
+              style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(member.email, style: MayaTheme.bodyMedium),
+                Text('Role: ${member.role} • Joined: ${member.joinedAt}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(member.role, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ApiKeyTile extends StatelessWidget {
+  final AdminApiKey key;
+  final VoidCallback onRevoke;
+
+  const _ApiKeyTile({required this.key, required this.onRevoke});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: key.revoked
+                      ? Colors.white12
+                      : MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  key.revoked ? Icons.lock_rounded : Icons.key_rounded,
+                  color: key.revoked ? Colors.white38 : MayaTheme.neonEmerald,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(key.name, style: MayaTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text('Prefix: ${key.prefix}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                        const SizedBox(width: 16),
+                        Text('Created: ${key.createdAt}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (key.lastUsedAt != null)
+                Text('Last used: ${key.lastUsedAt}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54))
+              else
+                const Text('Never used', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (!key.revoked)
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onRevoke,
+                    icon: const Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                    label: const Text('Revoke', style: TextStyle(color: MayaTheme.error)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: MayaTheme.error,
+                      side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AuditTile extends StatelessWidget {
+  final AuditEvent event;
+  final String time;
+
+  const _AuditTile({required this.event, required this.time});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.history_rounded, color: MayaTheme.neonCyan, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(event.action, style: MayaTheme.titleMedium),
+                    Text('Actor: ${event.actor}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+              Text(time, style: MayaTheme.labelSmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text('Target: ${event.target}', style: MayaTheme.bodyMedium),
+          if (event.details.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.slate700,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                event.details.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white70, fontFamily: 'monospace'),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _DashboardStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: color, size: 32),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+                const SizedBox(height: 4),
+                Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardMetricTile extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DashboardMetricTile({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Text(label, style: MayaTheme.bodyMedium),
+          const Spacer(),
+          Text(value, style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan)),
+        ],
+      ),
+    );
+  }
+}
+
+// Enterprise Providers
+final adminRolesProvider = FutureProvider<AdminRolesResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAdminRoles();
+});
+
+final adminOrgsProvider = FutureProvider<AdminOrgsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAdminOrgs();
+});
+
+final adminApiKeysProvider = FutureProvider<AdminApiKeysResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAdminApiKeys();
+});
+
+final adminAuditProvider = FutureProvider<AdminAuditResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAdminAudit();
+});
+
+final adminDashboardProvider = FutureProvider<AdminDashboardResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAdminDashboard();
 });

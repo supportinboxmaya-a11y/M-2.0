@@ -12936,3 +12936,2714 @@ abstract class _LLMStrategyResponse implements LLMStrategyResponse {
   _$$LLMStrategyResponseImplCopyWith<_$LLMStrategyResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+RoleInfo _$RoleInfoFromJson(Map<String, dynamic> json) {
+  return _RoleInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RoleInfo {
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  List<String> get permissions => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RoleInfoCopyWith<RoleInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RoleInfoCopyWith<$Res> {
+  factory $RoleInfoCopyWith(RoleInfo value, $Res Function(RoleInfo) then) =
+      _$RoleInfoCopyWithImpl<$Res, RoleInfo>;
+  @useResult
+  $Res call({String name, String description, List<String> permissions});
+}
+
+/// @nodoc
+class _$RoleInfoCopyWithImpl<$Res, $Val extends RoleInfo>
+    implements $RoleInfoCopyWith<$Res> {
+  _$RoleInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? description = null,
+    Object? permissions = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      permissions: null == permissions
+          ? _value.permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RoleInfoImplCopyWith<$Res>
+    implements $RoleInfoCopyWith<$Res> {
+  factory _$$RoleInfoImplCopyWith(
+          _$RoleInfoImpl value, $Res Function(_$RoleInfoImpl) then) =
+      __$$RoleInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String name, String description, List<String> permissions});
+}
+
+/// @nodoc
+class __$$RoleInfoImplCopyWithImpl<$Res>
+    extends _$RoleInfoCopyWithImpl<$Res, _$RoleInfoImpl>
+    implements _$$RoleInfoImplCopyWith<$Res> {
+  __$$RoleInfoImplCopyWithImpl(
+      _$RoleInfoImpl _value, $Res Function(_$RoleInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? description = null,
+    Object? permissions = null,
+  }) {
+    return _then(_$RoleInfoImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      permissions: null == permissions
+          ? _value._permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RoleInfoImpl implements _RoleInfo {
+  const _$RoleInfoImpl(
+      {required this.name,
+      required this.description,
+      required final List<String> permissions})
+      : _permissions = permissions;
+
+  factory _$RoleInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RoleInfoImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String description;
+  final List<String> _permissions;
+  @override
+  List<String> get permissions {
+    if (_permissions is EqualUnmodifiableListView) return _permissions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_permissions);
+  }
+
+  @override
+  String toString() {
+    return 'RoleInfo(name: $name, description: $description, permissions: $permissions)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RoleInfoImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality()
+                .equals(other._permissions, _permissions));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, description,
+      const DeepCollectionEquality().hash(_permissions));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RoleInfoImplCopyWith<_$RoleInfoImpl> get copyWith =>
+      __$$RoleInfoImplCopyWithImpl<_$RoleInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RoleInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RoleInfo implements RoleInfo {
+  const factory _RoleInfo(
+      {required final String name,
+      required final String description,
+      required final List<String> permissions}) = _$RoleInfoImpl;
+
+  factory _RoleInfo.fromJson(Map<String, dynamic> json) =
+      _$RoleInfoImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  List<String> get permissions;
+  @override
+  @JsonKey(ignore: true)
+  _$$RoleInfoImplCopyWith<_$RoleInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminRolesResponse _$AdminRolesResponseFromJson(Map<String, dynamic> json) {
+  return _AdminRolesResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminRolesResponse {
+  Map<String, RoleInfo> get roles => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminRolesResponseCopyWith<AdminRolesResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminRolesResponseCopyWith<$Res> {
+  factory $AdminRolesResponseCopyWith(
+          AdminRolesResponse value, $Res Function(AdminRolesResponse) then) =
+      _$AdminRolesResponseCopyWithImpl<$Res, AdminRolesResponse>;
+  @useResult
+  $Res call({Map<String, RoleInfo> roles});
+}
+
+/// @nodoc
+class _$AdminRolesResponseCopyWithImpl<$Res, $Val extends AdminRolesResponse>
+    implements $AdminRolesResponseCopyWith<$Res> {
+  _$AdminRolesResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? roles = null,
+  }) {
+    return _then(_value.copyWith(
+      roles: null == roles
+          ? _value.roles
+          : roles // ignore: cast_nullable_to_non_nullable
+              as Map<String, RoleInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminRolesResponseImplCopyWith<$Res>
+    implements $AdminRolesResponseCopyWith<$Res> {
+  factory _$$AdminRolesResponseImplCopyWith(_$AdminRolesResponseImpl value,
+          $Res Function(_$AdminRolesResponseImpl) then) =
+      __$$AdminRolesResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Map<String, RoleInfo> roles});
+}
+
+/// @nodoc
+class __$$AdminRolesResponseImplCopyWithImpl<$Res>
+    extends _$AdminRolesResponseCopyWithImpl<$Res, _$AdminRolesResponseImpl>
+    implements _$$AdminRolesResponseImplCopyWith<$Res> {
+  __$$AdminRolesResponseImplCopyWithImpl(_$AdminRolesResponseImpl _value,
+      $Res Function(_$AdminRolesResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? roles = null,
+  }) {
+    return _then(_$AdminRolesResponseImpl(
+      roles: null == roles
+          ? _value._roles
+          : roles // ignore: cast_nullable_to_non_nullable
+              as Map<String, RoleInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminRolesResponseImpl implements _AdminRolesResponse {
+  const _$AdminRolesResponseImpl({required final Map<String, RoleInfo> roles})
+      : _roles = roles;
+
+  factory _$AdminRolesResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminRolesResponseImplFromJson(json);
+
+  final Map<String, RoleInfo> _roles;
+  @override
+  Map<String, RoleInfo> get roles {
+    if (_roles is EqualUnmodifiableMapView) return _roles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_roles);
+  }
+
+  @override
+  String toString() {
+    return 'AdminRolesResponse(roles: $roles)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminRolesResponseImpl &&
+            const DeepCollectionEquality().equals(other._roles, _roles));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_roles));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminRolesResponseImplCopyWith<_$AdminRolesResponseImpl> get copyWith =>
+      __$$AdminRolesResponseImplCopyWithImpl<_$AdminRolesResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminRolesResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminRolesResponse implements AdminRolesResponse {
+  const factory _AdminRolesResponse(
+      {required final Map<String, RoleInfo> roles}) = _$AdminRolesResponseImpl;
+
+  factory _AdminRolesResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminRolesResponseImpl.fromJson;
+
+  @override
+  Map<String, RoleInfo> get roles;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminRolesResponseImplCopyWith<_$AdminRolesResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminOrg _$AdminOrgFromJson(Map<String, dynamic> json) {
+  return _AdminOrg.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminOrg {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+  int? get memberCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminOrgCopyWith<AdminOrg> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminOrgCopyWith<$Res> {
+  factory $AdminOrgCopyWith(AdminOrg value, $Res Function(AdminOrg) then) =
+      _$AdminOrgCopyWithImpl<$Res, AdminOrg>;
+  @useResult
+  $Res call({String id, String name, String createdAt, int? memberCount});
+}
+
+/// @nodoc
+class _$AdminOrgCopyWithImpl<$Res, $Val extends AdminOrg>
+    implements $AdminOrgCopyWith<$Res> {
+  _$AdminOrgCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? createdAt = null,
+    Object? memberCount = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      memberCount: freezed == memberCount
+          ? _value.memberCount
+          : memberCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminOrgImplCopyWith<$Res>
+    implements $AdminOrgCopyWith<$Res> {
+  factory _$$AdminOrgImplCopyWith(
+          _$AdminOrgImpl value, $Res Function(_$AdminOrgImpl) then) =
+      __$$AdminOrgImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String name, String createdAt, int? memberCount});
+}
+
+/// @nodoc
+class __$$AdminOrgImplCopyWithImpl<$Res>
+    extends _$AdminOrgCopyWithImpl<$Res, _$AdminOrgImpl>
+    implements _$$AdminOrgImplCopyWith<$Res> {
+  __$$AdminOrgImplCopyWithImpl(
+      _$AdminOrgImpl _value, $Res Function(_$AdminOrgImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? createdAt = null,
+    Object? memberCount = freezed,
+  }) {
+    return _then(_$AdminOrgImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      memberCount: freezed == memberCount
+          ? _value.memberCount
+          : memberCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminOrgImpl implements _AdminOrg {
+  const _$AdminOrgImpl(
+      {required this.id,
+      required this.name,
+      required this.createdAt,
+      this.memberCount});
+
+  factory _$AdminOrgImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminOrgImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String createdAt;
+  @override
+  final int? memberCount;
+
+  @override
+  String toString() {
+    return 'AdminOrg(id: $id, name: $name, createdAt: $createdAt, memberCount: $memberCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminOrgImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.memberCount, memberCount) ||
+                other.memberCount == memberCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, createdAt, memberCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminOrgImplCopyWith<_$AdminOrgImpl> get copyWith =>
+      __$$AdminOrgImplCopyWithImpl<_$AdminOrgImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminOrgImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminOrg implements AdminOrg {
+  const factory _AdminOrg(
+      {required final String id,
+      required final String name,
+      required final String createdAt,
+      final int? memberCount}) = _$AdminOrgImpl;
+
+  factory _AdminOrg.fromJson(Map<String, dynamic> json) =
+      _$AdminOrgImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get createdAt;
+  @override
+  int? get memberCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminOrgImplCopyWith<_$AdminOrgImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminOrgsResponse _$AdminOrgsResponseFromJson(Map<String, dynamic> json) {
+  return _AdminOrgsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminOrgsResponse {
+  List<AdminOrg> get orgs => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminOrgsResponseCopyWith<AdminOrgsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminOrgsResponseCopyWith<$Res> {
+  factory $AdminOrgsResponseCopyWith(
+          AdminOrgsResponse value, $Res Function(AdminOrgsResponse) then) =
+      _$AdminOrgsResponseCopyWithImpl<$Res, AdminOrgsResponse>;
+  @useResult
+  $Res call({List<AdminOrg> orgs});
+}
+
+/// @nodoc
+class _$AdminOrgsResponseCopyWithImpl<$Res, $Val extends AdminOrgsResponse>
+    implements $AdminOrgsResponseCopyWith<$Res> {
+  _$AdminOrgsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? orgs = null,
+  }) {
+    return _then(_value.copyWith(
+      orgs: null == orgs
+          ? _value.orgs
+          : orgs // ignore: cast_nullable_to_non_nullable
+              as List<AdminOrg>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminOrgsResponseImplCopyWith<$Res>
+    implements $AdminOrgsResponseCopyWith<$Res> {
+  factory _$$AdminOrgsResponseImplCopyWith(_$AdminOrgsResponseImpl value,
+          $Res Function(_$AdminOrgsResponseImpl) then) =
+      __$$AdminOrgsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AdminOrg> orgs});
+}
+
+/// @nodoc
+class __$$AdminOrgsResponseImplCopyWithImpl<$Res>
+    extends _$AdminOrgsResponseCopyWithImpl<$Res, _$AdminOrgsResponseImpl>
+    implements _$$AdminOrgsResponseImplCopyWith<$Res> {
+  __$$AdminOrgsResponseImplCopyWithImpl(_$AdminOrgsResponseImpl _value,
+      $Res Function(_$AdminOrgsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? orgs = null,
+  }) {
+    return _then(_$AdminOrgsResponseImpl(
+      orgs: null == orgs
+          ? _value._orgs
+          : orgs // ignore: cast_nullable_to_non_nullable
+              as List<AdminOrg>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminOrgsResponseImpl implements _AdminOrgsResponse {
+  const _$AdminOrgsResponseImpl({required final List<AdminOrg> orgs})
+      : _orgs = orgs;
+
+  factory _$AdminOrgsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminOrgsResponseImplFromJson(json);
+
+  final List<AdminOrg> _orgs;
+  @override
+  List<AdminOrg> get orgs {
+    if (_orgs is EqualUnmodifiableListView) return _orgs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_orgs);
+  }
+
+  @override
+  String toString() {
+    return 'AdminOrgsResponse(orgs: $orgs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminOrgsResponseImpl &&
+            const DeepCollectionEquality().equals(other._orgs, _orgs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_orgs));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminOrgsResponseImplCopyWith<_$AdminOrgsResponseImpl> get copyWith =>
+      __$$AdminOrgsResponseImplCopyWithImpl<_$AdminOrgsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminOrgsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminOrgsResponse implements AdminOrgsResponse {
+  const factory _AdminOrgsResponse({required final List<AdminOrg> orgs}) =
+      _$AdminOrgsResponseImpl;
+
+  factory _AdminOrgsResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminOrgsResponseImpl.fromJson;
+
+  @override
+  List<AdminOrg> get orgs;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminOrgsResponseImplCopyWith<_$AdminOrgsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminOrgResponse _$AdminOrgResponseFromJson(Map<String, dynamic> json) {
+  return _AdminOrgResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminOrgResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminOrgResponseCopyWith<AdminOrgResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminOrgResponseCopyWith<$Res> {
+  factory $AdminOrgResponseCopyWith(
+          AdminOrgResponse value, $Res Function(AdminOrgResponse) then) =
+      _$AdminOrgResponseCopyWithImpl<$Res, AdminOrgResponse>;
+  @useResult
+  $Res call({String id, String name});
+}
+
+/// @nodoc
+class _$AdminOrgResponseCopyWithImpl<$Res, $Val extends AdminOrgResponse>
+    implements $AdminOrgResponseCopyWith<$Res> {
+  _$AdminOrgResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminOrgResponseImplCopyWith<$Res>
+    implements $AdminOrgResponseCopyWith<$Res> {
+  factory _$$AdminOrgResponseImplCopyWith(_$AdminOrgResponseImpl value,
+          $Res Function(_$AdminOrgResponseImpl) then) =
+      __$$AdminOrgResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String name});
+}
+
+/// @nodoc
+class __$$AdminOrgResponseImplCopyWithImpl<$Res>
+    extends _$AdminOrgResponseCopyWithImpl<$Res, _$AdminOrgResponseImpl>
+    implements _$$AdminOrgResponseImplCopyWith<$Res> {
+  __$$AdminOrgResponseImplCopyWithImpl(_$AdminOrgResponseImpl _value,
+      $Res Function(_$AdminOrgResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+  }) {
+    return _then(_$AdminOrgResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminOrgResponseImpl implements _AdminOrgResponse {
+  const _$AdminOrgResponseImpl({required this.id, required this.name});
+
+  factory _$AdminOrgResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminOrgResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+
+  @override
+  String toString() {
+    return 'AdminOrgResponse(id: $id, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminOrgResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminOrgResponseImplCopyWith<_$AdminOrgResponseImpl> get copyWith =>
+      __$$AdminOrgResponseImplCopyWithImpl<_$AdminOrgResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminOrgResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminOrgResponse implements AdminOrgResponse {
+  const factory _AdminOrgResponse(
+      {required final String id,
+      required final String name}) = _$AdminOrgResponseImpl;
+
+  factory _AdminOrgResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminOrgResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminOrgResponseImplCopyWith<_$AdminOrgResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+OrgMember _$OrgMemberFromJson(Map<String, dynamic> json) {
+  return _OrgMember.fromJson(json);
+}
+
+/// @nodoc
+mixin _$OrgMember {
+  String get email => throw _privateConstructorUsedError;
+  String get role => throw _privateConstructorUsedError;
+  String? get teamId => throw _privateConstructorUsedError;
+  String get joinedAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $OrgMemberCopyWith<OrgMember> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $OrgMemberCopyWith<$Res> {
+  factory $OrgMemberCopyWith(OrgMember value, $Res Function(OrgMember) then) =
+      _$OrgMemberCopyWithImpl<$Res, OrgMember>;
+  @useResult
+  $Res call({String email, String role, String? teamId, String joinedAt});
+}
+
+/// @nodoc
+class _$OrgMemberCopyWithImpl<$Res, $Val extends OrgMember>
+    implements $OrgMemberCopyWith<$Res> {
+  _$OrgMemberCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = null,
+    Object? role = null,
+    Object? teamId = freezed,
+    Object? joinedAt = null,
+  }) {
+    return _then(_value.copyWith(
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      teamId: freezed == teamId
+          ? _value.teamId
+          : teamId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      joinedAt: null == joinedAt
+          ? _value.joinedAt
+          : joinedAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$OrgMemberImplCopyWith<$Res>
+    implements $OrgMemberCopyWith<$Res> {
+  factory _$$OrgMemberImplCopyWith(
+          _$OrgMemberImpl value, $Res Function(_$OrgMemberImpl) then) =
+      __$$OrgMemberImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String email, String role, String? teamId, String joinedAt});
+}
+
+/// @nodoc
+class __$$OrgMemberImplCopyWithImpl<$Res>
+    extends _$OrgMemberCopyWithImpl<$Res, _$OrgMemberImpl>
+    implements _$$OrgMemberImplCopyWith<$Res> {
+  __$$OrgMemberImplCopyWithImpl(
+      _$OrgMemberImpl _value, $Res Function(_$OrgMemberImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = null,
+    Object? role = null,
+    Object? teamId = freezed,
+    Object? joinedAt = null,
+  }) {
+    return _then(_$OrgMemberImpl(
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      teamId: freezed == teamId
+          ? _value.teamId
+          : teamId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      joinedAt: null == joinedAt
+          ? _value.joinedAt
+          : joinedAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$OrgMemberImpl implements _OrgMember {
+  const _$OrgMemberImpl(
+      {required this.email,
+      required this.role,
+      this.teamId,
+      required this.joinedAt});
+
+  factory _$OrgMemberImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrgMemberImplFromJson(json);
+
+  @override
+  final String email;
+  @override
+  final String role;
+  @override
+  final String? teamId;
+  @override
+  final String joinedAt;
+
+  @override
+  String toString() {
+    return 'OrgMember(email: $email, role: $role, teamId: $teamId, joinedAt: $joinedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OrgMemberImpl &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.teamId, teamId) || other.teamId == teamId) &&
+            (identical(other.joinedAt, joinedAt) ||
+                other.joinedAt == joinedAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, email, role, teamId, joinedAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OrgMemberImplCopyWith<_$OrgMemberImpl> get copyWith =>
+      __$$OrgMemberImplCopyWithImpl<_$OrgMemberImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$OrgMemberImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _OrgMember implements OrgMember {
+  const factory _OrgMember(
+      {required final String email,
+      required final String role,
+      final String? teamId,
+      required final String joinedAt}) = _$OrgMemberImpl;
+
+  factory _OrgMember.fromJson(Map<String, dynamic> json) =
+      _$OrgMemberImpl.fromJson;
+
+  @override
+  String get email;
+  @override
+  String get role;
+  @override
+  String? get teamId;
+  @override
+  String get joinedAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$OrgMemberImplCopyWith<_$OrgMemberImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminOrgMembersResponse _$AdminOrgMembersResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AdminOrgMembersResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminOrgMembersResponse {
+  List<OrgMember> get members => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminOrgMembersResponseCopyWith<AdminOrgMembersResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminOrgMembersResponseCopyWith<$Res> {
+  factory $AdminOrgMembersResponseCopyWith(AdminOrgMembersResponse value,
+          $Res Function(AdminOrgMembersResponse) then) =
+      _$AdminOrgMembersResponseCopyWithImpl<$Res, AdminOrgMembersResponse>;
+  @useResult
+  $Res call({List<OrgMember> members});
+}
+
+/// @nodoc
+class _$AdminOrgMembersResponseCopyWithImpl<$Res,
+        $Val extends AdminOrgMembersResponse>
+    implements $AdminOrgMembersResponseCopyWith<$Res> {
+  _$AdminOrgMembersResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? members = null,
+  }) {
+    return _then(_value.copyWith(
+      members: null == members
+          ? _value.members
+          : members // ignore: cast_nullable_to_non_nullable
+              as List<OrgMember>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminOrgMembersResponseImplCopyWith<$Res>
+    implements $AdminOrgMembersResponseCopyWith<$Res> {
+  factory _$$AdminOrgMembersResponseImplCopyWith(
+          _$AdminOrgMembersResponseImpl value,
+          $Res Function(_$AdminOrgMembersResponseImpl) then) =
+      __$$AdminOrgMembersResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<OrgMember> members});
+}
+
+/// @nodoc
+class __$$AdminOrgMembersResponseImplCopyWithImpl<$Res>
+    extends _$AdminOrgMembersResponseCopyWithImpl<$Res,
+        _$AdminOrgMembersResponseImpl>
+    implements _$$AdminOrgMembersResponseImplCopyWith<$Res> {
+  __$$AdminOrgMembersResponseImplCopyWithImpl(
+      _$AdminOrgMembersResponseImpl _value,
+      $Res Function(_$AdminOrgMembersResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? members = null,
+  }) {
+    return _then(_$AdminOrgMembersResponseImpl(
+      members: null == members
+          ? _value._members
+          : members // ignore: cast_nullable_to_non_nullable
+              as List<OrgMember>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminOrgMembersResponseImpl implements _AdminOrgMembersResponse {
+  const _$AdminOrgMembersResponseImpl({required final List<OrgMember> members})
+      : _members = members;
+
+  factory _$AdminOrgMembersResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminOrgMembersResponseImplFromJson(json);
+
+  final List<OrgMember> _members;
+  @override
+  List<OrgMember> get members {
+    if (_members is EqualUnmodifiableListView) return _members;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_members);
+  }
+
+  @override
+  String toString() {
+    return 'AdminOrgMembersResponse(members: $members)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminOrgMembersResponseImpl &&
+            const DeepCollectionEquality().equals(other._members, _members));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_members));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminOrgMembersResponseImplCopyWith<_$AdminOrgMembersResponseImpl>
+      get copyWith => __$$AdminOrgMembersResponseImplCopyWithImpl<
+          _$AdminOrgMembersResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminOrgMembersResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminOrgMembersResponse implements AdminOrgMembersResponse {
+  const factory _AdminOrgMembersResponse(
+      {required final List<OrgMember> members}) = _$AdminOrgMembersResponseImpl;
+
+  factory _AdminOrgMembersResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminOrgMembersResponseImpl.fromJson;
+
+  @override
+  List<OrgMember> get members;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminOrgMembersResponseImplCopyWith<_$AdminOrgMembersResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AdminApiKey _$AdminApiKeyFromJson(Map<String, dynamic> json) {
+  return _AdminApiKey.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminApiKey {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get prefix => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+  String? get lastUsedAt => throw _privateConstructorUsedError;
+  bool get revoked => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminApiKeyCopyWith<AdminApiKey> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminApiKeyCopyWith<$Res> {
+  factory $AdminApiKeyCopyWith(
+          AdminApiKey value, $Res Function(AdminApiKey) then) =
+      _$AdminApiKeyCopyWithImpl<$Res, AdminApiKey>;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String prefix,
+      String createdAt,
+      String? lastUsedAt,
+      bool revoked});
+}
+
+/// @nodoc
+class _$AdminApiKeyCopyWithImpl<$Res, $Val extends AdminApiKey>
+    implements $AdminApiKeyCopyWith<$Res> {
+  _$AdminApiKeyCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? prefix = null,
+    Object? createdAt = null,
+    Object? lastUsedAt = freezed,
+    Object? revoked = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      prefix: null == prefix
+          ? _value.prefix
+          : prefix // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      lastUsedAt: freezed == lastUsedAt
+          ? _value.lastUsedAt
+          : lastUsedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      revoked: null == revoked
+          ? _value.revoked
+          : revoked // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminApiKeyImplCopyWith<$Res>
+    implements $AdminApiKeyCopyWith<$Res> {
+  factory _$$AdminApiKeyImplCopyWith(
+          _$AdminApiKeyImpl value, $Res Function(_$AdminApiKeyImpl) then) =
+      __$$AdminApiKeyImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String prefix,
+      String createdAt,
+      String? lastUsedAt,
+      bool revoked});
+}
+
+/// @nodoc
+class __$$AdminApiKeyImplCopyWithImpl<$Res>
+    extends _$AdminApiKeyCopyWithImpl<$Res, _$AdminApiKeyImpl>
+    implements _$$AdminApiKeyImplCopyWith<$Res> {
+  __$$AdminApiKeyImplCopyWithImpl(
+      _$AdminApiKeyImpl _value, $Res Function(_$AdminApiKeyImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? prefix = null,
+    Object? createdAt = null,
+    Object? lastUsedAt = freezed,
+    Object? revoked = null,
+  }) {
+    return _then(_$AdminApiKeyImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      prefix: null == prefix
+          ? _value.prefix
+          : prefix // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      lastUsedAt: freezed == lastUsedAt
+          ? _value.lastUsedAt
+          : lastUsedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      revoked: null == revoked
+          ? _value.revoked
+          : revoked // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminApiKeyImpl implements _AdminApiKey {
+  const _$AdminApiKeyImpl(
+      {required this.id,
+      required this.name,
+      required this.prefix,
+      required this.createdAt,
+      this.lastUsedAt,
+      required this.revoked});
+
+  factory _$AdminApiKeyImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminApiKeyImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String prefix;
+  @override
+  final String createdAt;
+  @override
+  final String? lastUsedAt;
+  @override
+  final bool revoked;
+
+  @override
+  String toString() {
+    return 'AdminApiKey(id: $id, name: $name, prefix: $prefix, createdAt: $createdAt, lastUsedAt: $lastUsedAt, revoked: $revoked)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminApiKeyImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.prefix, prefix) || other.prefix == prefix) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.lastUsedAt, lastUsedAt) ||
+                other.lastUsedAt == lastUsedAt) &&
+            (identical(other.revoked, revoked) || other.revoked == revoked));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, name, prefix, createdAt, lastUsedAt, revoked);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminApiKeyImplCopyWith<_$AdminApiKeyImpl> get copyWith =>
+      __$$AdminApiKeyImplCopyWithImpl<_$AdminApiKeyImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminApiKeyImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminApiKey implements AdminApiKey {
+  const factory _AdminApiKey(
+      {required final String id,
+      required final String name,
+      required final String prefix,
+      required final String createdAt,
+      final String? lastUsedAt,
+      required final bool revoked}) = _$AdminApiKeyImpl;
+
+  factory _AdminApiKey.fromJson(Map<String, dynamic> json) =
+      _$AdminApiKeyImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get prefix;
+  @override
+  String get createdAt;
+  @override
+  String? get lastUsedAt;
+  @override
+  bool get revoked;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminApiKeyImplCopyWith<_$AdminApiKeyImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminApiKeysResponse _$AdminApiKeysResponseFromJson(Map<String, dynamic> json) {
+  return _AdminApiKeysResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminApiKeysResponse {
+  List<AdminApiKey> get keys => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminApiKeysResponseCopyWith<AdminApiKeysResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminApiKeysResponseCopyWith<$Res> {
+  factory $AdminApiKeysResponseCopyWith(AdminApiKeysResponse value,
+          $Res Function(AdminApiKeysResponse) then) =
+      _$AdminApiKeysResponseCopyWithImpl<$Res, AdminApiKeysResponse>;
+  @useResult
+  $Res call({List<AdminApiKey> keys});
+}
+
+/// @nodoc
+class _$AdminApiKeysResponseCopyWithImpl<$Res,
+        $Val extends AdminApiKeysResponse>
+    implements $AdminApiKeysResponseCopyWith<$Res> {
+  _$AdminApiKeysResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? keys = null,
+  }) {
+    return _then(_value.copyWith(
+      keys: null == keys
+          ? _value.keys
+          : keys // ignore: cast_nullable_to_non_nullable
+              as List<AdminApiKey>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminApiKeysResponseImplCopyWith<$Res>
+    implements $AdminApiKeysResponseCopyWith<$Res> {
+  factory _$$AdminApiKeysResponseImplCopyWith(_$AdminApiKeysResponseImpl value,
+          $Res Function(_$AdminApiKeysResponseImpl) then) =
+      __$$AdminApiKeysResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AdminApiKey> keys});
+}
+
+/// @nodoc
+class __$$AdminApiKeysResponseImplCopyWithImpl<$Res>
+    extends _$AdminApiKeysResponseCopyWithImpl<$Res, _$AdminApiKeysResponseImpl>
+    implements _$$AdminApiKeysResponseImplCopyWith<$Res> {
+  __$$AdminApiKeysResponseImplCopyWithImpl(_$AdminApiKeysResponseImpl _value,
+      $Res Function(_$AdminApiKeysResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? keys = null,
+  }) {
+    return _then(_$AdminApiKeysResponseImpl(
+      keys: null == keys
+          ? _value._keys
+          : keys // ignore: cast_nullable_to_non_nullable
+              as List<AdminApiKey>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminApiKeysResponseImpl implements _AdminApiKeysResponse {
+  const _$AdminApiKeysResponseImpl({required final List<AdminApiKey> keys})
+      : _keys = keys;
+
+  factory _$AdminApiKeysResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminApiKeysResponseImplFromJson(json);
+
+  final List<AdminApiKey> _keys;
+  @override
+  List<AdminApiKey> get keys {
+    if (_keys is EqualUnmodifiableListView) return _keys;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_keys);
+  }
+
+  @override
+  String toString() {
+    return 'AdminApiKeysResponse(keys: $keys)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminApiKeysResponseImpl &&
+            const DeepCollectionEquality().equals(other._keys, _keys));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_keys));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminApiKeysResponseImplCopyWith<_$AdminApiKeysResponseImpl>
+      get copyWith =>
+          __$$AdminApiKeysResponseImplCopyWithImpl<_$AdminApiKeysResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminApiKeysResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminApiKeysResponse implements AdminApiKeysResponse {
+  const factory _AdminApiKeysResponse({required final List<AdminApiKey> keys}) =
+      _$AdminApiKeysResponseImpl;
+
+  factory _AdminApiKeysResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminApiKeysResponseImpl.fromJson;
+
+  @override
+  List<AdminApiKey> get keys;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminApiKeysResponseImplCopyWith<_$AdminApiKeysResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AdminApiKeyCreatedResponse _$AdminApiKeyCreatedResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AdminApiKeyCreatedResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminApiKeyCreatedResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get key =>
+      throw _privateConstructorUsedError; // Only shown once at creation
+  String get prefix => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminApiKeyCreatedResponseCopyWith<AdminApiKeyCreatedResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminApiKeyCreatedResponseCopyWith<$Res> {
+  factory $AdminApiKeyCreatedResponseCopyWith(AdminApiKeyCreatedResponse value,
+          $Res Function(AdminApiKeyCreatedResponse) then) =
+      _$AdminApiKeyCreatedResponseCopyWithImpl<$Res,
+          AdminApiKeyCreatedResponse>;
+  @useResult
+  $Res call(
+      {String id, String name, String key, String prefix, String createdAt});
+}
+
+/// @nodoc
+class _$AdminApiKeyCreatedResponseCopyWithImpl<$Res,
+        $Val extends AdminApiKeyCreatedResponse>
+    implements $AdminApiKeyCreatedResponseCopyWith<$Res> {
+  _$AdminApiKeyCreatedResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? key = null,
+    Object? prefix = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      prefix: null == prefix
+          ? _value.prefix
+          : prefix // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminApiKeyCreatedResponseImplCopyWith<$Res>
+    implements $AdminApiKeyCreatedResponseCopyWith<$Res> {
+  factory _$$AdminApiKeyCreatedResponseImplCopyWith(
+          _$AdminApiKeyCreatedResponseImpl value,
+          $Res Function(_$AdminApiKeyCreatedResponseImpl) then) =
+      __$$AdminApiKeyCreatedResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id, String name, String key, String prefix, String createdAt});
+}
+
+/// @nodoc
+class __$$AdminApiKeyCreatedResponseImplCopyWithImpl<$Res>
+    extends _$AdminApiKeyCreatedResponseCopyWithImpl<$Res,
+        _$AdminApiKeyCreatedResponseImpl>
+    implements _$$AdminApiKeyCreatedResponseImplCopyWith<$Res> {
+  __$$AdminApiKeyCreatedResponseImplCopyWithImpl(
+      _$AdminApiKeyCreatedResponseImpl _value,
+      $Res Function(_$AdminApiKeyCreatedResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? key = null,
+    Object? prefix = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$AdminApiKeyCreatedResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      prefix: null == prefix
+          ? _value.prefix
+          : prefix // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminApiKeyCreatedResponseImpl implements _AdminApiKeyCreatedResponse {
+  const _$AdminApiKeyCreatedResponseImpl(
+      {required this.id,
+      required this.name,
+      required this.key,
+      required this.prefix,
+      required this.createdAt});
+
+  factory _$AdminApiKeyCreatedResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$AdminApiKeyCreatedResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String key;
+// Only shown once at creation
+  @override
+  final String prefix;
+  @override
+  final String createdAt;
+
+  @override
+  String toString() {
+    return 'AdminApiKeyCreatedResponse(id: $id, name: $name, key: $key, prefix: $prefix, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminApiKeyCreatedResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.prefix, prefix) || other.prefix == prefix) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, key, prefix, createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminApiKeyCreatedResponseImplCopyWith<_$AdminApiKeyCreatedResponseImpl>
+      get copyWith => __$$AdminApiKeyCreatedResponseImplCopyWithImpl<
+          _$AdminApiKeyCreatedResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminApiKeyCreatedResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminApiKeyCreatedResponse
+    implements AdminApiKeyCreatedResponse {
+  const factory _AdminApiKeyCreatedResponse(
+      {required final String id,
+      required final String name,
+      required final String key,
+      required final String prefix,
+      required final String createdAt}) = _$AdminApiKeyCreatedResponseImpl;
+
+  factory _AdminApiKeyCreatedResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminApiKeyCreatedResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get key;
+  @override // Only shown once at creation
+  String get prefix;
+  @override
+  String get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminApiKeyCreatedResponseImplCopyWith<_$AdminApiKeyCreatedResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AuditEvent _$AuditEventFromJson(Map<String, dynamic> json) {
+  return _AuditEvent.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AuditEvent {
+  String get id => throw _privateConstructorUsedError;
+  String get actor => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String get target => throw _privateConstructorUsedError;
+  Map<String, dynamic> get details => throw _privateConstructorUsedError;
+  double get timestamp => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AuditEventCopyWith<AuditEvent> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AuditEventCopyWith<$Res> {
+  factory $AuditEventCopyWith(
+          AuditEvent value, $Res Function(AuditEvent) then) =
+      _$AuditEventCopyWithImpl<$Res, AuditEvent>;
+  @useResult
+  $Res call(
+      {String id,
+      String actor,
+      String action,
+      String target,
+      Map<String, dynamic> details,
+      double timestamp});
+}
+
+/// @nodoc
+class _$AuditEventCopyWithImpl<$Res, $Val extends AuditEvent>
+    implements $AuditEventCopyWith<$Res> {
+  _$AuditEventCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? actor = null,
+    Object? action = null,
+    Object? target = null,
+    Object? details = null,
+    Object? timestamp = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      actor: null == actor
+          ? _value.actor
+          : actor // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      target: null == target
+          ? _value.target
+          : target // ignore: cast_nullable_to_non_nullable
+              as String,
+      details: null == details
+          ? _value.details
+          : details // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AuditEventImplCopyWith<$Res>
+    implements $AuditEventCopyWith<$Res> {
+  factory _$$AuditEventImplCopyWith(
+          _$AuditEventImpl value, $Res Function(_$AuditEventImpl) then) =
+      __$$AuditEventImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String actor,
+      String action,
+      String target,
+      Map<String, dynamic> details,
+      double timestamp});
+}
+
+/// @nodoc
+class __$$AuditEventImplCopyWithImpl<$Res>
+    extends _$AuditEventCopyWithImpl<$Res, _$AuditEventImpl>
+    implements _$$AuditEventImplCopyWith<$Res> {
+  __$$AuditEventImplCopyWithImpl(
+      _$AuditEventImpl _value, $Res Function(_$AuditEventImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? actor = null,
+    Object? action = null,
+    Object? target = null,
+    Object? details = null,
+    Object? timestamp = null,
+  }) {
+    return _then(_$AuditEventImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      actor: null == actor
+          ? _value.actor
+          : actor // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      target: null == target
+          ? _value.target
+          : target // ignore: cast_nullable_to_non_nullable
+              as String,
+      details: null == details
+          ? _value._details
+          : details // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AuditEventImpl implements _AuditEvent {
+  const _$AuditEventImpl(
+      {required this.id,
+      required this.actor,
+      required this.action,
+      required this.target,
+      required final Map<String, dynamic> details,
+      required this.timestamp})
+      : _details = details;
+
+  factory _$AuditEventImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AuditEventImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String actor;
+  @override
+  final String action;
+  @override
+  final String target;
+  final Map<String, dynamic> _details;
+  @override
+  Map<String, dynamic> get details {
+    if (_details is EqualUnmodifiableMapView) return _details;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_details);
+  }
+
+  @override
+  final double timestamp;
+
+  @override
+  String toString() {
+    return 'AuditEvent(id: $id, actor: $actor, action: $action, target: $target, details: $details, timestamp: $timestamp)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AuditEventImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.actor, actor) || other.actor == actor) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.target, target) || other.target == target) &&
+            const DeepCollectionEquality().equals(other._details, _details) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, actor, action, target,
+      const DeepCollectionEquality().hash(_details), timestamp);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuditEventImplCopyWith<_$AuditEventImpl> get copyWith =>
+      __$$AuditEventImplCopyWithImpl<_$AuditEventImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AuditEventImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AuditEvent implements AuditEvent {
+  const factory _AuditEvent(
+      {required final String id,
+      required final String actor,
+      required final String action,
+      required final String target,
+      required final Map<String, dynamic> details,
+      required final double timestamp}) = _$AuditEventImpl;
+
+  factory _AuditEvent.fromJson(Map<String, dynamic> json) =
+      _$AuditEventImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get actor;
+  @override
+  String get action;
+  @override
+  String get target;
+  @override
+  Map<String, dynamic> get details;
+  @override
+  double get timestamp;
+  @override
+  @JsonKey(ignore: true)
+  _$$AuditEventImplCopyWith<_$AuditEventImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminAuditResponse _$AdminAuditResponseFromJson(Map<String, dynamic> json) {
+  return _AdminAuditResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminAuditResponse {
+  List<AuditEvent> get events => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminAuditResponseCopyWith<AdminAuditResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminAuditResponseCopyWith<$Res> {
+  factory $AdminAuditResponseCopyWith(
+          AdminAuditResponse value, $Res Function(AdminAuditResponse) then) =
+      _$AdminAuditResponseCopyWithImpl<$Res, AdminAuditResponse>;
+  @useResult
+  $Res call({List<AuditEvent> events});
+}
+
+/// @nodoc
+class _$AdminAuditResponseCopyWithImpl<$Res, $Val extends AdminAuditResponse>
+    implements $AdminAuditResponseCopyWith<$Res> {
+  _$AdminAuditResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? events = null,
+  }) {
+    return _then(_value.copyWith(
+      events: null == events
+          ? _value.events
+          : events // ignore: cast_nullable_to_non_nullable
+              as List<AuditEvent>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminAuditResponseImplCopyWith<$Res>
+    implements $AdminAuditResponseCopyWith<$Res> {
+  factory _$$AdminAuditResponseImplCopyWith(_$AdminAuditResponseImpl value,
+          $Res Function(_$AdminAuditResponseImpl) then) =
+      __$$AdminAuditResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AuditEvent> events});
+}
+
+/// @nodoc
+class __$$AdminAuditResponseImplCopyWithImpl<$Res>
+    extends _$AdminAuditResponseCopyWithImpl<$Res, _$AdminAuditResponseImpl>
+    implements _$$AdminAuditResponseImplCopyWith<$Res> {
+  __$$AdminAuditResponseImplCopyWithImpl(_$AdminAuditResponseImpl _value,
+      $Res Function(_$AdminAuditResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? events = null,
+  }) {
+    return _then(_$AdminAuditResponseImpl(
+      events: null == events
+          ? _value._events
+          : events // ignore: cast_nullable_to_non_nullable
+              as List<AuditEvent>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminAuditResponseImpl implements _AdminAuditResponse {
+  const _$AdminAuditResponseImpl({required final List<AuditEvent> events})
+      : _events = events;
+
+  factory _$AdminAuditResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminAuditResponseImplFromJson(json);
+
+  final List<AuditEvent> _events;
+  @override
+  List<AuditEvent> get events {
+    if (_events is EqualUnmodifiableListView) return _events;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_events);
+  }
+
+  @override
+  String toString() {
+    return 'AdminAuditResponse(events: $events)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminAuditResponseImpl &&
+            const DeepCollectionEquality().equals(other._events, _events));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_events));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminAuditResponseImplCopyWith<_$AdminAuditResponseImpl> get copyWith =>
+      __$$AdminAuditResponseImplCopyWithImpl<_$AdminAuditResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminAuditResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminAuditResponse implements AdminAuditResponse {
+  const factory _AdminAuditResponse({required final List<AuditEvent> events}) =
+      _$AdminAuditResponseImpl;
+
+  factory _AdminAuditResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminAuditResponseImpl.fromJson;
+
+  @override
+  List<AuditEvent> get events;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminAuditResponseImplCopyWith<_$AdminAuditResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminUsageResponse _$AdminUsageResponseFromJson(Map<String, dynamic> json) {
+  return _AdminUsageResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminUsageResponse {
+  Map<String, dynamic> get summary => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminUsageResponseCopyWith<AdminUsageResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminUsageResponseCopyWith<$Res> {
+  factory $AdminUsageResponseCopyWith(
+          AdminUsageResponse value, $Res Function(AdminUsageResponse) then) =
+      _$AdminUsageResponseCopyWithImpl<$Res, AdminUsageResponse>;
+  @useResult
+  $Res call({Map<String, dynamic> summary});
+}
+
+/// @nodoc
+class _$AdminUsageResponseCopyWithImpl<$Res, $Val extends AdminUsageResponse>
+    implements $AdminUsageResponseCopyWith<$Res> {
+  _$AdminUsageResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? summary = null,
+  }) {
+    return _then(_value.copyWith(
+      summary: null == summary
+          ? _value.summary
+          : summary // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminUsageResponseImplCopyWith<$Res>
+    implements $AdminUsageResponseCopyWith<$Res> {
+  factory _$$AdminUsageResponseImplCopyWith(_$AdminUsageResponseImpl value,
+          $Res Function(_$AdminUsageResponseImpl) then) =
+      __$$AdminUsageResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Map<String, dynamic> summary});
+}
+
+/// @nodoc
+class __$$AdminUsageResponseImplCopyWithImpl<$Res>
+    extends _$AdminUsageResponseCopyWithImpl<$Res, _$AdminUsageResponseImpl>
+    implements _$$AdminUsageResponseImplCopyWith<$Res> {
+  __$$AdminUsageResponseImplCopyWithImpl(_$AdminUsageResponseImpl _value,
+      $Res Function(_$AdminUsageResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? summary = null,
+  }) {
+    return _then(_$AdminUsageResponseImpl(
+      summary: null == summary
+          ? _value._summary
+          : summary // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminUsageResponseImpl implements _AdminUsageResponse {
+  const _$AdminUsageResponseImpl({required final Map<String, dynamic> summary})
+      : _summary = summary;
+
+  factory _$AdminUsageResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminUsageResponseImplFromJson(json);
+
+  final Map<String, dynamic> _summary;
+  @override
+  Map<String, dynamic> get summary {
+    if (_summary is EqualUnmodifiableMapView) return _summary;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_summary);
+  }
+
+  @override
+  String toString() {
+    return 'AdminUsageResponse(summary: $summary)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminUsageResponseImpl &&
+            const DeepCollectionEquality().equals(other._summary, _summary));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_summary));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminUsageResponseImplCopyWith<_$AdminUsageResponseImpl> get copyWith =>
+      __$$AdminUsageResponseImplCopyWithImpl<_$AdminUsageResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminUsageResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminUsageResponse implements AdminUsageResponse {
+  const factory _AdminUsageResponse(
+      {required final Map<String, dynamic> summary}) = _$AdminUsageResponseImpl;
+
+  factory _AdminUsageResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminUsageResponseImpl.fromJson;
+
+  @override
+  Map<String, dynamic> get summary;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminUsageResponseImplCopyWith<_$AdminUsageResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AdminDashboardResponse _$AdminDashboardResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AdminDashboardResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminDashboardResponse {
+  Map<String, dynamic> get metrics => throw _privateConstructorUsedError;
+  Map<String, dynamic> get agents => throw _privateConstructorUsedError;
+  Map<String, dynamic> get providers => throw _privateConstructorUsedError;
+  int get queueDepth => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminDashboardResponseCopyWith<AdminDashboardResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminDashboardResponseCopyWith<$Res> {
+  factory $AdminDashboardResponseCopyWith(AdminDashboardResponse value,
+          $Res Function(AdminDashboardResponse) then) =
+      _$AdminDashboardResponseCopyWithImpl<$Res, AdminDashboardResponse>;
+  @useResult
+  $Res call(
+      {Map<String, dynamic> metrics,
+      Map<String, dynamic> agents,
+      Map<String, dynamic> providers,
+      int queueDepth});
+}
+
+/// @nodoc
+class _$AdminDashboardResponseCopyWithImpl<$Res,
+        $Val extends AdminDashboardResponse>
+    implements $AdminDashboardResponseCopyWith<$Res> {
+  _$AdminDashboardResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? metrics = null,
+    Object? agents = null,
+    Object? providers = null,
+    Object? queueDepth = null,
+  }) {
+    return _then(_value.copyWith(
+      metrics: null == metrics
+          ? _value.metrics
+          : metrics // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      agents: null == agents
+          ? _value.agents
+          : agents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      providers: null == providers
+          ? _value.providers
+          : providers // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      queueDepth: null == queueDepth
+          ? _value.queueDepth
+          : queueDepth // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminDashboardResponseImplCopyWith<$Res>
+    implements $AdminDashboardResponseCopyWith<$Res> {
+  factory _$$AdminDashboardResponseImplCopyWith(
+          _$AdminDashboardResponseImpl value,
+          $Res Function(_$AdminDashboardResponseImpl) then) =
+      __$$AdminDashboardResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {Map<String, dynamic> metrics,
+      Map<String, dynamic> agents,
+      Map<String, dynamic> providers,
+      int queueDepth});
+}
+
+/// @nodoc
+class __$$AdminDashboardResponseImplCopyWithImpl<$Res>
+    extends _$AdminDashboardResponseCopyWithImpl<$Res,
+        _$AdminDashboardResponseImpl>
+    implements _$$AdminDashboardResponseImplCopyWith<$Res> {
+  __$$AdminDashboardResponseImplCopyWithImpl(
+      _$AdminDashboardResponseImpl _value,
+      $Res Function(_$AdminDashboardResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? metrics = null,
+    Object? agents = null,
+    Object? providers = null,
+    Object? queueDepth = null,
+  }) {
+    return _then(_$AdminDashboardResponseImpl(
+      metrics: null == metrics
+          ? _value._metrics
+          : metrics // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      agents: null == agents
+          ? _value._agents
+          : agents // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      providers: null == providers
+          ? _value._providers
+          : providers // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      queueDepth: null == queueDepth
+          ? _value.queueDepth
+          : queueDepth // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminDashboardResponseImpl implements _AdminDashboardResponse {
+  const _$AdminDashboardResponseImpl(
+      {required final Map<String, dynamic> metrics,
+      required final Map<String, dynamic> agents,
+      required final Map<String, dynamic> providers,
+      required this.queueDepth})
+      : _metrics = metrics,
+        _agents = agents,
+        _providers = providers;
+
+  factory _$AdminDashboardResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminDashboardResponseImplFromJson(json);
+
+  final Map<String, dynamic> _metrics;
+  @override
+  Map<String, dynamic> get metrics {
+    if (_metrics is EqualUnmodifiableMapView) return _metrics;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_metrics);
+  }
+
+  final Map<String, dynamic> _agents;
+  @override
+  Map<String, dynamic> get agents {
+    if (_agents is EqualUnmodifiableMapView) return _agents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_agents);
+  }
+
+  final Map<String, dynamic> _providers;
+  @override
+  Map<String, dynamic> get providers {
+    if (_providers is EqualUnmodifiableMapView) return _providers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_providers);
+  }
+
+  @override
+  final int queueDepth;
+
+  @override
+  String toString() {
+    return 'AdminDashboardResponse(metrics: $metrics, agents: $agents, providers: $providers, queueDepth: $queueDepth)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminDashboardResponseImpl &&
+            const DeepCollectionEquality().equals(other._metrics, _metrics) &&
+            const DeepCollectionEquality().equals(other._agents, _agents) &&
+            const DeepCollectionEquality()
+                .equals(other._providers, _providers) &&
+            (identical(other.queueDepth, queueDepth) ||
+                other.queueDepth == queueDepth));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_metrics),
+      const DeepCollectionEquality().hash(_agents),
+      const DeepCollectionEquality().hash(_providers),
+      queueDepth);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminDashboardResponseImplCopyWith<_$AdminDashboardResponseImpl>
+      get copyWith => __$$AdminDashboardResponseImplCopyWithImpl<
+          _$AdminDashboardResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminDashboardResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminDashboardResponse implements AdminDashboardResponse {
+  const factory _AdminDashboardResponse(
+      {required final Map<String, dynamic> metrics,
+      required final Map<String, dynamic> agents,
+      required final Map<String, dynamic> providers,
+      required final int queueDepth}) = _$AdminDashboardResponseImpl;
+
+  factory _AdminDashboardResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminDashboardResponseImpl.fromJson;
+
+  @override
+  Map<String, dynamic> get metrics;
+  @override
+  Map<String, dynamic> get agents;
+  @override
+  Map<String, dynamic> get providers;
+  @override
+  int get queueDepth;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminDashboardResponseImplCopyWith<_$AdminDashboardResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AdminOwnerModeResponse _$AdminOwnerModeResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AdminOwnerModeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AdminOwnerModeResponse {
+  String get mode => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdminOwnerModeResponseCopyWith<AdminOwnerModeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdminOwnerModeResponseCopyWith<$Res> {
+  factory $AdminOwnerModeResponseCopyWith(AdminOwnerModeResponse value,
+          $Res Function(AdminOwnerModeResponse) then) =
+      _$AdminOwnerModeResponseCopyWithImpl<$Res, AdminOwnerModeResponse>;
+  @useResult
+  $Res call({String mode, String? message});
+}
+
+/// @nodoc
+class _$AdminOwnerModeResponseCopyWithImpl<$Res,
+        $Val extends AdminOwnerModeResponse>
+    implements $AdminOwnerModeResponseCopyWith<$Res> {
+  _$AdminOwnerModeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mode = null,
+    Object? message = freezed,
+  }) {
+    return _then(_value.copyWith(
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdminOwnerModeResponseImplCopyWith<$Res>
+    implements $AdminOwnerModeResponseCopyWith<$Res> {
+  factory _$$AdminOwnerModeResponseImplCopyWith(
+          _$AdminOwnerModeResponseImpl value,
+          $Res Function(_$AdminOwnerModeResponseImpl) then) =
+      __$$AdminOwnerModeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String mode, String? message});
+}
+
+/// @nodoc
+class __$$AdminOwnerModeResponseImplCopyWithImpl<$Res>
+    extends _$AdminOwnerModeResponseCopyWithImpl<$Res,
+        _$AdminOwnerModeResponseImpl>
+    implements _$$AdminOwnerModeResponseImplCopyWith<$Res> {
+  __$$AdminOwnerModeResponseImplCopyWithImpl(
+      _$AdminOwnerModeResponseImpl _value,
+      $Res Function(_$AdminOwnerModeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mode = null,
+    Object? message = freezed,
+  }) {
+    return _then(_$AdminOwnerModeResponseImpl(
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdminOwnerModeResponseImpl implements _AdminOwnerModeResponse {
+  const _$AdminOwnerModeResponseImpl({required this.mode, this.message});
+
+  factory _$AdminOwnerModeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdminOwnerModeResponseImplFromJson(json);
+
+  @override
+  final String mode;
+  @override
+  final String? message;
+
+  @override
+  String toString() {
+    return 'AdminOwnerModeResponse(mode: $mode, message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdminOwnerModeResponseImpl &&
+            (identical(other.mode, mode) || other.mode == mode) &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, mode, message);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdminOwnerModeResponseImplCopyWith<_$AdminOwnerModeResponseImpl>
+      get copyWith => __$$AdminOwnerModeResponseImplCopyWithImpl<
+          _$AdminOwnerModeResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdminOwnerModeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AdminOwnerModeResponse implements AdminOwnerModeResponse {
+  const factory _AdminOwnerModeResponse(
+      {required final String mode,
+      final String? message}) = _$AdminOwnerModeResponseImpl;
+
+  factory _AdminOwnerModeResponse.fromJson(Map<String, dynamic> json) =
+      _$AdminOwnerModeResponseImpl.fromJson;
+
+  @override
+  String get mode;
+  @override
+  String? get message;
+  @override
+  @JsonKey(ignore: true)
+  _$$AdminOwnerModeResponseImplCopyWith<_$AdminOwnerModeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

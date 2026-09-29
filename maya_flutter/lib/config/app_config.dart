@@ -91,6 +91,18 @@ class AppConfig {
   static const String llmStats = '/api/v1/llm/stats';
   static const String llmStrategy = '/api/v1/llm/strategy';
 
+  // Enterprise Layer
+  static const String adminRoles = '/api/v1/admin/roles';
+  static const String adminOrgs = '/api/v1/admin/orgs';
+  static const String adminOrg = '/api/v1/admin/orgs/';
+  static const String adminApiKeys = '/api/v1/admin/apikeys';
+  static const String adminApiKey = '/api/v1/admin/apikeys/';
+  static const String adminAudit = '/api/v1/admin/audit';
+  static const String adminUsage = '/api/v1/admin/usage';
+  static const String adminDashboard = '/api/v1/admin/dashboard';
+  static const String adminUsers = '/api/v1/admin/users';
+  static const String adminOwnerMode = '/api/v1/admin/owner-mode';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

@@ -608,6 +608,99 @@ class ApiService {
     return LLMStrategyResponse.fromJson(response.data);
   }
 
+  // Enterprise Layer
+  Future<AdminRolesResponse> getAdminRoles() async {
+    final response = await _dio.get(AppConfig.adminRoles);
+    return AdminRolesResponse.fromJson(response.data);
+  }
+
+  Future<AdminOrgsResponse> getAdminOrgs() async {
+    final response = await _dio.get(AppConfig.adminOrgs);
+    return AdminOrgsResponse.fromJson(response.data);
+  }
+
+  Future<AdminOrgResponse> createAdminOrg(String name) async {
+    final response = await _dio.post(
+      AppConfig.adminOrgs,
+      data: {'name': name},
+    );
+    return AdminOrgResponse.fromJson(response.data);
+  }
+
+  Future<bool> deleteAdminOrg(String orgId) async {
+    try {
+      final response = await _dio.delete('${AppConfig.adminOrg}$orgId');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<AdminOrgMembersResponse> getAdminOrgMembers(String orgId) async {
+    final response = await _dio.get('${AppConfig.adminOrg}$orgId/members');
+    return AdminOrgMembersResponse.fromJson(response.data);
+  }
+
+  Future<AdminApiKeysResponse> getAdminApiKeys() async {
+    final response = await _dio.get(AppConfig.adminApiKeys);
+    return AdminApiKeysResponse.fromJson(response.data);
+  }
+
+  Future<AdminApiKeyCreatedResponse> createAdminApiKey(String name) async {
+    final response = await _dio.post(
+      AppConfig.adminApiKeys,
+      data: {'name': name},
+    );
+    return AdminApiKeyCreatedResponse.fromJson(response.data);
+  }
+
+  Future<bool> revokeAdminApiKey(String keyId) async {
+    try {
+      final response = await _dio.delete('${AppConfig.adminApiKey}$keyId');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<AdminAuditResponse> getAdminAudit({String? actor, String? action, int limit = 100}) async {
+    final response = await _dio.get(
+      AppConfig.adminAudit,
+      queryParameters: {
+        if (actor != null) 'actor': actor,
+        if (action != null) 'action': action,
+        'limit': limit,
+      },
+    );
+    return AdminAuditResponse.fromJson(response.data);
+  }
+
+  Future<AdminUsageResponse> getAdminUsage({double sinceTs = 0.0}) async {
+    final response = await _dio.get(
+      AppConfig.adminUsage,
+      queryParameters: {'since_ts': sinceTs},
+    );
+    return AdminUsageResponse.fromJson(response.data);
+  }
+
+  Future<AdminDashboardResponse> getAdminDashboard() async {
+    final response = await _dio.get(AppConfig.adminDashboard);
+    return AdminDashboardResponse.fromJson(response.data);
+  }
+
+  Future<AdminOwnerModeResponse> getAdminOwnerMode() async {
+    final response = await _dio.get(AppConfig.adminOwnerMode);
+    return AdminOwnerModeResponse.fromJson(response.data);
+  }
+
+  Future<AdminOwnerModeResponse> setAdminOwnerMode(String mode) async {
+    final response = await _dio.post(
+      AppConfig.adminOwnerMode,
+      data: {'mode': mode},
+    );
+    return AdminOwnerModeResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1499,4 +1592,182 @@ class LLMStrategyResponse with _$LLMStrategyResponse {
 
   factory LLMStrategyResponse.fromJson(Map<String, dynamic> json) =>
       _$LLMStrategyResponseFromJson(json);
+}
+
+// Enterprise Layer Models
+@freezed
+class RoleInfo with _$RoleInfo {
+  const factory RoleInfo({
+    required String name,
+    required String description,
+    required List<String> permissions,
+  }) = _RoleInfo;
+
+  factory RoleInfo.fromJson(Map<String, dynamic> json) =>
+      _$RoleInfoFromJson(json);
+}
+
+@freezed
+class AdminRolesResponse with _$AdminRolesResponse {
+  const factory AdminRolesResponse({
+    required Map<String, RoleInfo> roles,
+  }) = _AdminRolesResponse;
+
+  factory AdminRolesResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminRolesResponseFromJson(json);
+}
+
+@freezed
+class AdminOrg with _$AdminOrg {
+  const factory AdminOrg({
+    required String id,
+    required String name,
+    required String createdAt,
+    int? memberCount,
+  }) = _AdminOrg;
+
+  factory AdminOrg.fromJson(Map<String, dynamic> json) =>
+      _$AdminOrgFromJson(json);
+}
+
+@freezed
+class AdminOrgsResponse with _$AdminOrgsResponse {
+  const factory AdminOrgsResponse({
+    required List<AdminOrg> orgs,
+  }) = _AdminOrgsResponse;
+
+  factory AdminOrgsResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminOrgsResponseFromJson(json);
+}
+
+@freezed
+class AdminOrgResponse with _$AdminOrgResponse {
+  const factory AdminOrgResponse({
+    required String id,
+    required String name,
+  }) = _AdminOrgResponse;
+
+  factory AdminOrgResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminOrgResponseFromJson(json);
+}
+
+@freezed
+class OrgMember with _$OrgMember {
+  const factory OrgMember({
+    required String email,
+    required String role,
+    String? teamId,
+    required String joinedAt,
+  }) = _OrgMember;
+
+  factory OrgMember.fromJson(Map<String, dynamic> json) =>
+      _$OrgMemberFromJson(json);
+}
+
+@freezed
+class AdminOrgMembersResponse with _$AdminOrgMembersResponse {
+  const factory AdminOrgMembersResponse({
+    required List<OrgMember> members,
+  }) = _AdminOrgMembersResponse;
+
+  factory AdminOrgMembersResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminOrgMembersResponseFromJson(json);
+}
+
+@freezed
+class AdminApiKey with _$AdminApiKey {
+  const factory AdminApiKey({
+    required String id,
+    required String name,
+    required String prefix,
+    required String createdAt,
+    String? lastUsedAt,
+    required bool revoked,
+  }) = _AdminApiKey;
+
+  factory AdminApiKey.fromJson(Map<String, dynamic> json) =>
+      _$AdminApiKeyFromJson(json);
+}
+
+@freezed
+class AdminApiKeysResponse with _$AdminApiKeysResponse {
+  const factory AdminApiKeysResponse({
+    required List<AdminApiKey> keys,
+  }) = _AdminApiKeysResponse;
+
+  factory AdminApiKeysResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminApiKeysResponseFromJson(json);
+}
+
+@freezed
+class AdminApiKeyCreatedResponse with _$AdminApiKeyCreatedResponse {
+  const factory AdminApiKeyCreatedResponse({
+    required String id,
+    required String name,
+    required String key,  // Only shown once at creation
+    required String prefix,
+    required String createdAt,
+  }) = _AdminApiKeyCreatedResponse;
+
+  factory AdminApiKeyCreatedResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminApiKeyCreatedResponseFromJson(json);
+}
+
+@freezed
+class AuditEvent with _$AuditEvent {
+  const factory AuditEvent({
+    required String id,
+    required String actor,
+    required String action,
+    required String target,
+    required Map<String, dynamic> details,
+    required double timestamp,
+  }) = _AuditEvent;
+
+  factory AuditEvent.fromJson(Map<String, dynamic> json) =>
+      _$AuditEventFromJson(json);
+}
+
+@freezed
+class AdminAuditResponse with _$AdminAuditResponse {
+  const factory AdminAuditResponse({
+    required List<AuditEvent> events,
+  }) = _AdminAuditResponse;
+
+  factory AdminAuditResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminAuditResponseFromJson(json);
+}
+
+@freezed
+class AdminUsageResponse with _$AdminUsageResponse {
+  const factory AdminUsageResponse({
+    required Map<String, dynamic> summary,
+  }) = _AdminUsageResponse;
+
+  factory AdminUsageResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminUsageResponseFromJson(json);
+}
+
+@freezed
+class AdminDashboardResponse with _$AdminDashboardResponse {
+  const factory AdminDashboardResponse({
+    required Map<String, dynamic> metrics,
+    required Map<String, dynamic> agents,
+    required Map<String, dynamic> providers,
+    required int queueDepth,
+  }) = _AdminDashboardResponse;
+
+  factory AdminDashboardResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminDashboardResponseFromJson(json);
+}
+
+@freezed
+class AdminOwnerModeResponse with _$AdminOwnerModeResponse {
+  const factory AdminOwnerModeResponse({
+    required String mode,
+    String? message,
+  }) = _AdminOwnerModeResponse;
+
+  factory AdminOwnerModeResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdminOwnerModeResponseFromJson(json);
 }
