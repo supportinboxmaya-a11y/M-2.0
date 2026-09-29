@@ -671,13 +671,21 @@ class _ActionCard extends StatelessWidget {
   }
 }
 
-class _VoiceScreen extends ConsumerWidget {
+class _VoiceScreen extends ConsumerStatefulWidget {
   const _VoiceScreen();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_VoiceScreen> createState() => _VoiceScreenState();
+}
+
+class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
+  String _ttsText = 'Hello! I am Maya, your AI assistant.';
+
+  @override
+  Widget build(BuildContext context) {
     final voiceStateAsync = ref.watch(voiceStateStreamProvider);
     final voiceState = voiceStateAsync.value;
+    final voiceService = ref.read(voiceServiceProvider);
     final isRecording = voiceState == VoiceState.recording;
     final isSpeaking = voiceState == VoiceState.speaking;
 
@@ -729,9 +737,9 @@ class _VoiceScreen extends ConsumerWidget {
                               .scale(duration: 2000.ms);
                         }),
                         // Central Logo
-                        const MayaLogo(
+                        MayaLogo(
                           size: 160,
-                          state: MayaLogoState.idle,
+                          state: isRecording ? MayaLogoState.listening : (isSpeaking ? MayaLogoState.speaking : MayaLogoState.idle),
                           showPulse: true,
                           showGlow: true,
                         ),
@@ -742,42 +750,56 @@ class _VoiceScreen extends ConsumerWidget {
 
                     // Status Text
                     Text(
-                      'Tap to speak',
-                      style:
-                          MayaTheme.titleMedium.copyWith(color: Colors.white70),
+                      isRecording ? 'Listening...' : (isSpeaking ? 'Speaking...' : 'Tap to speak'),
+                      style: MayaTheme.titleMedium.copyWith(color: Colors.white70),
                     ),
 
                     const SizedBox(height: 32),
 
                     // Voice Button
                     GestureDetector(
-                      onTap: () {},
-                      child: Container(
+                      onTapDown: (_) => _toggleListening(),
+                      onTapUp: (_) => _toggleListening(),
+                      onTapCancel: () => _toggleListening(),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: MayaTheme.neonCyan.withValues(alpha: 0.4),
-                              blurRadius: 30,
-                              spreadRadius: 5,
-                            ),
-                          ],
+                          gradient: isRecording
+                              ? LinearGradient(
+                                  colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
+                                )
+                              : const LinearGradient(
+                                  colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
+                                ),
+                          boxShadow: isRecording
+                              ? [
+                                  BoxShadow(
+                                    color: MayaTheme.error.withValues(alpha: 0.5),
+                                    blurRadius: 30,
+                                    spreadRadius: 5,
+                                  ),
+                                ]
+                              : [
+                                  BoxShadow(
+                                    color: MayaTheme.neonCyan.withValues(alpha: 0.4),
+                                    blurRadius: 30,
+                                    spreadRadius: 5,
+                                  ),
+                                ],
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Icon(
-                            Icons.mic_rounded,
+                            isRecording ? Icons.stop_rounded : Icons.mic_rounded,
                             size: 40,
                             color: MayaTheme.slate900,
                           ),
                         ),
                       )
-                          .animate(onPlay: (c) => c.repeat())
-                          .scale(duration: 1000.ms, curve: Curves.easeInOut),
+                          .animate(target: isRecording ? 1 : 0)
+                          .scale(duration: const Duration(milliseconds: 200)),
                     ),
 
                     const SizedBox(height: 32),
@@ -786,11 +808,16 @@ class _VoiceScreen extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: MayaTheme.glassCard(),
-                      child: Text(
-                        'Say something...',
-                        style: MayaTheme.bodyMedium
-                            .copyWith(color: Colors.white54),
-                        textAlign: TextAlign.center,
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          final transcript = ref.watch(voiceServiceProvider).currentTranscript;
+                          return Text(
+                            transcript.isEmpty ? 'Say something...' : transcript,
+                            style: MayaTheme.bodyMedium
+                                .copyWith(color: Colors.white54),
+                            textAlign: TextAlign.center,
+                          );
+                        },
                       ),
                     ),
 
@@ -806,16 +833,16 @@ class _VoiceScreen extends ConsumerWidget {
                             backgroundColor: MayaTheme.error,
                             padding: const EdgeInsets.all(20),
                           ),
-                          onPressed: () {},
+                          onPressed: _stopAll,
                         ),
                         const SizedBox(width: 24),
                         IconButton.filled(
-                          icon: const Icon(Icons.volume_up_rounded),
+                          icon: Icon(isSpeaking ? Icons.volume_off_rounded : Icons.volume_up_rounded),
                           style: IconButton.styleFrom(
-                            backgroundColor: MayaTheme.neonEmerald,
+                            backgroundColor: isSpeaking ? MayaTheme.error : MayaTheme.neonEmerald,
                             padding: const EdgeInsets.all(20),
                           ),
-                          onPressed: () {},
+                          onPressed: _toggleTTS,
                         ),
                         const SizedBox(width: 24),
                         IconButton.filled(
@@ -824,7 +851,7 @@ class _VoiceScreen extends ConsumerWidget {
                             backgroundColor: MayaTheme.slate700,
                             padding: const EdgeInsets.all(20),
                           ),
-                          onPressed: () {},
+                          onPressed: _showVoiceSettings,
                         ),
                       ],
                     ),
@@ -837,13 +864,118 @@ class _VoiceScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _toggleListening() {
+    final voiceService = ref.read(voiceServiceProvider);
+    if (voiceService.isRecording) {
+      voiceService.stopRecording();
+    } else {
+      voiceService.startRecording(useSpeechToText: true);
+    }
+  }
+
+  void _stopAll() {
+    final voiceService = ref.read(voiceServiceProvider);
+    voiceService.stopRecording();
+    voiceService.stopSpeaking();
+  }
+
+  void _toggleTTS() {
+    final voiceService = ref.read(voiceServiceProvider);
+    if (voiceService.isSpeaking) {
+      voiceService.stopSpeaking();
+    } else {
+      voiceService.speak(_ttsText, voice: 'en-US-AriaNeural');
+    }
+  }
+
+  void _showVoiceSettings() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MayaTheme.slate800,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Voice Settings', style: MayaTheme.headlineMedium),
+            const SizedBox(height: 24),
+            const Text('TTS Voice', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: ['en-US-AriaNeural', 'en-US-GuyNeural', 'en-GB-RyanNeural', 'bn-BD', 'hi-IN']
+                  .map((v) => FilterChip(
+                        label: Text(v),
+                        selected: _ttsText.contains(v),
+                        onSelected: (selected) {
+                          setState(() => _ttsText = v);
+                        },
+                        selectedColor: MayaTheme.neonCyan.withValues(alpha: 0.3),
+                        checkmarkColor: MayaTheme.neonCyan,
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: TextEditingController(text: _ttsText),
+              maxLines: 3,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                labelText: 'Test Text',
+                labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onChanged: (v) => _ttsText = v,
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ref.read(voiceServiceProvider).speak(_ttsText);
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.volume_up_rounded),
+                label: const Text('Speak Test Text'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonCyan,
+                  foregroundColor: MayaTheme.slate900,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _CameraScreen extends ConsumerWidget {
+class _CameraScreen extends ConsumerStatefulWidget {
   const _CameraScreen();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_CameraScreen> createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends ConsumerState<_CameraScreen> {
+  VisionAnalysisResult? _analysisResult;
+  OcrResult? _ocrResult;
+  bool _isProcessing = false;
+  String _processingText = '';
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -884,14 +1016,20 @@ class _CameraScreen extends ConsumerWidget {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.flash_on_rounded),
-                          onPressed: () {},
+                          onPressed: () {
+                            final cameraService = ref.read(cameraServiceProvider);
+                            final mode = cameraService.controller?.value.flashMode ?? FlashMode.off;
+                            cameraService.setFlashMode(mode == FlashMode.off ? FlashMode.torch : FlashMode.off);
+                          },
                           style: IconButton.styleFrom(
                               backgroundColor: Colors.black54),
                         ),
                         const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.cameraswitch_rounded),
-                          onPressed: () {},
+                          onPressed: () {
+                            ref.read(cameraServiceProvider).switchCamera();
+                          },
                           style: IconButton.styleFrom(
                               backgroundColor: Colors.black54),
                         ),
@@ -909,6 +1047,167 @@ class _CameraScreen extends ConsumerWidget {
               ),
             ),
 
+            // Processing Overlay
+            if (_isProcessing)
+              Container(
+                color: Colors.black87,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(_processingText, style: MayaTheme.bodyMedium.copyWith(color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
+
+            // Results Overlay
+            if ((_analysisResult != null || _ocrResult != null) && !_isProcessing)
+              Positioned(
+                bottom: 100,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: MayaTheme.slate900.withValues(alpha: 0.95),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: MayaTheme.neonCyan.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.psychology_rounded, color: MayaTheme.neonCyan, size: 24),
+                          const SizedBox(width: 12),
+                          Text('Analysis Result', style: MayaTheme.titleMedium),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, color: Colors.white54),
+                            onPressed: () => setState(() {
+                              _analysisResult = null;
+                              _ocrResult = null;
+                            }),
+                          ),
+                        ],
+                      ),
+                      if (_analysisResult != null) ...[
+                        const SizedBox(height: 8),
+                        Text(_analysisResult!.analysis, style: MayaTheme.bodyMedium),
+                        if (_analysisResult!.tags != null && _analysisResult!.tags!.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: _analysisResult!.tags!.map((tag) => Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: MayaTheme.neonCyan.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+                              ),
+                              child: Text(tag, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan)),
+                            )).toList(),
+                          ),
+                        ],
+                      ],
+                      if (_ocrResult != null) ...[
+                        const SizedBox(height: 12),
+                        const Divider(color: MayaTheme.glassWhite10),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.text_fields_rounded, color: MayaTheme.neonViolet, size: 20),
+                            const SizedBox(width: 8),
+                            Text('OCR Text', style: MayaTheme.titleSmall.copyWith(color: MayaTheme.neonViolet)),
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(Icons.copy_rounded, color: MayaTheme.neonCyan, size: 20),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: _ocrResult!.text));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: const Text('Copied to clipboard'), backgroundColor: MayaTheme.neonEmerald),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: MayaTheme.slate700,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: MayaTheme.glassWhite10),
+                          ),
+                          child: SelectableText(
+                            _ocrResult!.text.isEmpty ? 'No text detected' : _ocrResult!.text,
+                            style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace'),
+                          ),
+                        ),
+                        if (_ocrResult!.regions != null && _ocrResult!.regions!.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text('Regions: ${_ocrResult!.regions!.length}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                        ],
+                      ],
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _analyzeImage,
+                              icon: const Icon(Icons.psychology_rounded),
+                              label: const Text('Analyze'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: MayaTheme.neonCyan,
+                                side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _extractText,
+                              icon: const Icon(Icons.text_fields_rounded),
+                              label: const Text('OCR'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: MayaTheme.neonViolet,
+                                side: BorderSide(color: MayaTheme.neonViolet.withValues(alpha: 0.5)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _captureAndAnalyze,
+                              icon: const Icon(Icons.camera_rounded),
+                              label: const Text('Capture'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: MayaTheme.neonCyan,
+                                foregroundColor: MayaTheme.slate900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
             // Bottom Controls
             Align(
               alignment: Alignment.bottomCenter,
@@ -923,18 +1222,18 @@ class _CameraScreen extends ConsumerWidget {
                         _CameraActionButton(
                           icon: Icons.image_rounded,
                           label: 'Gallery',
-                          onTap: () {},
+                          onTap: _pickFromGallery,
                         ),
-                        _CameraShutterButton(onPressed: () {}),
+                        _CameraShutterButton(onPressed: _capturePhoto),
                         _CameraActionButton(
                           icon: Icons.flash_on_rounded,
                           label: 'Flash',
-                          onTap: () {},
+                          onPressed: _toggleFlash,
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Text('Tap to capture • Swipe to zoom',
+                    Text('Capture → Analyze → OCR',
                         style: MayaTheme.bodySmall
                             .copyWith(color: Colors.white54)),
                   ],
@@ -945,6 +1244,76 @@ class _CameraScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _capturePhoto() async {
+    if (_isProcessing) return;
+    final cameraService = ref.read(cameraServiceProvider);
+    final photo = await cameraService.takePhoto();
+    if (photo != null) {
+      _analyzePhoto(photo);
+    }
+  }
+
+  Future<void> _captureAndAnalyze() async {
+    if (_isProcessing) return;
+    final cameraService = ref.read(cameraServiceProvider);
+    final photo = await cameraService.takePhoto();
+    if (photo != null) {
+      _analyzePhoto(photo);
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    if (_isProcessing) return;
+    final cameraService = ref.read(cameraServiceProvider);
+    final photo = await cameraService._picker.pickImage(source: ImageSource.gallery);
+    if (photo != null) {
+      _analyzePhoto(photo);
+    }
+  }
+
+  Future<void> _analyzePhoto(XFile photo) async {
+    setState(() {
+      _isProcessing = true;
+      _processingText = 'Analyzing image...';
+      _analysisResult = null;
+      _ocrResult = null;
+    });
+
+    final cameraService = ref.read(cameraServiceProvider);
+    final result = await cameraService.analyzePhoto(photo, prompt: 'Describe this image in detail.');
+
+    if (mounted) {
+      setState(() {
+        _isProcessing = false;
+        _analysisResult = result;
+      });
+    }
+  }
+
+  Future<void> _analyzeImage() async {
+    if (_isProcessing) return;
+    // Re-analyze last captured image
+    final cameraService = ref.read(cameraServiceProvider);
+    // This would need the last photo - for now just show a message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: const Text('Recapture image to analyze'), backgroundColor: MayaTheme.neonOrange),
+    );
+  }
+
+  Future<void> _extractText() async {
+    if (_isProcessing) return;
+    // OCR on last captured image - would need to store last photo
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: const Text('Recapture image for OCR'), backgroundColor: MayaTheme.neonOrange),
+    );
+  }
+
+  Future<void> _toggleFlash() async {
+    final cameraService = ref.read(cameraServiceProvider);
+    final mode = cameraService.controller?.value.flashMode ?? FlashMode.off;
+    cameraService.setFlashMode(mode == FlashMode.off ? FlashMode.torch : FlashMode.off);
   }
 }
 
@@ -1842,7 +2211,7 @@ class _SidebarItem extends StatelessWidget {
   }
 }
 
-class _ChatBubble extends StatelessWidget {
+class _ChatBubble extends ConsumerStatefulWidget {
   final String text;
   final bool isUser;
   final String time;
@@ -1858,25 +2227,32 @@ class _ChatBubble extends StatelessWidget {
   });
 
   @override
+  ConsumerState<_ChatBubble> createState() => _ChatBubbleState();
+}
+
+class _ChatBubbleState extends ConsumerState<_ChatBubble> {
+  bool _isSpeaking = false;
+
+  @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: widget.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         constraints:
             BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
-          color: isUser ? MayaTheme.neonCyan : MayaTheme.slate700,
+          color: widget.isUser ? MayaTheme.neonCyan : MayaTheme.slate700,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20),
             topRight: const Radius.circular(20),
-            bottomLeft: Radius.circular(isUser ? 20 : 4),
-            bottomRight: Radius.circular(isUser ? 4 : 20),
+            bottomLeft: Radius.circular(widget.isUser ? 20 : 4),
+            bottomRight: Radius.circular(widget.isUser ? 4 : 20),
           ),
           boxShadow: [
             BoxShadow(
-              color: (isUser ? MayaTheme.neonCyan : MayaTheme.neonViolet)
+              color: (widget.isUser ? MayaTheme.neonCyan : MayaTheme.neonViolet)
                   .withValues(alpha: 0.2),
               blurRadius: 12,
               spreadRadius: 2,
@@ -1887,10 +2263,10 @@ class _ChatBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(text,
+            Text(widget.text,
                 style: MayaTheme.bodyMedium.copyWith(
-                    color: isUser ? MayaTheme.slate900 : Colors.white)),
-            if (isStreaming && !isUser) ...[
+                    color: widget.isUser ? MayaTheme.slate900 : Colors.white)),
+            if (widget.isStreaming && !widget.isUser) ...[
               const SizedBox(height: 4),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1901,7 +2277,7 @@ class _ChatBubble extends StatelessWidget {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          isUser ? MayaTheme.slate900 : Colors.white70),
+                          widget.isUser ? MayaTheme.slate900 : Colors.white70),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -1915,22 +2291,80 @@ class _ChatBubble extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(time,
+                Text(widget.time,
                     style:
                         MayaTheme.labelSmall.copyWith(color: Colors.white38)),
                 const SizedBox(width: 8),
                 const Icon(Icons.done_all_rounded,
                     size: 14, color: Colors.white38),
-],
-                  ),
+                if (!widget.isUser) ...[
+                  const SizedBox(width: 8),
+                  _TTSButton(text: widget.text, isSpeaking: _isSpeaking, onStateChanged: (speaking) {
+                    setState(() => _isSpeaking = speaking);
+                  }),
                 ],
               ),
-              const SizedBox(width: 8),
-              // Health Probes
-              const _HealthProbesWidget(),
-            ),
+            ],
+          ),
+        ),
+      );
+  }
+}
+
+class _TTSButton extends ConsumerStatefulWidget {
+  final String text;
+  final bool isSpeaking;
+  final ValueChanged<bool> onStateChanged;
+
+  const _TTSButton({
+    required this.text,
+    required this.isSpeaking,
+    required this.onStateChanged,
+  });
+
+  @override
+  ConsumerState<_TTSButton> createState() => _TTSButtonState();
+}
+
+class _TTSButtonState extends ConsumerState<_TTSButton> {
+  bool _isPlaying = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _toggleTTS,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: _isPlaying
+              ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+              : MayaTheme.glassWhite10,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          _isPlaying ? Icons.stop_rounded : Icons.volume_up_rounded,
+          size: 16,
+          color: _isPlaying ? MayaTheme.neonEmerald : Colors.white54,
+        ),
+      ),
     );
   }
+
+  void _toggleTTS() async {
+    final voiceService = ref.read(voiceServiceProvider);
+    if (voiceService.isSpeaking) {
+      await voiceService.stopSpeaking();
+      widget.onStateChanged(false);
+      setState(() => _isPlaying = false);
+    } else {
+      widget.onStateChanged(true);
+      setState(() => _isPlaying = true);
+      await voiceService.speak(widget.text);
+      widget.onStateChanged(false);
+      if (mounted) setState(() => _isPlaying = false);
+    }
+  }
+}
 }
 
 // Task Queue Monitor Screen
