@@ -36,6 +36,11 @@ class AppConfig {
   static const String wsEvents = '/api/v1/events';
   static const String wsAgentStream = '/ws/stream/';
 
+  // Health Probes
+  static const String healthLive = '/health/live';
+  static const String healthReady = '/health/ready';
+  static const String healthSystem = '/health/system';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

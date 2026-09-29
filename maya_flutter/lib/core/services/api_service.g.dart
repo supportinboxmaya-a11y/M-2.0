@@ -6,6 +6,45 @@ part of 'api_service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_$HealthCheckResultImpl _$$HealthCheckResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$HealthCheckResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$HealthCheckResultImpl(
+          live: $checkedConvert('live', (v) => v as bool),
+          ready: $checkedConvert('ready', (v) => v as bool),
+          system: $checkedConvert('system', (v) => v as String),
+          latency: $checkedConvert('latency', (v) => (v as num).toInt()),
+          lastCheck:
+              $checkedConvert('last_check', (v) => DateTime.parse(v as String)),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'lastCheck': 'last_check'},
+    );
+
+Map<String, dynamic> _$$HealthCheckResultImplToJson(
+    _$HealthCheckResultImpl instance) {
+  final val = <String, dynamic>{
+    'live': instance.live,
+    'ready': instance.ready,
+    'system': instance.system,
+    'latency': instance.latency,
+    'last_check': instance.lastCheck.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('error', instance.error);
+  return val;
+}
+
 _$AuthResponseImpl _$$AuthResponseImplFromJson(Map json) => $checkedCreate(
       r'_$AuthResponseImpl',
       json,

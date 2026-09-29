@@ -10,11 +10,16 @@ import 'core/services/api_service.dart';
 import 'features/voice/voice_service.dart';
 import 'features/camera/camera_service.dart';
 import 'features/system/system_service.dart';
-import 'config/app_config.dart';
+import 'features/system/health_service.dart';
 
 final voiceServiceProvider = Provider((ref) => VoiceService(ref.read(apiServiceProvider)));
 final cameraServiceProvider = Provider((ref) => CameraService(ref.read(apiServiceProvider)));
 final systemServiceProvider = Provider((ref) => SystemService(ref.read(apiServiceProvider)));
+// Health status stream provider - polls every 30 seconds
+final healthStreamProvider = StreamProvider<HealthStatus>((ref) {
+  final service = ref.watch(healthServiceProvider);
+  return service.watchHealth(interval: const Duration(seconds: 30));
+});
 
 // StreamProviders to watch service streams as AsyncValue
 final systemStateStreamProvider = StreamProvider<SystemState>((ref) {
@@ -346,14 +351,14 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _StatusChip(
+                      const _StatusChip(
                         label: 'Agent',
                         value: 'Maya Core',
                         color: MayaTheme.neonCyan,
                         icon: Icons.psychology_rounded,
                       ),
                       const SizedBox(width: 8),
-                      _StatusChip(
+                      const _StatusChip(
                         label: 'Tools',
                         value: '3 Active',
                         color: MayaTheme.neonViolet,
@@ -390,7 +395,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
                               showGlow: true,
                             ),
                             const SizedBox(height: 24),
-                            Text(
+                            const Text(
                               'Welcome to Maya Pro',
                               style: MayaTheme.headlineSmall,
                             ),
@@ -493,7 +498,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
                             ? LinearGradient(
                                 colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
                               )
-                            : LinearGradient(
+                            : const LinearGradient(
                                 colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
                               ),
                         boxShadow: _isListening
@@ -1099,8 +1104,8 @@ class ChatMessage {
   }) {
     return ChatMessage(
       text: text ?? this.text,
-      isUser: this.isUser,
-      time: this.time,
+      isUser: isUser,
+      time: time,
       isStreaming: isStreaming ?? this.isStreaming,
       isVoice: isVoice ?? this.isVoice,
     );
@@ -1189,6 +1194,89 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
   }
 }
 
+class _HealthProbesWidget extends ConsumerWidget {
+  const _HealthProbesWidget();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final healthAsync = ref.watch(healthStreamProvider);
+
+    return healthAsync.when(
+      data: (health) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: health.isHealthy
+              ? MayaTheme.neonEmerald.withValues(alpha: 0.15)
+              : health.ready
+                  ? MayaTheme.neonOrange.withValues(alpha: 0.15)
+                  : MayaTheme.error.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: health.statusColor.withValues(alpha: 0.5),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              health.live ? Icons.check_circle : Icons.error,
+              size: 14,
+              color: health.statusColor,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              health.statusText,
+              style: MayaTheme.labelSmall.copyWith(
+                color: health.statusColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+      loading: () => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: MayaTheme.glassWhite10,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: MayaTheme.glassWhite30),
+        ),
+        child: const SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(MayaTheme.neonCyan),
+          ),
+        ),
+      ),
+      error: (err, _) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: MayaTheme.error.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: MayaTheme.error.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error, size: 14, color: MayaTheme.error),
+            const SizedBox(width: 4),
+            Text(
+              'Error',
+              style: MayaTheme.labelSmall.copyWith(
+                color: MayaTheme.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _AppDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1210,7 +1298,7 @@ class _AppDrawer extends ConsumerWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Maya Pro', style: MayaTheme.headlineSmall),
+                      const Text('Maya Pro', style: MayaTheme.headlineSmall),
                       Text('AI Assistant', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
                     ],
                   ),
@@ -1295,7 +1383,7 @@ class _AppDrawer extends ConsumerWidget {
                   trailing: Container(
                     width: 8,
                     height: 8,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: MayaTheme.neonEmerald,
                       shape: BoxShape.circle,
                     ),
@@ -1697,11 +1785,14 @@ class _ChatBubble extends StatelessWidget {
                 const SizedBox(width: 8),
                 const Icon(Icons.done_all_rounded,
                     size: 14, color: Colors.white38),
-              ],
+],
+                  ),
+                ],
+              ),
+              const SizedBox(width: 8),
+              // Health Probes
+              const _HealthProbesWidget(),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

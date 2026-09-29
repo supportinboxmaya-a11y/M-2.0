@@ -14,6 +14,249 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+HealthCheckResult _$HealthCheckResultFromJson(Map<String, dynamic> json) {
+  return _HealthCheckResult.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HealthCheckResult {
+  bool get live => throw _privateConstructorUsedError;
+  bool get ready => throw _privateConstructorUsedError;
+  String get system => throw _privateConstructorUsedError;
+  int get latency => throw _privateConstructorUsedError;
+  DateTime get lastCheck => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HealthCheckResultCopyWith<HealthCheckResult> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HealthCheckResultCopyWith<$Res> {
+  factory $HealthCheckResultCopyWith(
+          HealthCheckResult value, $Res Function(HealthCheckResult) then) =
+      _$HealthCheckResultCopyWithImpl<$Res, HealthCheckResult>;
+  @useResult
+  $Res call(
+      {bool live,
+      bool ready,
+      String system,
+      int latency,
+      DateTime lastCheck,
+      String? error});
+}
+
+/// @nodoc
+class _$HealthCheckResultCopyWithImpl<$Res, $Val extends HealthCheckResult>
+    implements $HealthCheckResultCopyWith<$Res> {
+  _$HealthCheckResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? live = null,
+    Object? ready = null,
+    Object? system = null,
+    Object? latency = null,
+    Object? lastCheck = null,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      live: null == live
+          ? _value.live
+          : live // ignore: cast_nullable_to_non_nullable
+              as bool,
+      ready: null == ready
+          ? _value.ready
+          : ready // ignore: cast_nullable_to_non_nullable
+              as bool,
+      system: null == system
+          ? _value.system
+          : system // ignore: cast_nullable_to_non_nullable
+              as String,
+      latency: null == latency
+          ? _value.latency
+          : latency // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastCheck: null == lastCheck
+          ? _value.lastCheck
+          : lastCheck // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HealthCheckResultImplCopyWith<$Res>
+    implements $HealthCheckResultCopyWith<$Res> {
+  factory _$$HealthCheckResultImplCopyWith(_$HealthCheckResultImpl value,
+          $Res Function(_$HealthCheckResultImpl) then) =
+      __$$HealthCheckResultImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool live,
+      bool ready,
+      String system,
+      int latency,
+      DateTime lastCheck,
+      String? error});
+}
+
+/// @nodoc
+class __$$HealthCheckResultImplCopyWithImpl<$Res>
+    extends _$HealthCheckResultCopyWithImpl<$Res, _$HealthCheckResultImpl>
+    implements _$$HealthCheckResultImplCopyWith<$Res> {
+  __$$HealthCheckResultImplCopyWithImpl(_$HealthCheckResultImpl _value,
+      $Res Function(_$HealthCheckResultImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? live = null,
+    Object? ready = null,
+    Object? system = null,
+    Object? latency = null,
+    Object? lastCheck = null,
+    Object? error = freezed,
+  }) {
+    return _then(_$HealthCheckResultImpl(
+      live: null == live
+          ? _value.live
+          : live // ignore: cast_nullable_to_non_nullable
+              as bool,
+      ready: null == ready
+          ? _value.ready
+          : ready // ignore: cast_nullable_to_non_nullable
+              as bool,
+      system: null == system
+          ? _value.system
+          : system // ignore: cast_nullable_to_non_nullable
+              as String,
+      latency: null == latency
+          ? _value.latency
+          : latency // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastCheck: null == lastCheck
+          ? _value.lastCheck
+          : lastCheck // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HealthCheckResultImpl implements _HealthCheckResult {
+  const _$HealthCheckResultImpl(
+      {required this.live,
+      required this.ready,
+      required this.system,
+      required this.latency,
+      required this.lastCheck,
+      this.error});
+
+  factory _$HealthCheckResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HealthCheckResultImplFromJson(json);
+
+  @override
+  final bool live;
+  @override
+  final bool ready;
+  @override
+  final String system;
+  @override
+  final int latency;
+  @override
+  final DateTime lastCheck;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'HealthCheckResult(live: $live, ready: $ready, system: $system, latency: $latency, lastCheck: $lastCheck, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HealthCheckResultImpl &&
+            (identical(other.live, live) || other.live == live) &&
+            (identical(other.ready, ready) || other.ready == ready) &&
+            (identical(other.system, system) || other.system == system) &&
+            (identical(other.latency, latency) || other.latency == latency) &&
+            (identical(other.lastCheck, lastCheck) ||
+                other.lastCheck == lastCheck) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, live, ready, system, latency, lastCheck, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HealthCheckResultImplCopyWith<_$HealthCheckResultImpl> get copyWith =>
+      __$$HealthCheckResultImplCopyWithImpl<_$HealthCheckResultImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HealthCheckResultImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HealthCheckResult implements HealthCheckResult {
+  const factory _HealthCheckResult(
+      {required final bool live,
+      required final bool ready,
+      required final String system,
+      required final int latency,
+      required final DateTime lastCheck,
+      final String? error}) = _$HealthCheckResultImpl;
+
+  factory _HealthCheckResult.fromJson(Map<String, dynamic> json) =
+      _$HealthCheckResultImpl.fromJson;
+
+  @override
+  bool get live;
+  @override
+  bool get ready;
+  @override
+  String get system;
+  @override
+  int get latency;
+  @override
+  DateTime get lastCheck;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$HealthCheckResultImplCopyWith<_$HealthCheckResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) {
   return _AuthResponse.fromJson(json);
 }

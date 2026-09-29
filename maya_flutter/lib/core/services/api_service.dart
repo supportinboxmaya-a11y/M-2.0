@@ -93,6 +93,9 @@ class ApiService {
   String? _storedToken;
   String? _storedRefreshToken;
 
+  /// Public getter for Dio instance (for health checks, etc.)
+  Dio get dio => _dio;
+
   void _initDio() {
     _dio = Dio(
       BaseOptions(
@@ -415,12 +418,54 @@ class ApiService {
     _isConnected = false;
   }
 
-  void dispose() {
-    _wsController.close();
-    _reconnectTimer?.cancel();
-    disconnectWebSocket();
-    _dio.close();
+  Future<HealthCheckResult> checkHealth() async {
+    try {
+      final response = await _dio.get('/health/live');
+      return HealthCheckResult(
+        live: true,
+        ready: true,
+        system: 'healthy',
+        latency: 0,
+        lastCheck: DateTime.now(),
+      );
+    } catch (e) {
+      try {
+        // Try the system health endpoint as fallback
+        final response = await _dio.get('/health/system');
+        return HealthCheckResult(
+          live: true,
+          ready: true,
+          system: 'healthy',
+          latency: 0,
+          lastCheck: DateTime.now(),
+        );
+      } catch (e) {
+        return HealthCheckResult(
+          live: false,
+          ready: false,
+          system: 'unhealthy',
+          latency: 0,
+          lastCheck: DateTime.now(),
+          error: e.toString(),
+        );
+      }
+    }
   }
+}
+
+@freezed
+class HealthCheckResult with _$HealthCheckResult {
+  const factory HealthCheckResult({
+    required bool live,
+    required bool ready,
+    required String system,
+    required int latency,
+    required DateTime lastCheck,
+    String? error,
+  }) = _HealthCheckResult;
+
+  factory HealthCheckResult.fromJson(Map<String, dynamic> json) =>
+      _$HealthCheckResultFromJson(json);
 }
 
 // Data Models
