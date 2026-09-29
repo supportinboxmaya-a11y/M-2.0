@@ -1358,6 +1358,20 @@ class _AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
+                _DrawerActionTile(
+                  icon: Icons.router_rounded,
+                  label: 'Multi-Model Router',
+                  subtitle: 'Providers, stats & routing strategy',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _RouterScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -6839,4 +6853,701 @@ final autonomousStatusProvider = FutureProvider<dynamic>((ref) async {
   // This would check if there's an active autonomous run
   // For now, return empty since backend doesn't have a status endpoint
   return {};
+});
+
+// Multi-Model Router Screen
+class _RouterScreen extends ConsumerStatefulWidget {
+  const _RouterScreen();
+
+  @override
+  ConsumerState<_RouterScreen> createState() => _RouterScreenState();
+}
+
+class _RouterScreenState extends ConsumerState<_RouterScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+  String _selectedStrategy = 'balanced';
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (mounted) {
+        ref.invalidate(llmProvidersProvider);
+        ref.invalidate(llmStatsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Multi-Model Router', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(llmProvidersProvider);
+                ref.invalidate(llmStatsProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.cloud_rounded), text: 'Providers'),
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Stats'),
+              Tab(icon: Icon(Icons.tune_rounded), text: 'Strategy'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildProvidersTab(),
+            _buildStatsTab(),
+            _buildStrategyTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProvidersTab() {
+    final providersAsync = ref.watch(llmProvidersProvider);
+
+    return providersAsync.when(
+      data: (response) {
+        if (response.providers.isEmpty) {
+          return const Center(
+            child: Text('No providers configured', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.providers.length,
+          itemBuilder: (context, index) {
+            final provider = response.providers[index];
+            return _ProviderTile(
+              provider: provider,
+              onToggle: (enabled) async {
+                final success = await ref.read(apiServiceProvider).toggleLLMProvider(provider.id, enabled);
+                if (success && mounted) {
+                  ref.invalidate(llmProvidersProvider);
+                }
+              },
+            );
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading providers', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatsTab() {
+    final statsAsync = ref.watch(llmStatsProvider);
+
+    return statsAsync.when(
+      data: (stats) {
+        if (stats.stats.isEmpty) {
+          return const Center(
+            child: Text('No stats available yet', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        // Combine stats with table info
+        final entries = stats.stats.entries.toList()
+          ..sort((a, b) => b.value.ok.compareTo(a.value.ok));
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Live Provider Stats', style: MayaTheme.titleMedium),
+              const SizedBox(height: 12),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: entries.length,
+                itemBuilder: (context, index) {
+                  final entry = entries[index];
+                  final providerId = entry.key;
+                  final stat = entry.value;
+                  final tableInfo = stats.table[providerId] ?? {};
+                  final cost = tableInfo['cost'] ?? 0.0;
+                  final quality = tableInfo['quality'] ?? 0.0;
+
+                  return _StatTile(
+                    providerId: providerId,
+                    latency: stat.latencyEmaS,
+                    ok: stat.ok,
+                    errors: stat.errors,
+                    errorRate: stat.errorRate,
+                    cost: cost.toDouble(),
+                    quality: quality.toDouble(),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              const Text('Provider Cost/Quality Reference', style: MayaTheme.titleMedium),
+              const SizedBox(height: 12),
+              _buildReferenceTable(stats.table),
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading stats', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReferenceTable(Map<String, Map<String, dynamic>> table) {
+    final entries = table.entries.toList()
+      ..sort((a, b) => (a.value['cost'] ?? 0.0).compareTo(b.value['cost'] ?? 0.0));
+
+    return Container(
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: const Row(
+              children: [
+                Expanded(flex: 2, child: Text('Provider', style: MayaTheme.labelMedium)),
+                Expanded(flex: 1, child: Text('Cost ($/1M)', style: MayaTheme.labelMedium, textAlign: TextAlign.center)),
+                Expanded(flex: 1, child: Text('Quality (0-1)', style: MayaTheme.labelMedium, textAlign: TextAlign.center)),
+              ],
+            ),
+          ),
+          ...entries.map((entry) {
+            final cost = entry.value['cost'] ?? 0.0;
+            final quality = entry.value['quality'] ?? 0.0;
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: MayaTheme.glassWhite10)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(flex: 2, child: Text(entry.key, style: MayaTheme.bodyMedium)),
+                  Expanded(flex: 1, child: Text('\$${cost.toStringAsFixed(2)}', style: MayaTheme.bodyMedium, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text(quality.toStringAsFixed(2), style: MayaTheme.bodyMedium, textAlign: TextAlign.center)),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStrategyTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Routing Strategy', style: MayaTheme.titleMedium),
+                const SizedBox(height: 8),
+                const Text(
+                  'Choose how Maya selects the best model for each task. The strategy determines the priority order of providers.',
+                  style: MayaTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _selectedStrategy,
+                  dropdownColor: MayaTheme.slate800,
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'Strategy',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'balanced', child: Text('Balanced (quality per $, tempered by latency)')),
+                    DropdownMenuItem(value: 'cost', child: Text('Cost (cheapest first)')),
+                    DropdownMenuItem(value: 'latency', child: Text('Latency (fastest first)')),
+                    DropdownMenuItem(value: 'quality', child: Text('Quality (best quality first)')),
+                  ],
+                  onChanged: (value) {
+                    setState(() => _selectedStrategy = value ?? 'balanced');
+                  },
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => ref.invalidate(llmStrategyProvider(_selectedStrategy)),
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('Preview Order'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Consumer(
+            builder: (context, ref, _) {
+              final strategyAsync = ref.watch(llmStrategyProvider(_selectedStrategy));
+
+              return strategyAsync.when(
+                data: (result) => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: MayaTheme.glassCard(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.account_tree_rounded, color: MayaTheme.neonViolet, size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Strategy: ${result.strategy}', style: MayaTheme.titleMedium),
+                                const SizedBox(height: 4),
+                                Text('Provider order (1st → last)', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ...result.order.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final provider = entry.value;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: MayaTheme.slate700,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: MayaTheme.glassWhite10),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text('${index + 1}', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(provider, style: MayaTheme.bodyMedium),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+                loading: () => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: MayaTheme.glassCard(),
+                  child: const Center(
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                  ),
+                ),
+                error: (err, _) => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: MayaTheme.glassCard(),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                      const SizedBox(height: 16),
+                      Text('Error loading strategy', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                      const SizedBox(height: 8),
+                      Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 24),
+
+          // Strategy explanation
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Strategy Details', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                _StrategyInfoRow(
+                  title: 'Balanced',
+                  desc: 'Optimizes quality per dollar, tempered by observed latency. Best for general use.',
+                ),
+                _StrategyInfoRow(
+                  title: 'Cost',
+                  desc: 'Prioritizes cheapest providers first. Good for high-volume, cost-sensitive tasks.',
+                ),
+                _StrategyInfoRow(
+                  title: 'Latency',
+                  desc: 'Prioritizes fastest providers first. Good for real-time interactive tasks.',
+                ),
+                _StrategyInfoRow(
+                  title: 'Quality',
+                  desc: 'Prioritizes highest quality providers first. Good for complex reasoning tasks.',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProviderTile extends ConsumerWidget {
+  final LLMProviderInfo provider;
+  final Future<void> Function(bool) onToggle;
+
+  const _ProviderTile({required this.provider, required this.onToggle});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: provider.active
+                  ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                  : (provider.configured
+                      ? MayaTheme.neonOrange.withValues(alpha: 0.2)
+                      : Colors.white12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              provider.active
+                  ? Icons.cloud_done_rounded
+                  : (provider.configured ? Icons.cloud_off_rounded : Icons.cloud_queue_rounded),
+              color: provider.active
+                  ? MayaTheme.neonEmerald
+                  : (provider.configured ? MayaTheme.neonOrange : Colors.white38),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(provider.label, style: MayaTheme.titleMedium),
+                    const SizedBox(width: 8),
+                    Text(
+                      '(${provider.id})',
+                      style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    _ProviderStatusChip(
+                      label: provider.configured ? 'Configured' : 'Not Configured',
+                      color: provider.configured ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                    ),
+                    const SizedBox(width: 8),
+                    _ProviderStatusChip(
+                      label: provider.enabled ? 'Enabled' : 'Disabled',
+                      color: provider.enabled ? MayaTheme.neonCyan : Colors.white38,
+                    ),
+                    if (provider.errorCount > 0) ...[
+                      const SizedBox(width: 8),
+                      _ProviderStatusChip(
+                        label: 'Errors: ${provider.errorCount}',
+                        color: MayaTheme.error,
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: provider.enabled,
+            activeColor: MayaTheme.neonCyan,
+            onChanged: (value) => onToggle(value),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProviderStatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _ProviderStatusChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: MayaTheme.labelSmall.copyWith(
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  final String providerId;
+  final double latency;
+  final int ok;
+  final int errors;
+  final double errorRate;
+  final double cost;
+  final double quality;
+
+  const _StatTile({
+    required this.providerId,
+    required this.latency,
+    required this.ok,
+    required this.errors,
+    required this.errorRate,
+    required this.cost,
+    required this.quality,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(providerId, style: MayaTheme.titleMedium),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: (cost <= 0.5 ? MayaTheme.neonEmerald : (cost <= 1.0 ? MayaTheme.neonOrange : MayaTheme.error)).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '\$${cost.toStringAsFixed(2)}/1M',
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: cost <= 0.5 ? MayaTheme.neonEmerald : (cost <= 1.0 ? MayaTheme.neonOrange : MayaTheme.error),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _StatItem(label: 'Latency (EMA)', value: '${latency.toStringAsFixed(2)}s', icon: Icons.speed_rounded, color: MayaTheme.neonCyan)),
+              Expanded(child: _StatItem(label: 'Success', value: ok.toString(), icon: Icons.check_circle_rounded, color: MayaTheme.neonEmerald)),
+              Expanded(child: _StatItem(label: 'Errors', value: errors.toString(), icon: Icons.error_rounded, color: MayaTheme.error)),
+              Expanded(child: _StatItem(label: 'Error Rate', value: '${(errorRate * 100).toStringAsFixed(1)}%', icon: Icons.percent_rounded, color: errorRate > 0.3 ? MayaTheme.error : MayaTheme.neonEmerald)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _StatItem(label: 'Quality', value: quality.toStringAsFixed(2), icon: Icons.star_rounded, color: MayaTheme.neonViolet)),
+              const SizedBox(width: 16),
+              Expanded(child: _StatItem(label: 'Cost/Quality', value: (cost > 0 ? (quality / cost).toStringAsFixed(2) : 'N/A'), icon: Icons.trending_up_rounded, color: MayaTheme.neonOrange)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _StatItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(value, style: MayaTheme.titleSmall.copyWith(color: color)),
+          const SizedBox(height: 2),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _StrategyInfoRow extends StatelessWidget {
+  final String title;
+  final String desc;
+
+  const _StrategyInfoRow({required this.title, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 80,
+            child: Text(title, style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+          ),
+          Expanded(
+            child: Text(desc, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Multi-Model Router Providers
+final llmProvidersProvider = FutureProvider<LLMProvidersResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMProviders();
+});
+
+final llmStatsProvider = FutureProvider<LLMStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMStats();
+});
+
+final llmStrategyProvider = FutureProvider.family<LLMStrategyResponse, String>((ref, strategy) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMStrategy(strategy: strategy);
 });

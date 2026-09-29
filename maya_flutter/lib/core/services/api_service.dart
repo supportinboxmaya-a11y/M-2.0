@@ -577,6 +577,37 @@ class ApiService {
     return AutonomousRunResponse.fromJson(response.data);
   }
 
+  // Multi-Model Router
+  Future<LLMProvidersResponse> getLLMProviders() async {
+    final response = await _dio.get(AppConfig.llmProviders);
+    return LLMProvidersResponse.fromJson(response.data);
+  }
+
+  Future<bool> toggleLLMProvider(String providerId, bool enabled) async {
+    try {
+      final response = await _dio.post(
+        '${AppConfig.llmProviderToggle}$providerId/toggle',
+        data: {'enabled': enabled},
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<LLMStatsResponse> getLLMStats() async {
+    final response = await _dio.get(AppConfig.llmStats);
+    return LLMStatsResponse.fromJson(response.data);
+  }
+
+  Future<LLMStrategyResponse> getLLMStrategy({String strategy = 'balanced'}) async {
+    final response = await _dio.get(
+      AppConfig.llmStrategy,
+      queryParameters: {'strategy': strategy},
+    );
+    return LLMStrategyResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1407,4 +1438,65 @@ class AutonomousRunResponse with _$AutonomousRunResponse {
 
   factory AutonomousRunResponse.fromJson(Map<String, dynamic> json) =>
       _$AutonomousRunResponseFromJson(json);
+}
+
+// Multi-Model Router Models
+@freezed
+class LLMProviderInfo with _$LLMProviderInfo {
+  const factory LLMProviderInfo({
+    required String id,
+    required String label,
+    required bool configured,
+    required bool enabled,
+    required bool active,
+    required int errorCount,
+  }) = _LLMProviderInfo;
+
+  factory LLMProviderInfo.fromJson(Map<String, dynamic> json) =>
+      _$LLMProviderInfoFromJson(json);
+}
+
+@freezed
+class LLMProvidersResponse with _$LLMProvidersResponse {
+  const factory LLMProvidersResponse({
+    required List<LLMProviderInfo> providers,
+  }) = _LLMProvidersResponse;
+
+  factory LLMProvidersResponse.fromJson(Map<String, dynamic> json) =>
+      _$LLMProvidersResponseFromJson(json);
+}
+
+@freezed
+class LLMProviderStat with _$LLMProviderStat {
+  const factory LLMProviderStat({
+    required double latencyEmaS,
+    required int ok,
+    required int errors,
+    required double errorRate,
+  }) = _LLMProviderStat;
+
+  factory LLMProviderStat.fromJson(Map<String, dynamic> json) =>
+      _$LLMProviderStatFromJson(json);
+}
+
+@freezed
+class LLMStatsResponse with _$LLMStatsResponse {
+  const factory LLMStatsResponse({
+    required Map<String, LLMProviderStat> stats,
+    required Map<String, Map<String, dynamic>> table,
+  }) = _LLMStatsResponse;
+
+  factory LLMStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$LLMStatsResponseFromJson(json);
+}
+
+@freezed
+class LLMStrategyResponse with _$LLMStrategyResponse {
+  const factory LLMStrategyResponse({
+    required String strategy,
+    required List<String> order,
+  }) = _LLMStrategyResponse;
+
+  factory LLMStrategyResponse.fromJson(Map<String, dynamic> json) =>
+      _$LLMStrategyResponseFromJson(json);
 }

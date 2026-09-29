@@ -1782,6 +1782,141 @@ Map<String, dynamic> _$$AutonomousRunResponseImplToJson(
   return val;
 }
 
+_$LLMProviderInfoImpl _$$LLMProviderInfoImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LLMProviderInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LLMProviderInfoImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          label: $checkedConvert('label', (v) => v as String),
+          configured: $checkedConvert('configured', (v) => v as bool),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          active: $checkedConvert('active', (v) => v as bool),
+          errorCount: $checkedConvert('error_count', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'errorCount': 'error_count'},
+    );
+
+Map<String, dynamic> _$$LLMProviderInfoImplToJson(
+        _$LLMProviderInfoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'label': instance.label,
+      'configured': instance.configured,
+      'enabled': instance.enabled,
+      'active': instance.active,
+      'error_count': instance.errorCount,
+    };
+
+_$LLMProvidersResponseImpl _$$LLMProvidersResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LLMProvidersResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LLMProvidersResponseImpl(
+          providers: $checkedConvert(
+              'providers',
+              (v) => (v as List<dynamic>)
+                  .map((e) => LLMProviderInfo.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LLMProvidersResponseImplToJson(
+        _$LLMProvidersResponseImpl instance) =>
+    <String, dynamic>{
+      'providers': instance.providers,
+    };
+
+_$LLMProviderStatImpl _$$LLMProviderStatImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LLMProviderStatImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LLMProviderStatImpl(
+          latencyEmaS:
+              $checkedConvert('latency_ema_s', (v) => (v as num).toDouble()),
+          ok: $checkedConvert('ok', (v) => (v as num).toInt()),
+          errors: $checkedConvert('errors', (v) => (v as num).toInt()),
+          errorRate:
+              $checkedConvert('error_rate', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'latencyEmaS': 'latency_ema_s',
+        'errorRate': 'error_rate'
+      },
+    );
+
+Map<String, dynamic> _$$LLMProviderStatImplToJson(
+        _$LLMProviderStatImpl instance) =>
+    <String, dynamic>{
+      'latency_ema_s': instance.latencyEmaS,
+      'ok': instance.ok,
+      'errors': instance.errors,
+      'error_rate': instance.errorRate,
+    };
+
+_$LLMStatsResponseImpl _$$LLMStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LLMStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LLMStatsResponseImpl(
+          stats: $checkedConvert(
+              'stats',
+              (v) => (v as Map).map(
+                    (k, e) => MapEntry(
+                        k as String,
+                        LLMProviderStat.fromJson(
+                            Map<String, dynamic>.from(e as Map))),
+                  )),
+          table: $checkedConvert(
+              'table',
+              (v) => (v as Map).map(
+                    (k, e) => MapEntry(
+                        k as String, Map<String, dynamic>.from(e as Map)),
+                  )),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LLMStatsResponseImplToJson(
+        _$LLMStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'stats': instance.stats,
+      'table': instance.table,
+    };
+
+_$LLMStrategyResponseImpl _$$LLMStrategyResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LLMStrategyResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LLMStrategyResponseImpl(
+          strategy: $checkedConvert('strategy', (v) => v as String),
+          order: $checkedConvert('order',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LLMStrategyResponseImplToJson(
+        _$LLMStrategyResponseImpl instance) =>
+    <String, dynamic>{
+      'strategy': instance.strategy,
+      'order': instance.order,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

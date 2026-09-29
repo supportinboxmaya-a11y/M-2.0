@@ -12003,3 +12003,936 @@ abstract class _AutonomousRunResponse implements AutonomousRunResponse {
   _$$AutonomousRunResponseImplCopyWith<_$AutonomousRunResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+LLMProviderInfo _$LLMProviderInfoFromJson(Map<String, dynamic> json) {
+  return _LLMProviderInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LLMProviderInfo {
+  String get id => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
+  bool get configured => throw _privateConstructorUsedError;
+  bool get enabled => throw _privateConstructorUsedError;
+  bool get active => throw _privateConstructorUsedError;
+  int get errorCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LLMProviderInfoCopyWith<LLMProviderInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LLMProviderInfoCopyWith<$Res> {
+  factory $LLMProviderInfoCopyWith(
+          LLMProviderInfo value, $Res Function(LLMProviderInfo) then) =
+      _$LLMProviderInfoCopyWithImpl<$Res, LLMProviderInfo>;
+  @useResult
+  $Res call(
+      {String id,
+      String label,
+      bool configured,
+      bool enabled,
+      bool active,
+      int errorCount});
+}
+
+/// @nodoc
+class _$LLMProviderInfoCopyWithImpl<$Res, $Val extends LLMProviderInfo>
+    implements $LLMProviderInfoCopyWith<$Res> {
+  _$LLMProviderInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? label = null,
+    Object? configured = null,
+    Object? enabled = null,
+    Object? active = null,
+    Object? errorCount = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: null == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorCount: null == errorCount
+          ? _value.errorCount
+          : errorCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LLMProviderInfoImplCopyWith<$Res>
+    implements $LLMProviderInfoCopyWith<$Res> {
+  factory _$$LLMProviderInfoImplCopyWith(_$LLMProviderInfoImpl value,
+          $Res Function(_$LLMProviderInfoImpl) then) =
+      __$$LLMProviderInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String label,
+      bool configured,
+      bool enabled,
+      bool active,
+      int errorCount});
+}
+
+/// @nodoc
+class __$$LLMProviderInfoImplCopyWithImpl<$Res>
+    extends _$LLMProviderInfoCopyWithImpl<$Res, _$LLMProviderInfoImpl>
+    implements _$$LLMProviderInfoImplCopyWith<$Res> {
+  __$$LLMProviderInfoImplCopyWithImpl(
+      _$LLMProviderInfoImpl _value, $Res Function(_$LLMProviderInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? label = null,
+    Object? configured = null,
+    Object? enabled = null,
+    Object? active = null,
+    Object? errorCount = null,
+  }) {
+    return _then(_$LLMProviderInfoImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: null == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorCount: null == errorCount
+          ? _value.errorCount
+          : errorCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LLMProviderInfoImpl implements _LLMProviderInfo {
+  const _$LLMProviderInfoImpl(
+      {required this.id,
+      required this.label,
+      required this.configured,
+      required this.enabled,
+      required this.active,
+      required this.errorCount});
+
+  factory _$LLMProviderInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LLMProviderInfoImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String label;
+  @override
+  final bool configured;
+  @override
+  final bool enabled;
+  @override
+  final bool active;
+  @override
+  final int errorCount;
+
+  @override
+  String toString() {
+    return 'LLMProviderInfo(id: $id, label: $label, configured: $configured, enabled: $enabled, active: $active, errorCount: $errorCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LLMProviderInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.label, label) || other.label == label) &&
+            (identical(other.configured, configured) ||
+                other.configured == configured) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.active, active) || other.active == active) &&
+            (identical(other.errorCount, errorCount) ||
+                other.errorCount == errorCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, label, configured, enabled, active, errorCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LLMProviderInfoImplCopyWith<_$LLMProviderInfoImpl> get copyWith =>
+      __$$LLMProviderInfoImplCopyWithImpl<_$LLMProviderInfoImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LLMProviderInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LLMProviderInfo implements LLMProviderInfo {
+  const factory _LLMProviderInfo(
+      {required final String id,
+      required final String label,
+      required final bool configured,
+      required final bool enabled,
+      required final bool active,
+      required final int errorCount}) = _$LLMProviderInfoImpl;
+
+  factory _LLMProviderInfo.fromJson(Map<String, dynamic> json) =
+      _$LLMProviderInfoImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get label;
+  @override
+  bool get configured;
+  @override
+  bool get enabled;
+  @override
+  bool get active;
+  @override
+  int get errorCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$LLMProviderInfoImplCopyWith<_$LLMProviderInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LLMProvidersResponse _$LLMProvidersResponseFromJson(Map<String, dynamic> json) {
+  return _LLMProvidersResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LLMProvidersResponse {
+  List<LLMProviderInfo> get providers => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LLMProvidersResponseCopyWith<LLMProvidersResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LLMProvidersResponseCopyWith<$Res> {
+  factory $LLMProvidersResponseCopyWith(LLMProvidersResponse value,
+          $Res Function(LLMProvidersResponse) then) =
+      _$LLMProvidersResponseCopyWithImpl<$Res, LLMProvidersResponse>;
+  @useResult
+  $Res call({List<LLMProviderInfo> providers});
+}
+
+/// @nodoc
+class _$LLMProvidersResponseCopyWithImpl<$Res,
+        $Val extends LLMProvidersResponse>
+    implements $LLMProvidersResponseCopyWith<$Res> {
+  _$LLMProvidersResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? providers = null,
+  }) {
+    return _then(_value.copyWith(
+      providers: null == providers
+          ? _value.providers
+          : providers // ignore: cast_nullable_to_non_nullable
+              as List<LLMProviderInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LLMProvidersResponseImplCopyWith<$Res>
+    implements $LLMProvidersResponseCopyWith<$Res> {
+  factory _$$LLMProvidersResponseImplCopyWith(_$LLMProvidersResponseImpl value,
+          $Res Function(_$LLMProvidersResponseImpl) then) =
+      __$$LLMProvidersResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<LLMProviderInfo> providers});
+}
+
+/// @nodoc
+class __$$LLMProvidersResponseImplCopyWithImpl<$Res>
+    extends _$LLMProvidersResponseCopyWithImpl<$Res, _$LLMProvidersResponseImpl>
+    implements _$$LLMProvidersResponseImplCopyWith<$Res> {
+  __$$LLMProvidersResponseImplCopyWithImpl(_$LLMProvidersResponseImpl _value,
+      $Res Function(_$LLMProvidersResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? providers = null,
+  }) {
+    return _then(_$LLMProvidersResponseImpl(
+      providers: null == providers
+          ? _value._providers
+          : providers // ignore: cast_nullable_to_non_nullable
+              as List<LLMProviderInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LLMProvidersResponseImpl implements _LLMProvidersResponse {
+  const _$LLMProvidersResponseImpl(
+      {required final List<LLMProviderInfo> providers})
+      : _providers = providers;
+
+  factory _$LLMProvidersResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LLMProvidersResponseImplFromJson(json);
+
+  final List<LLMProviderInfo> _providers;
+  @override
+  List<LLMProviderInfo> get providers {
+    if (_providers is EqualUnmodifiableListView) return _providers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_providers);
+  }
+
+  @override
+  String toString() {
+    return 'LLMProvidersResponse(providers: $providers)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LLMProvidersResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._providers, _providers));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_providers));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LLMProvidersResponseImplCopyWith<_$LLMProvidersResponseImpl>
+      get copyWith =>
+          __$$LLMProvidersResponseImplCopyWithImpl<_$LLMProvidersResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LLMProvidersResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LLMProvidersResponse implements LLMProvidersResponse {
+  const factory _LLMProvidersResponse(
+          {required final List<LLMProviderInfo> providers}) =
+      _$LLMProvidersResponseImpl;
+
+  factory _LLMProvidersResponse.fromJson(Map<String, dynamic> json) =
+      _$LLMProvidersResponseImpl.fromJson;
+
+  @override
+  List<LLMProviderInfo> get providers;
+  @override
+  @JsonKey(ignore: true)
+  _$$LLMProvidersResponseImplCopyWith<_$LLMProvidersResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+LLMProviderStat _$LLMProviderStatFromJson(Map<String, dynamic> json) {
+  return _LLMProviderStat.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LLMProviderStat {
+  double get latencyEmaS => throw _privateConstructorUsedError;
+  int get ok => throw _privateConstructorUsedError;
+  int get errors => throw _privateConstructorUsedError;
+  double get errorRate => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LLMProviderStatCopyWith<LLMProviderStat> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LLMProviderStatCopyWith<$Res> {
+  factory $LLMProviderStatCopyWith(
+          LLMProviderStat value, $Res Function(LLMProviderStat) then) =
+      _$LLMProviderStatCopyWithImpl<$Res, LLMProviderStat>;
+  @useResult
+  $Res call({double latencyEmaS, int ok, int errors, double errorRate});
+}
+
+/// @nodoc
+class _$LLMProviderStatCopyWithImpl<$Res, $Val extends LLMProviderStat>
+    implements $LLMProviderStatCopyWith<$Res> {
+  _$LLMProviderStatCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? latencyEmaS = null,
+    Object? ok = null,
+    Object? errors = null,
+    Object? errorRate = null,
+  }) {
+    return _then(_value.copyWith(
+      latencyEmaS: null == latencyEmaS
+          ? _value.latencyEmaS
+          : latencyEmaS // ignore: cast_nullable_to_non_nullable
+              as double,
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as int,
+      errors: null == errors
+          ? _value.errors
+          : errors // ignore: cast_nullable_to_non_nullable
+              as int,
+      errorRate: null == errorRate
+          ? _value.errorRate
+          : errorRate // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LLMProviderStatImplCopyWith<$Res>
+    implements $LLMProviderStatCopyWith<$Res> {
+  factory _$$LLMProviderStatImplCopyWith(_$LLMProviderStatImpl value,
+          $Res Function(_$LLMProviderStatImpl) then) =
+      __$$LLMProviderStatImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({double latencyEmaS, int ok, int errors, double errorRate});
+}
+
+/// @nodoc
+class __$$LLMProviderStatImplCopyWithImpl<$Res>
+    extends _$LLMProviderStatCopyWithImpl<$Res, _$LLMProviderStatImpl>
+    implements _$$LLMProviderStatImplCopyWith<$Res> {
+  __$$LLMProviderStatImplCopyWithImpl(
+      _$LLMProviderStatImpl _value, $Res Function(_$LLMProviderStatImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? latencyEmaS = null,
+    Object? ok = null,
+    Object? errors = null,
+    Object? errorRate = null,
+  }) {
+    return _then(_$LLMProviderStatImpl(
+      latencyEmaS: null == latencyEmaS
+          ? _value.latencyEmaS
+          : latencyEmaS // ignore: cast_nullable_to_non_nullable
+              as double,
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as int,
+      errors: null == errors
+          ? _value.errors
+          : errors // ignore: cast_nullable_to_non_nullable
+              as int,
+      errorRate: null == errorRate
+          ? _value.errorRate
+          : errorRate // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LLMProviderStatImpl implements _LLMProviderStat {
+  const _$LLMProviderStatImpl(
+      {required this.latencyEmaS,
+      required this.ok,
+      required this.errors,
+      required this.errorRate});
+
+  factory _$LLMProviderStatImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LLMProviderStatImplFromJson(json);
+
+  @override
+  final double latencyEmaS;
+  @override
+  final int ok;
+  @override
+  final int errors;
+  @override
+  final double errorRate;
+
+  @override
+  String toString() {
+    return 'LLMProviderStat(latencyEmaS: $latencyEmaS, ok: $ok, errors: $errors, errorRate: $errorRate)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LLMProviderStatImpl &&
+            (identical(other.latencyEmaS, latencyEmaS) ||
+                other.latencyEmaS == latencyEmaS) &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.errors, errors) || other.errors == errors) &&
+            (identical(other.errorRate, errorRate) ||
+                other.errorRate == errorRate));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, latencyEmaS, ok, errors, errorRate);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LLMProviderStatImplCopyWith<_$LLMProviderStatImpl> get copyWith =>
+      __$$LLMProviderStatImplCopyWithImpl<_$LLMProviderStatImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LLMProviderStatImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LLMProviderStat implements LLMProviderStat {
+  const factory _LLMProviderStat(
+      {required final double latencyEmaS,
+      required final int ok,
+      required final int errors,
+      required final double errorRate}) = _$LLMProviderStatImpl;
+
+  factory _LLMProviderStat.fromJson(Map<String, dynamic> json) =
+      _$LLMProviderStatImpl.fromJson;
+
+  @override
+  double get latencyEmaS;
+  @override
+  int get ok;
+  @override
+  int get errors;
+  @override
+  double get errorRate;
+  @override
+  @JsonKey(ignore: true)
+  _$$LLMProviderStatImplCopyWith<_$LLMProviderStatImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LLMStatsResponse _$LLMStatsResponseFromJson(Map<String, dynamic> json) {
+  return _LLMStatsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LLMStatsResponse {
+  Map<String, LLMProviderStat> get stats => throw _privateConstructorUsedError;
+  Map<String, Map<String, dynamic>> get table =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LLMStatsResponseCopyWith<LLMStatsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LLMStatsResponseCopyWith<$Res> {
+  factory $LLMStatsResponseCopyWith(
+          LLMStatsResponse value, $Res Function(LLMStatsResponse) then) =
+      _$LLMStatsResponseCopyWithImpl<$Res, LLMStatsResponse>;
+  @useResult
+  $Res call(
+      {Map<String, LLMProviderStat> stats,
+      Map<String, Map<String, dynamic>> table});
+}
+
+/// @nodoc
+class _$LLMStatsResponseCopyWithImpl<$Res, $Val extends LLMStatsResponse>
+    implements $LLMStatsResponseCopyWith<$Res> {
+  _$LLMStatsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? stats = null,
+    Object? table = null,
+  }) {
+    return _then(_value.copyWith(
+      stats: null == stats
+          ? _value.stats
+          : stats // ignore: cast_nullable_to_non_nullable
+              as Map<String, LLMProviderStat>,
+      table: null == table
+          ? _value.table
+          : table // ignore: cast_nullable_to_non_nullable
+              as Map<String, Map<String, dynamic>>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LLMStatsResponseImplCopyWith<$Res>
+    implements $LLMStatsResponseCopyWith<$Res> {
+  factory _$$LLMStatsResponseImplCopyWith(_$LLMStatsResponseImpl value,
+          $Res Function(_$LLMStatsResponseImpl) then) =
+      __$$LLMStatsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {Map<String, LLMProviderStat> stats,
+      Map<String, Map<String, dynamic>> table});
+}
+
+/// @nodoc
+class __$$LLMStatsResponseImplCopyWithImpl<$Res>
+    extends _$LLMStatsResponseCopyWithImpl<$Res, _$LLMStatsResponseImpl>
+    implements _$$LLMStatsResponseImplCopyWith<$Res> {
+  __$$LLMStatsResponseImplCopyWithImpl(_$LLMStatsResponseImpl _value,
+      $Res Function(_$LLMStatsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? stats = null,
+    Object? table = null,
+  }) {
+    return _then(_$LLMStatsResponseImpl(
+      stats: null == stats
+          ? _value._stats
+          : stats // ignore: cast_nullable_to_non_nullable
+              as Map<String, LLMProviderStat>,
+      table: null == table
+          ? _value._table
+          : table // ignore: cast_nullable_to_non_nullable
+              as Map<String, Map<String, dynamic>>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LLMStatsResponseImpl implements _LLMStatsResponse {
+  const _$LLMStatsResponseImpl(
+      {required final Map<String, LLMProviderStat> stats,
+      required final Map<String, Map<String, dynamic>> table})
+      : _stats = stats,
+        _table = table;
+
+  factory _$LLMStatsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LLMStatsResponseImplFromJson(json);
+
+  final Map<String, LLMProviderStat> _stats;
+  @override
+  Map<String, LLMProviderStat> get stats {
+    if (_stats is EqualUnmodifiableMapView) return _stats;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_stats);
+  }
+
+  final Map<String, Map<String, dynamic>> _table;
+  @override
+  Map<String, Map<String, dynamic>> get table {
+    if (_table is EqualUnmodifiableMapView) return _table;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_table);
+  }
+
+  @override
+  String toString() {
+    return 'LLMStatsResponse(stats: $stats, table: $table)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LLMStatsResponseImpl &&
+            const DeepCollectionEquality().equals(other._stats, _stats) &&
+            const DeepCollectionEquality().equals(other._table, _table));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_stats),
+      const DeepCollectionEquality().hash(_table));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LLMStatsResponseImplCopyWith<_$LLMStatsResponseImpl> get copyWith =>
+      __$$LLMStatsResponseImplCopyWithImpl<_$LLMStatsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LLMStatsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LLMStatsResponse implements LLMStatsResponse {
+  const factory _LLMStatsResponse(
+          {required final Map<String, LLMProviderStat> stats,
+          required final Map<String, Map<String, dynamic>> table}) =
+      _$LLMStatsResponseImpl;
+
+  factory _LLMStatsResponse.fromJson(Map<String, dynamic> json) =
+      _$LLMStatsResponseImpl.fromJson;
+
+  @override
+  Map<String, LLMProviderStat> get stats;
+  @override
+  Map<String, Map<String, dynamic>> get table;
+  @override
+  @JsonKey(ignore: true)
+  _$$LLMStatsResponseImplCopyWith<_$LLMStatsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LLMStrategyResponse _$LLMStrategyResponseFromJson(Map<String, dynamic> json) {
+  return _LLMStrategyResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LLMStrategyResponse {
+  String get strategy => throw _privateConstructorUsedError;
+  List<String> get order => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LLMStrategyResponseCopyWith<LLMStrategyResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LLMStrategyResponseCopyWith<$Res> {
+  factory $LLMStrategyResponseCopyWith(
+          LLMStrategyResponse value, $Res Function(LLMStrategyResponse) then) =
+      _$LLMStrategyResponseCopyWithImpl<$Res, LLMStrategyResponse>;
+  @useResult
+  $Res call({String strategy, List<String> order});
+}
+
+/// @nodoc
+class _$LLMStrategyResponseCopyWithImpl<$Res, $Val extends LLMStrategyResponse>
+    implements $LLMStrategyResponseCopyWith<$Res> {
+  _$LLMStrategyResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? strategy = null,
+    Object? order = null,
+  }) {
+    return _then(_value.copyWith(
+      strategy: null == strategy
+          ? _value.strategy
+          : strategy // ignore: cast_nullable_to_non_nullable
+              as String,
+      order: null == order
+          ? _value.order
+          : order // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LLMStrategyResponseImplCopyWith<$Res>
+    implements $LLMStrategyResponseCopyWith<$Res> {
+  factory _$$LLMStrategyResponseImplCopyWith(_$LLMStrategyResponseImpl value,
+          $Res Function(_$LLMStrategyResponseImpl) then) =
+      __$$LLMStrategyResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String strategy, List<String> order});
+}
+
+/// @nodoc
+class __$$LLMStrategyResponseImplCopyWithImpl<$Res>
+    extends _$LLMStrategyResponseCopyWithImpl<$Res, _$LLMStrategyResponseImpl>
+    implements _$$LLMStrategyResponseImplCopyWith<$Res> {
+  __$$LLMStrategyResponseImplCopyWithImpl(_$LLMStrategyResponseImpl _value,
+      $Res Function(_$LLMStrategyResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? strategy = null,
+    Object? order = null,
+  }) {
+    return _then(_$LLMStrategyResponseImpl(
+      strategy: null == strategy
+          ? _value.strategy
+          : strategy // ignore: cast_nullable_to_non_nullable
+              as String,
+      order: null == order
+          ? _value._order
+          : order // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LLMStrategyResponseImpl implements _LLMStrategyResponse {
+  const _$LLMStrategyResponseImpl(
+      {required this.strategy, required final List<String> order})
+      : _order = order;
+
+  factory _$LLMStrategyResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LLMStrategyResponseImplFromJson(json);
+
+  @override
+  final String strategy;
+  final List<String> _order;
+  @override
+  List<String> get order {
+    if (_order is EqualUnmodifiableListView) return _order;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_order);
+  }
+
+  @override
+  String toString() {
+    return 'LLMStrategyResponse(strategy: $strategy, order: $order)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LLMStrategyResponseImpl &&
+            (identical(other.strategy, strategy) ||
+                other.strategy == strategy) &&
+            const DeepCollectionEquality().equals(other._order, _order));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, strategy, const DeepCollectionEquality().hash(_order));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LLMStrategyResponseImplCopyWith<_$LLMStrategyResponseImpl> get copyWith =>
+      __$$LLMStrategyResponseImplCopyWithImpl<_$LLMStrategyResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LLMStrategyResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LLMStrategyResponse implements LLMStrategyResponse {
+  const factory _LLMStrategyResponse(
+      {required final String strategy,
+      required final List<String> order}) = _$LLMStrategyResponseImpl;
+
+  factory _LLMStrategyResponse.fromJson(Map<String, dynamic> json) =
+      _$LLMStrategyResponseImpl.fromJson;
+
+  @override
+  String get strategy;
+  @override
+  List<String> get order;
+  @override
+  @JsonKey(ignore: true)
+  _$$LLMStrategyResponseImplCopyWith<_$LLMStrategyResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

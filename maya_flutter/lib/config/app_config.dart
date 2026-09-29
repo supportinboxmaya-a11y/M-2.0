@@ -85,6 +85,12 @@ class AppConfig {
   // Autonomous Mode
   static const String autonomousRun = '/api/v1/autonomous/run';
 
+  // Multi-Model Router
+  static const String llmProviders = '/api/v1/llm/providers';
+  static const String llmProviderToggle = '/api/v1/llm/providers/';
+  static const String llmStats = '/api/v1/llm/stats';
+  static const String llmStrategy = '/api/v1/llm/strategy';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
