@@ -772,6 +772,180 @@ Map<String, dynamic> _$$FlagsSnapshotImplToJson(_$FlagsSnapshotImpl instance) =>
       'flags': instance.flags,
     };
 
+_$MemoryItemImpl _$$MemoryItemImplFromJson(Map json) => $checkedCreate(
+      r'_$MemoryItemImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MemoryItemImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+          createdAt: $checkedConvert('created_at', (v) => v as String?),
+          score: $checkedConvert('score', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$MemoryItemImplToJson(_$MemoryItemImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'content': instance.content,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  writeNotNull('created_at', instance.createdAt);
+  writeNotNull('score', instance.score);
+  return val;
+}
+
+_$MemoryListResponseImpl _$$MemoryListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$MemoryListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MemoryListResponseImpl(
+          items: $checkedConvert(
+              'items',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      MemoryItem.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          total: $checkedConvert('total', (v) => (v as num).toInt()),
+          limit: $checkedConvert('limit', (v) => (v as num?)?.toInt()),
+          offset: $checkedConvert('offset', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$MemoryListResponseImplToJson(
+    _$MemoryListResponseImpl instance) {
+  final val = <String, dynamic>{
+    'items': instance.items,
+    'total': instance.total,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('limit', instance.limit);
+  writeNotNull('offset', instance.offset);
+  return val;
+}
+
+_$MemorySearchResponseImpl _$$MemorySearchResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$MemorySearchResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MemorySearchResponseImpl(
+          results: $checkedConvert(
+              'results',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      MemoryItem.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          query: $checkedConvert('query', (v) => v as String),
+          count: $checkedConvert('count', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$MemorySearchResponseImplToJson(
+        _$MemorySearchResponseImpl instance) =>
+    <String, dynamic>{
+      'results': instance.results,
+      'query': instance.query,
+      'count': instance.count,
+    };
+
+_$MemoryCreateResponseImpl _$$MemoryCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$MemoryCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MemoryCreateResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+          createdAt: $checkedConvert('created_at', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$MemoryCreateResponseImplToJson(
+    _$MemoryCreateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'content': instance.content,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  writeNotNull('created_at', instance.createdAt);
+  return val;
+}
+
+_$MemoryStatsResponseImpl _$$MemoryStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$MemoryStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MemoryStatsResponseImpl(
+          totalMemories:
+              $checkedConvert('total_memories', (v) => (v as num).toInt()),
+          totalVectors:
+              $checkedConvert('total_vectors', (v) => (v as num).toInt()),
+          indexType: $checkedConvert('index_type', (v) => v as String),
+          indexSizeMb:
+              $checkedConvert('index_size_mb', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalMemories': 'total_memories',
+        'totalVectors': 'total_vectors',
+        'indexType': 'index_type',
+        'indexSizeMb': 'index_size_mb'
+      },
+    );
+
+Map<String, dynamic> _$$MemoryStatsResponseImplToJson(
+        _$MemoryStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_memories': instance.totalMemories,
+      'total_vectors': instance.totalVectors,
+      'index_type': instance.indexType,
+      'index_size_mb': instance.indexSizeMb,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

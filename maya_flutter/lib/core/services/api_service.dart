@@ -408,6 +408,43 @@ class ApiService {
     return FlagsSnapshot.fromJson(response.data);
   }
 
+  // Memory
+  Future<MemoryListResponse> getMemoryList({int limit = 50, int offset = 0}) async {
+    final response = await _dio.get(
+      AppConfig.memoryList,
+      queryParameters: {'limit': limit, 'offset': offset},
+    );
+    return MemoryListResponse.fromJson(response.data);
+  }
+
+  Future<MemorySearchResponse> searchMemory({
+    required String query,
+    int limit = 20,
+    double threshold = 0.7,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.memorySearch,
+      data: {'query': query, 'limit': limit, 'threshold': threshold},
+    );
+    return MemorySearchResponse.fromJson(response.data);
+  }
+
+  Future<MemoryCreateResponse> createMemory({
+    required String content,
+    Map<String, dynamic>? metadata,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.memoryCreate,
+      data: {'content': content, 'metadata': metadata ?? {}},
+    );
+    return MemoryCreateResponse.fromJson(response.data);
+  }
+
+  Future<MemoryStatsResponse> getMemoryStats() async {
+    final response = await _dio.get(AppConfig.memoryStats);
+    return MemoryStatsResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -828,4 +865,70 @@ class FlagsSnapshot with _$FlagsSnapshot {
 
   factory FlagsSnapshot.fromJson(Map<String, dynamic> json) =>
       _$FlagsSnapshotFromJson(json);
+}
+
+// Memory Models
+@freezed
+class MemoryItem with _$MemoryItem {
+  const factory MemoryItem({
+    required String id,
+    required String content,
+    Map<String, dynamic>? metadata,
+    String? createdAt,
+    double? score,
+  }) = _MemoryItem;
+
+  factory MemoryItem.fromJson(Map<String, dynamic> json) =>
+      _$MemoryItemFromJson(json);
+}
+
+@freezed
+class MemoryListResponse with _$MemoryListResponse {
+  const factory MemoryListResponse({
+    required List<MemoryItem> items,
+    required int total,
+    int? limit,
+    int? offset,
+  }) = _MemoryListResponse;
+
+  factory MemoryListResponse.fromJson(Map<String, dynamic> json) =>
+      _$MemoryListResponseFromJson(json);
+}
+
+@freezed
+class MemorySearchResponse with _$MemorySearchResponse {
+  const factory MemorySearchResponse({
+    required List<MemoryItem> results,
+    required String query,
+    required int count,
+  }) = _MemorySearchResponse;
+
+  factory MemorySearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$MemorySearchResponseFromJson(json);
+}
+
+@freezed
+class MemoryCreateResponse with _$MemoryCreateResponse {
+  const factory MemoryCreateResponse({
+    required String id,
+    required String content,
+    Map<String, dynamic>? metadata,
+    String? createdAt,
+  }) = _MemoryCreateResponse;
+
+  factory MemoryCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$MemoryCreateResponseFromJson(json);
+}
+
+@freezed
+class MemoryStatsResponse with _$MemoryStatsResponse {
+  const factory MemoryStatsResponse({
+    required int totalMemories,
+    required int totalVectors,
+    required String indexType,
+    required double indexSizeMb,
+  }) = _MemoryStatsResponse;
+
+  factory MemoryStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$MemoryStatsResponseFromJson(json);
 }

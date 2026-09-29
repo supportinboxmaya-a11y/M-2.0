@@ -5318,3 +5318,1040 @@ abstract class _FlagsSnapshot implements FlagsSnapshot {
   _$$FlagsSnapshotImplCopyWith<_$FlagsSnapshotImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+MemoryItem _$MemoryItemFromJson(Map<String, dynamic> json) {
+  return _MemoryItem.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MemoryItem {
+  String get id => throw _privateConstructorUsedError;
+  String get content => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
+  double? get score => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MemoryItemCopyWith<MemoryItem> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MemoryItemCopyWith<$Res> {
+  factory $MemoryItemCopyWith(
+          MemoryItem value, $Res Function(MemoryItem) then) =
+      _$MemoryItemCopyWithImpl<$Res, MemoryItem>;
+  @useResult
+  $Res call(
+      {String id,
+      String content,
+      Map<String, dynamic>? metadata,
+      String? createdAt,
+      double? score});
+}
+
+/// @nodoc
+class _$MemoryItemCopyWithImpl<$Res, $Val extends MemoryItem>
+    implements $MemoryItemCopyWith<$Res> {
+  _$MemoryItemCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? content = null,
+    Object? metadata = freezed,
+    Object? createdAt = freezed,
+    Object? score = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      score: freezed == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MemoryItemImplCopyWith<$Res>
+    implements $MemoryItemCopyWith<$Res> {
+  factory _$$MemoryItemImplCopyWith(
+          _$MemoryItemImpl value, $Res Function(_$MemoryItemImpl) then) =
+      __$$MemoryItemImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String content,
+      Map<String, dynamic>? metadata,
+      String? createdAt,
+      double? score});
+}
+
+/// @nodoc
+class __$$MemoryItemImplCopyWithImpl<$Res>
+    extends _$MemoryItemCopyWithImpl<$Res, _$MemoryItemImpl>
+    implements _$$MemoryItemImplCopyWith<$Res> {
+  __$$MemoryItemImplCopyWithImpl(
+      _$MemoryItemImpl _value, $Res Function(_$MemoryItemImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? content = null,
+    Object? metadata = freezed,
+    Object? createdAt = freezed,
+    Object? score = freezed,
+  }) {
+    return _then(_$MemoryItemImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      score: freezed == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MemoryItemImpl implements _MemoryItem {
+  const _$MemoryItemImpl(
+      {required this.id,
+      required this.content,
+      final Map<String, dynamic>? metadata,
+      this.createdAt,
+      this.score})
+      : _metadata = metadata;
+
+  factory _$MemoryItemImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemoryItemImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String content;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  final String? createdAt;
+  @override
+  final double? score;
+
+  @override
+  String toString() {
+    return 'MemoryItem(id: $id, content: $content, metadata: $metadata, createdAt: $createdAt, score: $score)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MemoryItemImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.content, content) || other.content == content) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.score, score) || other.score == score));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, content,
+      const DeepCollectionEquality().hash(_metadata), createdAt, score);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MemoryItemImplCopyWith<_$MemoryItemImpl> get copyWith =>
+      __$$MemoryItemImplCopyWithImpl<_$MemoryItemImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MemoryItemImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MemoryItem implements MemoryItem {
+  const factory _MemoryItem(
+      {required final String id,
+      required final String content,
+      final Map<String, dynamic>? metadata,
+      final String? createdAt,
+      final double? score}) = _$MemoryItemImpl;
+
+  factory _MemoryItem.fromJson(Map<String, dynamic> json) =
+      _$MemoryItemImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get content;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  String? get createdAt;
+  @override
+  double? get score;
+  @override
+  @JsonKey(ignore: true)
+  _$$MemoryItemImplCopyWith<_$MemoryItemImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+MemoryListResponse _$MemoryListResponseFromJson(Map<String, dynamic> json) {
+  return _MemoryListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MemoryListResponse {
+  List<MemoryItem> get items => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+  int? get limit => throw _privateConstructorUsedError;
+  int? get offset => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MemoryListResponseCopyWith<MemoryListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MemoryListResponseCopyWith<$Res> {
+  factory $MemoryListResponseCopyWith(
+          MemoryListResponse value, $Res Function(MemoryListResponse) then) =
+      _$MemoryListResponseCopyWithImpl<$Res, MemoryListResponse>;
+  @useResult
+  $Res call({List<MemoryItem> items, int total, int? limit, int? offset});
+}
+
+/// @nodoc
+class _$MemoryListResponseCopyWithImpl<$Res, $Val extends MemoryListResponse>
+    implements $MemoryListResponseCopyWith<$Res> {
+  _$MemoryListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? items = null,
+    Object? total = null,
+    Object? limit = freezed,
+    Object? offset = freezed,
+  }) {
+    return _then(_value.copyWith(
+      items: null == items
+          ? _value.items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<MemoryItem>,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
+      offset: freezed == offset
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MemoryListResponseImplCopyWith<$Res>
+    implements $MemoryListResponseCopyWith<$Res> {
+  factory _$$MemoryListResponseImplCopyWith(_$MemoryListResponseImpl value,
+          $Res Function(_$MemoryListResponseImpl) then) =
+      __$$MemoryListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<MemoryItem> items, int total, int? limit, int? offset});
+}
+
+/// @nodoc
+class __$$MemoryListResponseImplCopyWithImpl<$Res>
+    extends _$MemoryListResponseCopyWithImpl<$Res, _$MemoryListResponseImpl>
+    implements _$$MemoryListResponseImplCopyWith<$Res> {
+  __$$MemoryListResponseImplCopyWithImpl(_$MemoryListResponseImpl _value,
+      $Res Function(_$MemoryListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? items = null,
+    Object? total = null,
+    Object? limit = freezed,
+    Object? offset = freezed,
+  }) {
+    return _then(_$MemoryListResponseImpl(
+      items: null == items
+          ? _value._items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<MemoryItem>,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
+      offset: freezed == offset
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MemoryListResponseImpl implements _MemoryListResponse {
+  const _$MemoryListResponseImpl(
+      {required final List<MemoryItem> items,
+      required this.total,
+      this.limit,
+      this.offset})
+      : _items = items;
+
+  factory _$MemoryListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemoryListResponseImplFromJson(json);
+
+  final List<MemoryItem> _items;
+  @override
+  List<MemoryItem> get items {
+    if (_items is EqualUnmodifiableListView) return _items;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_items);
+  }
+
+  @override
+  final int total;
+  @override
+  final int? limit;
+  @override
+  final int? offset;
+
+  @override
+  String toString() {
+    return 'MemoryListResponse(items: $items, total: $total, limit: $limit, offset: $offset)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MemoryListResponseImpl &&
+            const DeepCollectionEquality().equals(other._items, _items) &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            (identical(other.offset, offset) || other.offset == offset));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_items), total, limit, offset);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MemoryListResponseImplCopyWith<_$MemoryListResponseImpl> get copyWith =>
+      __$$MemoryListResponseImplCopyWithImpl<_$MemoryListResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MemoryListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MemoryListResponse implements MemoryListResponse {
+  const factory _MemoryListResponse(
+      {required final List<MemoryItem> items,
+      required final int total,
+      final int? limit,
+      final int? offset}) = _$MemoryListResponseImpl;
+
+  factory _MemoryListResponse.fromJson(Map<String, dynamic> json) =
+      _$MemoryListResponseImpl.fromJson;
+
+  @override
+  List<MemoryItem> get items;
+  @override
+  int get total;
+  @override
+  int? get limit;
+  @override
+  int? get offset;
+  @override
+  @JsonKey(ignore: true)
+  _$$MemoryListResponseImplCopyWith<_$MemoryListResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+MemorySearchResponse _$MemorySearchResponseFromJson(Map<String, dynamic> json) {
+  return _MemorySearchResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MemorySearchResponse {
+  List<MemoryItem> get results => throw _privateConstructorUsedError;
+  String get query => throw _privateConstructorUsedError;
+  int get count => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MemorySearchResponseCopyWith<MemorySearchResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MemorySearchResponseCopyWith<$Res> {
+  factory $MemorySearchResponseCopyWith(MemorySearchResponse value,
+          $Res Function(MemorySearchResponse) then) =
+      _$MemorySearchResponseCopyWithImpl<$Res, MemorySearchResponse>;
+  @useResult
+  $Res call({List<MemoryItem> results, String query, int count});
+}
+
+/// @nodoc
+class _$MemorySearchResponseCopyWithImpl<$Res,
+        $Val extends MemorySearchResponse>
+    implements $MemorySearchResponseCopyWith<$Res> {
+  _$MemorySearchResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? results = null,
+    Object? query = null,
+    Object? count = null,
+  }) {
+    return _then(_value.copyWith(
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<MemoryItem>,
+      query: null == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String,
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MemorySearchResponseImplCopyWith<$Res>
+    implements $MemorySearchResponseCopyWith<$Res> {
+  factory _$$MemorySearchResponseImplCopyWith(_$MemorySearchResponseImpl value,
+          $Res Function(_$MemorySearchResponseImpl) then) =
+      __$$MemorySearchResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<MemoryItem> results, String query, int count});
+}
+
+/// @nodoc
+class __$$MemorySearchResponseImplCopyWithImpl<$Res>
+    extends _$MemorySearchResponseCopyWithImpl<$Res, _$MemorySearchResponseImpl>
+    implements _$$MemorySearchResponseImplCopyWith<$Res> {
+  __$$MemorySearchResponseImplCopyWithImpl(_$MemorySearchResponseImpl _value,
+      $Res Function(_$MemorySearchResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? results = null,
+    Object? query = null,
+    Object? count = null,
+  }) {
+    return _then(_$MemorySearchResponseImpl(
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<MemoryItem>,
+      query: null == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String,
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MemorySearchResponseImpl implements _MemorySearchResponse {
+  const _$MemorySearchResponseImpl(
+      {required final List<MemoryItem> results,
+      required this.query,
+      required this.count})
+      : _results = results;
+
+  factory _$MemorySearchResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemorySearchResponseImplFromJson(json);
+
+  final List<MemoryItem> _results;
+  @override
+  List<MemoryItem> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  @override
+  final String query;
+  @override
+  final int count;
+
+  @override
+  String toString() {
+    return 'MemorySearchResponse(results: $results, query: $query, count: $count)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MemorySearchResponseImpl &&
+            const DeepCollectionEquality().equals(other._results, _results) &&
+            (identical(other.query, query) || other.query == query) &&
+            (identical(other.count, count) || other.count == count));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_results), query, count);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MemorySearchResponseImplCopyWith<_$MemorySearchResponseImpl>
+      get copyWith =>
+          __$$MemorySearchResponseImplCopyWithImpl<_$MemorySearchResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MemorySearchResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MemorySearchResponse implements MemorySearchResponse {
+  const factory _MemorySearchResponse(
+      {required final List<MemoryItem> results,
+      required final String query,
+      required final int count}) = _$MemorySearchResponseImpl;
+
+  factory _MemorySearchResponse.fromJson(Map<String, dynamic> json) =
+      _$MemorySearchResponseImpl.fromJson;
+
+  @override
+  List<MemoryItem> get results;
+  @override
+  String get query;
+  @override
+  int get count;
+  @override
+  @JsonKey(ignore: true)
+  _$$MemorySearchResponseImplCopyWith<_$MemorySearchResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+MemoryCreateResponse _$MemoryCreateResponseFromJson(Map<String, dynamic> json) {
+  return _MemoryCreateResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MemoryCreateResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get content => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MemoryCreateResponseCopyWith<MemoryCreateResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MemoryCreateResponseCopyWith<$Res> {
+  factory $MemoryCreateResponseCopyWith(MemoryCreateResponse value,
+          $Res Function(MemoryCreateResponse) then) =
+      _$MemoryCreateResponseCopyWithImpl<$Res, MemoryCreateResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String content,
+      Map<String, dynamic>? metadata,
+      String? createdAt});
+}
+
+/// @nodoc
+class _$MemoryCreateResponseCopyWithImpl<$Res,
+        $Val extends MemoryCreateResponse>
+    implements $MemoryCreateResponseCopyWith<$Res> {
+  _$MemoryCreateResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? content = null,
+    Object? metadata = freezed,
+    Object? createdAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MemoryCreateResponseImplCopyWith<$Res>
+    implements $MemoryCreateResponseCopyWith<$Res> {
+  factory _$$MemoryCreateResponseImplCopyWith(_$MemoryCreateResponseImpl value,
+          $Res Function(_$MemoryCreateResponseImpl) then) =
+      __$$MemoryCreateResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String content,
+      Map<String, dynamic>? metadata,
+      String? createdAt});
+}
+
+/// @nodoc
+class __$$MemoryCreateResponseImplCopyWithImpl<$Res>
+    extends _$MemoryCreateResponseCopyWithImpl<$Res, _$MemoryCreateResponseImpl>
+    implements _$$MemoryCreateResponseImplCopyWith<$Res> {
+  __$$MemoryCreateResponseImplCopyWithImpl(_$MemoryCreateResponseImpl _value,
+      $Res Function(_$MemoryCreateResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? content = null,
+    Object? metadata = freezed,
+    Object? createdAt = freezed,
+  }) {
+    return _then(_$MemoryCreateResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MemoryCreateResponseImpl implements _MemoryCreateResponse {
+  const _$MemoryCreateResponseImpl(
+      {required this.id,
+      required this.content,
+      final Map<String, dynamic>? metadata,
+      this.createdAt})
+      : _metadata = metadata;
+
+  factory _$MemoryCreateResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemoryCreateResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String content;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  final String? createdAt;
+
+  @override
+  String toString() {
+    return 'MemoryCreateResponse(id: $id, content: $content, metadata: $metadata, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MemoryCreateResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.content, content) || other.content == content) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, content,
+      const DeepCollectionEquality().hash(_metadata), createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MemoryCreateResponseImplCopyWith<_$MemoryCreateResponseImpl>
+      get copyWith =>
+          __$$MemoryCreateResponseImplCopyWithImpl<_$MemoryCreateResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MemoryCreateResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MemoryCreateResponse implements MemoryCreateResponse {
+  const factory _MemoryCreateResponse(
+      {required final String id,
+      required final String content,
+      final Map<String, dynamic>? metadata,
+      final String? createdAt}) = _$MemoryCreateResponseImpl;
+
+  factory _MemoryCreateResponse.fromJson(Map<String, dynamic> json) =
+      _$MemoryCreateResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get content;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  String? get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$MemoryCreateResponseImplCopyWith<_$MemoryCreateResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+MemoryStatsResponse _$MemoryStatsResponseFromJson(Map<String, dynamic> json) {
+  return _MemoryStatsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MemoryStatsResponse {
+  int get totalMemories => throw _privateConstructorUsedError;
+  int get totalVectors => throw _privateConstructorUsedError;
+  String get indexType => throw _privateConstructorUsedError;
+  double get indexSizeMb => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MemoryStatsResponseCopyWith<MemoryStatsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MemoryStatsResponseCopyWith<$Res> {
+  factory $MemoryStatsResponseCopyWith(
+          MemoryStatsResponse value, $Res Function(MemoryStatsResponse) then) =
+      _$MemoryStatsResponseCopyWithImpl<$Res, MemoryStatsResponse>;
+  @useResult
+  $Res call(
+      {int totalMemories,
+      int totalVectors,
+      String indexType,
+      double indexSizeMb});
+}
+
+/// @nodoc
+class _$MemoryStatsResponseCopyWithImpl<$Res, $Val extends MemoryStatsResponse>
+    implements $MemoryStatsResponseCopyWith<$Res> {
+  _$MemoryStatsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalMemories = null,
+    Object? totalVectors = null,
+    Object? indexType = null,
+    Object? indexSizeMb = null,
+  }) {
+    return _then(_value.copyWith(
+      totalMemories: null == totalMemories
+          ? _value.totalMemories
+          : totalMemories // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalVectors: null == totalVectors
+          ? _value.totalVectors
+          : totalVectors // ignore: cast_nullable_to_non_nullable
+              as int,
+      indexType: null == indexType
+          ? _value.indexType
+          : indexType // ignore: cast_nullable_to_non_nullable
+              as String,
+      indexSizeMb: null == indexSizeMb
+          ? _value.indexSizeMb
+          : indexSizeMb // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MemoryStatsResponseImplCopyWith<$Res>
+    implements $MemoryStatsResponseCopyWith<$Res> {
+  factory _$$MemoryStatsResponseImplCopyWith(_$MemoryStatsResponseImpl value,
+          $Res Function(_$MemoryStatsResponseImpl) then) =
+      __$$MemoryStatsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int totalMemories,
+      int totalVectors,
+      String indexType,
+      double indexSizeMb});
+}
+
+/// @nodoc
+class __$$MemoryStatsResponseImplCopyWithImpl<$Res>
+    extends _$MemoryStatsResponseCopyWithImpl<$Res, _$MemoryStatsResponseImpl>
+    implements _$$MemoryStatsResponseImplCopyWith<$Res> {
+  __$$MemoryStatsResponseImplCopyWithImpl(_$MemoryStatsResponseImpl _value,
+      $Res Function(_$MemoryStatsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalMemories = null,
+    Object? totalVectors = null,
+    Object? indexType = null,
+    Object? indexSizeMb = null,
+  }) {
+    return _then(_$MemoryStatsResponseImpl(
+      totalMemories: null == totalMemories
+          ? _value.totalMemories
+          : totalMemories // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalVectors: null == totalVectors
+          ? _value.totalVectors
+          : totalVectors // ignore: cast_nullable_to_non_nullable
+              as int,
+      indexType: null == indexType
+          ? _value.indexType
+          : indexType // ignore: cast_nullable_to_non_nullable
+              as String,
+      indexSizeMb: null == indexSizeMb
+          ? _value.indexSizeMb
+          : indexSizeMb // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MemoryStatsResponseImpl implements _MemoryStatsResponse {
+  const _$MemoryStatsResponseImpl(
+      {required this.totalMemories,
+      required this.totalVectors,
+      required this.indexType,
+      required this.indexSizeMb});
+
+  factory _$MemoryStatsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemoryStatsResponseImplFromJson(json);
+
+  @override
+  final int totalMemories;
+  @override
+  final int totalVectors;
+  @override
+  final String indexType;
+  @override
+  final double indexSizeMb;
+
+  @override
+  String toString() {
+    return 'MemoryStatsResponse(totalMemories: $totalMemories, totalVectors: $totalVectors, indexType: $indexType, indexSizeMb: $indexSizeMb)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MemoryStatsResponseImpl &&
+            (identical(other.totalMemories, totalMemories) ||
+                other.totalMemories == totalMemories) &&
+            (identical(other.totalVectors, totalVectors) ||
+                other.totalVectors == totalVectors) &&
+            (identical(other.indexType, indexType) ||
+                other.indexType == indexType) &&
+            (identical(other.indexSizeMb, indexSizeMb) ||
+                other.indexSizeMb == indexSizeMb));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, totalMemories, totalVectors, indexType, indexSizeMb);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MemoryStatsResponseImplCopyWith<_$MemoryStatsResponseImpl> get copyWith =>
+      __$$MemoryStatsResponseImplCopyWithImpl<_$MemoryStatsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MemoryStatsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MemoryStatsResponse implements MemoryStatsResponse {
+  const factory _MemoryStatsResponse(
+      {required final int totalMemories,
+      required final int totalVectors,
+      required final String indexType,
+      required final double indexSizeMb}) = _$MemoryStatsResponseImpl;
+
+  factory _MemoryStatsResponse.fromJson(Map<String, dynamic> json) =
+      _$MemoryStatsResponseImpl.fromJson;
+
+  @override
+  int get totalMemories;
+  @override
+  int get totalVectors;
+  @override
+  String get indexType;
+  @override
+  double get indexSizeMb;
+  @override
+  @JsonKey(ignore: true)
+  _$$MemoryStatsResponseImplCopyWith<_$MemoryStatsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

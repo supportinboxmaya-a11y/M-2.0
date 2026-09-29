@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -1370,7 +1372,15 @@ class _AppDrawer extends ConsumerWidget {
                   icon: Icons.memory_rounded,
                   label: 'Memory & RAG',
                   subtitle: 'Knowledge & context',
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _MemoryScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _DrawerActionTile(
                   icon: Icons.analytics_rounded,
@@ -2891,3 +2901,547 @@ final flagsProvider = FutureProvider<FlagsSnapshot>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getFlags();
 });
+
+// Memory Screen
+class _MemoryScreen extends ConsumerStatefulWidget {
+  const _MemoryScreen();
+
+  @override
+  ConsumerState<_MemoryScreen> createState() => _MemoryScreenState();
+}
+
+class _MemoryScreenState extends ConsumerState<_MemoryScreen> {
+  Timer? _refreshTimer;
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+  bool _isSearching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(memoryListProvider);
+        ref.invalidate(memoryStatsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final memoryListAsync = ref.watch(memoryListProvider);
+    final memoryStatsAsync = ref.watch(memoryStatsProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Memory & RAG', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(memoryListProvider);
+                ref.invalidate(memoryStatsProvider);
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_rounded),
+              onPressed: _showAddMemoryDialog,
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // Stats Cards
+            memoryStatsAsync.when(
+              data: (stats) => Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _MemoryStatCard(
+                        label: 'Total Memories',
+                        value: stats.totalMemories.toString(),
+                        color: MayaTheme.neonCyan,
+                        icon: Icons.memory_rounded,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _MemoryStatCard(
+                        label: 'Vectors',
+                        value: stats.totalVectors.toString(),
+                        color: MayaTheme.neonViolet,
+                        icon: Icons.data_array_rounded,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _MemoryStatCard(
+                        label: 'Index Type',
+                        value: stats.indexType,
+                        color: MayaTheme.neonEmerald,
+                        icon: Icons.category_rounded,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _MemoryStatCard(
+                        label: 'Size (MB)',
+                        value: stats.indexSizeMb.toStringAsFixed(1),
+                        color: MayaTheme.neonOrange,
+                        icon: Icons.storage_rounded,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              loading: () => const SizedBox(height: 100),
+              error: (_, __) => const SizedBox(height: 100),
+            ),
+
+            const Divider(color: MayaTheme.glassWhite10, height: 1),
+
+            // Search Bar
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search memories...',
+                        hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                        prefixIcon: const Icon(Icons.search_rounded, color: Colors.white54),
+                        suffixIcon: _searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear_rounded, color: Colors.white54),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() => _searchQuery = '');
+                                  ref.read(memorySearchTriggerProvider.notifier).state = '';
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: MayaTheme.slate700,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      ),
+                      style: MayaTheme.bodyMedium,
+                      onSubmitted: (value) {
+                        setState(() => _searchQuery = value);
+                        ref.read(memorySearchTriggerProvider.notifier).state = value;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    icon: Icon(
+                      _isSearching ? Icons.close_rounded : Icons.search_rounded,
+                      color: MayaTheme.neonCyan,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isSearching = !_isSearching;
+                        if (!_isSearching) {
+                          _searchQuery = '';
+                          _searchController.clear();
+                          ref.read(memorySearchTriggerProvider.notifier).state = '';
+                        }
+                      });
+                      ref.invalidate(memoryListProvider);
+                      ref.invalidate(memorySearchProvider);
+                    },
+                    style: IconButton.styleFrom(
+                      backgroundColor: MayaTheme.glassWhite10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Memory List / Search Results
+            Expanded(
+              child: _isSearching && _searchQuery.isNotEmpty
+                  ? _buildSearchResults()
+                  : _buildMemoryList(memoryListAsync),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemoryList(AsyncValue<MemoryListResponse> memoryListAsync) {
+    return memoryListAsync.when(
+      data: (response) {
+        if (response.items.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.memory_rounded, size: 64, color: Colors.white24),
+                const SizedBox(height: 16),
+                Text('No memories yet',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
+                const SizedBox(height: 8),
+                Text('Tap + to add a memory',
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white24)),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: response.items.length,
+          itemBuilder: (context, index) {
+            final item = response.items[index];
+            return _MemoryItemTile(item: item);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading memories',
+                style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    return ref.watch(memorySearchProvider).when(
+      data: (response) {
+        if (response.results.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.search_off_rounded, size: 64, color: Colors.white24),
+                const SizedBox(height: 16),
+                Text('No results for "$_searchQuery"',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: response.results.length,
+          itemBuilder: (context, index) {
+            final item = response.results[index];
+            return _MemoryItemTile(item: item, showScore: true);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Search error',
+                style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddMemoryDialog() {
+    final contentController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Add Memory', style: MayaTheme.headlineSmall),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: contentController,
+              maxLines: 4,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                hintText: 'Enter memory content...',
+                hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final content = contentController.text.trim();
+              if (content.isNotEmpty) {
+                Navigator.pop(context);
+                try {
+                  final apiService = ref.read(apiServiceProvider);
+                  await apiService.createMemory(content: content);
+                  ref.invalidate(memoryListProvider);
+                  ref.invalidate(memoryStatsProvider);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Memory added'),
+                        backgroundColor: MayaTheme.neonEmerald,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed: $e'),
+                        backgroundColor: MayaTheme.error,
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemoryStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _MemoryStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemoryItemTile extends ConsumerWidget {
+  final MemoryItem item;
+  final bool showScore;
+
+  const _MemoryItemTile({required this.item, this.showScore = false});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.article_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(
+          item.content.length > 60
+              ? '${item.content.substring(0, 60)}...'
+              : item.content,
+          style: MayaTheme.titleMedium.copyWith(fontWeight: FontWeight.w500),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            if (item.createdAt != null)
+              Text(
+                'Created: ${item.createdAt}',
+                style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+              ),
+            if (showScore && item.score != null)
+              Text(
+                'Score: ${item.score!.toStringAsFixed(3)}',
+                style: MayaTheme.labelSmall.copyWith(
+                  color: MayaTheme.neonEmerald,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+          ],
+        ),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'copy',
+              child: Row(
+                children: [
+                  Icon(Icons.copy_rounded, size: 18),
+                  SizedBox(width: 8),
+                  Text('Copy'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) async {
+            if (value == 'copy') {
+              await Clipboard.setData(ClipboardData(text: item.content));
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Copied to clipboard'),
+                    backgroundColor: MayaTheme.neonEmerald,
+                  ),
+                );
+              }
+            } else if (value == 'delete') {
+              // TODO: Implement delete when backend supports it
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Delete not yet implemented'),
+                    backgroundColor: MayaTheme.neonOrange,
+                  ),
+                );
+              }
+            }
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (item.metadata != null && item.metadata!.isNotEmpty) ...[
+                  const Text('Metadata:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.slate900,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.glassWhite10),
+                    ),
+                    child: Text(
+                      item.metadata.toString(),
+                      style: MayaTheme.bodySmall.copyWith(
+                          color: Colors.white70, fontFamily: 'monospace'),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                SelectableText(
+                  item.content,
+                  style: MayaTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Memory Providers
+final memoryListProvider = FutureProvider<MemoryListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMemoryList();
+});
+
+final memoryStatsProvider = FutureProvider<MemoryStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMemoryStats();
+});
+
+final memorySearchProvider = FutureProvider<MemorySearchResponse>((ref) async {
+  final query = ref.watch(memorySearchTriggerProvider);
+  if (query.isEmpty) {
+    return MemorySearchResponse(results: [], query: '', count: 0);
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.searchMemory(query: query);
+});
+
+// Helper to trigger search
+final memorySearchTriggerProvider = StateProvider<String>((ref) => '');
