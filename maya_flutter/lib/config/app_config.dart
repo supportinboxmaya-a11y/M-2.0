@@ -66,6 +66,10 @@ class AppConfig {
   static const String providersList = '/api/v1/providers';
   static const String providersToggle = '/api/v1/providers/';
 
+  // Brain Engine
+  static const String brainAnalyze = '/api/v1/brain/analyze';
+  static const String brainGraph = '/api/v1/brain/graph';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

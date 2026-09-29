@@ -492,6 +492,23 @@ class ApiService {
     }
   }
 
+  // Brain Engine
+  Future<BrainAnalyzeResponse> analyzeGoal(String goal) async {
+    final response = await _dio.get(
+      AppConfig.brainAnalyze,
+      queryParameters: {'goal': goal},
+    );
+    return BrainAnalyzeResponse.fromJson(response.data);
+  }
+
+  Future<BrainGraphResponse> buildGraph(List<Map<String, dynamic>> steps) async {
+    final response = await _dio.post(
+      AppConfig.brainGraph,
+      data: {'steps': steps},
+    );
+    return BrainGraphResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1092,4 +1109,61 @@ class ProvidersListResponse with _$ProvidersListResponse {
 
   factory ProvidersListResponse.fromJson(Map<String, dynamic> json) =>
       _$ProvidersListResponseFromJson(json);
+}
+
+// Brain Engine Models
+@freezed
+class BrainAnalyzeResponse with _$BrainAnalyzeResponse {
+  const factory BrainAnalyzeResponse({
+    required String goal,
+    required String complexity,
+    required int estimatedSteps,
+    required List<String> suggestedTools,
+    required List<String> subGoals,
+  }) = _BrainAnalyzeResponse;
+
+  factory BrainAnalyzeResponse.fromJson(Map<String, dynamic> json) =>
+      _$BrainAnalyzeResponseFromJson(json);
+}
+
+@freezed
+class GraphNode with _$GraphNode {
+  const factory GraphNode({
+    required String id,
+    required String description,
+    String? tool,
+    String? agent,
+    required List<String> dependsOn,
+    required String state,
+    required int attempts,
+    String? error,
+  }) = _GraphNode;
+
+  factory GraphNode.fromJson(Map<String, dynamic> json) =>
+      _$GraphNodeFromJson(json);
+}
+
+@freezed
+class GraphProgress with _$GraphProgress {
+  const factory GraphProgress({
+    required int total,
+    required Map<String, int> states,
+    required double percent,
+    required bool finished,
+    required bool stuck,
+  }) = _GraphProgress;
+
+  factory GraphProgress.fromJson(Map<String, dynamic> json) =>
+      _$GraphProgressFromJson(json);
+}
+
+@freezed
+class BrainGraphResponse with _$BrainGraphResponse {
+  const factory BrainGraphResponse({
+    required List<GraphNode> nodes,
+    required GraphProgress progress,
+  }) = _BrainGraphResponse;
+
+  factory BrainGraphResponse.fromJson(Map<String, dynamic> json) =>
+      _$BrainGraphResponseFromJson(json);
 }

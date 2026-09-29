@@ -1334,6 +1334,20 @@ class _AppDrawer extends ConsumerWidget {
                   subtitle: 'View & edit agents',
                   onTap: () => Navigator.pop(context),
                 ),
+                _DrawerActionTile(
+                  icon: Icons.psychology_rounded,
+                  label: 'Brain Engine',
+                  subtitle: 'Goal analysis & task graphs',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _BrainEngineScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -3974,4 +3988,464 @@ final providersListProvider = FutureProvider<ProvidersListResponse>((ref) async 
   final apiService = ref.read(apiServiceProvider);
   final response = await apiService.getProvidersList();
   return ProvidersListResponse(providers: response.providers);
+});
+
+// Brain Engine Screen
+class _BrainEngineScreen extends ConsumerStatefulWidget {
+  const _BrainEngineScreen();
+
+  @override
+  ConsumerState<_BrainEngineScreen> createState() => _BrainEngineScreenState();
+}
+
+class _BrainEngineScreenState extends ConsumerState<_BrainEngineScreen> {
+  final _goalController = TextEditingController();
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _goalController.text = 'Build a todo app with Flutter';
+  }
+
+  @override
+  void dispose() {
+    _goalController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Brain Engine', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Goal Input Section
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Goal Analysis', style: MayaTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _goalController,
+                      style: MayaTheme.bodyMedium,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Enter a goal to analyze...',
+                        hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                        filled: true,
+                        fillColor: MayaTheme.slate700,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _analyzeGoal,
+                        icon: const Icon(Icons.psychology_rounded),
+                        label: const Text('Analyze Goal'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MayaTheme.neonCyan,
+                          foregroundColor: MayaTheme.slate900,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Analysis Result
+              _buildAnalysisSection(),
+
+              const SizedBox(height: 24),
+
+              // Graph Builder Section
+              _buildGraphSection(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _analyzeGoal() async {
+    final goal = _goalController.text.trim();
+    if (goal.isEmpty) return;
+
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.analyzeGoal(goal);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Analysis complete: ${result.complexity} (${result.estimatedSteps} steps)'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Analysis failed: $e'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _buildGraphFromAnalysis(BrainAnalyzeResponse analysis) async {
+    // Convert sub-goals to steps for graph building
+    final steps = analysis.subGoals.asMap().entries.map((entry) {
+      final index = entry.key;
+      final subGoal = entry.value;
+      return {
+        'description': subGoal,
+        'tool': analysis.suggestedTools.isNotEmpty ? analysis.suggestedTools.first : 'llm',
+        'depends_on': index > 0 ? [index - 1] : [],
+      };
+    }).toList();
+
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      await apiService.buildGraph(steps);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Graph built from analysis'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Graph build failed: $e'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildAnalysisSection() {
+    // We'll use a simple FutureBuilder-like approach with a local state
+    return Consumer(
+      builder: (context, ref, _) {
+        final analysisAsync = ref.watch(brainAnalyzeProvider(_goalController.text.trim()));
+
+        return analysisAsync.when(
+          data: (analysis) => _AnalysisResultCard(analysis: analysis, onBuildGraph: () => _buildGraphFromAnalysis(analysis)),
+          loading: () => Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: MayaTheme.glassCard(),
+            child: const Center(
+              child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+            ),
+          ),
+          error: (err, _) => Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              children: [
+                const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                const SizedBox(height: 16),
+                Text('Analysis error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                const SizedBox(height: 8),
+                Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGraphSection() {
+    return Consumer(
+      builder: (context, ref, _) {
+        // Only show graph if we have analysis
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Task Graph', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Enter a goal above and tap "Analyze Goal" to see the task graph visualization.',
+                    style: MayaTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'The graph will show:',
+                    style: MayaTheme.labelMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  _GraphFeatureRow(icon: Icons.circle_rounded, text: 'Nodes = steps/tasks', color: MayaTheme.neonCyan),
+                  _GraphFeatureRow(icon: Icons.arrow_forward_rounded, text: 'Edges = dependencies', color: MayaTheme.neonViolet),
+                  _GraphFeatureRow(icon: Icons.color_lens_rounded, text: 'Colors = state (pending/running/done/failed)', color: MayaTheme.neonEmerald),
+                  _GraphFeatureRow(icon: Icons.build_rounded, text: 'Tool/agent assignments per node', color: MayaTheme.neonOrange),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _AnalysisResultCard extends StatelessWidget {
+  final BrainAnalyzeResponse analysis;
+  final VoidCallback onBuildGraph;
+
+  const _AnalysisResultCard({required this.analysis, required this.onBuildGraph});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.psychology_rounded, color: MayaTheme.neonCyan, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(analysis.goal, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          _AnalysisChip(
+                            label: analysis.complexity.toUpperCase(),
+                            color: analysis.complexity == 'multi_step' ? MayaTheme.neonOrange : MayaTheme.neonEmerald,
+                          ),
+                          const SizedBox(width: 8),
+                          _AnalysisChip(
+                            label: '${analysis.estimatedSteps} steps',
+                            color: MayaTheme.neonViolet,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Suggested Tools
+          if (analysis.suggestedTools.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Suggested Tools', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: analysis.suggestedTools.map((tool) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.neonCyan.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+                      ),
+                      child: Text(tool, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan)),
+                    )).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // Sub Goals
+          if (analysis.subGoals.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Sub-goals', style: MayaTheme.labelMedium),
+                      TextButton.icon(
+                        onPressed: onBuildGraph,
+                        icon: const Icon(Icons.account_tree_rounded, size: 16),
+                        label: const Text('Build Graph'),
+                        style: TextButton.styleFrom(foregroundColor: MayaTheme.neonCyan),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ...analysis.subGoals.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final subGoal = entry.value;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.slate700,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: MayaTheme.glassWhite10),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text('${index + 1}', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(subGoal, style: MayaTheme.bodyMedium),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ],
+
+          // Build Graph Button
+          if (analysis.subGoals.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: onBuildGraph,
+                  icon: const Icon(Icons.account_tree_rounded),
+                  label: const Text('Build Task Graph from Analysis'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: MayaTheme.neonCyan,
+                    side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _AnalysisChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: MayaTheme.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+class _GraphFeatureRow extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
+
+  const _GraphFeatureRow({required this.icon, required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 12),
+          Text(text, style: MayaTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+}
+
+// Brain Engine Provider (depends on goal text)
+final brainAnalyzeProvider = FutureProvider.family<BrainAnalyzeResponse, String>((ref, goal) async {
+  if (goal.isEmpty) {
+    throw Exception('Empty goal');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.analyzeGoal(goal);
 });

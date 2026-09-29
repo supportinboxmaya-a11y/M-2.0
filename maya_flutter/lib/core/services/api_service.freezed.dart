@@ -8143,3 +8143,945 @@ abstract class _ProvidersListResponse implements ProvidersListResponse {
   _$$ProvidersListResponseImplCopyWith<_$ProvidersListResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+BrainAnalyzeResponse _$BrainAnalyzeResponseFromJson(Map<String, dynamic> json) {
+  return _BrainAnalyzeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BrainAnalyzeResponse {
+  String get goal => throw _privateConstructorUsedError;
+  String get complexity => throw _privateConstructorUsedError;
+  int get estimatedSteps => throw _privateConstructorUsedError;
+  List<String> get suggestedTools => throw _privateConstructorUsedError;
+  List<String> get subGoals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BrainAnalyzeResponseCopyWith<BrainAnalyzeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BrainAnalyzeResponseCopyWith<$Res> {
+  factory $BrainAnalyzeResponseCopyWith(BrainAnalyzeResponse value,
+          $Res Function(BrainAnalyzeResponse) then) =
+      _$BrainAnalyzeResponseCopyWithImpl<$Res, BrainAnalyzeResponse>;
+  @useResult
+  $Res call(
+      {String goal,
+      String complexity,
+      int estimatedSteps,
+      List<String> suggestedTools,
+      List<String> subGoals});
+}
+
+/// @nodoc
+class _$BrainAnalyzeResponseCopyWithImpl<$Res,
+        $Val extends BrainAnalyzeResponse>
+    implements $BrainAnalyzeResponseCopyWith<$Res> {
+  _$BrainAnalyzeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goal = null,
+    Object? complexity = null,
+    Object? estimatedSteps = null,
+    Object? suggestedTools = null,
+    Object? subGoals = null,
+  }) {
+    return _then(_value.copyWith(
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      complexity: null == complexity
+          ? _value.complexity
+          : complexity // ignore: cast_nullable_to_non_nullable
+              as String,
+      estimatedSteps: null == estimatedSteps
+          ? _value.estimatedSteps
+          : estimatedSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      suggestedTools: null == suggestedTools
+          ? _value.suggestedTools
+          : suggestedTools // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      subGoals: null == subGoals
+          ? _value.subGoals
+          : subGoals // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BrainAnalyzeResponseImplCopyWith<$Res>
+    implements $BrainAnalyzeResponseCopyWith<$Res> {
+  factory _$$BrainAnalyzeResponseImplCopyWith(_$BrainAnalyzeResponseImpl value,
+          $Res Function(_$BrainAnalyzeResponseImpl) then) =
+      __$$BrainAnalyzeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String goal,
+      String complexity,
+      int estimatedSteps,
+      List<String> suggestedTools,
+      List<String> subGoals});
+}
+
+/// @nodoc
+class __$$BrainAnalyzeResponseImplCopyWithImpl<$Res>
+    extends _$BrainAnalyzeResponseCopyWithImpl<$Res, _$BrainAnalyzeResponseImpl>
+    implements _$$BrainAnalyzeResponseImplCopyWith<$Res> {
+  __$$BrainAnalyzeResponseImplCopyWithImpl(_$BrainAnalyzeResponseImpl _value,
+      $Res Function(_$BrainAnalyzeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goal = null,
+    Object? complexity = null,
+    Object? estimatedSteps = null,
+    Object? suggestedTools = null,
+    Object? subGoals = null,
+  }) {
+    return _then(_$BrainAnalyzeResponseImpl(
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      complexity: null == complexity
+          ? _value.complexity
+          : complexity // ignore: cast_nullable_to_non_nullable
+              as String,
+      estimatedSteps: null == estimatedSteps
+          ? _value.estimatedSteps
+          : estimatedSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      suggestedTools: null == suggestedTools
+          ? _value._suggestedTools
+          : suggestedTools // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      subGoals: null == subGoals
+          ? _value._subGoals
+          : subGoals // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BrainAnalyzeResponseImpl implements _BrainAnalyzeResponse {
+  const _$BrainAnalyzeResponseImpl(
+      {required this.goal,
+      required this.complexity,
+      required this.estimatedSteps,
+      required final List<String> suggestedTools,
+      required final List<String> subGoals})
+      : _suggestedTools = suggestedTools,
+        _subGoals = subGoals;
+
+  factory _$BrainAnalyzeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BrainAnalyzeResponseImplFromJson(json);
+
+  @override
+  final String goal;
+  @override
+  final String complexity;
+  @override
+  final int estimatedSteps;
+  final List<String> _suggestedTools;
+  @override
+  List<String> get suggestedTools {
+    if (_suggestedTools is EqualUnmodifiableListView) return _suggestedTools;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_suggestedTools);
+  }
+
+  final List<String> _subGoals;
+  @override
+  List<String> get subGoals {
+    if (_subGoals is EqualUnmodifiableListView) return _subGoals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_subGoals);
+  }
+
+  @override
+  String toString() {
+    return 'BrainAnalyzeResponse(goal: $goal, complexity: $complexity, estimatedSteps: $estimatedSteps, suggestedTools: $suggestedTools, subGoals: $subGoals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BrainAnalyzeResponseImpl &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            (identical(other.complexity, complexity) ||
+                other.complexity == complexity) &&
+            (identical(other.estimatedSteps, estimatedSteps) ||
+                other.estimatedSteps == estimatedSteps) &&
+            const DeepCollectionEquality()
+                .equals(other._suggestedTools, _suggestedTools) &&
+            const DeepCollectionEquality().equals(other._subGoals, _subGoals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      goal,
+      complexity,
+      estimatedSteps,
+      const DeepCollectionEquality().hash(_suggestedTools),
+      const DeepCollectionEquality().hash(_subGoals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BrainAnalyzeResponseImplCopyWith<_$BrainAnalyzeResponseImpl>
+      get copyWith =>
+          __$$BrainAnalyzeResponseImplCopyWithImpl<_$BrainAnalyzeResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BrainAnalyzeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BrainAnalyzeResponse implements BrainAnalyzeResponse {
+  const factory _BrainAnalyzeResponse(
+      {required final String goal,
+      required final String complexity,
+      required final int estimatedSteps,
+      required final List<String> suggestedTools,
+      required final List<String> subGoals}) = _$BrainAnalyzeResponseImpl;
+
+  factory _BrainAnalyzeResponse.fromJson(Map<String, dynamic> json) =
+      _$BrainAnalyzeResponseImpl.fromJson;
+
+  @override
+  String get goal;
+  @override
+  String get complexity;
+  @override
+  int get estimatedSteps;
+  @override
+  List<String> get suggestedTools;
+  @override
+  List<String> get subGoals;
+  @override
+  @JsonKey(ignore: true)
+  _$$BrainAnalyzeResponseImplCopyWith<_$BrainAnalyzeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GraphNode _$GraphNodeFromJson(Map<String, dynamic> json) {
+  return _GraphNode.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GraphNode {
+  String get id => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String? get tool => throw _privateConstructorUsedError;
+  String? get agent => throw _privateConstructorUsedError;
+  List<String> get dependsOn => throw _privateConstructorUsedError;
+  String get state => throw _privateConstructorUsedError;
+  int get attempts => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GraphNodeCopyWith<GraphNode> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GraphNodeCopyWith<$Res> {
+  factory $GraphNodeCopyWith(GraphNode value, $Res Function(GraphNode) then) =
+      _$GraphNodeCopyWithImpl<$Res, GraphNode>;
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String? tool,
+      String? agent,
+      List<String> dependsOn,
+      String state,
+      int attempts,
+      String? error});
+}
+
+/// @nodoc
+class _$GraphNodeCopyWithImpl<$Res, $Val extends GraphNode>
+    implements $GraphNodeCopyWith<$Res> {
+  _$GraphNodeCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? tool = freezed,
+    Object? agent = freezed,
+    Object? dependsOn = null,
+    Object? state = null,
+    Object? attempts = null,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      tool: freezed == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agent: freezed == agent
+          ? _value.agent
+          : agent // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dependsOn: null == dependsOn
+          ? _value.dependsOn
+          : dependsOn // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GraphNodeImplCopyWith<$Res>
+    implements $GraphNodeCopyWith<$Res> {
+  factory _$$GraphNodeImplCopyWith(
+          _$GraphNodeImpl value, $Res Function(_$GraphNodeImpl) then) =
+      __$$GraphNodeImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String? tool,
+      String? agent,
+      List<String> dependsOn,
+      String state,
+      int attempts,
+      String? error});
+}
+
+/// @nodoc
+class __$$GraphNodeImplCopyWithImpl<$Res>
+    extends _$GraphNodeCopyWithImpl<$Res, _$GraphNodeImpl>
+    implements _$$GraphNodeImplCopyWith<$Res> {
+  __$$GraphNodeImplCopyWithImpl(
+      _$GraphNodeImpl _value, $Res Function(_$GraphNodeImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? tool = freezed,
+    Object? agent = freezed,
+    Object? dependsOn = null,
+    Object? state = null,
+    Object? attempts = null,
+    Object? error = freezed,
+  }) {
+    return _then(_$GraphNodeImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      tool: freezed == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agent: freezed == agent
+          ? _value.agent
+          : agent // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dependsOn: null == dependsOn
+          ? _value._dependsOn
+          : dependsOn // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GraphNodeImpl implements _GraphNode {
+  const _$GraphNodeImpl(
+      {required this.id,
+      required this.description,
+      this.tool,
+      this.agent,
+      required final List<String> dependsOn,
+      required this.state,
+      required this.attempts,
+      this.error})
+      : _dependsOn = dependsOn;
+
+  factory _$GraphNodeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GraphNodeImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String description;
+  @override
+  final String? tool;
+  @override
+  final String? agent;
+  final List<String> _dependsOn;
+  @override
+  List<String> get dependsOn {
+    if (_dependsOn is EqualUnmodifiableListView) return _dependsOn;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_dependsOn);
+  }
+
+  @override
+  final String state;
+  @override
+  final int attempts;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'GraphNode(id: $id, description: $description, tool: $tool, agent: $agent, dependsOn: $dependsOn, state: $state, attempts: $attempts, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GraphNodeImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.tool, tool) || other.tool == tool) &&
+            (identical(other.agent, agent) || other.agent == agent) &&
+            const DeepCollectionEquality()
+                .equals(other._dependsOn, _dependsOn) &&
+            (identical(other.state, state) || other.state == state) &&
+            (identical(other.attempts, attempts) ||
+                other.attempts == attempts) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, description, tool, agent,
+      const DeepCollectionEquality().hash(_dependsOn), state, attempts, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GraphNodeImplCopyWith<_$GraphNodeImpl> get copyWith =>
+      __$$GraphNodeImplCopyWithImpl<_$GraphNodeImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GraphNodeImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GraphNode implements GraphNode {
+  const factory _GraphNode(
+      {required final String id,
+      required final String description,
+      final String? tool,
+      final String? agent,
+      required final List<String> dependsOn,
+      required final String state,
+      required final int attempts,
+      final String? error}) = _$GraphNodeImpl;
+
+  factory _GraphNode.fromJson(Map<String, dynamic> json) =
+      _$GraphNodeImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get description;
+  @override
+  String? get tool;
+  @override
+  String? get agent;
+  @override
+  List<String> get dependsOn;
+  @override
+  String get state;
+  @override
+  int get attempts;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$GraphNodeImplCopyWith<_$GraphNodeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GraphProgress _$GraphProgressFromJson(Map<String, dynamic> json) {
+  return _GraphProgress.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GraphProgress {
+  int get total => throw _privateConstructorUsedError;
+  Map<String, int> get states => throw _privateConstructorUsedError;
+  double get percent => throw _privateConstructorUsedError;
+  bool get finished => throw _privateConstructorUsedError;
+  bool get stuck => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GraphProgressCopyWith<GraphProgress> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GraphProgressCopyWith<$Res> {
+  factory $GraphProgressCopyWith(
+          GraphProgress value, $Res Function(GraphProgress) then) =
+      _$GraphProgressCopyWithImpl<$Res, GraphProgress>;
+  @useResult
+  $Res call(
+      {int total,
+      Map<String, int> states,
+      double percent,
+      bool finished,
+      bool stuck});
+}
+
+/// @nodoc
+class _$GraphProgressCopyWithImpl<$Res, $Val extends GraphProgress>
+    implements $GraphProgressCopyWith<$Res> {
+  _$GraphProgressCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? states = null,
+    Object? percent = null,
+    Object? finished = null,
+    Object? stuck = null,
+  }) {
+    return _then(_value.copyWith(
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      states: null == states
+          ? _value.states
+          : states // ignore: cast_nullable_to_non_nullable
+              as Map<String, int>,
+      percent: null == percent
+          ? _value.percent
+          : percent // ignore: cast_nullable_to_non_nullable
+              as double,
+      finished: null == finished
+          ? _value.finished
+          : finished // ignore: cast_nullable_to_non_nullable
+              as bool,
+      stuck: null == stuck
+          ? _value.stuck
+          : stuck // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GraphProgressImplCopyWith<$Res>
+    implements $GraphProgressCopyWith<$Res> {
+  factory _$$GraphProgressImplCopyWith(
+          _$GraphProgressImpl value, $Res Function(_$GraphProgressImpl) then) =
+      __$$GraphProgressImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int total,
+      Map<String, int> states,
+      double percent,
+      bool finished,
+      bool stuck});
+}
+
+/// @nodoc
+class __$$GraphProgressImplCopyWithImpl<$Res>
+    extends _$GraphProgressCopyWithImpl<$Res, _$GraphProgressImpl>
+    implements _$$GraphProgressImplCopyWith<$Res> {
+  __$$GraphProgressImplCopyWithImpl(
+      _$GraphProgressImpl _value, $Res Function(_$GraphProgressImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? states = null,
+    Object? percent = null,
+    Object? finished = null,
+    Object? stuck = null,
+  }) {
+    return _then(_$GraphProgressImpl(
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      states: null == states
+          ? _value._states
+          : states // ignore: cast_nullable_to_non_nullable
+              as Map<String, int>,
+      percent: null == percent
+          ? _value.percent
+          : percent // ignore: cast_nullable_to_non_nullable
+              as double,
+      finished: null == finished
+          ? _value.finished
+          : finished // ignore: cast_nullable_to_non_nullable
+              as bool,
+      stuck: null == stuck
+          ? _value.stuck
+          : stuck // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GraphProgressImpl implements _GraphProgress {
+  const _$GraphProgressImpl(
+      {required this.total,
+      required final Map<String, int> states,
+      required this.percent,
+      required this.finished,
+      required this.stuck})
+      : _states = states;
+
+  factory _$GraphProgressImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GraphProgressImplFromJson(json);
+
+  @override
+  final int total;
+  final Map<String, int> _states;
+  @override
+  Map<String, int> get states {
+    if (_states is EqualUnmodifiableMapView) return _states;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_states);
+  }
+
+  @override
+  final double percent;
+  @override
+  final bool finished;
+  @override
+  final bool stuck;
+
+  @override
+  String toString() {
+    return 'GraphProgress(total: $total, states: $states, percent: $percent, finished: $finished, stuck: $stuck)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GraphProgressImpl &&
+            (identical(other.total, total) || other.total == total) &&
+            const DeepCollectionEquality().equals(other._states, _states) &&
+            (identical(other.percent, percent) || other.percent == percent) &&
+            (identical(other.finished, finished) ||
+                other.finished == finished) &&
+            (identical(other.stuck, stuck) || other.stuck == stuck));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, total,
+      const DeepCollectionEquality().hash(_states), percent, finished, stuck);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GraphProgressImplCopyWith<_$GraphProgressImpl> get copyWith =>
+      __$$GraphProgressImplCopyWithImpl<_$GraphProgressImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GraphProgressImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GraphProgress implements GraphProgress {
+  const factory _GraphProgress(
+      {required final int total,
+      required final Map<String, int> states,
+      required final double percent,
+      required final bool finished,
+      required final bool stuck}) = _$GraphProgressImpl;
+
+  factory _GraphProgress.fromJson(Map<String, dynamic> json) =
+      _$GraphProgressImpl.fromJson;
+
+  @override
+  int get total;
+  @override
+  Map<String, int> get states;
+  @override
+  double get percent;
+  @override
+  bool get finished;
+  @override
+  bool get stuck;
+  @override
+  @JsonKey(ignore: true)
+  _$$GraphProgressImplCopyWith<_$GraphProgressImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BrainGraphResponse _$BrainGraphResponseFromJson(Map<String, dynamic> json) {
+  return _BrainGraphResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BrainGraphResponse {
+  List<GraphNode> get nodes => throw _privateConstructorUsedError;
+  GraphProgress get progress => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BrainGraphResponseCopyWith<BrainGraphResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BrainGraphResponseCopyWith<$Res> {
+  factory $BrainGraphResponseCopyWith(
+          BrainGraphResponse value, $Res Function(BrainGraphResponse) then) =
+      _$BrainGraphResponseCopyWithImpl<$Res, BrainGraphResponse>;
+  @useResult
+  $Res call({List<GraphNode> nodes, GraphProgress progress});
+
+  $GraphProgressCopyWith<$Res> get progress;
+}
+
+/// @nodoc
+class _$BrainGraphResponseCopyWithImpl<$Res, $Val extends BrainGraphResponse>
+    implements $BrainGraphResponseCopyWith<$Res> {
+  _$BrainGraphResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nodes = null,
+    Object? progress = null,
+  }) {
+    return _then(_value.copyWith(
+      nodes: null == nodes
+          ? _value.nodes
+          : nodes // ignore: cast_nullable_to_non_nullable
+              as List<GraphNode>,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as GraphProgress,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $GraphProgressCopyWith<$Res> get progress {
+    return $GraphProgressCopyWith<$Res>(_value.progress, (value) {
+      return _then(_value.copyWith(progress: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$BrainGraphResponseImplCopyWith<$Res>
+    implements $BrainGraphResponseCopyWith<$Res> {
+  factory _$$BrainGraphResponseImplCopyWith(_$BrainGraphResponseImpl value,
+          $Res Function(_$BrainGraphResponseImpl) then) =
+      __$$BrainGraphResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<GraphNode> nodes, GraphProgress progress});
+
+  @override
+  $GraphProgressCopyWith<$Res> get progress;
+}
+
+/// @nodoc
+class __$$BrainGraphResponseImplCopyWithImpl<$Res>
+    extends _$BrainGraphResponseCopyWithImpl<$Res, _$BrainGraphResponseImpl>
+    implements _$$BrainGraphResponseImplCopyWith<$Res> {
+  __$$BrainGraphResponseImplCopyWithImpl(_$BrainGraphResponseImpl _value,
+      $Res Function(_$BrainGraphResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nodes = null,
+    Object? progress = null,
+  }) {
+    return _then(_$BrainGraphResponseImpl(
+      nodes: null == nodes
+          ? _value._nodes
+          : nodes // ignore: cast_nullable_to_non_nullable
+              as List<GraphNode>,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as GraphProgress,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BrainGraphResponseImpl implements _BrainGraphResponse {
+  const _$BrainGraphResponseImpl(
+      {required final List<GraphNode> nodes, required this.progress})
+      : _nodes = nodes;
+
+  factory _$BrainGraphResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BrainGraphResponseImplFromJson(json);
+
+  final List<GraphNode> _nodes;
+  @override
+  List<GraphNode> get nodes {
+    if (_nodes is EqualUnmodifiableListView) return _nodes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_nodes);
+  }
+
+  @override
+  final GraphProgress progress;
+
+  @override
+  String toString() {
+    return 'BrainGraphResponse(nodes: $nodes, progress: $progress)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BrainGraphResponseImpl &&
+            const DeepCollectionEquality().equals(other._nodes, _nodes) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_nodes), progress);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BrainGraphResponseImplCopyWith<_$BrainGraphResponseImpl> get copyWith =>
+      __$$BrainGraphResponseImplCopyWithImpl<_$BrainGraphResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BrainGraphResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BrainGraphResponse implements BrainGraphResponse {
+  const factory _BrainGraphResponse(
+      {required final List<GraphNode> nodes,
+      required final GraphProgress progress}) = _$BrainGraphResponseImpl;
+
+  factory _BrainGraphResponse.fromJson(Map<String, dynamic> json) =
+      _$BrainGraphResponseImpl.fromJson;
+
+  @override
+  List<GraphNode> get nodes;
+  @override
+  GraphProgress get progress;
+  @override
+  @JsonKey(ignore: true)
+  _$$BrainGraphResponseImplCopyWith<_$BrainGraphResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

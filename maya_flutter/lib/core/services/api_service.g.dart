@@ -1207,6 +1207,134 @@ Map<String, dynamic> _$$ProvidersListResponseImplToJson(
       'providers': instance.providers,
     };
 
+_$BrainAnalyzeResponseImpl _$$BrainAnalyzeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BrainAnalyzeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BrainAnalyzeResponseImpl(
+          goal: $checkedConvert('goal', (v) => v as String),
+          complexity: $checkedConvert('complexity', (v) => v as String),
+          estimatedSteps:
+              $checkedConvert('estimated_steps', (v) => (v as num).toInt()),
+          suggestedTools: $checkedConvert('suggested_tools',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          subGoals: $checkedConvert('sub_goals',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'estimatedSteps': 'estimated_steps',
+        'suggestedTools': 'suggested_tools',
+        'subGoals': 'sub_goals'
+      },
+    );
+
+Map<String, dynamic> _$$BrainAnalyzeResponseImplToJson(
+        _$BrainAnalyzeResponseImpl instance) =>
+    <String, dynamic>{
+      'goal': instance.goal,
+      'complexity': instance.complexity,
+      'estimated_steps': instance.estimatedSteps,
+      'suggested_tools': instance.suggestedTools,
+      'sub_goals': instance.subGoals,
+    };
+
+_$GraphNodeImpl _$$GraphNodeImplFromJson(Map json) => $checkedCreate(
+      r'_$GraphNodeImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GraphNodeImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          tool: $checkedConvert('tool', (v) => v as String?),
+          agent: $checkedConvert('agent', (v) => v as String?),
+          dependsOn: $checkedConvert('depends_on',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          state: $checkedConvert('state', (v) => v as String),
+          attempts: $checkedConvert('attempts', (v) => (v as num).toInt()),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'dependsOn': 'depends_on'},
+    );
+
+Map<String, dynamic> _$$GraphNodeImplToJson(_$GraphNodeImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'description': instance.description,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('tool', instance.tool);
+  writeNotNull('agent', instance.agent);
+  val['depends_on'] = instance.dependsOn;
+  val['state'] = instance.state;
+  val['attempts'] = instance.attempts;
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$GraphProgressImpl _$$GraphProgressImplFromJson(Map json) => $checkedCreate(
+      r'_$GraphProgressImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GraphProgressImpl(
+          total: $checkedConvert('total', (v) => (v as num).toInt()),
+          states:
+              $checkedConvert('states', (v) => Map<String, int>.from(v as Map)),
+          percent: $checkedConvert('percent', (v) => (v as num).toDouble()),
+          finished: $checkedConvert('finished', (v) => v as bool),
+          stuck: $checkedConvert('stuck', (v) => v as bool),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GraphProgressImplToJson(_$GraphProgressImpl instance) =>
+    <String, dynamic>{
+      'total': instance.total,
+      'states': instance.states,
+      'percent': instance.percent,
+      'finished': instance.finished,
+      'stuck': instance.stuck,
+    };
+
+_$BrainGraphResponseImpl _$$BrainGraphResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BrainGraphResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BrainGraphResponseImpl(
+          nodes: $checkedConvert(
+              'nodes',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      GraphNode.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          progress: $checkedConvert(
+              'progress',
+              (v) =>
+                  GraphProgress.fromJson(Map<String, dynamic>.from(v as Map))),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BrainGraphResponseImplToJson(
+        _$BrainGraphResponseImpl instance) =>
+    <String, dynamic>{
+      'nodes': instance.nodes,
+      'progress': instance.progress,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
