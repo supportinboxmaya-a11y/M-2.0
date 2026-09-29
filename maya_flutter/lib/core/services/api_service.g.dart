@@ -1529,6 +1529,205 @@ Map<String, dynamic> _$$AgentsMessagesResponseImplToJson(
       'messages': instance.messages,
     };
 
+_$WorkflowPlanResponseImpl _$$WorkflowPlanResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WorkflowPlanResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WorkflowPlanResponseImpl(
+          runId: $checkedConvert('run_id', (v) => v as String),
+          state: $checkedConvert(
+              'state', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'runId': 'run_id'},
+    );
+
+Map<String, dynamic> _$$WorkflowPlanResponseImplToJson(
+        _$WorkflowPlanResponseImpl instance) =>
+    <String, dynamic>{
+      'run_id': instance.runId,
+      'state': instance.state,
+    };
+
+_$WorkflowNodeImpl _$$WorkflowNodeImplFromJson(Map json) => $checkedCreate(
+      r'_$WorkflowNodeImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WorkflowNodeImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          tool: $checkedConvert('tool', (v) => v as String?),
+          agent: $checkedConvert('agent', (v) => v as String?),
+          dependsOn: $checkedConvert('depends_on',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          state: $checkedConvert('state', (v) => v as String),
+          attempts: $checkedConvert('attempts', (v) => (v as num).toInt()),
+          error: $checkedConvert('error', (v) => v as String?),
+          recoveryNote: $checkedConvert('recovery_note', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'dependsOn': 'depends_on',
+        'recoveryNote': 'recovery_note'
+      },
+    );
+
+Map<String, dynamic> _$$WorkflowNodeImplToJson(_$WorkflowNodeImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'description': instance.description,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('tool', instance.tool);
+  writeNotNull('agent', instance.agent);
+  val['depends_on'] = instance.dependsOn;
+  val['state'] = instance.state;
+  val['attempts'] = instance.attempts;
+  writeNotNull('error', instance.error);
+  writeNotNull('recovery_note', instance.recoveryNote);
+  return val;
+}
+
+_$WorkflowRunStateImpl _$$WorkflowRunStateImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WorkflowRunStateImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WorkflowRunStateImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          goal: $checkedConvert('goal', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          created: $checkedConvert('created', (v) => (v as num).toDouble()),
+          results: $checkedConvert('results', (v) => v as List<dynamic>),
+          nodes: $checkedConvert(
+              'nodes',
+              (v) => (v as List<dynamic>)
+                  .map((e) => WorkflowNode.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          replansLeft:
+              $checkedConvert('replans_left', (v) => (v as num?)?.toInt()),
+          recoveryLog:
+              $checkedConvert('recovery_log', (v) => v as List<dynamic>?),
+          replanCount:
+              $checkedConvert('replan_count', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'replansLeft': 'replans_left',
+        'recoveryLog': 'recovery_log',
+        'replanCount': 'replan_count'
+      },
+    );
+
+Map<String, dynamic> _$$WorkflowRunStateImplToJson(
+    _$WorkflowRunStateImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'goal': instance.goal,
+    'status': instance.status,
+    'created': instance.created,
+    'results': instance.results,
+    'nodes': instance.nodes,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('replans_left', instance.replansLeft);
+  writeNotNull('recovery_log', instance.recoveryLog);
+  writeNotNull('replan_count', instance.replanCount);
+  return val;
+}
+
+_$WorkflowsRunsResponseImpl _$$WorkflowsRunsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WorkflowsRunsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WorkflowsRunsResponseImpl(
+          checkpoints: $checkedConvert('checkpoints',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$WorkflowsRunsResponseImplToJson(
+        _$WorkflowsRunsResponseImpl instance) =>
+    <String, dynamic>{
+      'checkpoints': instance.checkpoints,
+    };
+
+_$WorkflowExecuteResponseImpl _$$WorkflowExecuteResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$WorkflowExecuteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WorkflowExecuteResponseImpl(
+          runId: $checkedConvert('run_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          progress: $checkedConvert(
+              'progress', (v) => Map<String, dynamic>.from(v as Map)),
+          results: $checkedConvert('results', (v) => v as List<dynamic>),
+          recoveryLog:
+              $checkedConvert('recovery_log', (v) => v as List<dynamic>),
+          replansUsed:
+              $checkedConvert('replans_used', (v) => (v as num).toInt()),
+          planConfidence: $checkedConvert(
+              'plan_confidence', (v) => (v as num?)?.toDouble()),
+          shouldReplan: $checkedConvert('should_replan', (v) => v as bool?),
+          stepCount: $checkedConvert('step_count', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'runId': 'run_id',
+        'recoveryLog': 'recovery_log',
+        'replansUsed': 'replans_used',
+        'planConfidence': 'plan_confidence',
+        'shouldReplan': 'should_replan',
+        'stepCount': 'step_count'
+      },
+    );
+
+Map<String, dynamic> _$$WorkflowExecuteResponseImplToJson(
+    _$WorkflowExecuteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'run_id': instance.runId,
+    'status': instance.status,
+    'progress': instance.progress,
+    'results': instance.results,
+    'recovery_log': instance.recoveryLog,
+    'replans_used': instance.replansUsed,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('plan_confidence', instance.planConfidence);
+  writeNotNull('should_replan', instance.shouldReplan);
+  writeNotNull('step_count', instance.stepCount);
+  return val;
+}
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

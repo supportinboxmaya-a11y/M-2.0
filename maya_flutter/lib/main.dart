@@ -1403,8 +1403,16 @@ class _AppDrawer extends ConsumerWidget {
                 _DrawerActionTile(
                   icon: Icons.analytics_rounded,
                   label: 'Tasks & Workflows',
-                  subtitle: 'Active workflows',
-                  onTap: () => Navigator.pop(context),
+                  subtitle: 'Workflow runs, steps, checkpoints',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _WorkflowEngineScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _DrawerActionTile(
                   icon: Icons.queue_rounded,
@@ -5478,4 +5486,817 @@ final agentsOrchestrateProvider = FutureProvider<AgentsOrchestrateResponse>((ref
 final agentsMessagesProvider = FutureProvider<AgentsMessagesResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getAgentsMessages();
+});
+
+// Workflow Engine Screen
+class _WorkflowEngineScreen extends ConsumerStatefulWidget {
+  const _WorkflowEngineScreen();
+
+  @override
+  ConsumerState<_WorkflowEngineScreen> createState() => _WorkflowEngineScreenState();
+}
+
+class _WorkflowEngineScreenState extends ConsumerState<_WorkflowEngineScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+  final _goalController = TextEditingController(text: 'Build a REST API with FastAPI');
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(workflowsRunsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    _goalController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Workflow Engine', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(workflowsRunsProvider),
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.list_rounded), text: 'Runs'),
+              Tab(icon: Icon(Icons.add_rounded), text: 'New Workflow'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildRunsTab(),
+            _buildNewWorkflowTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRunsTab() {
+    final runsAsync = ref.watch(workflowsRunsProvider);
+
+    return runsAsync.when(
+      data: (response) {
+        if (response.checkpoints.isEmpty) {
+          return const Center(
+            child: Text('No workflow runs yet', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.checkpoints.length,
+          itemBuilder: (context, index) {
+            final runId = response.checkpoints[index];
+            return _WorkflowRunTile(runId: runId);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading runs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNewWorkflowTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Create New Workflow', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _goalController,
+                  style: MayaTheme.bodyMedium,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: 'Describe the goal for the workflow...',
+                    hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _createWorkflow,
+                    icon: const Icon(Icons.psychology_rounded),
+                    label: const Text('Plan Workflow'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Consumer(
+            builder: (context, ref, _) {
+              final planAsync = ref.watch(workflowPlanProvider(_goalController.text.trim()));
+
+              return planAsync.when(
+                data: (plan) => _WorkflowPlanCard(plan: plan),
+                loading: () => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: MayaTheme.glassCard(),
+                  child: const Center(
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                  ),
+                ),
+                error: (err, _) => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: MayaTheme.glassCard(),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                      const SizedBox(height: 16),
+                      Text('Planning error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                      const SizedBox(height: 8),
+                      Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _createWorkflow() async {
+    final goal = _goalController.text.trim();
+    if (goal.isEmpty) return;
+
+    ref.read(workflowPlanGoalProvider.notifier).state = goal;
+    await Future.delayed(const Duration(milliseconds: 100));
+    ref.invalidate(workflowPlanProvider(goal));
+  }
+}
+
+class _WorkflowRunTile extends ConsumerWidget {
+  final String runId;
+
+  const _WorkflowRunTile({required this.runId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final runAsync = ref.watch(workflowRunProvider(runId));
+
+    return runAsync.when(
+      data: (run) => Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: MayaTheme.glassCard(),
+        child: ExpansionTile(
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _getStatusColor(run.status).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              _getStatusIcon(run.status),
+              color: _getStatusColor(run.status),
+              size: 20,
+            ),
+          ),
+          title: Text(run.goal, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+          subtitle: Text(
+            'Run ID: ${run.id.substring(0, 12)}...',
+            style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(run.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  run.status.toUpperCase(),
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: _getStatusColor(run.status),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              PopupMenuButton(
+                icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+                itemBuilder: (context) => [
+                  if (run.status == 'pending' || run.status == 'running')
+                    const PopupMenuItem(
+                      value: 'execute',
+                      child: Row(
+                        children: [
+                          Icon(Icons.play_arrow_rounded, size: 18),
+                          SizedBox(width: 8),
+                          Text('Execute'),
+                        ],
+                      ),
+                    ),
+                  if (run.status == 'running' || run.status == 'pending')
+                    const PopupMenuItem(
+                      value: 'cancel',
+                      child: Row(
+                        children: [
+                          Icon(Icons.cancel_rounded, size: 18, color: MayaTheme.error),
+                          SizedBox(width: 8),
+                          Text('Cancel', style: TextStyle(color: MayaTheme.error)),
+                        ],
+                      ),
+                    ),
+                  const PopupMenuItem(
+                    value: 'refresh',
+                    child: Row(
+                      children: [
+                        Icon(Icons.refresh_rounded, size: 18),
+                        SizedBox(width: 8),
+                        Text('Refresh'),
+                      ],
+                    ),
+                  ),
+                ],
+                onSelected: (value) async {
+                  if (value == 'execute') {
+                    await _executeRun(run.id, ref, context);
+                  } else if (value == 'cancel') {
+                    await _cancelRun(run.id, ref, context);
+                  } else if (value == 'refresh') {
+                    ref.invalidate(workflowsRunsProvider);
+                    ref.invalidate(workflowRunProvider(run.id));
+                  }
+                },
+              ),
+            ],
+          ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _DetailRow(label: 'Run ID', value: run.id),
+                  _DetailRow(label: 'Goal', value: run.goal),
+                  _DetailRow(label: 'Status', value: run.status),
+                  _DetailRow(label: 'Created', value: DateTime.fromMillisecondsSinceEpoch((run.created * 1000).round()).toString()),
+                  _DetailRow(label: 'Steps', value: '${run.nodes.length}'),
+                  const SizedBox(height: 12),
+                  const Text('Steps / Checkpoints', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  ...run.nodes.map((node) => _WorkflowNodeTile(node: node)),
+                  if (run.recoveryLog != null && run.recoveryLog!.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    const Text('Recovery Log', style: MayaTheme.labelMedium),
+                    const SizedBox(height: 8),
+                    ...run.recoveryLog!.map((entry) => _RecoveryLogTile(entry: entry)),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      loading: () => Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: MayaTheme.glassCard(),
+        child: const ListTile(
+          leading: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+          title: Text('Loading...'),
+        ),
+      ),
+      error: (err, _) => Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: MayaTheme.glassCard(),
+        child: ListTile(
+          leading: const Icon(Icons.error_rounded, color: MayaTheme.error),
+          title: Text('Error loading run', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          subtitle: Text(err.toString(), style: MayaTheme.bodySmall),
+        ),
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'completed':
+        return MayaTheme.neonEmerald;
+      case 'running':
+        return MayaTheme.neonCyan;
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'failed':
+        return MayaTheme.error;
+      case 'cancelled':
+        return Colors.white38;
+      default:
+        return Colors.white54;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'completed':
+        return Icons.check_circle_rounded;
+      case 'running':
+        return Icons.play_circle_rounded;
+      case 'pending':
+        return Icons.schedule_rounded;
+      case 'failed':
+        return Icons.error_rounded;
+      case 'cancelled':
+        return Icons.cancel_rounded;
+      default:
+        return Icons.help_rounded;
+    }
+  }
+
+  Future<void> _executeRun(String runId, WidgetRef ref, BuildContext context) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.executeWorkflowRun(runId);
+      if (mounted) {
+        ref.invalidate(workflowsRunsProvider);
+        ref.invalidate(workflowRunProvider(runId));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Workflow executed: ${result.status}'),
+            backgroundColor: result.status == 'completed' ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Execution failed: $e'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _cancelRun(String runId, WidgetRef ref, BuildContext context) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final success = await apiService.cancelWorkflowRun(runId);
+      if (success && mounted) {
+        ref.invalidate(workflowsRunsProvider);
+        ref.invalidate(workflowRunProvider(runId));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Workflow cancelled'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cancel failed'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Cancel error: $e'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    }
+  }
+}
+
+class _WorkflowNodeTile extends StatelessWidget {
+  final WorkflowNode node;
+
+  const _WorkflowNodeTile({required this.node});
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'done':
+        return MayaTheme.neonEmerald;
+      case 'running':
+        return MayaTheme.neonCyan;
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'failed':
+        return MayaTheme.error;
+      case 'blocked':
+        return MayaTheme.neonViolet;
+      case 'skipped':
+        return Colors.white38;
+      default:
+        return Colors.white54;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'done':
+        return Icons.check_circle_rounded;
+      case 'running':
+        return Icons.play_circle_rounded;
+      case 'pending':
+        return Icons.schedule_rounded;
+      case 'failed':
+        return Icons.error_rounded;
+      case 'blocked':
+        return Icons.block_rounded;
+      case 'skipped':
+        return Icons.skip_next_rounded;
+      default:
+        return Icons.help_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: MayaTheme.slate700,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MayaTheme.glassWhite10),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: _getStatusColor(node.state).withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Icon(_getStatusIcon(node.state), color: _getStatusColor(node.state), size: 16),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(node.description, style: MayaTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    if (node.tool != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(node.tool!, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                      ),
+                      const SizedBox(width: 6),
+                    ],
+                    if (node.agent != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: MayaTheme.neonEmerald.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(node.agent!, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonEmerald)),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+          if (node.error != null)
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: MayaTheme.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(node.error!, style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecoveryLogTile extends StatelessWidget {
+  final dynamic entry;
+
+  const _RecoveryLogTile({required this.entry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: MayaTheme.slate700,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MayaTheme.glassWhite10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Node: ${entry['node'] ?? 'unknown'}', style: MayaTheme.labelMedium),
+          const SizedBox(height: 4),
+          Text('Strategy: ${entry['strategy'] ?? 'unknown'}', style: MayaTheme.bodySmall),
+          if (entry['reflection'] != null) ...[
+            const SizedBox(height: 4),
+            Text('Reflection: ${entry['reflection']}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _WorkflowPlanCard extends StatelessWidget {
+  final WorkflowPlanResponse plan;
+
+  const _WorkflowPlanCard({required this.plan});
+
+  @override
+  Widget build(BuildContext context) {
+    final state = plan.state;
+    final goal = state['goal'] ?? 'Unknown goal';
+    final nodes = state['nodes'] as List? ?? [];
+
+    return Container(
+      width: double.infinity,
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.psychology_rounded, color: MayaTheme.neonCyan, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(goal, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          _AnalysisChip(label: '${nodes.length} steps', color: MayaTheme.neonViolet),
+                          const SizedBox(width: 8),
+                          _AnalysisChip(label: 'Planned', color: MayaTheme.neonEmerald),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Nodes
+          if (nodes.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Planned Steps', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  ...nodes.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final node = entry.value as Map<String, dynamic>;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.slate700,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: MayaTheme.glassWhite10),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text('${index + 1}', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(node['description'] ?? '', style: MayaTheme.bodyMedium),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    if (node['tool'] != null) ...[
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(node['tool'], style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                                      ),
+                                      const SizedBox(width: 6),
+                                    ],
+                                    if (node['agent'] != null) ...[
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: MayaTheme.neonEmerald.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(node['agent'], style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonEmerald)),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+
+          // Action Buttons
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // TODO: Navigate to run detail
+                    },
+                    icon: const Icon(Icons.visibility_rounded),
+                    label: const Text('View Run'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: MayaTheme.neonCyan,
+                      side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // TODO: Execute workflow
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text('Execute'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _AnalysisChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: MayaTheme.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+// Workflow Engine Providers
+final workflowsRunsProvider = FutureProvider<WorkflowsRunsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getWorkflowsRuns();
+});
+
+final workflowPlanGoalProvider = StateProvider<String>((ref) => '');
+
+final workflowPlanProvider = FutureProvider.family<WorkflowPlanResponse, String>((ref, goal) async {
+  if (goal.isEmpty) {
+    throw Exception('Empty goal');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.planWorkflow(goal);
+});
+
+final workflowRunProvider = FutureProvider.family<WorkflowRunState, String>((ref, runId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getWorkflowRun(runId);
 });

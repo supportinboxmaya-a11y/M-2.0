@@ -531,6 +531,39 @@ class ApiService {
     return AgentsMessagesResponse.fromJson(response.data);
   }
 
+  // Workflow Engine
+  Future<WorkflowPlanResponse> planWorkflow(String goal) async {
+    final response = await _dio.post(
+      AppConfig.workflowsPlan,
+      data: {'goal': goal},
+    );
+    return WorkflowPlanResponse.fromJson(response.data);
+  }
+
+  Future<WorkflowsRunsResponse> getWorkflowsRuns() async {
+    final response = await _dio.get(AppConfig.workflowsRuns);
+    return WorkflowsRunsResponse.fromJson(response.data);
+  }
+
+  Future<WorkflowRunState> getWorkflowRun(String runId) async {
+    final response = await _dio.get('${AppConfig.workflowsRun}$runId');
+    return WorkflowRunState.fromJson(response.data);
+  }
+
+  Future<bool> cancelWorkflowRun(String runId) async {
+    try {
+      final response = await _dio.post('${AppConfig.workflowsCancel}$runId/cancel');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<WorkflowExecuteResponse> executeWorkflowRun(String runId) async {
+    final response = await _dio.post('${AppConfig.workflowsExecute}$runId/execute');
+    return WorkflowExecuteResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1266,4 +1299,80 @@ class AgentsMessagesResponse with _$AgentsMessagesResponse {
 
   factory AgentsMessagesResponse.fromJson(Map<String, dynamic> json) =>
       _$AgentsMessagesResponseFromJson(json);
+}
+
+// Workflow Engine Models
+@freezed
+class WorkflowPlanResponse with _$WorkflowPlanResponse {
+  const factory WorkflowPlanResponse({
+    required String runId,
+    required Map<String, dynamic> state,
+  }) = _WorkflowPlanResponse;
+
+  factory WorkflowPlanResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkflowPlanResponseFromJson(json);
+}
+
+@freezed
+class WorkflowNode with _$WorkflowNode {
+  const factory WorkflowNode({
+    required String id,
+    required String description,
+    String? tool,
+    String? agent,
+    required List<String> dependsOn,
+    required String state,
+    required int attempts,
+    String? error,
+    String? recoveryNote,
+  }) = _WorkflowNode;
+
+  factory WorkflowNode.fromJson(Map<String, dynamic> json) =>
+      _$WorkflowNodeFromJson(json);
+}
+
+@freezed
+class WorkflowRunState with _$WorkflowRunState {
+  const factory WorkflowRunState({
+    required String id,
+    required String goal,
+    required String status,
+    required double created,
+    required List<dynamic> results,
+    required List<WorkflowNode> nodes,
+    int? replansLeft,
+    List<dynamic>? recoveryLog,
+    int? replanCount,
+  }) = _WorkflowRunState;
+
+  factory WorkflowRunState.fromJson(Map<String, dynamic> json) =>
+      _$WorkflowRunStateFromJson(json);
+}
+
+@freezed
+class WorkflowsRunsResponse with _$WorkflowsRunsResponse {
+  const factory WorkflowsRunsResponse({
+    required List<String> checkpoints,
+  }) = _WorkflowsRunsResponse;
+
+  factory WorkflowsRunsResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkflowsRunsResponseFromJson(json);
+}
+
+@freezed
+class WorkflowExecuteResponse with _$WorkflowExecuteResponse {
+  const factory WorkflowExecuteResponse({
+    required String runId,
+    required String status,
+    required Map<String, dynamic> progress,
+    required List<dynamic> results,
+    required List<dynamic> recoveryLog,
+    required int replansUsed,
+    double? planConfidence,
+    bool? shouldReplan,
+    int? stepCount,
+  }) = _WorkflowExecuteResponse;
+
+  factory WorkflowExecuteResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkflowExecuteResponseFromJson(json);
 }

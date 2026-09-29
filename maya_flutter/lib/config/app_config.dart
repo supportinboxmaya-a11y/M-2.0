@@ -75,6 +75,13 @@ class AppConfig {
   static const String agentsOrchestrate = '/api/v1/agents/orchestrate';
   static const String agentsMessages = '/api/v1/agents/messages';
 
+  // Workflow Engine
+  static const String workflowsPlan = '/api/v1/workflows/plan';
+  static const String workflowsRuns = '/api/v1/workflows/runs';
+  static const String workflowsRun = '/api/v1/workflows/runs/';
+  static const String workflowsCancel = '/api/v1/workflows/runs/';
+  static const String workflowsExecute = '/api/v1/workflows/runs/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

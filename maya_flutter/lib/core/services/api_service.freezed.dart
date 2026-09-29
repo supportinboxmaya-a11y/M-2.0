@@ -10347,3 +10347,1318 @@ abstract class _AgentsMessagesResponse implements AgentsMessagesResponse {
   _$$AgentsMessagesResponseImplCopyWith<_$AgentsMessagesResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+WorkflowPlanResponse _$WorkflowPlanResponseFromJson(Map<String, dynamic> json) {
+  return _WorkflowPlanResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WorkflowPlanResponse {
+  String get runId => throw _privateConstructorUsedError;
+  Map<String, dynamic> get state => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WorkflowPlanResponseCopyWith<WorkflowPlanResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WorkflowPlanResponseCopyWith<$Res> {
+  factory $WorkflowPlanResponseCopyWith(WorkflowPlanResponse value,
+          $Res Function(WorkflowPlanResponse) then) =
+      _$WorkflowPlanResponseCopyWithImpl<$Res, WorkflowPlanResponse>;
+  @useResult
+  $Res call({String runId, Map<String, dynamic> state});
+}
+
+/// @nodoc
+class _$WorkflowPlanResponseCopyWithImpl<$Res,
+        $Val extends WorkflowPlanResponse>
+    implements $WorkflowPlanResponseCopyWith<$Res> {
+  _$WorkflowPlanResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? runId = null,
+    Object? state = null,
+  }) {
+    return _then(_value.copyWith(
+      runId: null == runId
+          ? _value.runId
+          : runId // ignore: cast_nullable_to_non_nullable
+              as String,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WorkflowPlanResponseImplCopyWith<$Res>
+    implements $WorkflowPlanResponseCopyWith<$Res> {
+  factory _$$WorkflowPlanResponseImplCopyWith(_$WorkflowPlanResponseImpl value,
+          $Res Function(_$WorkflowPlanResponseImpl) then) =
+      __$$WorkflowPlanResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String runId, Map<String, dynamic> state});
+}
+
+/// @nodoc
+class __$$WorkflowPlanResponseImplCopyWithImpl<$Res>
+    extends _$WorkflowPlanResponseCopyWithImpl<$Res, _$WorkflowPlanResponseImpl>
+    implements _$$WorkflowPlanResponseImplCopyWith<$Res> {
+  __$$WorkflowPlanResponseImplCopyWithImpl(_$WorkflowPlanResponseImpl _value,
+      $Res Function(_$WorkflowPlanResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? runId = null,
+    Object? state = null,
+  }) {
+    return _then(_$WorkflowPlanResponseImpl(
+      runId: null == runId
+          ? _value.runId
+          : runId // ignore: cast_nullable_to_non_nullable
+              as String,
+      state: null == state
+          ? _value._state
+          : state // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WorkflowPlanResponseImpl implements _WorkflowPlanResponse {
+  const _$WorkflowPlanResponseImpl(
+      {required this.runId, required final Map<String, dynamic> state})
+      : _state = state;
+
+  factory _$WorkflowPlanResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkflowPlanResponseImplFromJson(json);
+
+  @override
+  final String runId;
+  final Map<String, dynamic> _state;
+  @override
+  Map<String, dynamic> get state {
+    if (_state is EqualUnmodifiableMapView) return _state;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_state);
+  }
+
+  @override
+  String toString() {
+    return 'WorkflowPlanResponse(runId: $runId, state: $state)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WorkflowPlanResponseImpl &&
+            (identical(other.runId, runId) || other.runId == runId) &&
+            const DeepCollectionEquality().equals(other._state, _state));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, runId, const DeepCollectionEquality().hash(_state));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkflowPlanResponseImplCopyWith<_$WorkflowPlanResponseImpl>
+      get copyWith =>
+          __$$WorkflowPlanResponseImplCopyWithImpl<_$WorkflowPlanResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkflowPlanResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WorkflowPlanResponse implements WorkflowPlanResponse {
+  const factory _WorkflowPlanResponse(
+      {required final String runId,
+      required final Map<String, dynamic> state}) = _$WorkflowPlanResponseImpl;
+
+  factory _WorkflowPlanResponse.fromJson(Map<String, dynamic> json) =
+      _$WorkflowPlanResponseImpl.fromJson;
+
+  @override
+  String get runId;
+  @override
+  Map<String, dynamic> get state;
+  @override
+  @JsonKey(ignore: true)
+  _$$WorkflowPlanResponseImplCopyWith<_$WorkflowPlanResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+WorkflowNode _$WorkflowNodeFromJson(Map<String, dynamic> json) {
+  return _WorkflowNode.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WorkflowNode {
+  String get id => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String? get tool => throw _privateConstructorUsedError;
+  String? get agent => throw _privateConstructorUsedError;
+  List<String> get dependsOn => throw _privateConstructorUsedError;
+  String get state => throw _privateConstructorUsedError;
+  int get attempts => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+  String? get recoveryNote => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WorkflowNodeCopyWith<WorkflowNode> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WorkflowNodeCopyWith<$Res> {
+  factory $WorkflowNodeCopyWith(
+          WorkflowNode value, $Res Function(WorkflowNode) then) =
+      _$WorkflowNodeCopyWithImpl<$Res, WorkflowNode>;
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String? tool,
+      String? agent,
+      List<String> dependsOn,
+      String state,
+      int attempts,
+      String? error,
+      String? recoveryNote});
+}
+
+/// @nodoc
+class _$WorkflowNodeCopyWithImpl<$Res, $Val extends WorkflowNode>
+    implements $WorkflowNodeCopyWith<$Res> {
+  _$WorkflowNodeCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? tool = freezed,
+    Object? agent = freezed,
+    Object? dependsOn = null,
+    Object? state = null,
+    Object? attempts = null,
+    Object? error = freezed,
+    Object? recoveryNote = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      tool: freezed == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agent: freezed == agent
+          ? _value.agent
+          : agent // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dependsOn: null == dependsOn
+          ? _value.dependsOn
+          : dependsOn // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      recoveryNote: freezed == recoveryNote
+          ? _value.recoveryNote
+          : recoveryNote // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WorkflowNodeImplCopyWith<$Res>
+    implements $WorkflowNodeCopyWith<$Res> {
+  factory _$$WorkflowNodeImplCopyWith(
+          _$WorkflowNodeImpl value, $Res Function(_$WorkflowNodeImpl) then) =
+      __$$WorkflowNodeImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String? tool,
+      String? agent,
+      List<String> dependsOn,
+      String state,
+      int attempts,
+      String? error,
+      String? recoveryNote});
+}
+
+/// @nodoc
+class __$$WorkflowNodeImplCopyWithImpl<$Res>
+    extends _$WorkflowNodeCopyWithImpl<$Res, _$WorkflowNodeImpl>
+    implements _$$WorkflowNodeImplCopyWith<$Res> {
+  __$$WorkflowNodeImplCopyWithImpl(
+      _$WorkflowNodeImpl _value, $Res Function(_$WorkflowNodeImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? tool = freezed,
+    Object? agent = freezed,
+    Object? dependsOn = null,
+    Object? state = null,
+    Object? attempts = null,
+    Object? error = freezed,
+    Object? recoveryNote = freezed,
+  }) {
+    return _then(_$WorkflowNodeImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      tool: freezed == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agent: freezed == agent
+          ? _value.agent
+          : agent // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dependsOn: null == dependsOn
+          ? _value._dependsOn
+          : dependsOn // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      state: null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as String,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      recoveryNote: freezed == recoveryNote
+          ? _value.recoveryNote
+          : recoveryNote // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WorkflowNodeImpl implements _WorkflowNode {
+  const _$WorkflowNodeImpl(
+      {required this.id,
+      required this.description,
+      this.tool,
+      this.agent,
+      required final List<String> dependsOn,
+      required this.state,
+      required this.attempts,
+      this.error,
+      this.recoveryNote})
+      : _dependsOn = dependsOn;
+
+  factory _$WorkflowNodeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkflowNodeImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String description;
+  @override
+  final String? tool;
+  @override
+  final String? agent;
+  final List<String> _dependsOn;
+  @override
+  List<String> get dependsOn {
+    if (_dependsOn is EqualUnmodifiableListView) return _dependsOn;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_dependsOn);
+  }
+
+  @override
+  final String state;
+  @override
+  final int attempts;
+  @override
+  final String? error;
+  @override
+  final String? recoveryNote;
+
+  @override
+  String toString() {
+    return 'WorkflowNode(id: $id, description: $description, tool: $tool, agent: $agent, dependsOn: $dependsOn, state: $state, attempts: $attempts, error: $error, recoveryNote: $recoveryNote)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WorkflowNodeImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.tool, tool) || other.tool == tool) &&
+            (identical(other.agent, agent) || other.agent == agent) &&
+            const DeepCollectionEquality()
+                .equals(other._dependsOn, _dependsOn) &&
+            (identical(other.state, state) || other.state == state) &&
+            (identical(other.attempts, attempts) ||
+                other.attempts == attempts) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.recoveryNote, recoveryNote) ||
+                other.recoveryNote == recoveryNote));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      description,
+      tool,
+      agent,
+      const DeepCollectionEquality().hash(_dependsOn),
+      state,
+      attempts,
+      error,
+      recoveryNote);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkflowNodeImplCopyWith<_$WorkflowNodeImpl> get copyWith =>
+      __$$WorkflowNodeImplCopyWithImpl<_$WorkflowNodeImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkflowNodeImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WorkflowNode implements WorkflowNode {
+  const factory _WorkflowNode(
+      {required final String id,
+      required final String description,
+      final String? tool,
+      final String? agent,
+      required final List<String> dependsOn,
+      required final String state,
+      required final int attempts,
+      final String? error,
+      final String? recoveryNote}) = _$WorkflowNodeImpl;
+
+  factory _WorkflowNode.fromJson(Map<String, dynamic> json) =
+      _$WorkflowNodeImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get description;
+  @override
+  String? get tool;
+  @override
+  String? get agent;
+  @override
+  List<String> get dependsOn;
+  @override
+  String get state;
+  @override
+  int get attempts;
+  @override
+  String? get error;
+  @override
+  String? get recoveryNote;
+  @override
+  @JsonKey(ignore: true)
+  _$$WorkflowNodeImplCopyWith<_$WorkflowNodeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+WorkflowRunState _$WorkflowRunStateFromJson(Map<String, dynamic> json) {
+  return _WorkflowRunState.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WorkflowRunState {
+  String get id => throw _privateConstructorUsedError;
+  String get goal => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get created => throw _privateConstructorUsedError;
+  List<dynamic> get results => throw _privateConstructorUsedError;
+  List<WorkflowNode> get nodes => throw _privateConstructorUsedError;
+  int? get replansLeft => throw _privateConstructorUsedError;
+  List<dynamic>? get recoveryLog => throw _privateConstructorUsedError;
+  int? get replanCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WorkflowRunStateCopyWith<WorkflowRunState> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WorkflowRunStateCopyWith<$Res> {
+  factory $WorkflowRunStateCopyWith(
+          WorkflowRunState value, $Res Function(WorkflowRunState) then) =
+      _$WorkflowRunStateCopyWithImpl<$Res, WorkflowRunState>;
+  @useResult
+  $Res call(
+      {String id,
+      String goal,
+      String status,
+      double created,
+      List<dynamic> results,
+      List<WorkflowNode> nodes,
+      int? replansLeft,
+      List<dynamic>? recoveryLog,
+      int? replanCount});
+}
+
+/// @nodoc
+class _$WorkflowRunStateCopyWithImpl<$Res, $Val extends WorkflowRunState>
+    implements $WorkflowRunStateCopyWith<$Res> {
+  _$WorkflowRunStateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? goal = null,
+    Object? status = null,
+    Object? created = null,
+    Object? results = null,
+    Object? nodes = null,
+    Object? replansLeft = freezed,
+    Object? recoveryLog = freezed,
+    Object? replanCount = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      created: null == created
+          ? _value.created
+          : created // ignore: cast_nullable_to_non_nullable
+              as double,
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      nodes: null == nodes
+          ? _value.nodes
+          : nodes // ignore: cast_nullable_to_non_nullable
+              as List<WorkflowNode>,
+      replansLeft: freezed == replansLeft
+          ? _value.replansLeft
+          : replansLeft // ignore: cast_nullable_to_non_nullable
+              as int?,
+      recoveryLog: freezed == recoveryLog
+          ? _value.recoveryLog
+          : recoveryLog // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>?,
+      replanCount: freezed == replanCount
+          ? _value.replanCount
+          : replanCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WorkflowRunStateImplCopyWith<$Res>
+    implements $WorkflowRunStateCopyWith<$Res> {
+  factory _$$WorkflowRunStateImplCopyWith(_$WorkflowRunStateImpl value,
+          $Res Function(_$WorkflowRunStateImpl) then) =
+      __$$WorkflowRunStateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String goal,
+      String status,
+      double created,
+      List<dynamic> results,
+      List<WorkflowNode> nodes,
+      int? replansLeft,
+      List<dynamic>? recoveryLog,
+      int? replanCount});
+}
+
+/// @nodoc
+class __$$WorkflowRunStateImplCopyWithImpl<$Res>
+    extends _$WorkflowRunStateCopyWithImpl<$Res, _$WorkflowRunStateImpl>
+    implements _$$WorkflowRunStateImplCopyWith<$Res> {
+  __$$WorkflowRunStateImplCopyWithImpl(_$WorkflowRunStateImpl _value,
+      $Res Function(_$WorkflowRunStateImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? goal = null,
+    Object? status = null,
+    Object? created = null,
+    Object? results = null,
+    Object? nodes = null,
+    Object? replansLeft = freezed,
+    Object? recoveryLog = freezed,
+    Object? replanCount = freezed,
+  }) {
+    return _then(_$WorkflowRunStateImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      created: null == created
+          ? _value.created
+          : created // ignore: cast_nullable_to_non_nullable
+              as double,
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      nodes: null == nodes
+          ? _value._nodes
+          : nodes // ignore: cast_nullable_to_non_nullable
+              as List<WorkflowNode>,
+      replansLeft: freezed == replansLeft
+          ? _value.replansLeft
+          : replansLeft // ignore: cast_nullable_to_non_nullable
+              as int?,
+      recoveryLog: freezed == recoveryLog
+          ? _value._recoveryLog
+          : recoveryLog // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>?,
+      replanCount: freezed == replanCount
+          ? _value.replanCount
+          : replanCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WorkflowRunStateImpl implements _WorkflowRunState {
+  const _$WorkflowRunStateImpl(
+      {required this.id,
+      required this.goal,
+      required this.status,
+      required this.created,
+      required final List<dynamic> results,
+      required final List<WorkflowNode> nodes,
+      this.replansLeft,
+      final List<dynamic>? recoveryLog,
+      this.replanCount})
+      : _results = results,
+        _nodes = nodes,
+        _recoveryLog = recoveryLog;
+
+  factory _$WorkflowRunStateImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkflowRunStateImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String goal;
+  @override
+  final String status;
+  @override
+  final double created;
+  final List<dynamic> _results;
+  @override
+  List<dynamic> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  final List<WorkflowNode> _nodes;
+  @override
+  List<WorkflowNode> get nodes {
+    if (_nodes is EqualUnmodifiableListView) return _nodes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_nodes);
+  }
+
+  @override
+  final int? replansLeft;
+  final List<dynamic>? _recoveryLog;
+  @override
+  List<dynamic>? get recoveryLog {
+    final value = _recoveryLog;
+    if (value == null) return null;
+    if (_recoveryLog is EqualUnmodifiableListView) return _recoveryLog;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final int? replanCount;
+
+  @override
+  String toString() {
+    return 'WorkflowRunState(id: $id, goal: $goal, status: $status, created: $created, results: $results, nodes: $nodes, replansLeft: $replansLeft, recoveryLog: $recoveryLog, replanCount: $replanCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WorkflowRunStateImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.created, created) || other.created == created) &&
+            const DeepCollectionEquality().equals(other._results, _results) &&
+            const DeepCollectionEquality().equals(other._nodes, _nodes) &&
+            (identical(other.replansLeft, replansLeft) ||
+                other.replansLeft == replansLeft) &&
+            const DeepCollectionEquality()
+                .equals(other._recoveryLog, _recoveryLog) &&
+            (identical(other.replanCount, replanCount) ||
+                other.replanCount == replanCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      goal,
+      status,
+      created,
+      const DeepCollectionEquality().hash(_results),
+      const DeepCollectionEquality().hash(_nodes),
+      replansLeft,
+      const DeepCollectionEquality().hash(_recoveryLog),
+      replanCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkflowRunStateImplCopyWith<_$WorkflowRunStateImpl> get copyWith =>
+      __$$WorkflowRunStateImplCopyWithImpl<_$WorkflowRunStateImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkflowRunStateImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WorkflowRunState implements WorkflowRunState {
+  const factory _WorkflowRunState(
+      {required final String id,
+      required final String goal,
+      required final String status,
+      required final double created,
+      required final List<dynamic> results,
+      required final List<WorkflowNode> nodes,
+      final int? replansLeft,
+      final List<dynamic>? recoveryLog,
+      final int? replanCount}) = _$WorkflowRunStateImpl;
+
+  factory _WorkflowRunState.fromJson(Map<String, dynamic> json) =
+      _$WorkflowRunStateImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get goal;
+  @override
+  String get status;
+  @override
+  double get created;
+  @override
+  List<dynamic> get results;
+  @override
+  List<WorkflowNode> get nodes;
+  @override
+  int? get replansLeft;
+  @override
+  List<dynamic>? get recoveryLog;
+  @override
+  int? get replanCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$WorkflowRunStateImplCopyWith<_$WorkflowRunStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+WorkflowsRunsResponse _$WorkflowsRunsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _WorkflowsRunsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WorkflowsRunsResponse {
+  List<String> get checkpoints => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WorkflowsRunsResponseCopyWith<WorkflowsRunsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WorkflowsRunsResponseCopyWith<$Res> {
+  factory $WorkflowsRunsResponseCopyWith(WorkflowsRunsResponse value,
+          $Res Function(WorkflowsRunsResponse) then) =
+      _$WorkflowsRunsResponseCopyWithImpl<$Res, WorkflowsRunsResponse>;
+  @useResult
+  $Res call({List<String> checkpoints});
+}
+
+/// @nodoc
+class _$WorkflowsRunsResponseCopyWithImpl<$Res,
+        $Val extends WorkflowsRunsResponse>
+    implements $WorkflowsRunsResponseCopyWith<$Res> {
+  _$WorkflowsRunsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? checkpoints = null,
+  }) {
+    return _then(_value.copyWith(
+      checkpoints: null == checkpoints
+          ? _value.checkpoints
+          : checkpoints // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WorkflowsRunsResponseImplCopyWith<$Res>
+    implements $WorkflowsRunsResponseCopyWith<$Res> {
+  factory _$$WorkflowsRunsResponseImplCopyWith(
+          _$WorkflowsRunsResponseImpl value,
+          $Res Function(_$WorkflowsRunsResponseImpl) then) =
+      __$$WorkflowsRunsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<String> checkpoints});
+}
+
+/// @nodoc
+class __$$WorkflowsRunsResponseImplCopyWithImpl<$Res>
+    extends _$WorkflowsRunsResponseCopyWithImpl<$Res,
+        _$WorkflowsRunsResponseImpl>
+    implements _$$WorkflowsRunsResponseImplCopyWith<$Res> {
+  __$$WorkflowsRunsResponseImplCopyWithImpl(_$WorkflowsRunsResponseImpl _value,
+      $Res Function(_$WorkflowsRunsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? checkpoints = null,
+  }) {
+    return _then(_$WorkflowsRunsResponseImpl(
+      checkpoints: null == checkpoints
+          ? _value._checkpoints
+          : checkpoints // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WorkflowsRunsResponseImpl implements _WorkflowsRunsResponse {
+  const _$WorkflowsRunsResponseImpl({required final List<String> checkpoints})
+      : _checkpoints = checkpoints;
+
+  factory _$WorkflowsRunsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkflowsRunsResponseImplFromJson(json);
+
+  final List<String> _checkpoints;
+  @override
+  List<String> get checkpoints {
+    if (_checkpoints is EqualUnmodifiableListView) return _checkpoints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_checkpoints);
+  }
+
+  @override
+  String toString() {
+    return 'WorkflowsRunsResponse(checkpoints: $checkpoints)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WorkflowsRunsResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._checkpoints, _checkpoints));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_checkpoints));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkflowsRunsResponseImplCopyWith<_$WorkflowsRunsResponseImpl>
+      get copyWith => __$$WorkflowsRunsResponseImplCopyWithImpl<
+          _$WorkflowsRunsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkflowsRunsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WorkflowsRunsResponse implements WorkflowsRunsResponse {
+  const factory _WorkflowsRunsResponse(
+      {required final List<String> checkpoints}) = _$WorkflowsRunsResponseImpl;
+
+  factory _WorkflowsRunsResponse.fromJson(Map<String, dynamic> json) =
+      _$WorkflowsRunsResponseImpl.fromJson;
+
+  @override
+  List<String> get checkpoints;
+  @override
+  @JsonKey(ignore: true)
+  _$$WorkflowsRunsResponseImplCopyWith<_$WorkflowsRunsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+WorkflowExecuteResponse _$WorkflowExecuteResponseFromJson(
+    Map<String, dynamic> json) {
+  return _WorkflowExecuteResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WorkflowExecuteResponse {
+  String get runId => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  Map<String, dynamic> get progress => throw _privateConstructorUsedError;
+  List<dynamic> get results => throw _privateConstructorUsedError;
+  List<dynamic> get recoveryLog => throw _privateConstructorUsedError;
+  int get replansUsed => throw _privateConstructorUsedError;
+  double? get planConfidence => throw _privateConstructorUsedError;
+  bool? get shouldReplan => throw _privateConstructorUsedError;
+  int? get stepCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WorkflowExecuteResponseCopyWith<WorkflowExecuteResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WorkflowExecuteResponseCopyWith<$Res> {
+  factory $WorkflowExecuteResponseCopyWith(WorkflowExecuteResponse value,
+          $Res Function(WorkflowExecuteResponse) then) =
+      _$WorkflowExecuteResponseCopyWithImpl<$Res, WorkflowExecuteResponse>;
+  @useResult
+  $Res call(
+      {String runId,
+      String status,
+      Map<String, dynamic> progress,
+      List<dynamic> results,
+      List<dynamic> recoveryLog,
+      int replansUsed,
+      double? planConfidence,
+      bool? shouldReplan,
+      int? stepCount});
+}
+
+/// @nodoc
+class _$WorkflowExecuteResponseCopyWithImpl<$Res,
+        $Val extends WorkflowExecuteResponse>
+    implements $WorkflowExecuteResponseCopyWith<$Res> {
+  _$WorkflowExecuteResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? runId = null,
+    Object? status = null,
+    Object? progress = null,
+    Object? results = null,
+    Object? recoveryLog = null,
+    Object? replansUsed = null,
+    Object? planConfidence = freezed,
+    Object? shouldReplan = freezed,
+    Object? stepCount = freezed,
+  }) {
+    return _then(_value.copyWith(
+      runId: null == runId
+          ? _value.runId
+          : runId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      recoveryLog: null == recoveryLog
+          ? _value.recoveryLog
+          : recoveryLog // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      replansUsed: null == replansUsed
+          ? _value.replansUsed
+          : replansUsed // ignore: cast_nullable_to_non_nullable
+              as int,
+      planConfidence: freezed == planConfidence
+          ? _value.planConfidence
+          : planConfidence // ignore: cast_nullable_to_non_nullable
+              as double?,
+      shouldReplan: freezed == shouldReplan
+          ? _value.shouldReplan
+          : shouldReplan // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      stepCount: freezed == stepCount
+          ? _value.stepCount
+          : stepCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WorkflowExecuteResponseImplCopyWith<$Res>
+    implements $WorkflowExecuteResponseCopyWith<$Res> {
+  factory _$$WorkflowExecuteResponseImplCopyWith(
+          _$WorkflowExecuteResponseImpl value,
+          $Res Function(_$WorkflowExecuteResponseImpl) then) =
+      __$$WorkflowExecuteResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String runId,
+      String status,
+      Map<String, dynamic> progress,
+      List<dynamic> results,
+      List<dynamic> recoveryLog,
+      int replansUsed,
+      double? planConfidence,
+      bool? shouldReplan,
+      int? stepCount});
+}
+
+/// @nodoc
+class __$$WorkflowExecuteResponseImplCopyWithImpl<$Res>
+    extends _$WorkflowExecuteResponseCopyWithImpl<$Res,
+        _$WorkflowExecuteResponseImpl>
+    implements _$$WorkflowExecuteResponseImplCopyWith<$Res> {
+  __$$WorkflowExecuteResponseImplCopyWithImpl(
+      _$WorkflowExecuteResponseImpl _value,
+      $Res Function(_$WorkflowExecuteResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? runId = null,
+    Object? status = null,
+    Object? progress = null,
+    Object? results = null,
+    Object? recoveryLog = null,
+    Object? replansUsed = null,
+    Object? planConfidence = freezed,
+    Object? shouldReplan = freezed,
+    Object? stepCount = freezed,
+  }) {
+    return _then(_$WorkflowExecuteResponseImpl(
+      runId: null == runId
+          ? _value.runId
+          : runId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      progress: null == progress
+          ? _value._progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      recoveryLog: null == recoveryLog
+          ? _value._recoveryLog
+          : recoveryLog // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      replansUsed: null == replansUsed
+          ? _value.replansUsed
+          : replansUsed // ignore: cast_nullable_to_non_nullable
+              as int,
+      planConfidence: freezed == planConfidence
+          ? _value.planConfidence
+          : planConfidence // ignore: cast_nullable_to_non_nullable
+              as double?,
+      shouldReplan: freezed == shouldReplan
+          ? _value.shouldReplan
+          : shouldReplan // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      stepCount: freezed == stepCount
+          ? _value.stepCount
+          : stepCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WorkflowExecuteResponseImpl implements _WorkflowExecuteResponse {
+  const _$WorkflowExecuteResponseImpl(
+      {required this.runId,
+      required this.status,
+      required final Map<String, dynamic> progress,
+      required final List<dynamic> results,
+      required final List<dynamic> recoveryLog,
+      required this.replansUsed,
+      this.planConfidence,
+      this.shouldReplan,
+      this.stepCount})
+      : _progress = progress,
+        _results = results,
+        _recoveryLog = recoveryLog;
+
+  factory _$WorkflowExecuteResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkflowExecuteResponseImplFromJson(json);
+
+  @override
+  final String runId;
+  @override
+  final String status;
+  final Map<String, dynamic> _progress;
+  @override
+  Map<String, dynamic> get progress {
+    if (_progress is EqualUnmodifiableMapView) return _progress;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_progress);
+  }
+
+  final List<dynamic> _results;
+  @override
+  List<dynamic> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  final List<dynamic> _recoveryLog;
+  @override
+  List<dynamic> get recoveryLog {
+    if (_recoveryLog is EqualUnmodifiableListView) return _recoveryLog;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_recoveryLog);
+  }
+
+  @override
+  final int replansUsed;
+  @override
+  final double? planConfidence;
+  @override
+  final bool? shouldReplan;
+  @override
+  final int? stepCount;
+
+  @override
+  String toString() {
+    return 'WorkflowExecuteResponse(runId: $runId, status: $status, progress: $progress, results: $results, recoveryLog: $recoveryLog, replansUsed: $replansUsed, planConfidence: $planConfidence, shouldReplan: $shouldReplan, stepCount: $stepCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WorkflowExecuteResponseImpl &&
+            (identical(other.runId, runId) || other.runId == runId) &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._progress, _progress) &&
+            const DeepCollectionEquality().equals(other._results, _results) &&
+            const DeepCollectionEquality()
+                .equals(other._recoveryLog, _recoveryLog) &&
+            (identical(other.replansUsed, replansUsed) ||
+                other.replansUsed == replansUsed) &&
+            (identical(other.planConfidence, planConfidence) ||
+                other.planConfidence == planConfidence) &&
+            (identical(other.shouldReplan, shouldReplan) ||
+                other.shouldReplan == shouldReplan) &&
+            (identical(other.stepCount, stepCount) ||
+                other.stepCount == stepCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      runId,
+      status,
+      const DeepCollectionEquality().hash(_progress),
+      const DeepCollectionEquality().hash(_results),
+      const DeepCollectionEquality().hash(_recoveryLog),
+      replansUsed,
+      planConfidence,
+      shouldReplan,
+      stepCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkflowExecuteResponseImplCopyWith<_$WorkflowExecuteResponseImpl>
+      get copyWith => __$$WorkflowExecuteResponseImplCopyWithImpl<
+          _$WorkflowExecuteResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkflowExecuteResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WorkflowExecuteResponse implements WorkflowExecuteResponse {
+  const factory _WorkflowExecuteResponse(
+      {required final String runId,
+      required final String status,
+      required final Map<String, dynamic> progress,
+      required final List<dynamic> results,
+      required final List<dynamic> recoveryLog,
+      required final int replansUsed,
+      final double? planConfidence,
+      final bool? shouldReplan,
+      final int? stepCount}) = _$WorkflowExecuteResponseImpl;
+
+  factory _WorkflowExecuteResponse.fromJson(Map<String, dynamic> json) =
+      _$WorkflowExecuteResponseImpl.fromJson;
+
+  @override
+  String get runId;
+  @override
+  String get status;
+  @override
+  Map<String, dynamic> get progress;
+  @override
+  List<dynamic> get results;
+  @override
+  List<dynamic> get recoveryLog;
+  @override
+  int get replansUsed;
+  @override
+  double? get planConfidence;
+  @override
+  bool? get shouldReplan;
+  @override
+  int? get stepCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$WorkflowExecuteResponseImplCopyWith<_$WorkflowExecuteResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
