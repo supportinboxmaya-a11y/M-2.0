@@ -103,6 +103,13 @@ class AppConfig {
   static const String adminUsers = '/api/v1/admin/users';
   static const String adminOwnerMode = '/api/v1/admin/owner-mode';
 
+  // Learning Layer
+  static const String learningFeedback = '/api/v1/learning/feedback';
+  static const String learningStats = '/api/v1/learning/stats';
+  static const String learningExperience = '/api/v1/learning/experience';
+  static const String learningCompress = '/api/v1/learning/compress';
+  static const String learningPrompts = '/api/v1/learning/prompts';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

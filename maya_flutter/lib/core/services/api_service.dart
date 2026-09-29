@@ -701,6 +701,49 @@ class ApiService {
     return AdminOwnerModeResponse.fromJson(response.data);
   }
 
+  // Learning Layer
+  Future<LearningFeedbackResponse> submitFeedback({
+    required String goal,
+    required String output,
+    required int rating, // 1, 0, -1
+    String comment = '',
+  }) async {
+    final response = await _dio.post(
+      AppConfig.learningFeedback,
+      data: {'goal': goal, 'output': output, 'rating': rating, 'comment': comment},
+    );
+    return LearningFeedbackResponse.fromJson(response.data);
+  }
+
+  Future<LearningStatsResponse> getLearningStats() async {
+    final response = await _dio.get(AppConfig.learningStats);
+    return LearningStatsResponse.fromJson(response.data);
+  }
+
+  Future<LearningExperienceResponse> getLearningExperience({String? goal, int limit = 5}) async {
+    final response = await _dio.get(
+      AppConfig.learningExperience,
+      queryParameters: {
+        if (goal != null) 'goal': goal,
+        'limit': limit,
+      },
+    );
+    return LearningExperienceResponse.fromJson(response.data);
+  }
+
+  Future<LearningCompressResponse> compressMemory({bool dryRun = true, String memoryType = 'chat'}) async {
+    final response = await _dio.post(
+      AppConfig.learningCompress,
+      data: {'dry_run': dryRun, 'memory_type': memoryType},
+    );
+    return LearningCompressResponse.fromJson(response.data);
+  }
+
+  Future<LearningPromptsResponse> getLearningPrompts() async {
+    final response = await _dio.get(AppConfig.learningPrompts);
+    return LearningPromptsResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1770,4 +1813,115 @@ class AdminOwnerModeResponse with _$AdminOwnerModeResponse {
 
   factory AdminOwnerModeResponse.fromJson(Map<String, dynamic> json) =>
       _$AdminOwnerModeResponseFromJson(json);
+}
+
+// Learning Layer Models
+@freezed
+class LearningFeedbackResponse with _$LearningFeedbackResponse {
+  const factory LearningFeedbackResponse({
+    required bool recorded,
+    required Map<String, dynamic> stats,
+  }) = _LearningFeedbackResponse;
+
+  factory LearningFeedbackResponse.fromJson(Map<String, dynamic> json) =>
+      _$LearningFeedbackResponseFromJson(json);
+}
+
+@freezed
+class FeedbackStats with _$FeedbackStats {
+  const factory FeedbackStats({
+    required int total,
+    required int positive,
+    required int negative,
+    double? satisfaction,
+  }) = _FeedbackStats;
+
+  factory FeedbackStats.fromJson(Map<String, dynamic> json) =>
+      _$FeedbackStatsFromJson(json);
+}
+
+@freezed
+class Lesson with _$Lesson {
+  const factory Lesson({
+    required double ts,
+    required String goal,
+    required String comment,
+  }) = _Lesson;
+
+  factory Lesson.fromJson(Map<String, dynamic> json) =>
+      _$LessonFromJson(json);
+}
+
+@freezed
+class LearningStatsResponse with _$LearningStatsResponse {
+  const factory LearningStatsResponse({
+    required FeedbackStats feedback,
+    required List<Lesson> lessons,
+    required Map<String, dynamic> prompts,
+  }) = _LearningStatsResponse;
+
+  factory LearningStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$LearningStatsResponseFromJson(json);
+}
+
+@freezed
+class ExperienceEpisode with _$ExperienceEpisode {
+  const factory ExperienceEpisode({
+    required int id,
+    required double ts,
+    required String goal,
+    required List<dynamic> steps,
+    required String outcome,
+    required double confidence,
+    double? similarity,
+  }) = _ExperienceEpisode;
+
+  factory ExperienceEpisode.fromJson(Map<String, dynamic> json) =>
+      _$ExperienceEpisodeFromJson(json);
+}
+
+@freezed
+class LearningExperienceResponse with _$LearningExperienceResponse {
+  const factory LearningExperienceResponse({
+    List<ExperienceEpisode>? similar,
+    List<ExperienceEpisode>? history,
+    Map<String, dynamic>? successRate,
+  }) = _LearningExperienceResponse;
+
+  factory LearningExperienceResponse.fromJson(Map<String, dynamic> json) =>
+      _$LearningExperienceResponseFromJson(json);
+}
+
+@freezed
+class LearningCompressResponse with _$LearningCompressResponse {
+  const factory LearningCompressResponse({
+    required bool dryRun,
+    required String memoryType,
+    required Map<String, dynamic> result,
+  }) = _LearningCompressResponse;
+
+  factory LearningCompressResponse.fromJson(Map<String, dynamic> json) =>
+      _$LearningCompressResponseFromJson(json);
+}
+
+@freezed
+class PromptVariant with _$PromptVariant {
+  const factory PromptVariant({
+    required int ok,
+    required int fail,
+    required double score,
+  }) = _PromptVariant;
+
+  factory PromptVariant.fromJson(Map<String, dynamic> json) =>
+      _$PromptVariantFromJson(json);
+}
+
+@freezed
+class LearningPromptsResponse with _$LearningPromptsResponse {
+  const factory LearningPromptsResponse({
+    required Map<String, Map<String, PromptVariant>> prompts,
+  }) = _LearningPromptsResponse;
+
+  factory LearningPromptsResponse.fromJson(Map<String, dynamic> json) =>
+      _$LearningPromptsResponseFromJson(json);
 }

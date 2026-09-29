@@ -15647,3 +15647,1767 @@ abstract class _AdminOwnerModeResponse implements AdminOwnerModeResponse {
   _$$AdminOwnerModeResponseImplCopyWith<_$AdminOwnerModeResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+LearningFeedbackResponse _$LearningFeedbackResponseFromJson(
+    Map<String, dynamic> json) {
+  return _LearningFeedbackResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LearningFeedbackResponse {
+  bool get recorded => throw _privateConstructorUsedError;
+  Map<String, dynamic> get stats => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LearningFeedbackResponseCopyWith<LearningFeedbackResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LearningFeedbackResponseCopyWith<$Res> {
+  factory $LearningFeedbackResponseCopyWith(LearningFeedbackResponse value,
+          $Res Function(LearningFeedbackResponse) then) =
+      _$LearningFeedbackResponseCopyWithImpl<$Res, LearningFeedbackResponse>;
+  @useResult
+  $Res call({bool recorded, Map<String, dynamic> stats});
+}
+
+/// @nodoc
+class _$LearningFeedbackResponseCopyWithImpl<$Res,
+        $Val extends LearningFeedbackResponse>
+    implements $LearningFeedbackResponseCopyWith<$Res> {
+  _$LearningFeedbackResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? recorded = null,
+    Object? stats = null,
+  }) {
+    return _then(_value.copyWith(
+      recorded: null == recorded
+          ? _value.recorded
+          : recorded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      stats: null == stats
+          ? _value.stats
+          : stats // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LearningFeedbackResponseImplCopyWith<$Res>
+    implements $LearningFeedbackResponseCopyWith<$Res> {
+  factory _$$LearningFeedbackResponseImplCopyWith(
+          _$LearningFeedbackResponseImpl value,
+          $Res Function(_$LearningFeedbackResponseImpl) then) =
+      __$$LearningFeedbackResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool recorded, Map<String, dynamic> stats});
+}
+
+/// @nodoc
+class __$$LearningFeedbackResponseImplCopyWithImpl<$Res>
+    extends _$LearningFeedbackResponseCopyWithImpl<$Res,
+        _$LearningFeedbackResponseImpl>
+    implements _$$LearningFeedbackResponseImplCopyWith<$Res> {
+  __$$LearningFeedbackResponseImplCopyWithImpl(
+      _$LearningFeedbackResponseImpl _value,
+      $Res Function(_$LearningFeedbackResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? recorded = null,
+    Object? stats = null,
+  }) {
+    return _then(_$LearningFeedbackResponseImpl(
+      recorded: null == recorded
+          ? _value.recorded
+          : recorded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      stats: null == stats
+          ? _value._stats
+          : stats // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LearningFeedbackResponseImpl implements _LearningFeedbackResponse {
+  const _$LearningFeedbackResponseImpl(
+      {required this.recorded, required final Map<String, dynamic> stats})
+      : _stats = stats;
+
+  factory _$LearningFeedbackResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LearningFeedbackResponseImplFromJson(json);
+
+  @override
+  final bool recorded;
+  final Map<String, dynamic> _stats;
+  @override
+  Map<String, dynamic> get stats {
+    if (_stats is EqualUnmodifiableMapView) return _stats;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_stats);
+  }
+
+  @override
+  String toString() {
+    return 'LearningFeedbackResponse(recorded: $recorded, stats: $stats)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LearningFeedbackResponseImpl &&
+            (identical(other.recorded, recorded) ||
+                other.recorded == recorded) &&
+            const DeepCollectionEquality().equals(other._stats, _stats));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, recorded, const DeepCollectionEquality().hash(_stats));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LearningFeedbackResponseImplCopyWith<_$LearningFeedbackResponseImpl>
+      get copyWith => __$$LearningFeedbackResponseImplCopyWithImpl<
+          _$LearningFeedbackResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LearningFeedbackResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LearningFeedbackResponse implements LearningFeedbackResponse {
+  const factory _LearningFeedbackResponse(
+          {required final bool recorded,
+          required final Map<String, dynamic> stats}) =
+      _$LearningFeedbackResponseImpl;
+
+  factory _LearningFeedbackResponse.fromJson(Map<String, dynamic> json) =
+      _$LearningFeedbackResponseImpl.fromJson;
+
+  @override
+  bool get recorded;
+  @override
+  Map<String, dynamic> get stats;
+  @override
+  @JsonKey(ignore: true)
+  _$$LearningFeedbackResponseImplCopyWith<_$LearningFeedbackResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+FeedbackStats _$FeedbackStatsFromJson(Map<String, dynamic> json) {
+  return _FeedbackStats.fromJson(json);
+}
+
+/// @nodoc
+mixin _$FeedbackStats {
+  int get total => throw _privateConstructorUsedError;
+  int get positive => throw _privateConstructorUsedError;
+  int get negative => throw _privateConstructorUsedError;
+  double? get satisfaction => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $FeedbackStatsCopyWith<FeedbackStats> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $FeedbackStatsCopyWith<$Res> {
+  factory $FeedbackStatsCopyWith(
+          FeedbackStats value, $Res Function(FeedbackStats) then) =
+      _$FeedbackStatsCopyWithImpl<$Res, FeedbackStats>;
+  @useResult
+  $Res call({int total, int positive, int negative, double? satisfaction});
+}
+
+/// @nodoc
+class _$FeedbackStatsCopyWithImpl<$Res, $Val extends FeedbackStats>
+    implements $FeedbackStatsCopyWith<$Res> {
+  _$FeedbackStatsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? positive = null,
+    Object? negative = null,
+    Object? satisfaction = freezed,
+  }) {
+    return _then(_value.copyWith(
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      positive: null == positive
+          ? _value.positive
+          : positive // ignore: cast_nullable_to_non_nullable
+              as int,
+      negative: null == negative
+          ? _value.negative
+          : negative // ignore: cast_nullable_to_non_nullable
+              as int,
+      satisfaction: freezed == satisfaction
+          ? _value.satisfaction
+          : satisfaction // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$FeedbackStatsImplCopyWith<$Res>
+    implements $FeedbackStatsCopyWith<$Res> {
+  factory _$$FeedbackStatsImplCopyWith(
+          _$FeedbackStatsImpl value, $Res Function(_$FeedbackStatsImpl) then) =
+      __$$FeedbackStatsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int total, int positive, int negative, double? satisfaction});
+}
+
+/// @nodoc
+class __$$FeedbackStatsImplCopyWithImpl<$Res>
+    extends _$FeedbackStatsCopyWithImpl<$Res, _$FeedbackStatsImpl>
+    implements _$$FeedbackStatsImplCopyWith<$Res> {
+  __$$FeedbackStatsImplCopyWithImpl(
+      _$FeedbackStatsImpl _value, $Res Function(_$FeedbackStatsImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? positive = null,
+    Object? negative = null,
+    Object? satisfaction = freezed,
+  }) {
+    return _then(_$FeedbackStatsImpl(
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      positive: null == positive
+          ? _value.positive
+          : positive // ignore: cast_nullable_to_non_nullable
+              as int,
+      negative: null == negative
+          ? _value.negative
+          : negative // ignore: cast_nullable_to_non_nullable
+              as int,
+      satisfaction: freezed == satisfaction
+          ? _value.satisfaction
+          : satisfaction // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$FeedbackStatsImpl implements _FeedbackStats {
+  const _$FeedbackStatsImpl(
+      {required this.total,
+      required this.positive,
+      required this.negative,
+      this.satisfaction});
+
+  factory _$FeedbackStatsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FeedbackStatsImplFromJson(json);
+
+  @override
+  final int total;
+  @override
+  final int positive;
+  @override
+  final int negative;
+  @override
+  final double? satisfaction;
+
+  @override
+  String toString() {
+    return 'FeedbackStats(total: $total, positive: $positive, negative: $negative, satisfaction: $satisfaction)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FeedbackStatsImpl &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.positive, positive) ||
+                other.positive == positive) &&
+            (identical(other.negative, negative) ||
+                other.negative == negative) &&
+            (identical(other.satisfaction, satisfaction) ||
+                other.satisfaction == satisfaction));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, total, positive, negative, satisfaction);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FeedbackStatsImplCopyWith<_$FeedbackStatsImpl> get copyWith =>
+      __$$FeedbackStatsImplCopyWithImpl<_$FeedbackStatsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$FeedbackStatsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _FeedbackStats implements FeedbackStats {
+  const factory _FeedbackStats(
+      {required final int total,
+      required final int positive,
+      required final int negative,
+      final double? satisfaction}) = _$FeedbackStatsImpl;
+
+  factory _FeedbackStats.fromJson(Map<String, dynamic> json) =
+      _$FeedbackStatsImpl.fromJson;
+
+  @override
+  int get total;
+  @override
+  int get positive;
+  @override
+  int get negative;
+  @override
+  double? get satisfaction;
+  @override
+  @JsonKey(ignore: true)
+  _$$FeedbackStatsImplCopyWith<_$FeedbackStatsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Lesson _$LessonFromJson(Map<String, dynamic> json) {
+  return _Lesson.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Lesson {
+  double get ts => throw _privateConstructorUsedError;
+  String get goal => throw _privateConstructorUsedError;
+  String get comment => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LessonCopyWith<Lesson> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LessonCopyWith<$Res> {
+  factory $LessonCopyWith(Lesson value, $Res Function(Lesson) then) =
+      _$LessonCopyWithImpl<$Res, Lesson>;
+  @useResult
+  $Res call({double ts, String goal, String comment});
+}
+
+/// @nodoc
+class _$LessonCopyWithImpl<$Res, $Val extends Lesson>
+    implements $LessonCopyWith<$Res> {
+  _$LessonCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ts = null,
+    Object? goal = null,
+    Object? comment = null,
+  }) {
+    return _then(_value.copyWith(
+      ts: null == ts
+          ? _value.ts
+          : ts // ignore: cast_nullable_to_non_nullable
+              as double,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      comment: null == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LessonImplCopyWith<$Res> implements $LessonCopyWith<$Res> {
+  factory _$$LessonImplCopyWith(
+          _$LessonImpl value, $Res Function(_$LessonImpl) then) =
+      __$$LessonImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({double ts, String goal, String comment});
+}
+
+/// @nodoc
+class __$$LessonImplCopyWithImpl<$Res>
+    extends _$LessonCopyWithImpl<$Res, _$LessonImpl>
+    implements _$$LessonImplCopyWith<$Res> {
+  __$$LessonImplCopyWithImpl(
+      _$LessonImpl _value, $Res Function(_$LessonImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ts = null,
+    Object? goal = null,
+    Object? comment = null,
+  }) {
+    return _then(_$LessonImpl(
+      ts: null == ts
+          ? _value.ts
+          : ts // ignore: cast_nullable_to_non_nullable
+              as double,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      comment: null == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LessonImpl implements _Lesson {
+  const _$LessonImpl(
+      {required this.ts, required this.goal, required this.comment});
+
+  factory _$LessonImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LessonImplFromJson(json);
+
+  @override
+  final double ts;
+  @override
+  final String goal;
+  @override
+  final String comment;
+
+  @override
+  String toString() {
+    return 'Lesson(ts: $ts, goal: $goal, comment: $comment)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LessonImpl &&
+            (identical(other.ts, ts) || other.ts == ts) &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            (identical(other.comment, comment) || other.comment == comment));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ts, goal, comment);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LessonImplCopyWith<_$LessonImpl> get copyWith =>
+      __$$LessonImplCopyWithImpl<_$LessonImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LessonImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Lesson implements Lesson {
+  const factory _Lesson(
+      {required final double ts,
+      required final String goal,
+      required final String comment}) = _$LessonImpl;
+
+  factory _Lesson.fromJson(Map<String, dynamic> json) = _$LessonImpl.fromJson;
+
+  @override
+  double get ts;
+  @override
+  String get goal;
+  @override
+  String get comment;
+  @override
+  @JsonKey(ignore: true)
+  _$$LessonImplCopyWith<_$LessonImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LearningStatsResponse _$LearningStatsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _LearningStatsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LearningStatsResponse {
+  FeedbackStats get feedback => throw _privateConstructorUsedError;
+  List<Lesson> get lessons => throw _privateConstructorUsedError;
+  Map<String, dynamic> get prompts => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LearningStatsResponseCopyWith<LearningStatsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LearningStatsResponseCopyWith<$Res> {
+  factory $LearningStatsResponseCopyWith(LearningStatsResponse value,
+          $Res Function(LearningStatsResponse) then) =
+      _$LearningStatsResponseCopyWithImpl<$Res, LearningStatsResponse>;
+  @useResult
+  $Res call(
+      {FeedbackStats feedback,
+      List<Lesson> lessons,
+      Map<String, dynamic> prompts});
+
+  $FeedbackStatsCopyWith<$Res> get feedback;
+}
+
+/// @nodoc
+class _$LearningStatsResponseCopyWithImpl<$Res,
+        $Val extends LearningStatsResponse>
+    implements $LearningStatsResponseCopyWith<$Res> {
+  _$LearningStatsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? feedback = null,
+    Object? lessons = null,
+    Object? prompts = null,
+  }) {
+    return _then(_value.copyWith(
+      feedback: null == feedback
+          ? _value.feedback
+          : feedback // ignore: cast_nullable_to_non_nullable
+              as FeedbackStats,
+      lessons: null == lessons
+          ? _value.lessons
+          : lessons // ignore: cast_nullable_to_non_nullable
+              as List<Lesson>,
+      prompts: null == prompts
+          ? _value.prompts
+          : prompts // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $FeedbackStatsCopyWith<$Res> get feedback {
+    return $FeedbackStatsCopyWith<$Res>(_value.feedback, (value) {
+      return _then(_value.copyWith(feedback: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$LearningStatsResponseImplCopyWith<$Res>
+    implements $LearningStatsResponseCopyWith<$Res> {
+  factory _$$LearningStatsResponseImplCopyWith(
+          _$LearningStatsResponseImpl value,
+          $Res Function(_$LearningStatsResponseImpl) then) =
+      __$$LearningStatsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {FeedbackStats feedback,
+      List<Lesson> lessons,
+      Map<String, dynamic> prompts});
+
+  @override
+  $FeedbackStatsCopyWith<$Res> get feedback;
+}
+
+/// @nodoc
+class __$$LearningStatsResponseImplCopyWithImpl<$Res>
+    extends _$LearningStatsResponseCopyWithImpl<$Res,
+        _$LearningStatsResponseImpl>
+    implements _$$LearningStatsResponseImplCopyWith<$Res> {
+  __$$LearningStatsResponseImplCopyWithImpl(_$LearningStatsResponseImpl _value,
+      $Res Function(_$LearningStatsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? feedback = null,
+    Object? lessons = null,
+    Object? prompts = null,
+  }) {
+    return _then(_$LearningStatsResponseImpl(
+      feedback: null == feedback
+          ? _value.feedback
+          : feedback // ignore: cast_nullable_to_non_nullable
+              as FeedbackStats,
+      lessons: null == lessons
+          ? _value._lessons
+          : lessons // ignore: cast_nullable_to_non_nullable
+              as List<Lesson>,
+      prompts: null == prompts
+          ? _value._prompts
+          : prompts // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LearningStatsResponseImpl implements _LearningStatsResponse {
+  const _$LearningStatsResponseImpl(
+      {required this.feedback,
+      required final List<Lesson> lessons,
+      required final Map<String, dynamic> prompts})
+      : _lessons = lessons,
+        _prompts = prompts;
+
+  factory _$LearningStatsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LearningStatsResponseImplFromJson(json);
+
+  @override
+  final FeedbackStats feedback;
+  final List<Lesson> _lessons;
+  @override
+  List<Lesson> get lessons {
+    if (_lessons is EqualUnmodifiableListView) return _lessons;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_lessons);
+  }
+
+  final Map<String, dynamic> _prompts;
+  @override
+  Map<String, dynamic> get prompts {
+    if (_prompts is EqualUnmodifiableMapView) return _prompts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_prompts);
+  }
+
+  @override
+  String toString() {
+    return 'LearningStatsResponse(feedback: $feedback, lessons: $lessons, prompts: $prompts)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LearningStatsResponseImpl &&
+            (identical(other.feedback, feedback) ||
+                other.feedback == feedback) &&
+            const DeepCollectionEquality().equals(other._lessons, _lessons) &&
+            const DeepCollectionEquality().equals(other._prompts, _prompts));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      feedback,
+      const DeepCollectionEquality().hash(_lessons),
+      const DeepCollectionEquality().hash(_prompts));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LearningStatsResponseImplCopyWith<_$LearningStatsResponseImpl>
+      get copyWith => __$$LearningStatsResponseImplCopyWithImpl<
+          _$LearningStatsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LearningStatsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LearningStatsResponse implements LearningStatsResponse {
+  const factory _LearningStatsResponse(
+          {required final FeedbackStats feedback,
+          required final List<Lesson> lessons,
+          required final Map<String, dynamic> prompts}) =
+      _$LearningStatsResponseImpl;
+
+  factory _LearningStatsResponse.fromJson(Map<String, dynamic> json) =
+      _$LearningStatsResponseImpl.fromJson;
+
+  @override
+  FeedbackStats get feedback;
+  @override
+  List<Lesson> get lessons;
+  @override
+  Map<String, dynamic> get prompts;
+  @override
+  @JsonKey(ignore: true)
+  _$$LearningStatsResponseImplCopyWith<_$LearningStatsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ExperienceEpisode _$ExperienceEpisodeFromJson(Map<String, dynamic> json) {
+  return _ExperienceEpisode.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ExperienceEpisode {
+  int get id => throw _privateConstructorUsedError;
+  double get ts => throw _privateConstructorUsedError;
+  String get goal => throw _privateConstructorUsedError;
+  List<dynamic> get steps => throw _privateConstructorUsedError;
+  String get outcome => throw _privateConstructorUsedError;
+  double get confidence => throw _privateConstructorUsedError;
+  double? get similarity => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ExperienceEpisodeCopyWith<ExperienceEpisode> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ExperienceEpisodeCopyWith<$Res> {
+  factory $ExperienceEpisodeCopyWith(
+          ExperienceEpisode value, $Res Function(ExperienceEpisode) then) =
+      _$ExperienceEpisodeCopyWithImpl<$Res, ExperienceEpisode>;
+  @useResult
+  $Res call(
+      {int id,
+      double ts,
+      String goal,
+      List<dynamic> steps,
+      String outcome,
+      double confidence,
+      double? similarity});
+}
+
+/// @nodoc
+class _$ExperienceEpisodeCopyWithImpl<$Res, $Val extends ExperienceEpisode>
+    implements $ExperienceEpisodeCopyWith<$Res> {
+  _$ExperienceEpisodeCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? ts = null,
+    Object? goal = null,
+    Object? steps = null,
+    Object? outcome = null,
+    Object? confidence = null,
+    Object? similarity = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      ts: null == ts
+          ? _value.ts
+          : ts // ignore: cast_nullable_to_non_nullable
+              as double,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      steps: null == steps
+          ? _value.steps
+          : steps // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      outcome: null == outcome
+          ? _value.outcome
+          : outcome // ignore: cast_nullable_to_non_nullable
+              as String,
+      confidence: null == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      similarity: freezed == similarity
+          ? _value.similarity
+          : similarity // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ExperienceEpisodeImplCopyWith<$Res>
+    implements $ExperienceEpisodeCopyWith<$Res> {
+  factory _$$ExperienceEpisodeImplCopyWith(_$ExperienceEpisodeImpl value,
+          $Res Function(_$ExperienceEpisodeImpl) then) =
+      __$$ExperienceEpisodeImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      double ts,
+      String goal,
+      List<dynamic> steps,
+      String outcome,
+      double confidence,
+      double? similarity});
+}
+
+/// @nodoc
+class __$$ExperienceEpisodeImplCopyWithImpl<$Res>
+    extends _$ExperienceEpisodeCopyWithImpl<$Res, _$ExperienceEpisodeImpl>
+    implements _$$ExperienceEpisodeImplCopyWith<$Res> {
+  __$$ExperienceEpisodeImplCopyWithImpl(_$ExperienceEpisodeImpl _value,
+      $Res Function(_$ExperienceEpisodeImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? ts = null,
+    Object? goal = null,
+    Object? steps = null,
+    Object? outcome = null,
+    Object? confidence = null,
+    Object? similarity = freezed,
+  }) {
+    return _then(_$ExperienceEpisodeImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      ts: null == ts
+          ? _value.ts
+          : ts // ignore: cast_nullable_to_non_nullable
+              as double,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+      steps: null == steps
+          ? _value._steps
+          : steps // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
+      outcome: null == outcome
+          ? _value.outcome
+          : outcome // ignore: cast_nullable_to_non_nullable
+              as String,
+      confidence: null == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      similarity: freezed == similarity
+          ? _value.similarity
+          : similarity // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ExperienceEpisodeImpl implements _ExperienceEpisode {
+  const _$ExperienceEpisodeImpl(
+      {required this.id,
+      required this.ts,
+      required this.goal,
+      required final List<dynamic> steps,
+      required this.outcome,
+      required this.confidence,
+      this.similarity})
+      : _steps = steps;
+
+  factory _$ExperienceEpisodeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ExperienceEpisodeImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  final double ts;
+  @override
+  final String goal;
+  final List<dynamic> _steps;
+  @override
+  List<dynamic> get steps {
+    if (_steps is EqualUnmodifiableListView) return _steps;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_steps);
+  }
+
+  @override
+  final String outcome;
+  @override
+  final double confidence;
+  @override
+  final double? similarity;
+
+  @override
+  String toString() {
+    return 'ExperienceEpisode(id: $id, ts: $ts, goal: $goal, steps: $steps, outcome: $outcome, confidence: $confidence, similarity: $similarity)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ExperienceEpisodeImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.ts, ts) || other.ts == ts) &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            const DeepCollectionEquality().equals(other._steps, _steps) &&
+            (identical(other.outcome, outcome) || other.outcome == outcome) &&
+            (identical(other.confidence, confidence) ||
+                other.confidence == confidence) &&
+            (identical(other.similarity, similarity) ||
+                other.similarity == similarity));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      ts,
+      goal,
+      const DeepCollectionEquality().hash(_steps),
+      outcome,
+      confidence,
+      similarity);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ExperienceEpisodeImplCopyWith<_$ExperienceEpisodeImpl> get copyWith =>
+      __$$ExperienceEpisodeImplCopyWithImpl<_$ExperienceEpisodeImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ExperienceEpisodeImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ExperienceEpisode implements ExperienceEpisode {
+  const factory _ExperienceEpisode(
+      {required final int id,
+      required final double ts,
+      required final String goal,
+      required final List<dynamic> steps,
+      required final String outcome,
+      required final double confidence,
+      final double? similarity}) = _$ExperienceEpisodeImpl;
+
+  factory _ExperienceEpisode.fromJson(Map<String, dynamic> json) =
+      _$ExperienceEpisodeImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  double get ts;
+  @override
+  String get goal;
+  @override
+  List<dynamic> get steps;
+  @override
+  String get outcome;
+  @override
+  double get confidence;
+  @override
+  double? get similarity;
+  @override
+  @JsonKey(ignore: true)
+  _$$ExperienceEpisodeImplCopyWith<_$ExperienceEpisodeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LearningExperienceResponse _$LearningExperienceResponseFromJson(
+    Map<String, dynamic> json) {
+  return _LearningExperienceResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LearningExperienceResponse {
+  List<ExperienceEpisode>? get similar => throw _privateConstructorUsedError;
+  List<ExperienceEpisode>? get history => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get successRate => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LearningExperienceResponseCopyWith<LearningExperienceResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LearningExperienceResponseCopyWith<$Res> {
+  factory $LearningExperienceResponseCopyWith(LearningExperienceResponse value,
+          $Res Function(LearningExperienceResponse) then) =
+      _$LearningExperienceResponseCopyWithImpl<$Res,
+          LearningExperienceResponse>;
+  @useResult
+  $Res call(
+      {List<ExperienceEpisode>? similar,
+      List<ExperienceEpisode>? history,
+      Map<String, dynamic>? successRate});
+}
+
+/// @nodoc
+class _$LearningExperienceResponseCopyWithImpl<$Res,
+        $Val extends LearningExperienceResponse>
+    implements $LearningExperienceResponseCopyWith<$Res> {
+  _$LearningExperienceResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? similar = freezed,
+    Object? history = freezed,
+    Object? successRate = freezed,
+  }) {
+    return _then(_value.copyWith(
+      similar: freezed == similar
+          ? _value.similar
+          : similar // ignore: cast_nullable_to_non_nullable
+              as List<ExperienceEpisode>?,
+      history: freezed == history
+          ? _value.history
+          : history // ignore: cast_nullable_to_non_nullable
+              as List<ExperienceEpisode>?,
+      successRate: freezed == successRate
+          ? _value.successRate
+          : successRate // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LearningExperienceResponseImplCopyWith<$Res>
+    implements $LearningExperienceResponseCopyWith<$Res> {
+  factory _$$LearningExperienceResponseImplCopyWith(
+          _$LearningExperienceResponseImpl value,
+          $Res Function(_$LearningExperienceResponseImpl) then) =
+      __$$LearningExperienceResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<ExperienceEpisode>? similar,
+      List<ExperienceEpisode>? history,
+      Map<String, dynamic>? successRate});
+}
+
+/// @nodoc
+class __$$LearningExperienceResponseImplCopyWithImpl<$Res>
+    extends _$LearningExperienceResponseCopyWithImpl<$Res,
+        _$LearningExperienceResponseImpl>
+    implements _$$LearningExperienceResponseImplCopyWith<$Res> {
+  __$$LearningExperienceResponseImplCopyWithImpl(
+      _$LearningExperienceResponseImpl _value,
+      $Res Function(_$LearningExperienceResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? similar = freezed,
+    Object? history = freezed,
+    Object? successRate = freezed,
+  }) {
+    return _then(_$LearningExperienceResponseImpl(
+      similar: freezed == similar
+          ? _value._similar
+          : similar // ignore: cast_nullable_to_non_nullable
+              as List<ExperienceEpisode>?,
+      history: freezed == history
+          ? _value._history
+          : history // ignore: cast_nullable_to_non_nullable
+              as List<ExperienceEpisode>?,
+      successRate: freezed == successRate
+          ? _value._successRate
+          : successRate // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LearningExperienceResponseImpl implements _LearningExperienceResponse {
+  const _$LearningExperienceResponseImpl(
+      {final List<ExperienceEpisode>? similar,
+      final List<ExperienceEpisode>? history,
+      final Map<String, dynamic>? successRate})
+      : _similar = similar,
+        _history = history,
+        _successRate = successRate;
+
+  factory _$LearningExperienceResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$LearningExperienceResponseImplFromJson(json);
+
+  final List<ExperienceEpisode>? _similar;
+  @override
+  List<ExperienceEpisode>? get similar {
+    final value = _similar;
+    if (value == null) return null;
+    if (_similar is EqualUnmodifiableListView) return _similar;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<ExperienceEpisode>? _history;
+  @override
+  List<ExperienceEpisode>? get history {
+    final value = _history;
+    if (value == null) return null;
+    if (_history is EqualUnmodifiableListView) return _history;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final Map<String, dynamic>? _successRate;
+  @override
+  Map<String, dynamic>? get successRate {
+    final value = _successRate;
+    if (value == null) return null;
+    if (_successRate is EqualUnmodifiableMapView) return _successRate;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'LearningExperienceResponse(similar: $similar, history: $history, successRate: $successRate)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LearningExperienceResponseImpl &&
+            const DeepCollectionEquality().equals(other._similar, _similar) &&
+            const DeepCollectionEquality().equals(other._history, _history) &&
+            const DeepCollectionEquality()
+                .equals(other._successRate, _successRate));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_similar),
+      const DeepCollectionEquality().hash(_history),
+      const DeepCollectionEquality().hash(_successRate));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LearningExperienceResponseImplCopyWith<_$LearningExperienceResponseImpl>
+      get copyWith => __$$LearningExperienceResponseImplCopyWithImpl<
+          _$LearningExperienceResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LearningExperienceResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LearningExperienceResponse
+    implements LearningExperienceResponse {
+  const factory _LearningExperienceResponse(
+          {final List<ExperienceEpisode>? similar,
+          final List<ExperienceEpisode>? history,
+          final Map<String, dynamic>? successRate}) =
+      _$LearningExperienceResponseImpl;
+
+  factory _LearningExperienceResponse.fromJson(Map<String, dynamic> json) =
+      _$LearningExperienceResponseImpl.fromJson;
+
+  @override
+  List<ExperienceEpisode>? get similar;
+  @override
+  List<ExperienceEpisode>? get history;
+  @override
+  Map<String, dynamic>? get successRate;
+  @override
+  @JsonKey(ignore: true)
+  _$$LearningExperienceResponseImplCopyWith<_$LearningExperienceResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+LearningCompressResponse _$LearningCompressResponseFromJson(
+    Map<String, dynamic> json) {
+  return _LearningCompressResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LearningCompressResponse {
+  bool get dryRun => throw _privateConstructorUsedError;
+  String get memoryType => throw _privateConstructorUsedError;
+  Map<String, dynamic> get result => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LearningCompressResponseCopyWith<LearningCompressResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LearningCompressResponseCopyWith<$Res> {
+  factory $LearningCompressResponseCopyWith(LearningCompressResponse value,
+          $Res Function(LearningCompressResponse) then) =
+      _$LearningCompressResponseCopyWithImpl<$Res, LearningCompressResponse>;
+  @useResult
+  $Res call({bool dryRun, String memoryType, Map<String, dynamic> result});
+}
+
+/// @nodoc
+class _$LearningCompressResponseCopyWithImpl<$Res,
+        $Val extends LearningCompressResponse>
+    implements $LearningCompressResponseCopyWith<$Res> {
+  _$LearningCompressResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? dryRun = null,
+    Object? memoryType = null,
+    Object? result = null,
+  }) {
+    return _then(_value.copyWith(
+      dryRun: null == dryRun
+          ? _value.dryRun
+          : dryRun // ignore: cast_nullable_to_non_nullable
+              as bool,
+      memoryType: null == memoryType
+          ? _value.memoryType
+          : memoryType // ignore: cast_nullable_to_non_nullable
+              as String,
+      result: null == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LearningCompressResponseImplCopyWith<$Res>
+    implements $LearningCompressResponseCopyWith<$Res> {
+  factory _$$LearningCompressResponseImplCopyWith(
+          _$LearningCompressResponseImpl value,
+          $Res Function(_$LearningCompressResponseImpl) then) =
+      __$$LearningCompressResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool dryRun, String memoryType, Map<String, dynamic> result});
+}
+
+/// @nodoc
+class __$$LearningCompressResponseImplCopyWithImpl<$Res>
+    extends _$LearningCompressResponseCopyWithImpl<$Res,
+        _$LearningCompressResponseImpl>
+    implements _$$LearningCompressResponseImplCopyWith<$Res> {
+  __$$LearningCompressResponseImplCopyWithImpl(
+      _$LearningCompressResponseImpl _value,
+      $Res Function(_$LearningCompressResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? dryRun = null,
+    Object? memoryType = null,
+    Object? result = null,
+  }) {
+    return _then(_$LearningCompressResponseImpl(
+      dryRun: null == dryRun
+          ? _value.dryRun
+          : dryRun // ignore: cast_nullable_to_non_nullable
+              as bool,
+      memoryType: null == memoryType
+          ? _value.memoryType
+          : memoryType // ignore: cast_nullable_to_non_nullable
+              as String,
+      result: null == result
+          ? _value._result
+          : result // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LearningCompressResponseImpl implements _LearningCompressResponse {
+  const _$LearningCompressResponseImpl(
+      {required this.dryRun,
+      required this.memoryType,
+      required final Map<String, dynamic> result})
+      : _result = result;
+
+  factory _$LearningCompressResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LearningCompressResponseImplFromJson(json);
+
+  @override
+  final bool dryRun;
+  @override
+  final String memoryType;
+  final Map<String, dynamic> _result;
+  @override
+  Map<String, dynamic> get result {
+    if (_result is EqualUnmodifiableMapView) return _result;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_result);
+  }
+
+  @override
+  String toString() {
+    return 'LearningCompressResponse(dryRun: $dryRun, memoryType: $memoryType, result: $result)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LearningCompressResponseImpl &&
+            (identical(other.dryRun, dryRun) || other.dryRun == dryRun) &&
+            (identical(other.memoryType, memoryType) ||
+                other.memoryType == memoryType) &&
+            const DeepCollectionEquality().equals(other._result, _result));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, dryRun, memoryType,
+      const DeepCollectionEquality().hash(_result));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LearningCompressResponseImplCopyWith<_$LearningCompressResponseImpl>
+      get copyWith => __$$LearningCompressResponseImplCopyWithImpl<
+          _$LearningCompressResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LearningCompressResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LearningCompressResponse implements LearningCompressResponse {
+  const factory _LearningCompressResponse(
+          {required final bool dryRun,
+          required final String memoryType,
+          required final Map<String, dynamic> result}) =
+      _$LearningCompressResponseImpl;
+
+  factory _LearningCompressResponse.fromJson(Map<String, dynamic> json) =
+      _$LearningCompressResponseImpl.fromJson;
+
+  @override
+  bool get dryRun;
+  @override
+  String get memoryType;
+  @override
+  Map<String, dynamic> get result;
+  @override
+  @JsonKey(ignore: true)
+  _$$LearningCompressResponseImplCopyWith<_$LearningCompressResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+PromptVariant _$PromptVariantFromJson(Map<String, dynamic> json) {
+  return _PromptVariant.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PromptVariant {
+  int get ok => throw _privateConstructorUsedError;
+  int get fail => throw _privateConstructorUsedError;
+  double get score => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PromptVariantCopyWith<PromptVariant> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PromptVariantCopyWith<$Res> {
+  factory $PromptVariantCopyWith(
+          PromptVariant value, $Res Function(PromptVariant) then) =
+      _$PromptVariantCopyWithImpl<$Res, PromptVariant>;
+  @useResult
+  $Res call({int ok, int fail, double score});
+}
+
+/// @nodoc
+class _$PromptVariantCopyWithImpl<$Res, $Val extends PromptVariant>
+    implements $PromptVariantCopyWith<$Res> {
+  _$PromptVariantCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? fail = null,
+    Object? score = null,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as int,
+      fail: null == fail
+          ? _value.fail
+          : fail // ignore: cast_nullable_to_non_nullable
+              as int,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PromptVariantImplCopyWith<$Res>
+    implements $PromptVariantCopyWith<$Res> {
+  factory _$$PromptVariantImplCopyWith(
+          _$PromptVariantImpl value, $Res Function(_$PromptVariantImpl) then) =
+      __$$PromptVariantImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int ok, int fail, double score});
+}
+
+/// @nodoc
+class __$$PromptVariantImplCopyWithImpl<$Res>
+    extends _$PromptVariantCopyWithImpl<$Res, _$PromptVariantImpl>
+    implements _$$PromptVariantImplCopyWith<$Res> {
+  __$$PromptVariantImplCopyWithImpl(
+      _$PromptVariantImpl _value, $Res Function(_$PromptVariantImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? fail = null,
+    Object? score = null,
+  }) {
+    return _then(_$PromptVariantImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as int,
+      fail: null == fail
+          ? _value.fail
+          : fail // ignore: cast_nullable_to_non_nullable
+              as int,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PromptVariantImpl implements _PromptVariant {
+  const _$PromptVariantImpl(
+      {required this.ok, required this.fail, required this.score});
+
+  factory _$PromptVariantImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PromptVariantImplFromJson(json);
+
+  @override
+  final int ok;
+  @override
+  final int fail;
+  @override
+  final double score;
+
+  @override
+  String toString() {
+    return 'PromptVariant(ok: $ok, fail: $fail, score: $score)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PromptVariantImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.fail, fail) || other.fail == fail) &&
+            (identical(other.score, score) || other.score == score));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ok, fail, score);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PromptVariantImplCopyWith<_$PromptVariantImpl> get copyWith =>
+      __$$PromptVariantImplCopyWithImpl<_$PromptVariantImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PromptVariantImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PromptVariant implements PromptVariant {
+  const factory _PromptVariant(
+      {required final int ok,
+      required final int fail,
+      required final double score}) = _$PromptVariantImpl;
+
+  factory _PromptVariant.fromJson(Map<String, dynamic> json) =
+      _$PromptVariantImpl.fromJson;
+
+  @override
+  int get ok;
+  @override
+  int get fail;
+  @override
+  double get score;
+  @override
+  @JsonKey(ignore: true)
+  _$$PromptVariantImplCopyWith<_$PromptVariantImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+LearningPromptsResponse _$LearningPromptsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _LearningPromptsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LearningPromptsResponse {
+  Map<String, Map<String, PromptVariant>> get prompts =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LearningPromptsResponseCopyWith<LearningPromptsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LearningPromptsResponseCopyWith<$Res> {
+  factory $LearningPromptsResponseCopyWith(LearningPromptsResponse value,
+          $Res Function(LearningPromptsResponse) then) =
+      _$LearningPromptsResponseCopyWithImpl<$Res, LearningPromptsResponse>;
+  @useResult
+  $Res call({Map<String, Map<String, PromptVariant>> prompts});
+}
+
+/// @nodoc
+class _$LearningPromptsResponseCopyWithImpl<$Res,
+        $Val extends LearningPromptsResponse>
+    implements $LearningPromptsResponseCopyWith<$Res> {
+  _$LearningPromptsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? prompts = null,
+  }) {
+    return _then(_value.copyWith(
+      prompts: null == prompts
+          ? _value.prompts
+          : prompts // ignore: cast_nullable_to_non_nullable
+              as Map<String, Map<String, PromptVariant>>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LearningPromptsResponseImplCopyWith<$Res>
+    implements $LearningPromptsResponseCopyWith<$Res> {
+  factory _$$LearningPromptsResponseImplCopyWith(
+          _$LearningPromptsResponseImpl value,
+          $Res Function(_$LearningPromptsResponseImpl) then) =
+      __$$LearningPromptsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Map<String, Map<String, PromptVariant>> prompts});
+}
+
+/// @nodoc
+class __$$LearningPromptsResponseImplCopyWithImpl<$Res>
+    extends _$LearningPromptsResponseCopyWithImpl<$Res,
+        _$LearningPromptsResponseImpl>
+    implements _$$LearningPromptsResponseImplCopyWith<$Res> {
+  __$$LearningPromptsResponseImplCopyWithImpl(
+      _$LearningPromptsResponseImpl _value,
+      $Res Function(_$LearningPromptsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? prompts = null,
+  }) {
+    return _then(_$LearningPromptsResponseImpl(
+      prompts: null == prompts
+          ? _value._prompts
+          : prompts // ignore: cast_nullable_to_non_nullable
+              as Map<String, Map<String, PromptVariant>>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LearningPromptsResponseImpl implements _LearningPromptsResponse {
+  const _$LearningPromptsResponseImpl(
+      {required final Map<String, Map<String, PromptVariant>> prompts})
+      : _prompts = prompts;
+
+  factory _$LearningPromptsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LearningPromptsResponseImplFromJson(json);
+
+  final Map<String, Map<String, PromptVariant>> _prompts;
+  @override
+  Map<String, Map<String, PromptVariant>> get prompts {
+    if (_prompts is EqualUnmodifiableMapView) return _prompts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_prompts);
+  }
+
+  @override
+  String toString() {
+    return 'LearningPromptsResponse(prompts: $prompts)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LearningPromptsResponseImpl &&
+            const DeepCollectionEquality().equals(other._prompts, _prompts));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_prompts));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LearningPromptsResponseImplCopyWith<_$LearningPromptsResponseImpl>
+      get copyWith => __$$LearningPromptsResponseImplCopyWithImpl<
+          _$LearningPromptsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LearningPromptsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LearningPromptsResponse implements LearningPromptsResponse {
+  const factory _LearningPromptsResponse(
+          {required final Map<String, Map<String, PromptVariant>> prompts}) =
+      _$LearningPromptsResponseImpl;
+
+  factory _LearningPromptsResponse.fromJson(Map<String, dynamic> json) =
+      _$LearningPromptsResponseImpl.fromJson;
+
+  @override
+  Map<String, Map<String, PromptVariant>> get prompts;
+  @override
+  @JsonKey(ignore: true)
+  _$$LearningPromptsResponseImplCopyWith<_$LearningPromptsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

@@ -2312,6 +2312,273 @@ Map<String, dynamic> _$$AdminOwnerModeResponseImplToJson(
   return val;
 }
 
+_$LearningFeedbackResponseImpl _$$LearningFeedbackResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LearningFeedbackResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LearningFeedbackResponseImpl(
+          recorded: $checkedConvert('recorded', (v) => v as bool),
+          stats: $checkedConvert(
+              'stats', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LearningFeedbackResponseImplToJson(
+        _$LearningFeedbackResponseImpl instance) =>
+    <String, dynamic>{
+      'recorded': instance.recorded,
+      'stats': instance.stats,
+    };
+
+_$FeedbackStatsImpl _$$FeedbackStatsImplFromJson(Map json) => $checkedCreate(
+      r'_$FeedbackStatsImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$FeedbackStatsImpl(
+          total: $checkedConvert('total', (v) => (v as num).toInt()),
+          positive: $checkedConvert('positive', (v) => (v as num).toInt()),
+          negative: $checkedConvert('negative', (v) => (v as num).toInt()),
+          satisfaction:
+              $checkedConvert('satisfaction', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$FeedbackStatsImplToJson(_$FeedbackStatsImpl instance) {
+  final val = <String, dynamic>{
+    'total': instance.total,
+    'positive': instance.positive,
+    'negative': instance.negative,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('satisfaction', instance.satisfaction);
+  return val;
+}
+
+_$LessonImpl _$$LessonImplFromJson(Map json) => $checkedCreate(
+      r'_$LessonImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LessonImpl(
+          ts: $checkedConvert('ts', (v) => (v as num).toDouble()),
+          goal: $checkedConvert('goal', (v) => v as String),
+          comment: $checkedConvert('comment', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LessonImplToJson(_$LessonImpl instance) =>
+    <String, dynamic>{
+      'ts': instance.ts,
+      'goal': instance.goal,
+      'comment': instance.comment,
+    };
+
+_$LearningStatsResponseImpl _$$LearningStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LearningStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LearningStatsResponseImpl(
+          feedback: $checkedConvert(
+              'feedback',
+              (v) =>
+                  FeedbackStats.fromJson(Map<String, dynamic>.from(v as Map))),
+          lessons: $checkedConvert(
+              'lessons',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Lesson.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          prompts: $checkedConvert(
+              'prompts', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LearningStatsResponseImplToJson(
+        _$LearningStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'feedback': instance.feedback,
+      'lessons': instance.lessons,
+      'prompts': instance.prompts,
+    };
+
+_$ExperienceEpisodeImpl _$$ExperienceEpisodeImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExperienceEpisodeImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExperienceEpisodeImpl(
+          id: $checkedConvert('id', (v) => (v as num).toInt()),
+          ts: $checkedConvert('ts', (v) => (v as num).toDouble()),
+          goal: $checkedConvert('goal', (v) => v as String),
+          steps: $checkedConvert('steps', (v) => v as List<dynamic>),
+          outcome: $checkedConvert('outcome', (v) => v as String),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num).toDouble()),
+          similarity:
+              $checkedConvert('similarity', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExperienceEpisodeImplToJson(
+    _$ExperienceEpisodeImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'ts': instance.ts,
+    'goal': instance.goal,
+    'steps': instance.steps,
+    'outcome': instance.outcome,
+    'confidence': instance.confidence,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('similarity', instance.similarity);
+  return val;
+}
+
+_$LearningExperienceResponseImpl _$$LearningExperienceResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LearningExperienceResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LearningExperienceResponseImpl(
+          similar: $checkedConvert(
+              'similar',
+              (v) => (v as List<dynamic>?)
+                  ?.map((e) => ExperienceEpisode.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          history: $checkedConvert(
+              'history',
+              (v) => (v as List<dynamic>?)
+                  ?.map((e) => ExperienceEpisode.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          successRate: $checkedConvert(
+              'success_rate',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'successRate': 'success_rate'},
+    );
+
+Map<String, dynamic> _$$LearningExperienceResponseImplToJson(
+    _$LearningExperienceResponseImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('similar', instance.similar);
+  writeNotNull('history', instance.history);
+  writeNotNull('success_rate', instance.successRate);
+  return val;
+}
+
+_$LearningCompressResponseImpl _$$LearningCompressResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LearningCompressResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LearningCompressResponseImpl(
+          dryRun: $checkedConvert('dry_run', (v) => v as bool),
+          memoryType: $checkedConvert('memory_type', (v) => v as String),
+          result: $checkedConvert(
+              'result', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'dryRun': 'dry_run', 'memoryType': 'memory_type'},
+    );
+
+Map<String, dynamic> _$$LearningCompressResponseImplToJson(
+        _$LearningCompressResponseImpl instance) =>
+    <String, dynamic>{
+      'dry_run': instance.dryRun,
+      'memory_type': instance.memoryType,
+      'result': instance.result,
+    };
+
+_$PromptVariantImpl _$$PromptVariantImplFromJson(Map json) => $checkedCreate(
+      r'_$PromptVariantImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PromptVariantImpl(
+          ok: $checkedConvert('ok', (v) => (v as num).toInt()),
+          fail: $checkedConvert('fail', (v) => (v as num).toInt()),
+          score: $checkedConvert('score', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$PromptVariantImplToJson(_$PromptVariantImpl instance) =>
+    <String, dynamic>{
+      'ok': instance.ok,
+      'fail': instance.fail,
+      'score': instance.score,
+    };
+
+_$LearningPromptsResponseImpl _$$LearningPromptsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LearningPromptsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LearningPromptsResponseImpl(
+          prompts: $checkedConvert(
+              'prompts',
+              (v) => (v as Map).map(
+                    (k, e) => MapEntry(
+                        k as String,
+                        (e as Map).map(
+                          (k, e) => MapEntry(
+                              k as String,
+                              PromptVariant.fromJson(
+                                  Map<String, dynamic>.from(e as Map))),
+                        )),
+                  )),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LearningPromptsResponseImplToJson(
+        _$LearningPromptsResponseImpl instance) =>
+    <String, dynamic>{
+      'prompts': instance.prompts,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
