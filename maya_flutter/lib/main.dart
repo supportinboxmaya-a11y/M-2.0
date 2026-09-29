@@ -3480,12 +3480,13 @@ class _ToolsProvidersScreenState extends ConsumerState<_ToolsProvidersScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (mounted) {
         ref.invalidate(toolsListProvider);
         ref.invalidate(toolsLogsProvider);
         ref.invalidate(providersListProvider);
+        ref.invalidate(toolsFrameworkProvider);
       }
     });
   }
@@ -3528,6 +3529,7 @@ class _ToolsProvidersScreenState extends ConsumerState<_ToolsProvidersScreen>
             tabs: const [
               Tab(icon: Icon(Icons.build_rounded), text: 'Tools'),
               Tab(icon: Icon(Icons.history_rounded), text: 'Logs'),
+              Tab(icon: Icon(Icons.policy_rounded), text: 'Policies'),
               Tab(icon: Icon(Icons.cloud_rounded), text: 'Providers'),
             ],
           ),
@@ -3537,6 +3539,7 @@ class _ToolsProvidersScreenState extends ConsumerState<_ToolsProvidersScreen>
           children: [
             _buildToolsTab(),
             _buildLogsTab(),
+            _buildPoliciesTab(),
             _buildProvidersTab(),
           ],
         ),
@@ -3612,6 +3615,44 @@ class _ToolsProvidersScreenState extends ConsumerState<_ToolsProvidersScreen>
             const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
             const SizedBox(height: 16),
             Text('Error loading logs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoliciesTab() {
+    final frameworkAsync = ref.watch(toolsFrameworkProvider);
+
+    return frameworkAsync.when(
+      data: (response) {
+        if (response.tools.isEmpty) {
+          return const Center(
+            child: Text('No managed tools found', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.tools.length,
+          itemBuilder: (context, index) {
+            final tool = response.tools[index];
+            return _PolicyTile(tool: tool);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading policies', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
             Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
@@ -3858,6 +3899,184 @@ class _LogStat extends StatelessWidget {
   }
 }
 
+class _PolicyTile extends StatelessWidget {
+  final FrameworkTool tool;
+
+  const _PolicyTile({required this.tool});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: tool.dangerous
+                ? MayaTheme.error.withValues(alpha: 0.2)
+                : MayaTheme.neonViolet.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            tool.dangerous ? Icons.warning_rounded : Icons.policy_rounded,
+            color: tool.dangerous ? MayaTheme.error : MayaTheme.neonViolet,
+            size: 20,
+          ),
+        ),
+        title: Text(tool.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          tool.description,
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (tool.dangerous)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: MayaTheme.error.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'DANGEROUS',
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: MayaTheme.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                tool.category,
+                style: MayaTheme.labelSmall.copyWith(
+                  color: MayaTheme.neonCyan,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    _PolicyStat(
+                      label: 'Timeout',
+                      value: '${tool.timeoutSeconds}s',
+                      icon: Icons.timer_rounded,
+                      color: MayaTheme.neonOrange,
+                    ),
+                    const SizedBox(width: 16),
+                    _PolicyStat(
+                      label: 'Retries',
+                      value: tool.maxRetries.toString(),
+                      icon: Icons.refresh_rounded,
+                      color: MayaTheme.neonViolet,
+                    ),
+                    const SizedBox(width: 16),
+                    _PolicyStat(
+                      label: 'Permission',
+                      value: tool.permission,
+                      icon: Icons.lock_rounded,
+                      color: MayaTheme.neonEmerald,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Divider(color: MayaTheme.glassWhite10),
+                const SizedBox(height: 12),
+                const Text('Policy Details', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                _PolicyDetailRow(label: 'Category', value: tool.category),
+                _PolicyDetailRow(label: 'Timeout', value: '${tool.timeoutSeconds} seconds'),
+                _PolicyDetailRow(label: 'Max Retries', value: tool.maxRetries.toString()),
+                _PolicyDetailRow(label: 'Dangerous', value: tool.dangerous ? 'Yes (requires approval)' : 'No'),
+                _PolicyDetailRow(label: 'Permission Category', value: tool.permission),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PolicyStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _PolicyStat({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 4),
+            Text(value, style: MayaTheme.titleMedium.copyWith(color: color)),
+            const SizedBox(height: 2),
+            Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PolicyDetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _PolicyDetailRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ProviderTile extends ConsumerWidget {
   final ProviderInfo provider;
   final Future<void> Function(bool) onToggle;
@@ -3978,6 +4197,11 @@ final toolsLogsProvider = FutureProvider<ToolsLogsResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   final response = await apiService.getToolsLogs();
   return ToolsLogsResponse(logs: response.logs);
+});
+
+final toolsFrameworkProvider = FutureProvider<ToolsFrameworkResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getToolsFramework();
 });
 
 final providersListProvider = FutureProvider<ProvidersListResponse>((ref) async {
