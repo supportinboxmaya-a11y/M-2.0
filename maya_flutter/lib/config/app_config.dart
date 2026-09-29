@@ -70,6 +70,11 @@ class AppConfig {
   static const String brainAnalyze = '/api/v1/brain/analyze';
   static const String brainGraph = '/api/v1/brain/graph';
 
+  // Multi-Agent System
+  static const String agentsList = '/api/v1/agents';
+  static const String agentsOrchestrate = '/api/v1/agents/orchestrate';
+  static const String agentsMessages = '/api/v1/agents/messages';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

@@ -509,6 +509,28 @@ class ApiService {
     return BrainGraphResponse.fromJson(response.data);
   }
 
+  // Multi-Agent System
+  Future<AgentsListResponse> getAgentsList() async {
+    final response = await _dio.get(AppConfig.agentsList);
+    return AgentsListResponse.fromJson(response.data);
+  }
+
+  Future<AgentsOrchestrateResponse> orchestrateGoal(String goal) async {
+    final response = await _dio.post(
+      AppConfig.agentsOrchestrate,
+      data: {'goal': goal},
+    );
+    return AgentsOrchestrateResponse.fromJson(response.data);
+  }
+
+  Future<AgentsMessagesResponse> getAgentsMessages({int limit = 50}) async {
+    final response = await _dio.get(
+      AppConfig.agentsMessages,
+      queryParameters: {'limit': limit},
+    );
+    return AgentsMessagesResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1166,4 +1188,82 @@ class BrainGraphResponse with _$BrainGraphResponse {
 
   factory BrainGraphResponse.fromJson(Map<String, dynamic> json) =>
       _$BrainGraphResponseFromJson(json);
+}
+
+// Multi-Agent System Models
+@freezed
+class AgentInfo with _$AgentInfo {
+  const factory AgentInfo({
+    required String name,
+    required String role,
+    required List<String> skills,
+    required List<String> permissions,
+    required int ok,
+    required int errors,
+    double? successRate,
+    String? lastError,
+    double? lastActive,
+    required String status,
+  }) = _AgentInfo;
+
+  factory AgentInfo.fromJson(Map<String, dynamic> json) =>
+      _$AgentInfoFromJson(json);
+}
+
+@freezed
+class AgentsListResponse with _$AgentsListResponse {
+  const factory AgentsListResponse({
+    required List<AgentInfo> agents,
+  }) = _AgentsListResponse;
+
+  factory AgentsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentsListResponseFromJson(json);
+}
+
+@freezed
+class OrchestrationAssignment with _$OrchestrationAssignment {
+  const factory OrchestrationAssignment({
+    required String nodeId,
+    required String agentName,
+    String? description,
+    String? tool,
+  }) = _OrchestrationAssignment;
+
+  factory OrchestrationAssignment.fromJson(Map<String, dynamic> json) =>
+      _$OrchestrationAssignmentFromJson(json);
+}
+
+@freezed
+class AgentsOrchestrateResponse with _$AgentsOrchestrateResponse {
+  const factory AgentsOrchestrateResponse({
+    required BrainAnalyzeResponse analysis,
+    required Map<String, String> assignments,
+    required BrainGraphResponse graph,
+  }) = _AgentsOrchestrateResponse;
+
+  factory AgentsOrchestrateResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentsOrchestrateResponseFromJson(json);
+}
+
+@freezed
+class AgentMessage with _$AgentMessage {
+  const factory AgentMessage({
+    required String from,
+    required String to,
+    required dynamic content,
+    required double ts,
+  }) = _AgentMessage;
+
+  factory AgentMessage.fromJson(Map<String, dynamic> json) =>
+      _$AgentMessageFromJson(json);
+}
+
+@freezed
+class AgentsMessagesResponse with _$AgentsMessagesResponse {
+  const factory AgentsMessagesResponse({
+    required List<AgentMessage> messages,
+  }) = _AgentsMessagesResponse;
+
+  factory AgentsMessagesResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentsMessagesResponseFromJson(json);
 }

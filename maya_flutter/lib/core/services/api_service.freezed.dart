@@ -9085,3 +9085,1265 @@ abstract class _BrainGraphResponse implements BrainGraphResponse {
   _$$BrainGraphResponseImplCopyWith<_$BrainGraphResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+AgentInfo _$AgentInfoFromJson(Map<String, dynamic> json) {
+  return _AgentInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentInfo {
+  String get name => throw _privateConstructorUsedError;
+  String get role => throw _privateConstructorUsedError;
+  List<String> get skills => throw _privateConstructorUsedError;
+  List<String> get permissions => throw _privateConstructorUsedError;
+  int get ok => throw _privateConstructorUsedError;
+  int get errors => throw _privateConstructorUsedError;
+  double? get successRate => throw _privateConstructorUsedError;
+  String? get lastError => throw _privateConstructorUsedError;
+  double? get lastActive => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentInfoCopyWith<AgentInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentInfoCopyWith<$Res> {
+  factory $AgentInfoCopyWith(AgentInfo value, $Res Function(AgentInfo) then) =
+      _$AgentInfoCopyWithImpl<$Res, AgentInfo>;
+  @useResult
+  $Res call(
+      {String name,
+      String role,
+      List<String> skills,
+      List<String> permissions,
+      int ok,
+      int errors,
+      double? successRate,
+      String? lastError,
+      double? lastActive,
+      String status});
+}
+
+/// @nodoc
+class _$AgentInfoCopyWithImpl<$Res, $Val extends AgentInfo>
+    implements $AgentInfoCopyWith<$Res> {
+  _$AgentInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? role = null,
+    Object? skills = null,
+    Object? permissions = null,
+    Object? ok = null,
+    Object? errors = null,
+    Object? successRate = freezed,
+    Object? lastError = freezed,
+    Object? lastActive = freezed,
+    Object? status = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      skills: null == skills
+          ? _value.skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      permissions: null == permissions
+          ? _value.permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as int,
+      errors: null == errors
+          ? _value.errors
+          : errors // ignore: cast_nullable_to_non_nullable
+              as int,
+      successRate: freezed == successRate
+          ? _value.successRate
+          : successRate // ignore: cast_nullable_to_non_nullable
+              as double?,
+      lastError: freezed == lastError
+          ? _value.lastError
+          : lastError // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastActive: freezed == lastActive
+          ? _value.lastActive
+          : lastActive // ignore: cast_nullable_to_non_nullable
+              as double?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentInfoImplCopyWith<$Res>
+    implements $AgentInfoCopyWith<$Res> {
+  factory _$$AgentInfoImplCopyWith(
+          _$AgentInfoImpl value, $Res Function(_$AgentInfoImpl) then) =
+      __$$AgentInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String name,
+      String role,
+      List<String> skills,
+      List<String> permissions,
+      int ok,
+      int errors,
+      double? successRate,
+      String? lastError,
+      double? lastActive,
+      String status});
+}
+
+/// @nodoc
+class __$$AgentInfoImplCopyWithImpl<$Res>
+    extends _$AgentInfoCopyWithImpl<$Res, _$AgentInfoImpl>
+    implements _$$AgentInfoImplCopyWith<$Res> {
+  __$$AgentInfoImplCopyWithImpl(
+      _$AgentInfoImpl _value, $Res Function(_$AgentInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? role = null,
+    Object? skills = null,
+    Object? permissions = null,
+    Object? ok = null,
+    Object? errors = null,
+    Object? successRate = freezed,
+    Object? lastError = freezed,
+    Object? lastActive = freezed,
+    Object? status = null,
+  }) {
+    return _then(_$AgentInfoImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      skills: null == skills
+          ? _value._skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      permissions: null == permissions
+          ? _value._permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as int,
+      errors: null == errors
+          ? _value.errors
+          : errors // ignore: cast_nullable_to_non_nullable
+              as int,
+      successRate: freezed == successRate
+          ? _value.successRate
+          : successRate // ignore: cast_nullable_to_non_nullable
+              as double?,
+      lastError: freezed == lastError
+          ? _value.lastError
+          : lastError // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastActive: freezed == lastActive
+          ? _value.lastActive
+          : lastActive // ignore: cast_nullable_to_non_nullable
+              as double?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentInfoImpl implements _AgentInfo {
+  const _$AgentInfoImpl(
+      {required this.name,
+      required this.role,
+      required final List<String> skills,
+      required final List<String> permissions,
+      required this.ok,
+      required this.errors,
+      this.successRate,
+      this.lastError,
+      this.lastActive,
+      required this.status})
+      : _skills = skills,
+        _permissions = permissions;
+
+  factory _$AgentInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentInfoImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String role;
+  final List<String> _skills;
+  @override
+  List<String> get skills {
+    if (_skills is EqualUnmodifiableListView) return _skills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_skills);
+  }
+
+  final List<String> _permissions;
+  @override
+  List<String> get permissions {
+    if (_permissions is EqualUnmodifiableListView) return _permissions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_permissions);
+  }
+
+  @override
+  final int ok;
+  @override
+  final int errors;
+  @override
+  final double? successRate;
+  @override
+  final String? lastError;
+  @override
+  final double? lastActive;
+  @override
+  final String status;
+
+  @override
+  String toString() {
+    return 'AgentInfo(name: $name, role: $role, skills: $skills, permissions: $permissions, ok: $ok, errors: $errors, successRate: $successRate, lastError: $lastError, lastActive: $lastActive, status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentInfoImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.role, role) || other.role == role) &&
+            const DeepCollectionEquality().equals(other._skills, _skills) &&
+            const DeepCollectionEquality()
+                .equals(other._permissions, _permissions) &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.errors, errors) || other.errors == errors) &&
+            (identical(other.successRate, successRate) ||
+                other.successRate == successRate) &&
+            (identical(other.lastError, lastError) ||
+                other.lastError == lastError) &&
+            (identical(other.lastActive, lastActive) ||
+                other.lastActive == lastActive) &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      role,
+      const DeepCollectionEquality().hash(_skills),
+      const DeepCollectionEquality().hash(_permissions),
+      ok,
+      errors,
+      successRate,
+      lastError,
+      lastActive,
+      status);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentInfoImplCopyWith<_$AgentInfoImpl> get copyWith =>
+      __$$AgentInfoImplCopyWithImpl<_$AgentInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentInfo implements AgentInfo {
+  const factory _AgentInfo(
+      {required final String name,
+      required final String role,
+      required final List<String> skills,
+      required final List<String> permissions,
+      required final int ok,
+      required final int errors,
+      final double? successRate,
+      final String? lastError,
+      final double? lastActive,
+      required final String status}) = _$AgentInfoImpl;
+
+  factory _AgentInfo.fromJson(Map<String, dynamic> json) =
+      _$AgentInfoImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get role;
+  @override
+  List<String> get skills;
+  @override
+  List<String> get permissions;
+  @override
+  int get ok;
+  @override
+  int get errors;
+  @override
+  double? get successRate;
+  @override
+  String? get lastError;
+  @override
+  double? get lastActive;
+  @override
+  String get status;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentInfoImplCopyWith<_$AgentInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AgentsListResponse _$AgentsListResponseFromJson(Map<String, dynamic> json) {
+  return _AgentsListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentsListResponse {
+  List<AgentInfo> get agents => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentsListResponseCopyWith<AgentsListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentsListResponseCopyWith<$Res> {
+  factory $AgentsListResponseCopyWith(
+          AgentsListResponse value, $Res Function(AgentsListResponse) then) =
+      _$AgentsListResponseCopyWithImpl<$Res, AgentsListResponse>;
+  @useResult
+  $Res call({List<AgentInfo> agents});
+}
+
+/// @nodoc
+class _$AgentsListResponseCopyWithImpl<$Res, $Val extends AgentsListResponse>
+    implements $AgentsListResponseCopyWith<$Res> {
+  _$AgentsListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? agents = null,
+  }) {
+    return _then(_value.copyWith(
+      agents: null == agents
+          ? _value.agents
+          : agents // ignore: cast_nullable_to_non_nullable
+              as List<AgentInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentsListResponseImplCopyWith<$Res>
+    implements $AgentsListResponseCopyWith<$Res> {
+  factory _$$AgentsListResponseImplCopyWith(_$AgentsListResponseImpl value,
+          $Res Function(_$AgentsListResponseImpl) then) =
+      __$$AgentsListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AgentInfo> agents});
+}
+
+/// @nodoc
+class __$$AgentsListResponseImplCopyWithImpl<$Res>
+    extends _$AgentsListResponseCopyWithImpl<$Res, _$AgentsListResponseImpl>
+    implements _$$AgentsListResponseImplCopyWith<$Res> {
+  __$$AgentsListResponseImplCopyWithImpl(_$AgentsListResponseImpl _value,
+      $Res Function(_$AgentsListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? agents = null,
+  }) {
+    return _then(_$AgentsListResponseImpl(
+      agents: null == agents
+          ? _value._agents
+          : agents // ignore: cast_nullable_to_non_nullable
+              as List<AgentInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentsListResponseImpl implements _AgentsListResponse {
+  const _$AgentsListResponseImpl({required final List<AgentInfo> agents})
+      : _agents = agents;
+
+  factory _$AgentsListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentsListResponseImplFromJson(json);
+
+  final List<AgentInfo> _agents;
+  @override
+  List<AgentInfo> get agents {
+    if (_agents is EqualUnmodifiableListView) return _agents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_agents);
+  }
+
+  @override
+  String toString() {
+    return 'AgentsListResponse(agents: $agents)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentsListResponseImpl &&
+            const DeepCollectionEquality().equals(other._agents, _agents));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_agents));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentsListResponseImplCopyWith<_$AgentsListResponseImpl> get copyWith =>
+      __$$AgentsListResponseImplCopyWithImpl<_$AgentsListResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentsListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentsListResponse implements AgentsListResponse {
+  const factory _AgentsListResponse({required final List<AgentInfo> agents}) =
+      _$AgentsListResponseImpl;
+
+  factory _AgentsListResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentsListResponseImpl.fromJson;
+
+  @override
+  List<AgentInfo> get agents;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentsListResponseImplCopyWith<_$AgentsListResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+OrchestrationAssignment _$OrchestrationAssignmentFromJson(
+    Map<String, dynamic> json) {
+  return _OrchestrationAssignment.fromJson(json);
+}
+
+/// @nodoc
+mixin _$OrchestrationAssignment {
+  String get nodeId => throw _privateConstructorUsedError;
+  String get agentName => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  String? get tool => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $OrchestrationAssignmentCopyWith<OrchestrationAssignment> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $OrchestrationAssignmentCopyWith<$Res> {
+  factory $OrchestrationAssignmentCopyWith(OrchestrationAssignment value,
+          $Res Function(OrchestrationAssignment) then) =
+      _$OrchestrationAssignmentCopyWithImpl<$Res, OrchestrationAssignment>;
+  @useResult
+  $Res call(
+      {String nodeId, String agentName, String? description, String? tool});
+}
+
+/// @nodoc
+class _$OrchestrationAssignmentCopyWithImpl<$Res,
+        $Val extends OrchestrationAssignment>
+    implements $OrchestrationAssignmentCopyWith<$Res> {
+  _$OrchestrationAssignmentCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nodeId = null,
+    Object? agentName = null,
+    Object? description = freezed,
+    Object? tool = freezed,
+  }) {
+    return _then(_value.copyWith(
+      nodeId: null == nodeId
+          ? _value.nodeId
+          : nodeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentName: null == agentName
+          ? _value.agentName
+          : agentName // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tool: freezed == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$OrchestrationAssignmentImplCopyWith<$Res>
+    implements $OrchestrationAssignmentCopyWith<$Res> {
+  factory _$$OrchestrationAssignmentImplCopyWith(
+          _$OrchestrationAssignmentImpl value,
+          $Res Function(_$OrchestrationAssignmentImpl) then) =
+      __$$OrchestrationAssignmentImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String nodeId, String agentName, String? description, String? tool});
+}
+
+/// @nodoc
+class __$$OrchestrationAssignmentImplCopyWithImpl<$Res>
+    extends _$OrchestrationAssignmentCopyWithImpl<$Res,
+        _$OrchestrationAssignmentImpl>
+    implements _$$OrchestrationAssignmentImplCopyWith<$Res> {
+  __$$OrchestrationAssignmentImplCopyWithImpl(
+      _$OrchestrationAssignmentImpl _value,
+      $Res Function(_$OrchestrationAssignmentImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nodeId = null,
+    Object? agentName = null,
+    Object? description = freezed,
+    Object? tool = freezed,
+  }) {
+    return _then(_$OrchestrationAssignmentImpl(
+      nodeId: null == nodeId
+          ? _value.nodeId
+          : nodeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentName: null == agentName
+          ? _value.agentName
+          : agentName // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tool: freezed == tool
+          ? _value.tool
+          : tool // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$OrchestrationAssignmentImpl implements _OrchestrationAssignment {
+  const _$OrchestrationAssignmentImpl(
+      {required this.nodeId,
+      required this.agentName,
+      this.description,
+      this.tool});
+
+  factory _$OrchestrationAssignmentImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OrchestrationAssignmentImplFromJson(json);
+
+  @override
+  final String nodeId;
+  @override
+  final String agentName;
+  @override
+  final String? description;
+  @override
+  final String? tool;
+
+  @override
+  String toString() {
+    return 'OrchestrationAssignment(nodeId: $nodeId, agentName: $agentName, description: $description, tool: $tool)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OrchestrationAssignmentImpl &&
+            (identical(other.nodeId, nodeId) || other.nodeId == nodeId) &&
+            (identical(other.agentName, agentName) ||
+                other.agentName == agentName) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.tool, tool) || other.tool == tool));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, nodeId, agentName, description, tool);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OrchestrationAssignmentImplCopyWith<_$OrchestrationAssignmentImpl>
+      get copyWith => __$$OrchestrationAssignmentImplCopyWithImpl<
+          _$OrchestrationAssignmentImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$OrchestrationAssignmentImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _OrchestrationAssignment implements OrchestrationAssignment {
+  const factory _OrchestrationAssignment(
+      {required final String nodeId,
+      required final String agentName,
+      final String? description,
+      final String? tool}) = _$OrchestrationAssignmentImpl;
+
+  factory _OrchestrationAssignment.fromJson(Map<String, dynamic> json) =
+      _$OrchestrationAssignmentImpl.fromJson;
+
+  @override
+  String get nodeId;
+  @override
+  String get agentName;
+  @override
+  String? get description;
+  @override
+  String? get tool;
+  @override
+  @JsonKey(ignore: true)
+  _$$OrchestrationAssignmentImplCopyWith<_$OrchestrationAssignmentImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AgentsOrchestrateResponse _$AgentsOrchestrateResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AgentsOrchestrateResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentsOrchestrateResponse {
+  BrainAnalyzeResponse get analysis => throw _privateConstructorUsedError;
+  Map<String, String> get assignments => throw _privateConstructorUsedError;
+  BrainGraphResponse get graph => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentsOrchestrateResponseCopyWith<AgentsOrchestrateResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentsOrchestrateResponseCopyWith<$Res> {
+  factory $AgentsOrchestrateResponseCopyWith(AgentsOrchestrateResponse value,
+          $Res Function(AgentsOrchestrateResponse) then) =
+      _$AgentsOrchestrateResponseCopyWithImpl<$Res, AgentsOrchestrateResponse>;
+  @useResult
+  $Res call(
+      {BrainAnalyzeResponse analysis,
+      Map<String, String> assignments,
+      BrainGraphResponse graph});
+
+  $BrainAnalyzeResponseCopyWith<$Res> get analysis;
+  $BrainGraphResponseCopyWith<$Res> get graph;
+}
+
+/// @nodoc
+class _$AgentsOrchestrateResponseCopyWithImpl<$Res,
+        $Val extends AgentsOrchestrateResponse>
+    implements $AgentsOrchestrateResponseCopyWith<$Res> {
+  _$AgentsOrchestrateResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? analysis = null,
+    Object? assignments = null,
+    Object? graph = null,
+  }) {
+    return _then(_value.copyWith(
+      analysis: null == analysis
+          ? _value.analysis
+          : analysis // ignore: cast_nullable_to_non_nullable
+              as BrainAnalyzeResponse,
+      assignments: null == assignments
+          ? _value.assignments
+          : assignments // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      graph: null == graph
+          ? _value.graph
+          : graph // ignore: cast_nullable_to_non_nullable
+              as BrainGraphResponse,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $BrainAnalyzeResponseCopyWith<$Res> get analysis {
+    return $BrainAnalyzeResponseCopyWith<$Res>(_value.analysis, (value) {
+      return _then(_value.copyWith(analysis: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $BrainGraphResponseCopyWith<$Res> get graph {
+    return $BrainGraphResponseCopyWith<$Res>(_value.graph, (value) {
+      return _then(_value.copyWith(graph: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentsOrchestrateResponseImplCopyWith<$Res>
+    implements $AgentsOrchestrateResponseCopyWith<$Res> {
+  factory _$$AgentsOrchestrateResponseImplCopyWith(
+          _$AgentsOrchestrateResponseImpl value,
+          $Res Function(_$AgentsOrchestrateResponseImpl) then) =
+      __$$AgentsOrchestrateResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {BrainAnalyzeResponse analysis,
+      Map<String, String> assignments,
+      BrainGraphResponse graph});
+
+  @override
+  $BrainAnalyzeResponseCopyWith<$Res> get analysis;
+  @override
+  $BrainGraphResponseCopyWith<$Res> get graph;
+}
+
+/// @nodoc
+class __$$AgentsOrchestrateResponseImplCopyWithImpl<$Res>
+    extends _$AgentsOrchestrateResponseCopyWithImpl<$Res,
+        _$AgentsOrchestrateResponseImpl>
+    implements _$$AgentsOrchestrateResponseImplCopyWith<$Res> {
+  __$$AgentsOrchestrateResponseImplCopyWithImpl(
+      _$AgentsOrchestrateResponseImpl _value,
+      $Res Function(_$AgentsOrchestrateResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? analysis = null,
+    Object? assignments = null,
+    Object? graph = null,
+  }) {
+    return _then(_$AgentsOrchestrateResponseImpl(
+      analysis: null == analysis
+          ? _value.analysis
+          : analysis // ignore: cast_nullable_to_non_nullable
+              as BrainAnalyzeResponse,
+      assignments: null == assignments
+          ? _value._assignments
+          : assignments // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      graph: null == graph
+          ? _value.graph
+          : graph // ignore: cast_nullable_to_non_nullable
+              as BrainGraphResponse,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentsOrchestrateResponseImpl implements _AgentsOrchestrateResponse {
+  const _$AgentsOrchestrateResponseImpl(
+      {required this.analysis,
+      required final Map<String, String> assignments,
+      required this.graph})
+      : _assignments = assignments;
+
+  factory _$AgentsOrchestrateResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentsOrchestrateResponseImplFromJson(json);
+
+  @override
+  final BrainAnalyzeResponse analysis;
+  final Map<String, String> _assignments;
+  @override
+  Map<String, String> get assignments {
+    if (_assignments is EqualUnmodifiableMapView) return _assignments;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_assignments);
+  }
+
+  @override
+  final BrainGraphResponse graph;
+
+  @override
+  String toString() {
+    return 'AgentsOrchestrateResponse(analysis: $analysis, assignments: $assignments, graph: $graph)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentsOrchestrateResponseImpl &&
+            (identical(other.analysis, analysis) ||
+                other.analysis == analysis) &&
+            const DeepCollectionEquality()
+                .equals(other._assignments, _assignments) &&
+            (identical(other.graph, graph) || other.graph == graph));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, analysis,
+      const DeepCollectionEquality().hash(_assignments), graph);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentsOrchestrateResponseImplCopyWith<_$AgentsOrchestrateResponseImpl>
+      get copyWith => __$$AgentsOrchestrateResponseImplCopyWithImpl<
+          _$AgentsOrchestrateResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentsOrchestrateResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentsOrchestrateResponse implements AgentsOrchestrateResponse {
+  const factory _AgentsOrchestrateResponse(
+          {required final BrainAnalyzeResponse analysis,
+          required final Map<String, String> assignments,
+          required final BrainGraphResponse graph}) =
+      _$AgentsOrchestrateResponseImpl;
+
+  factory _AgentsOrchestrateResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentsOrchestrateResponseImpl.fromJson;
+
+  @override
+  BrainAnalyzeResponse get analysis;
+  @override
+  Map<String, String> get assignments;
+  @override
+  BrainGraphResponse get graph;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentsOrchestrateResponseImplCopyWith<_$AgentsOrchestrateResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AgentMessage _$AgentMessageFromJson(Map<String, dynamic> json) {
+  return _AgentMessage.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentMessage {
+  String get from => throw _privateConstructorUsedError;
+  String get to => throw _privateConstructorUsedError;
+  dynamic get content => throw _privateConstructorUsedError;
+  double get ts => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentMessageCopyWith<AgentMessage> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentMessageCopyWith<$Res> {
+  factory $AgentMessageCopyWith(
+          AgentMessage value, $Res Function(AgentMessage) then) =
+      _$AgentMessageCopyWithImpl<$Res, AgentMessage>;
+  @useResult
+  $Res call({String from, String to, dynamic content, double ts});
+}
+
+/// @nodoc
+class _$AgentMessageCopyWithImpl<$Res, $Val extends AgentMessage>
+    implements $AgentMessageCopyWith<$Res> {
+  _$AgentMessageCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? from = null,
+    Object? to = null,
+    Object? content = freezed,
+    Object? ts = null,
+  }) {
+    return _then(_value.copyWith(
+      from: null == from
+          ? _value.from
+          : from // ignore: cast_nullable_to_non_nullable
+              as String,
+      to: null == to
+          ? _value.to
+          : to // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      ts: null == ts
+          ? _value.ts
+          : ts // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentMessageImplCopyWith<$Res>
+    implements $AgentMessageCopyWith<$Res> {
+  factory _$$AgentMessageImplCopyWith(
+          _$AgentMessageImpl value, $Res Function(_$AgentMessageImpl) then) =
+      __$$AgentMessageImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String from, String to, dynamic content, double ts});
+}
+
+/// @nodoc
+class __$$AgentMessageImplCopyWithImpl<$Res>
+    extends _$AgentMessageCopyWithImpl<$Res, _$AgentMessageImpl>
+    implements _$$AgentMessageImplCopyWith<$Res> {
+  __$$AgentMessageImplCopyWithImpl(
+      _$AgentMessageImpl _value, $Res Function(_$AgentMessageImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? from = null,
+    Object? to = null,
+    Object? content = freezed,
+    Object? ts = null,
+  }) {
+    return _then(_$AgentMessageImpl(
+      from: null == from
+          ? _value.from
+          : from // ignore: cast_nullable_to_non_nullable
+              as String,
+      to: null == to
+          ? _value.to
+          : to // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      ts: null == ts
+          ? _value.ts
+          : ts // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentMessageImpl implements _AgentMessage {
+  const _$AgentMessageImpl(
+      {required this.from,
+      required this.to,
+      required this.content,
+      required this.ts});
+
+  factory _$AgentMessageImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentMessageImplFromJson(json);
+
+  @override
+  final String from;
+  @override
+  final String to;
+  @override
+  final dynamic content;
+  @override
+  final double ts;
+
+  @override
+  String toString() {
+    return 'AgentMessage(from: $from, to: $to, content: $content, ts: $ts)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentMessageImpl &&
+            (identical(other.from, from) || other.from == from) &&
+            (identical(other.to, to) || other.to == to) &&
+            const DeepCollectionEquality().equals(other.content, content) &&
+            (identical(other.ts, ts) || other.ts == ts));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, from, to, const DeepCollectionEquality().hash(content), ts);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentMessageImplCopyWith<_$AgentMessageImpl> get copyWith =>
+      __$$AgentMessageImplCopyWithImpl<_$AgentMessageImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentMessageImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentMessage implements AgentMessage {
+  const factory _AgentMessage(
+      {required final String from,
+      required final String to,
+      required final dynamic content,
+      required final double ts}) = _$AgentMessageImpl;
+
+  factory _AgentMessage.fromJson(Map<String, dynamic> json) =
+      _$AgentMessageImpl.fromJson;
+
+  @override
+  String get from;
+  @override
+  String get to;
+  @override
+  dynamic get content;
+  @override
+  double get ts;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentMessageImplCopyWith<_$AgentMessageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AgentsMessagesResponse _$AgentsMessagesResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AgentsMessagesResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentsMessagesResponse {
+  List<AgentMessage> get messages => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentsMessagesResponseCopyWith<AgentsMessagesResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentsMessagesResponseCopyWith<$Res> {
+  factory $AgentsMessagesResponseCopyWith(AgentsMessagesResponse value,
+          $Res Function(AgentsMessagesResponse) then) =
+      _$AgentsMessagesResponseCopyWithImpl<$Res, AgentsMessagesResponse>;
+  @useResult
+  $Res call({List<AgentMessage> messages});
+}
+
+/// @nodoc
+class _$AgentsMessagesResponseCopyWithImpl<$Res,
+        $Val extends AgentsMessagesResponse>
+    implements $AgentsMessagesResponseCopyWith<$Res> {
+  _$AgentsMessagesResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? messages = null,
+  }) {
+    return _then(_value.copyWith(
+      messages: null == messages
+          ? _value.messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<AgentMessage>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentsMessagesResponseImplCopyWith<$Res>
+    implements $AgentsMessagesResponseCopyWith<$Res> {
+  factory _$$AgentsMessagesResponseImplCopyWith(
+          _$AgentsMessagesResponseImpl value,
+          $Res Function(_$AgentsMessagesResponseImpl) then) =
+      __$$AgentsMessagesResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AgentMessage> messages});
+}
+
+/// @nodoc
+class __$$AgentsMessagesResponseImplCopyWithImpl<$Res>
+    extends _$AgentsMessagesResponseCopyWithImpl<$Res,
+        _$AgentsMessagesResponseImpl>
+    implements _$$AgentsMessagesResponseImplCopyWith<$Res> {
+  __$$AgentsMessagesResponseImplCopyWithImpl(
+      _$AgentsMessagesResponseImpl _value,
+      $Res Function(_$AgentsMessagesResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? messages = null,
+  }) {
+    return _then(_$AgentsMessagesResponseImpl(
+      messages: null == messages
+          ? _value._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<AgentMessage>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentsMessagesResponseImpl implements _AgentsMessagesResponse {
+  const _$AgentsMessagesResponseImpl(
+      {required final List<AgentMessage> messages})
+      : _messages = messages;
+
+  factory _$AgentsMessagesResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentsMessagesResponseImplFromJson(json);
+
+  final List<AgentMessage> _messages;
+  @override
+  List<AgentMessage> get messages {
+    if (_messages is EqualUnmodifiableListView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  @override
+  String toString() {
+    return 'AgentsMessagesResponse(messages: $messages)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentsMessagesResponseImpl &&
+            const DeepCollectionEquality().equals(other._messages, _messages));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_messages));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentsMessagesResponseImplCopyWith<_$AgentsMessagesResponseImpl>
+      get copyWith => __$$AgentsMessagesResponseImplCopyWithImpl<
+          _$AgentsMessagesResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentsMessagesResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentsMessagesResponse implements AgentsMessagesResponse {
+  const factory _AgentsMessagesResponse(
+          {required final List<AgentMessage> messages}) =
+      _$AgentsMessagesResponseImpl;
+
+  factory _AgentsMessagesResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentsMessagesResponseImpl.fromJson;
+
+  @override
+  List<AgentMessage> get messages;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentsMessagesResponseImplCopyWith<_$AgentsMessagesResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

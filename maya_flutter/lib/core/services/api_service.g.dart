@@ -1335,6 +1335,200 @@ Map<String, dynamic> _$$BrainGraphResponseImplToJson(
       'progress': instance.progress,
     };
 
+_$AgentInfoImpl _$$AgentInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$AgentInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentInfoImpl(
+          name: $checkedConvert('name', (v) => v as String),
+          role: $checkedConvert('role', (v) => v as String),
+          skills: $checkedConvert('skills',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          permissions: $checkedConvert('permissions',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          ok: $checkedConvert('ok', (v) => (v as num).toInt()),
+          errors: $checkedConvert('errors', (v) => (v as num).toInt()),
+          successRate:
+              $checkedConvert('success_rate', (v) => (v as num?)?.toDouble()),
+          lastError: $checkedConvert('last_error', (v) => v as String?),
+          lastActive:
+              $checkedConvert('last_active', (v) => (v as num?)?.toDouble()),
+          status: $checkedConvert('status', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'successRate': 'success_rate',
+        'lastError': 'last_error',
+        'lastActive': 'last_active'
+      },
+    );
+
+Map<String, dynamic> _$$AgentInfoImplToJson(_$AgentInfoImpl instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+    'role': instance.role,
+    'skills': instance.skills,
+    'permissions': instance.permissions,
+    'ok': instance.ok,
+    'errors': instance.errors,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('success_rate', instance.successRate);
+  writeNotNull('last_error', instance.lastError);
+  writeNotNull('last_active', instance.lastActive);
+  val['status'] = instance.status;
+  return val;
+}
+
+_$AgentsListResponseImpl _$$AgentsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AgentsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentsListResponseImpl(
+          agents: $checkedConvert(
+              'agents',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      AgentInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentsListResponseImplToJson(
+        _$AgentsListResponseImpl instance) =>
+    <String, dynamic>{
+      'agents': instance.agents,
+    };
+
+_$OrchestrationAssignmentImpl _$$OrchestrationAssignmentImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$OrchestrationAssignmentImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$OrchestrationAssignmentImpl(
+          nodeId: $checkedConvert('node_id', (v) => v as String),
+          agentName: $checkedConvert('agent_name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String?),
+          tool: $checkedConvert('tool', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'nodeId': 'node_id', 'agentName': 'agent_name'},
+    );
+
+Map<String, dynamic> _$$OrchestrationAssignmentImplToJson(
+    _$OrchestrationAssignmentImpl instance) {
+  final val = <String, dynamic>{
+    'node_id': instance.nodeId,
+    'agent_name': instance.agentName,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('description', instance.description);
+  writeNotNull('tool', instance.tool);
+  return val;
+}
+
+_$AgentsOrchestrateResponseImpl _$$AgentsOrchestrateResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AgentsOrchestrateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentsOrchestrateResponseImpl(
+          analysis: $checkedConvert(
+              'analysis',
+              (v) => BrainAnalyzeResponse.fromJson(
+                  Map<String, dynamic>.from(v as Map))),
+          assignments: $checkedConvert(
+              'assignments', (v) => Map<String, String>.from(v as Map)),
+          graph: $checkedConvert(
+              'graph',
+              (v) => BrainGraphResponse.fromJson(
+                  Map<String, dynamic>.from(v as Map))),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentsOrchestrateResponseImplToJson(
+        _$AgentsOrchestrateResponseImpl instance) =>
+    <String, dynamic>{
+      'analysis': instance.analysis,
+      'assignments': instance.assignments,
+      'graph': instance.graph,
+    };
+
+_$AgentMessageImpl _$$AgentMessageImplFromJson(Map json) => $checkedCreate(
+      r'_$AgentMessageImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentMessageImpl(
+          from: $checkedConvert('from', (v) => v as String),
+          to: $checkedConvert('to', (v) => v as String),
+          content: $checkedConvert('content', (v) => v),
+          ts: $checkedConvert('ts', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentMessageImplToJson(_$AgentMessageImpl instance) {
+  final val = <String, dynamic>{
+    'from': instance.from,
+    'to': instance.to,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('content', instance.content);
+  val['ts'] = instance.ts;
+  return val;
+}
+
+_$AgentsMessagesResponseImpl _$$AgentsMessagesResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AgentsMessagesResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentsMessagesResponseImpl(
+          messages: $checkedConvert(
+              'messages',
+              (v) => (v as List<dynamic>)
+                  .map((e) => AgentMessage.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentsMessagesResponseImplToJson(
+        _$AgentsMessagesResponseImpl instance) =>
+    <String, dynamic>{
+      'messages': instance.messages,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

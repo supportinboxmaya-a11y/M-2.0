@@ -1317,22 +1317,18 @@ class _AppDrawer extends ConsumerWidget {
               icon: Icons.psychology_rounded,
               children: [
                 _DrawerActionTile(
-                  icon: Icons.psychology_rounded,
-                  label: 'Select Agent',
-                  subtitle: 'Choose active AI agent',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _DrawerActionTile(
-                  icon: Icons.add_rounded,
-                  label: 'Create Agent',
-                  subtitle: 'Build custom agent',
-                  onTap: () => Navigator.pop(context),
-                ),
-                _DrawerActionTile(
-                  icon: Icons.manage_accounts_rounded,
-                  label: 'Manage Agents',
-                  subtitle: 'View & edit agents',
-                  onTap: () => Navigator.pop(context),
+                  icon: Icons.people_rounded,
+                  label: 'Agents',
+                  subtitle: '11 agents, status & orchestration',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _AgentsScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _DrawerActionTile(
                   icon: Icons.psychology_rounded,
@@ -4448,4 +4444,814 @@ final brainAnalyzeProvider = FutureProvider.family<BrainAnalyzeResponse, String>
   }
   final apiService = ref.read(apiServiceProvider);
   return apiService.analyzeGoal(goal);
+});
+
+// Multi-Agent System Screen
+class _AgentsScreen extends ConsumerStatefulWidget {
+  const _AgentsScreen();
+
+  @override
+  ConsumerState<_AgentsScreen> createState() => _AgentsScreenState();
+}
+
+class _AgentsScreenState extends ConsumerState<_AgentsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(agentsListProvider);
+        ref.invalidate(agentsMessagesProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Multi-Agent System', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(agentsListProvider);
+                ref.invalidate(agentsMessagesProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.people_rounded), text: 'Agents'),
+              Tab(icon: Icon(Icons.account_tree_rounded), text: 'Orchestration'),
+              Tab(icon: Icon(Icons.message_rounded), text: 'Messages'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildAgentsTab(),
+            _buildOrchestrationTab(),
+            _buildMessagesTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAgentsTab() {
+    final agentsAsync = ref.watch(agentsListProvider);
+
+    return agentsAsync.when(
+      data: (response) {
+        if (response.agents.isEmpty) {
+          return const Center(
+            child: Text('No agents found', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.agents.length,
+          itemBuilder: (context, index) {
+            final agent = response.agents[index];
+            return _AgentTile(agent: agent);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading agents', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrchestrationTab() {
+    final agentsAsync = ref.watch(agentsListProvider);
+    final _goalController = TextEditingController(text: 'Build a todo app with Flutter');
+
+    return agentsAsync.when(
+      data: (response) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Goal Input
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Orchestrate Goal', style: MayaTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _goalController,
+                      style: MayaTheme.bodyMedium,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Enter a goal to orchestrate across agents...',
+                        hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                        filled: true,
+                        fillColor: MayaTheme.slate700,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _orchestrateGoal(_goalController.text.trim()),
+                        icon: const Icon(Icons.psychology_rounded),
+                        label: const Text('Plan & Assign'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MayaTheme.neonCyan,
+                          foregroundColor: MayaTheme.slate900,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Orchestration Result
+              Consumer(
+                builder: (context, ref, _) {
+                  final orchestrationAsync = ref.watch(agentsOrchestrateProvider);
+
+                  return orchestrationAsync.when(
+                    data: (result) => _OrchestrationResultCard(result: result),
+                    loading: () => Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: MayaTheme.glassCard(),
+                      child: const Center(
+                        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                      ),
+                    ),
+                    error: (err, _) => Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: MayaTheme.glassCard(),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                          const SizedBox(height: 16),
+                          Text('Orchestration error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                          const SizedBox(height: 8),
+                          Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 24),
+
+              // Available Agents Reference
+              const Text('Available Agents', style: MayaTheme.titleMedium),
+              const SizedBox(height: 12),
+              ...response.agents.map((agent) => _AgentReferenceTile(agent: agent)),
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading agents', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessagesTab() {
+    final messagesAsync = ref.watch(agentsMessagesProvider);
+
+    return messagesAsync.when(
+      data: (response) {
+        if (response.messages.isEmpty) {
+          return const Center(
+            child: Text('No messages yet', style: MayaTheme.bodyMedium),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.messages.length,
+          itemBuilder: (context, index) {
+            final msg = response.messages[index];
+            return _MessageTile(message: msg);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading messages', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _orchestrateGoal(String goal) async {
+    if (goal.isEmpty) return;
+    ref.invalidate(agentsOrchestrateProvider);
+    // The provider will auto-fetch when we invalidate
+    // We just need to trigger it by watching with the goal
+    // Using a workaround: set a state provider for the goal
+    ref.read(agentsOrchestrateGoalProvider.notifier).state = goal;
+  }
+}
+
+class _AgentTile extends ConsumerWidget {
+  final AgentInfo agent;
+
+  const _AgentTile({required this.agent});
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'healthy':
+        return MayaTheme.neonEmerald;
+      case 'degraded':
+        return MayaTheme.neonOrange;
+      default:
+        return Colors.white38;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isHealthy = agent.status == 'healthy';
+    final totalTasks = agent.ok + agent.errors;
+    final lastActive = agent.lastActive != null
+        ? DateTime.fromMillisecondsSinceEpoch((agent.lastActive! * 1000).round())
+            .toString()
+            .substring(11, 19)
+        : 'Never';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _getStatusColor(agent.status).withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            isHealthy ? Icons.check_circle_rounded : Icons.warning_rounded,
+            color: _getStatusColor(agent.status),
+            size: 20,
+          ),
+        ),
+        title: Text(agent.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          agent.role,
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: _getStatusColor(agent.status).withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            agent.status.toUpperCase(),
+            style: MayaTheme.labelSmall.copyWith(
+              color: _getStatusColor(agent.status),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Role', value: agent.role),
+                _DetailRow(label: 'Success/Errors', value: '${agent.ok} / ${agent.errors}'),
+                if (agent.successRate != null)
+                  _DetailRow(label: 'Success Rate', value: '${(agent.successRate! * 100).toStringAsFixed(1)}%'),
+                _DetailRow(label: 'Last Active', value: lastActive),
+                if (agent.lastError != null) ...[
+                  const SizedBox(height: 8),
+                  const Text('Last Error:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.error.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(agent.lastError!, style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                const Text('Skills:', style: MayaTheme.labelMedium),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: agent.skills.map((skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonViolet.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(skill, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                  )).toList(),
+                ),
+                const SizedBox(height: 12),
+                const Text('Permissions:', style: MayaTheme.labelMedium),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: agent.permissions.map((perm) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonCyan.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(perm, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan)),
+                  )).toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AgentReferenceTile extends StatelessWidget {
+  final AgentInfo agent;
+
+  const _AgentReferenceTile({required this.agent});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                agent.name.substring(0, 1).toUpperCase(),
+                style: MayaTheme.titleMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(agent.name, style: MayaTheme.titleSmall),
+                Text(agent.role, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              ],
+            ),
+          ),
+          Wrap(
+            spacing: 4,
+            children: agent.skills.take(3).map((s) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(s, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrchestrationResultCard extends StatelessWidget {
+  final AgentsOrchestrateResponse result;
+
+  const _OrchestrationResultCard({required this.result});
+
+  @override
+  Widget build(BuildContext context) {
+    final analysis = result.analysis;
+    final assignments = result.assignments;
+    final graph = result.graph;
+
+    return Container(
+      width: double.infinity,
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.account_tree_rounded, color: MayaTheme.neonCyan, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Orchestration Plan', style: MayaTheme.titleMedium),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Goal: ${analysis.goal}',
+                            style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Analysis Summary
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    _AnalysisChip(label: analysis.complexity.toUpperCase(), color: analysis.complexity == 'multi_step' ? MayaTheme.neonOrange : MayaTheme.neonEmerald),
+                    const SizedBox(width: 8),
+                    _AnalysisChip(label: '${analysis.estimatedSteps} steps', color: MayaTheme.neonViolet),
+                    const SizedBox(width: 8),
+                    _AnalysisChip(label: '${graph.nodes.length} nodes', color: MayaTheme.neonCyan),
+                  ],
+                ),
+                if (analysis.suggestedTools.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  const Text('Suggested Tools:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: analysis.suggestedTools.map((t) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.neonCyan.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+                      ),
+                      child: Text(t, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan)),
+                    )).toList(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          // Assignments
+          if (assignments.isNotEmpty) ...[
+            const Divider(color: MayaTheme.glassWhite10, height: 1),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Agent Assignments', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  ...assignments.entries.map((entry) {
+                    final nodeId = entry.key;
+                    final agentName = entry.value;
+                    final node = graph.nodes.firstWhere((n) => n.id == nodeId, orElse: () => null);
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.slate700,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: MayaTheme.glassWhite10),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: agentName.isNotEmpty ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                agentName.isNotEmpty ? agentName.substring(0, 1).toUpperCase() : '?',
+                                style: MayaTheme.labelMedium.copyWith(
+                                  color: agentName.isNotEmpty ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  agentName.isNotEmpty ? agentName : 'Unassigned',
+                                  style: MayaTheme.titleSmall,
+                                ),
+                                if (node != null)
+                                  Text(
+                                    node.description,
+                                    style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          if (node?.tool != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(node!.tool!, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                            ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ],
+
+          // Graph Progress
+          const Divider(color: MayaTheme.glassWhite10, height: 1),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Graph Progress', style: MayaTheme.labelMedium),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: MayaTheme.slate700,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _ProgressStat(label: 'Total', value: graph.progress.total.toString(), color: MayaTheme.neonCyan),
+                          _ProgressStat(label: 'Done', value: graph.progress.states['done']?.toString() ?? '0', color: MayaTheme.neonEmerald),
+                          _ProgressStat(label: 'Running', value: graph.progress.states['running']?.toString() ?? '0', color: MayaTheme.neonViolet),
+                          _ProgressStat(label: 'Failed', value: graph.progress.states['failed']?.toString() ?? '0', color: MayaTheme.error),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      LinearProgressIndicator(
+                        value: graph.progress.percent / 100,
+                        backgroundColor: MayaTheme.slate900,
+                        valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
+                        minHeight: 8,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${graph.progress.percent.toStringAsFixed(1)}% complete',
+                        style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _AnalysisChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: MayaTheme.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+class _ProgressStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _ProgressStat({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(value, style: MayaTheme.headlineSmall.copyWith(color: color)),
+        const SizedBox(height: 2),
+        Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+      ],
+    );
+  }
+}
+
+class _MessageTile extends StatelessWidget {
+  final AgentMessage message;
+
+  const _MessageTile({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    final time = DateTime.fromMillisecondsSinceEpoch((message.ts * 1000).round())
+        .toString()
+        .substring(11, 19);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.message_rounded, color: MayaTheme.neonCyan, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Text(message.from, style: MayaTheme.titleSmall),
+              const SizedBox(width: 8),
+              const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white38),
+              const SizedBox(width: 8),
+              Text(message.to, style: MayaTheme.titleSmall),
+              const Spacer(),
+              Text(time, style: MayaTheme.labelSmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate700,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              message.content.toString(),
+              style: MayaTheme.bodySmall.copyWith(color: Colors.white70, fontFamily: 'monospace'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Multi-Agent Providers
+final agentsListProvider = FutureProvider<AgentsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAgentsList();
+});
+
+final agentsOrchestrateGoalProvider = StateProvider<String>((ref) => '');
+
+final agentsOrchestrateProvider = FutureProvider<AgentsOrchestrateResponse>((ref) async {
+  final goal = ref.watch(agentsOrchestrateGoalProvider);
+  if (goal.isEmpty) {
+    throw Exception('Empty goal');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.orchestrateGoal(goal);
+});
+
+final agentsMessagesProvider = FutureProvider<AgentsMessagesResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAgentsMessages();
 });
