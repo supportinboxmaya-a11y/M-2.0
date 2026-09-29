@@ -2579,6 +2579,201 @@ Map<String, dynamic> _$$LearningPromptsResponseImplToJson(
       'prompts': instance.prompts,
     };
 
+_$RAGStatsResponseImpl _$$RAGStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RAGStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGStatsResponseImpl(
+          totalDocuments:
+              $checkedConvert('total_documents', (v) => (v as num).toInt()),
+          totalChunks:
+              $checkedConvert('total_chunks', (v) => (v as num).toInt()),
+          indexType: $checkedConvert('index_type', (v) => v as String),
+          indexSizeMb:
+              $checkedConvert('index_size_mb', (v) => (v as num).toDouble()),
+          searchEngines: $checkedConvert(
+              'search_engines', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalDocuments': 'total_documents',
+        'totalChunks': 'total_chunks',
+        'indexType': 'index_type',
+        'indexSizeMb': 'index_size_mb',
+        'searchEngines': 'search_engines'
+      },
+    );
+
+Map<String, dynamic> _$$RAGStatsResponseImplToJson(
+        _$RAGStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_documents': instance.totalDocuments,
+      'total_chunks': instance.totalChunks,
+      'index_type': instance.indexType,
+      'index_size_mb': instance.indexSizeMb,
+      'search_engines': instance.searchEngines,
+    };
+
+_$RAGDocumentImpl _$$RAGDocumentImplFromJson(Map json) => $checkedCreate(
+      r'_$RAGDocumentImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGDocumentImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          docType: $checkedConvert('doc_type', (v) => v as String),
+          chunkCount: $checkedConvert('chunk_count', (v) => (v as num).toInt()),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+          sizeKb: $checkedConvert('size_kb', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'docType': 'doc_type',
+        'chunkCount': 'chunk_count',
+        'createdAt': 'created_at',
+        'sizeKb': 'size_kb'
+      },
+    );
+
+Map<String, dynamic> _$$RAGDocumentImplToJson(_$RAGDocumentImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'doc_type': instance.docType,
+      'chunk_count': instance.chunkCount,
+      'created_at': instance.createdAt,
+      'size_kb': instance.sizeKb,
+    };
+
+_$RAGDocumentsResponseImpl _$$RAGDocumentsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RAGDocumentsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGDocumentsResponseImpl(
+          documents: $checkedConvert(
+              'documents',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      RAGDocument.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$RAGDocumentsResponseImplToJson(
+        _$RAGDocumentsResponseImpl instance) =>
+    <String, dynamic>{
+      'documents': instance.documents,
+    };
+
+_$RAGIngestResponseImpl _$$RAGIngestResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RAGIngestResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGIngestResponseImpl(
+          docId: $checkedConvert('doc_id', (v) => v as String),
+          chunksCreated:
+              $checkedConvert('chunks_created', (v) => (v as num).toInt()),
+          title: $checkedConvert('title', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'docId': 'doc_id', 'chunksCreated': 'chunks_created'},
+    );
+
+Map<String, dynamic> _$$RAGIngestResponseImplToJson(
+        _$RAGIngestResponseImpl instance) =>
+    <String, dynamic>{
+      'doc_id': instance.docId,
+      'chunks_created': instance.chunksCreated,
+      'title': instance.title,
+    };
+
+_$RAGSearchResultImpl _$$RAGSearchResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RAGSearchResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGSearchResultImpl(
+          docId: $checkedConvert('doc_id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+          score: $checkedConvert('score', (v) => (v as num).toDouble()),
+          docType: $checkedConvert('doc_type', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'docId': 'doc_id', 'docType': 'doc_type'},
+    );
+
+Map<String, dynamic> _$$RAGSearchResultImplToJson(
+        _$RAGSearchResultImpl instance) =>
+    <String, dynamic>{
+      'doc_id': instance.docId,
+      'title': instance.title,
+      'content': instance.content,
+      'score': instance.score,
+      'doc_type': instance.docType,
+    };
+
+_$RAGSearchResponseImpl _$$RAGSearchResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RAGSearchResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGSearchResponseImpl(
+          query: $checkedConvert('query', (v) => v as String),
+          mode: $checkedConvert('mode', (v) => v as String),
+          results: $checkedConvert(
+              'results',
+              (v) => (v as List<dynamic>)
+                  .map((e) => RAGSearchResult.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$RAGSearchResponseImplToJson(
+        _$RAGSearchResponseImpl instance) =>
+    <String, dynamic>{
+      'query': instance.query,
+      'mode': instance.mode,
+      'results': instance.results,
+    };
+
+_$RAGContextResponseImpl _$$RAGContextResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RAGContextResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RAGContextResponseImpl(
+          context: $checkedConvert('context', (v) => v as String),
+          citations: $checkedConvert(
+              'citations',
+              (v) => (v as List<dynamic>)
+                  .map((e) => RAGSearchResult.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$RAGContextResponseImplToJson(
+        _$RAGContextResponseImpl instance) =>
+    <String, dynamic>{
+      'context': instance.context,
+      'citations': instance.citations,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

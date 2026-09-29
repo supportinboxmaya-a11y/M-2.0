@@ -2992,7 +2992,9 @@ class _MemoryScreen extends ConsumerStatefulWidget {
   ConsumerState<_MemoryScreen> createState() => _MemoryScreenState();
 }
 
-class _MemoryScreenState extends ConsumerState<_MemoryScreen> {
+class _MemoryScreenState extends ConsumerState<_MemoryScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   Timer? _refreshTimer;
   final _searchController = TextEditingController();
   String _searchQuery = '';
@@ -3001,16 +3003,20 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 4, vsync: this);
     _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (mounted) {
         ref.invalidate(memoryListProvider);
         ref.invalidate(memoryStatsProvider);
+        ref.invalidate(ragStatsProvider);
+        ref.invalidate(ragDocumentsProvider);
       }
     });
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _refreshTimer?.cancel();
     _searchController.dispose();
     super.dispose();
@@ -3038,6 +3044,8 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen> {
               onPressed: () {
                 ref.invalidate(memoryListProvider);
                 ref.invalidate(memoryStatsProvider);
+                ref.invalidate(ragStatsProvider);
+                ref.invalidate(ragDocumentsProvider);
               },
             ),
             IconButton(
@@ -3045,130 +3053,635 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen> {
               onPressed: _showAddMemoryDialog,
             ),
           ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.memory_rounded), text: 'Memories'),
+              Tab(icon: Icon(Icons.description_rounded), text: 'Documents'),
+              Tab(icon: Icon(Icons.search_rounded), text: 'RAG Search'),
+              Tab(icon: Icon(Icons.context_rounded), text: 'RAG Context'),
+            ],
+          ),
         ),
-        body: Column(
+        body: TabBarView(
+          controller: _tabController,
           children: [
-            // Stats Cards
-            memoryStatsAsync.when(
-              data: (stats) => Container(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _MemoryStatCard(
-                        label: 'Total Memories',
-                        value: stats.totalMemories.toString(),
-                        color: MayaTheme.neonCyan,
-                        icon: Icons.memory_rounded,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _MemoryStatCard(
-                        label: 'Vectors',
-                        value: stats.totalVectors.toString(),
-                        color: MayaTheme.neonViolet,
-                        icon: Icons.data_array_rounded,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _MemoryStatCard(
-                        label: 'Index Type',
-                        value: stats.indexType,
-                        color: MayaTheme.neonEmerald,
-                        icon: Icons.category_rounded,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _MemoryStatCard(
-                        label: 'Size (MB)',
-                        value: stats.indexSizeMb.toStringAsFixed(1),
-                        color: MayaTheme.neonOrange,
-                        icon: Icons.storage_rounded,
-                      ),
-                    ),
-                  ],
+            _buildMemoriesTab(memoryListAsync, memoryStatsAsync),
+            _buildDocumentsTab(),
+            _buildRAGSearchTab(),
+            _buildRAGContextTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMemoriesTab(AsyncValue<MemoryListResponse> memoryListAsync, AsyncValue<MemoryStatsResponse> memoryStatsAsync) {
+    return Column(
+      children: [
+        // Stats Cards
+        memoryStatsAsync.when(
+          data: (stats) => Container(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _MemoryStatCard(
+                    label: 'Total Memories',
+                    value: stats.totalMemories.toString(),
+                    color: MayaTheme.neonCyan,
+                    icon: Icons.memory_rounded,
+                  ),
                 ),
-              ),
-              loading: () => const SizedBox(height: 100),
-              error: (_, __) => const SizedBox(height: 100),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _MemoryStatCard(
+                    label: 'Vectors',
+                    value: stats.totalVectors.toString(),
+                    color: MayaTheme.neonViolet,
+                    icon: Icons.data_array_rounded,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _MemoryStatCard(
+                    label: 'Index Type',
+                    value: stats.indexType,
+                    color: MayaTheme.neonEmerald,
+                    icon: Icons.category_rounded,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _MemoryStatCard(
+                    label: 'Size (MB)',
+                    value: stats.indexSizeMb.toStringAsFixed(1),
+                    color: MayaTheme.neonOrange,
+                    icon: Icons.storage_rounded,
+                  ),
+                ),
+              ],
             ),
+          ),
+          loading: () => const SizedBox(height: 100),
+          error: (_, __) => const SizedBox(height: 100),
+        ),
 
-            const Divider(color: MayaTheme.glassWhite10, height: 1),
+        const Divider(color: MayaTheme.glassWhite10, height: 1),
 
-            // Search Bar
-            Container(
+        // Search Bar
+        Container(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search memories...',
+                    hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
+                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.white54),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded, color: Colors.white54),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                              ref.read(memorySearchTriggerProvider.notifier).state = '';
+                            },
+                          )
+                        : null,
+                      filled: true,
+                      fillColor: MayaTheme.slate700,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    ),
+                    style: MayaTheme.bodyMedium,
+                    onSubmitted: (value) {
+                      setState(() => _searchQuery = value);
+                      ref.read(memorySearchTriggerProvider.notifier).state = value;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton(
+                  icon: Icon(
+                    _isSearching ? Icons.close_rounded : Icons.search_rounded,
+                    color: MayaTheme.neonCyan,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = !_isSearching;
+                      if (!_isSearching) {
+                        _searchQuery = '';
+                        _searchController.clear();
+                        ref.read(memorySearchTriggerProvider.notifier).state = '';
+                      }
+                    });
+                    ref.invalidate(memoryListProvider);
+                    ref.invalidate(memorySearchProvider);
+                  },
+                  style: IconButton.styleFrom(
+                    backgroundColor: MayaTheme.glassWhite10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Memory List / Search Results
+          Expanded(
+            child: _isSearching && _searchQuery.isNotEmpty
+                ? _buildSearchResults()
+                : _buildMemoryList(memoryListAsync),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentsTab() {
+    final ragStatsAsync = ref.watch(ragStatsProvider);
+    final ragDocsAsync = ref.watch(ragDocumentsProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // RAG Stats
+          ragStatsAsync.when(
+            data: (stats) => Container(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search memories...',
-                        hintStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white38),
-                        prefixIcon: const Icon(Icons.search_rounded, color: Colors.white54),
-                        suffixIcon: _searchQuery.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.clear_rounded, color: Colors.white54),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() => _searchQuery = '');
-                                  ref.read(memorySearchTriggerProvider.notifier).state = '';
-                                },
-                              )
-                            : null,
-                        filled: true,
-                        fillColor: MayaTheme.slate700,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      ),
-                      style: MayaTheme.bodyMedium,
-                      onSubmitted: (value) {
-                        setState(() => _searchQuery = value);
-                        ref.read(memorySearchTriggerProvider.notifier).state = value;
-                      },
+                    child: _MemoryStatCard(
+                      label: 'Documents',
+                      value: stats.totalDocuments.toString(),
+                      color: MayaTheme.neonCyan,
+                      icon: Icons.description_rounded,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  IconButton(
-                    icon: Icon(
-                      _isSearching ? Icons.close_rounded : Icons.search_rounded,
-                      color: MayaTheme.neonCyan,
+                  Expanded(
+                    child: _MemoryStatCard(
+                      label: 'Chunks',
+                      value: stats.totalChunks.toString(),
+                      color: MayaTheme.neonViolet,
+                      icon: Icons.data_array_rounded,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isSearching = !_isSearching;
-                        if (!_isSearching) {
-                          _searchQuery = '';
-                          _searchController.clear();
-                          ref.read(memorySearchTriggerProvider.notifier).state = '';
-                        }
-                      });
-                      ref.invalidate(memoryListProvider);
-                      ref.invalidate(memorySearchProvider);
-                    },
-                    style: IconButton.styleFrom(
-                      backgroundColor: MayaTheme.glassWhite10,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _MemoryStatCard(
+                      label: 'Index Type',
+                      value: stats.indexType,
+                      color: MayaTheme.neonEmerald,
+                      icon: Icons.category_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _MemoryStatCard(
+                      label: 'Size (MB)',
+                      value: stats.indexSizeMb.toStringAsFixed(1),
+                      color: MayaTheme.neonOrange,
+                      icon: Icons.storage_rounded,
                     ),
                   ),
                 ],
               ),
             ),
+            loading: () => const SizedBox(height: 100),
+            error: (_, __) => const SizedBox(height: 100),
+          ),
 
-            // Memory List / Search Results
-            Expanded(
-              child: _isSearching && _searchQuery.isNotEmpty
-                  ? _buildSearchResults()
-                  : _buildMemoryList(memoryListAsync),
+          const SizedBox(height: 24),
+
+          // Ingest Document
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Ingest Document', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                _IngestDocumentForm(onSuccess: () {
+                  ref.invalidate(ragDocumentsProvider);
+                  ref.invalidate(ragStatsProvider);
+                }),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Documents List
+          const Text('Documents', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          ragDocsAsync.when(
+            data: (response) {
+              if (response.documents.isEmpty) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: MayaTheme.glassCard(),
+                  child: const Center(
+                    child: Text('No documents yet. Ingest a document to get started.',
+                        style: MayaTheme.bodyMedium),
+                  ),
+                );
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: response.documents.length,
+                itemBuilder: (context, index) {
+                  final doc = response.documents[index];
+                  return _RAGDocumentTile(doc: doc, onDelete: () async {
+                    final success = await ref.read(apiServiceProvider).deleteRAGDocument(doc.id);
+                    if (success && mounted) {
+                      ref.invalidate(ragDocumentsProvider);
+                      ref.invalidate(ragStatsProvider);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Document deleted'), backgroundColor: MayaTheme.neonEmerald),
+                      );
+                    }
+                  });
+                },
+              );
+            },
+            loading: () => const Center(
+              child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+            ),
+            error: (err, _) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                  const SizedBox(height: 16),
+                  Text('Error loading documents', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                  const SizedBox(height: 8),
+                  Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRAGSearchTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search Form
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('RAG Hybrid Search', style: MayaTheme.titleMedium),
+                const SizedBox(height: 8),
+                const Text(
+                  'Search the knowledge base with hybrid (vector + keyword), keyword-only, or vector-only modes.',
+                  style: MayaTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _searchController,
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'Query',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    setState(() => _searchQuery = value);
+                    ref.invalidate(ragSearchProvider(_searchQuery));
+                  },
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: 'hybrid',
+                        dropdownColor: MayaTheme.slate800,
+                        style: MayaTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          labelText: 'Search Mode',
+                          labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                          filled: true,
+                          fillColor: MayaTheme.slate700,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'hybrid', child: Text('Hybrid (Vector + Keyword)')),
+                          DropdownMenuItem(value: 'keyword', child: Text('Keyword Only (BM25)')),
+                          DropdownMenuItem(value: 'vector', child: Text('Vector Only')),
+                        ],
+                        onChanged: (value) {},
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        value: 5,
+                        dropdownColor: MayaTheme.slate800,
+                        style: MayaTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          labelText: 'Limit',
+                          labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                          filled: true,
+                          fillColor: MayaTheme.slate700,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 3, child: Text('3')),
+                          DropdownMenuItem(value: 5, child: Text('5')),
+                          DropdownMenuItem(value: 10, child: Text('10')),
+                          DropdownMenuItem(value: 20, child: Text('20')),
+                        ],
+                        onChanged: (value) {},
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() => _searchQuery = _searchController.text);
+                      ref.invalidate(ragSearchProvider(_searchQuery));
+                    },
+                    icon: const Icon(Icons.search_rounded),
+                    label: const Text('Search'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Search Results
+          Consumer(
+            builder: (context, ref, _) {
+              final searchAsync = ref.watch(ragSearchProvider(_searchQuery));
+              return searchAsync.when(
+                data: (result) {
+                  if (result.results.isEmpty && _searchQuery.isNotEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: MayaTheme.glassCard(),
+                      child: const Center(
+                        child: Text('No results found', style: MayaTheme.bodyMedium),
+                      ),
+                    );
+                  }
+                  if (_searchQuery.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: MayaTheme.glassCard(),
+                      child: const Center(
+                        child: Text('Enter a query and tap Search',
+                            style: MayaTheme.bodyMedium),
+                      ),
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Results for "${result.query}" (${result.mode})',
+                          style: MayaTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      ...result.results.map((hit) => _RAGSearchResultTile(hit: hit)),
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                ),
+                error: (err, _) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                      const SizedBox(height: 16),
+                      Text('Search error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                      const SizedBox(height: 8),
+                      Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRAGContextTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Context Form
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('RAG Context with Attribution', style: MayaTheme.titleMedium),
+                const SizedBox(height: 8),
+                const Text(
+                  'Get an LLM-ready context block with numbered citations for a query.',
+                  style: MayaTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _searchController,
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'Query',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        value: 5,
+                        dropdownColor: MayaTheme.slate800,
+                        style: MayaTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          labelText: 'Limit',
+                          labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                          filled: true,
+                          fillColor: MayaTheme.slate700,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 3, child: Text('3')),
+                          DropdownMenuItem(value: 5, child: Text('5')),
+                          DropdownMenuItem(value: 10, child: Text('10')),
+                        ],
+                        onChanged: (value) {},
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        value: 6000,
+                        dropdownColor: MayaTheme.slate800,
+                        style: MayaTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          labelText: 'Max Chars',
+                          labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                          filled: true,
+                          fillColor: MayaTheme.slate700,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 2000, child: Text('2000')),
+                          DropdownMenuItem(value: 4000, child: Text('4000')),
+                          DropdownMenuItem(value: 6000, child: Text('6000')),
+                          DropdownMenuItem(value: 8000, child: Text('8000')),
+                        ],
+                        onChanged: (value) {},
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      ref.invalidate(ragContextProvider(_searchController.text));
+                    },
+                    icon: const Icon(Icons.context_rounded),
+                    label: const Text('Get Context'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Context Result
+          Consumer(
+            builder: (context, ref, _) {
+              final contextAsync = ref.watch(ragContextProvider(_searchController.text));
+              return contextAsync.when(
+                data: (result) {
+                  if (result.context.isEmpty && _searchController.text.isEmpty) {
+                    return const SizedBox();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Context Block', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: SelectableText(
+                          result.context,
+                          style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace'),
+                        ),
+                      ),
+                      if (result.citations.isNotEmpty) ...[
+                        const SizedBox(height: 24),
+                        const Text('Citations', style: MayaTheme.titleMedium),
+                        const SizedBox(height: 12),
+                        ...result.citations.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final citation = entry.value;
+                          return _RAGCitationTile(index: index + 1, citation: citation);
+                        }),
+                      ],
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                ),
+                error: (err, _) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                      const SizedBox(height: 16),
+                      Text('Context error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                      const SizedBox(height: 8),
+                      Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -9447,4 +9960,387 @@ final learningExperienceProvider = FutureProvider.family<LearningExperienceRespo
 final learningPromptsProvider = FutureProvider<LearningPromptsResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getLearningPrompts();
+});
+
+// RAG Providers
+final ragStatsProvider = FutureProvider<RAGStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRAGStats();
+});
+
+final ragDocumentsProvider = FutureProvider<RAGDocumentsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRAGDocuments();
+});
+
+final ragSearchProvider = FutureProvider.family<RAGSearchResponse, String>((ref, query) async {
+  if (query.isEmpty) {
+    throw Exception('Empty query');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.searchRAG(query: query);
+});
+
+final ragContextProvider = FutureProvider.family<RAGContextResponse, String>((ref, query) async {
+  if (query.isEmpty) {
+    throw Exception('Empty query');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRAGContext(query: query);
+});
+
+// RAG Helper Widgets
+class _IngestDocumentForm extends ConsumerStatefulWidget {
+  final VoidCallback onSuccess;
+
+  const _IngestDocumentForm({required this.onSuccess});
+
+  @override
+  ConsumerState<_IngestDocumentForm> createState() => _IngestDocumentFormState();
+}
+
+class _IngestDocumentFormState extends ConsumerState<_IngestDocumentForm> {
+  final _textController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _docTypeController = TextEditingController(text: 'text');
+  final _pathController = TextEditingController();
+  bool _usePath = false;
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _titleController.dispose();
+    _docTypeController.dispose();
+    _pathController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          title: const Text('Use workspace file path'),
+          subtitle: const Text('Instead of inline text'),
+          value: _usePath,
+          activeColor: MayaTheme.neonCyan,
+          onChanged: (value) => setState(() => _usePath = value),
+        ),
+        const SizedBox(height: 12),
+        if (_usePath) ...[
+          TextField(
+            controller: _pathController,
+            style: MayaTheme.bodyMedium,
+            decoration: InputDecoration(
+              labelText: 'Workspace Path (e.g., docs/readme.md)',
+              labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+              filled: true,
+              fillColor: MayaTheme.slate700,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ] else ...[
+          TextField(
+            controller: _textController,
+            style: MayaTheme.bodyMedium,
+            maxLines: 4,
+            decoration: InputDecoration(
+              labelText: 'Document Text',
+              labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+              filled: true,
+              fillColor: MayaTheme.slate700,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _titleController,
+            style: MayaTheme.bodyMedium,
+            decoration: InputDecoration(
+              labelText: 'Title (optional)',
+              labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+              filled: true,
+              fillColor: MayaTheme.slate700,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _docTypeController,
+            style: MayaTheme.bodyMedium,
+            decoration: InputDecoration(
+              labelText: 'Doc Type (text, code, pdf, etc.)',
+              labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+              filled: true,
+              fillColor: MayaTheme.slate700,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _submit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MayaTheme.neonCyan,
+              foregroundColor: MayaTheme.slate900,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: Text(_usePath ? 'Ingest File' : 'Ingest Text'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _submit() async {
+    if (_usePath && _pathController.text.trim().isEmpty) return;
+    if (!_usePath && _textController.text.trim().isEmpty) return;
+
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.ingestRAGDocument(
+        text: _usePath ? null : _textController.text.trim(),
+        title: _usePath ? null : _titleController.text.trim(),
+        docType: _usePath ? null : _docTypeController.text.trim(),
+        path: _usePath ? _pathController.text.trim() : null,
+      );
+      if (mounted) {
+        widget.onSuccess();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Document ingested: ${result.docId} (${result.chunksCreated} chunks)'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _RAGDocumentTile extends StatelessWidget {
+  final RAGDocument doc;
+  final VoidCallback onDelete;
+
+  const _RAGDocumentTile({required this.doc, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(doc.title, style: MayaTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text(
+                      'ID: ${doc.id} • Type: ${doc.docType} • ${doc.chunkCount} chunks',
+                      style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${doc.sizeKb.toStringAsFixed(1)} KB',
+                  style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Created: ${doc.createdAt}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              const Spacer(),
+              OutlinedButton.icon(
+                onPressed: onDelete,
+                icon: const Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                label: const Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: MayaTheme.error,
+                  side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RAGSearchResultTile extends StatelessWidget {
+  final RAGSearchResult hit;
+
+  const _RAGSearchResultTile({required this.hit});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Score: ${hit.score.toStringAsFixed(3)}',
+                  style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(hit.docType, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+              ),
+              const Spacer(),
+              Text(hit.title, style: MayaTheme.titleSmall),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(hit.content.length > 300 ? '${hit.content.substring(0, 300)}...' : hit.content,
+              style: MayaTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+}
+
+class _RAGCitationTile extends StatelessWidget {
+  final int index;
+  final RAGSearchResult citation;
+
+  const _RAGCitationTile({required this.index, required this.citation});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: MayaTheme.slate700,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MayaTheme.glassWhite10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text('[$index]', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(citation.title, style: MayaTheme.bodyMedium),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(citation.docType, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            citation.content.length > 200 ? '${citation.content.substring(0, 200)}...' : citation.content,
+            style: MayaTheme.bodySmall.copyWith(color: Colors.white70, fontFamily: 'monospace'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// RAG Providers
+final ragStatsProvider = FutureProvider<RAGStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRAGStats();
+});
+
+final ragDocumentsProvider = FutureProvider<RAGDocumentsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRAGDocuments();
+});
+
+final ragSearchProvider = FutureProvider.family<RAGSearchResponse, String>((ref, query) async {
+  if (query.isEmpty) {
+    throw Exception('Empty query');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.searchRAG(query: query);
+});
+
+final ragContextProvider = FutureProvider.family<RAGContextResponse, String>((ref, query) async {
+  if (query.isEmpty) {
+    throw Exception('Empty query');
+  }
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRAGContext(query: query);
 });

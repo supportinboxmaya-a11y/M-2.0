@@ -744,6 +744,69 @@ class ApiService {
     return LearningPromptsResponse.fromJson(response.data);
   }
 
+  // RAG (Phase 11)
+  Future<RAGStatsResponse> getRAGStats() async {
+    final response = await _dio.get(AppConfig.ragStats);
+    return RAGStatsResponse.fromJson(response.data);
+  }
+
+  Future<RAGDocumentsResponse> getRAGDocuments({int limit = 200}) async {
+    final response = await _dio.get(
+      AppConfig.ragDocuments,
+      queryParameters: {'limit': limit},
+    );
+    return RAGDocumentsResponse.fromJson(response.data);
+  }
+
+  Future<RAGIngestResponse> ingestRAGDocument({
+    String? text,
+    String? title,
+    String? docType,
+    String? path,
+  }) async {
+    final data = <String, dynamic>{};
+    if (text != null) data['text'] = text;
+    if (title != null) data['title'] = title;
+    if (docType != null) data['doc_type'] = docType;
+    if (path != null) data['path'] = path;
+    
+    final response = await _dio.post(AppConfig.ragIngest, data: data);
+    return RAGIngestResponse.fromJson(response.data);
+  }
+
+  Future<bool> deleteRAGDocument(String docId) async {
+    try {
+      final response = await _dio.delete('${AppConfig.ragDocument}$docId');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<RAGSearchResponse> searchRAG({
+    required String query,
+    int limit = 5,
+    String mode = 'hybrid',
+  }) async {
+    final response = await _dio.get(
+      AppConfig.ragSearch,
+      queryParameters: {'q': query, 'limit': limit, 'mode': mode},
+    );
+    return RAGSearchResponse.fromJson(response.data);
+  }
+
+  Future<RAGContextResponse> getRAGContext({
+    required String query,
+    int limit = 5,
+    int maxChars = 6000,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.ragContext,
+      queryParameters: {'q': query, 'limit': limit, 'max_chars': maxChars},
+    );
+    return RAGContextResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -1924,4 +1987,93 @@ class LearningPromptsResponse with _$LearningPromptsResponse {
 
   factory LearningPromptsResponse.fromJson(Map<String, dynamic> json) =>
       _$LearningPromptsResponseFromJson(json);
+}
+
+// RAG (Phase 11) Models
+@freezed
+class RAGStatsResponse with _$RAGStatsResponse {
+  const factory RAGStatsResponse({
+    required int totalDocuments,
+    required int totalChunks,
+    required String indexType,
+    required double indexSizeMb,
+    required Map<String, dynamic> searchEngines,
+  }) = _RAGStatsResponse;
+
+  factory RAGStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$RAGStatsResponseFromJson(json);
+}
+
+@freezed
+class RAGDocument with _$RAGDocument {
+  const factory RAGDocument({
+    required String id,
+    required String title,
+    required String docType,
+    required int chunkCount,
+    required String createdAt,
+    required double sizeKb,
+  }) = _RAGDocument;
+
+  factory RAGDocument.fromJson(Map<String, dynamic> json) =>
+      _$RAGDocumentFromJson(json);
+}
+
+@freezed
+class RAGDocumentsResponse with _$RAGDocumentsResponse {
+  const factory RAGDocumentsResponse({
+    required List<RAGDocument> documents,
+  }) = _RAGDocumentsResponse;
+
+  factory RAGDocumentsResponse.fromJson(Map<String, dynamic> json) =>
+      _$RAGDocumentsResponseFromJson(json);
+}
+
+@freezed
+class RAGIngestResponse with _$RAGIngestResponse {
+  const factory RAGIngestResponse({
+    required String docId,
+    required int chunksCreated,
+    required String title,
+  }) = _RAGIngestResponse;
+
+  factory RAGIngestResponse.fromJson(Map<String, dynamic> json) =>
+      _$RAGIngestResponseFromJson(json);
+}
+
+@freezed
+class RAGSearchResult with _$RAGSearchResult {
+  const factory RAGSearchResult({
+    required String docId,
+    required String title,
+    required String content,
+    required double score,
+    required String docType,
+  }) = _RAGSearchResult;
+
+  factory RAGSearchResult.fromJson(Map<String, dynamic> json) =>
+      _$RAGSearchResultFromJson(json);
+}
+
+@freezed
+class RAGSearchResponse with _$RAGSearchResponse {
+  const factory RAGSearchResponse({
+    required String query,
+    required String mode,
+    required List<RAGSearchResult> results,
+  }) = _RAGSearchResponse;
+
+  factory RAGSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$RAGSearchResponseFromJson(json);
+}
+
+@freezed
+class RAGContextResponse with _$RAGContextResponse {
+  const factory RAGContextResponse({
+    required String context,
+    required List<RAGSearchResult> citations,
+  }) = _RAGContextResponse;
+
+  factory RAGContextResponse.fromJson(Map<String, dynamic> json) =>
+      _$RAGContextResponseFromJson(json);
 }

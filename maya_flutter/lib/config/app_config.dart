@@ -110,6 +110,14 @@ class AppConfig {
   static const String learningCompress = '/api/v1/learning/compress';
   static const String learningPrompts = '/api/v1/learning/prompts';
 
+  // RAG (Phase 11)
+  static const String ragStats = '/api/v1/rag/stats';
+  static const String ragDocuments = '/api/v1/rag/documents';
+  static const String ragDocument = '/api/v1/rag/documents/';
+  static const String ragIngest = '/api/v1/rag/ingest';
+  static const String ragSearch = '/api/v1/rag/search';
+  static const String ragContext = '/api/v1/rag/context';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

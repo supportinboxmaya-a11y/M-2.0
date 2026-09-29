@@ -17411,3 +17411,1377 @@ abstract class _LearningPromptsResponse implements LearningPromptsResponse {
   _$$LearningPromptsResponseImplCopyWith<_$LearningPromptsResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+
+RAGStatsResponse _$RAGStatsResponseFromJson(Map<String, dynamic> json) {
+  return _RAGStatsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGStatsResponse {
+  int get totalDocuments => throw _privateConstructorUsedError;
+  int get totalChunks => throw _privateConstructorUsedError;
+  String get indexType => throw _privateConstructorUsedError;
+  double get indexSizeMb => throw _privateConstructorUsedError;
+  Map<String, dynamic> get searchEngines => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGStatsResponseCopyWith<RAGStatsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGStatsResponseCopyWith<$Res> {
+  factory $RAGStatsResponseCopyWith(
+          RAGStatsResponse value, $Res Function(RAGStatsResponse) then) =
+      _$RAGStatsResponseCopyWithImpl<$Res, RAGStatsResponse>;
+  @useResult
+  $Res call(
+      {int totalDocuments,
+      int totalChunks,
+      String indexType,
+      double indexSizeMb,
+      Map<String, dynamic> searchEngines});
+}
+
+/// @nodoc
+class _$RAGStatsResponseCopyWithImpl<$Res, $Val extends RAGStatsResponse>
+    implements $RAGStatsResponseCopyWith<$Res> {
+  _$RAGStatsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalDocuments = null,
+    Object? totalChunks = null,
+    Object? indexType = null,
+    Object? indexSizeMb = null,
+    Object? searchEngines = null,
+  }) {
+    return _then(_value.copyWith(
+      totalDocuments: null == totalDocuments
+          ? _value.totalDocuments
+          : totalDocuments // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalChunks: null == totalChunks
+          ? _value.totalChunks
+          : totalChunks // ignore: cast_nullable_to_non_nullable
+              as int,
+      indexType: null == indexType
+          ? _value.indexType
+          : indexType // ignore: cast_nullable_to_non_nullable
+              as String,
+      indexSizeMb: null == indexSizeMb
+          ? _value.indexSizeMb
+          : indexSizeMb // ignore: cast_nullable_to_non_nullable
+              as double,
+      searchEngines: null == searchEngines
+          ? _value.searchEngines
+          : searchEngines // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGStatsResponseImplCopyWith<$Res>
+    implements $RAGStatsResponseCopyWith<$Res> {
+  factory _$$RAGStatsResponseImplCopyWith(_$RAGStatsResponseImpl value,
+          $Res Function(_$RAGStatsResponseImpl) then) =
+      __$$RAGStatsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int totalDocuments,
+      int totalChunks,
+      String indexType,
+      double indexSizeMb,
+      Map<String, dynamic> searchEngines});
+}
+
+/// @nodoc
+class __$$RAGStatsResponseImplCopyWithImpl<$Res>
+    extends _$RAGStatsResponseCopyWithImpl<$Res, _$RAGStatsResponseImpl>
+    implements _$$RAGStatsResponseImplCopyWith<$Res> {
+  __$$RAGStatsResponseImplCopyWithImpl(_$RAGStatsResponseImpl _value,
+      $Res Function(_$RAGStatsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalDocuments = null,
+    Object? totalChunks = null,
+    Object? indexType = null,
+    Object? indexSizeMb = null,
+    Object? searchEngines = null,
+  }) {
+    return _then(_$RAGStatsResponseImpl(
+      totalDocuments: null == totalDocuments
+          ? _value.totalDocuments
+          : totalDocuments // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalChunks: null == totalChunks
+          ? _value.totalChunks
+          : totalChunks // ignore: cast_nullable_to_non_nullable
+              as int,
+      indexType: null == indexType
+          ? _value.indexType
+          : indexType // ignore: cast_nullable_to_non_nullable
+              as String,
+      indexSizeMb: null == indexSizeMb
+          ? _value.indexSizeMb
+          : indexSizeMb // ignore: cast_nullable_to_non_nullable
+              as double,
+      searchEngines: null == searchEngines
+          ? _value._searchEngines
+          : searchEngines // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGStatsResponseImpl implements _RAGStatsResponse {
+  const _$RAGStatsResponseImpl(
+      {required this.totalDocuments,
+      required this.totalChunks,
+      required this.indexType,
+      required this.indexSizeMb,
+      required final Map<String, dynamic> searchEngines})
+      : _searchEngines = searchEngines;
+
+  factory _$RAGStatsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGStatsResponseImplFromJson(json);
+
+  @override
+  final int totalDocuments;
+  @override
+  final int totalChunks;
+  @override
+  final String indexType;
+  @override
+  final double indexSizeMb;
+  final Map<String, dynamic> _searchEngines;
+  @override
+  Map<String, dynamic> get searchEngines {
+    if (_searchEngines is EqualUnmodifiableMapView) return _searchEngines;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_searchEngines);
+  }
+
+  @override
+  String toString() {
+    return 'RAGStatsResponse(totalDocuments: $totalDocuments, totalChunks: $totalChunks, indexType: $indexType, indexSizeMb: $indexSizeMb, searchEngines: $searchEngines)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGStatsResponseImpl &&
+            (identical(other.totalDocuments, totalDocuments) ||
+                other.totalDocuments == totalDocuments) &&
+            (identical(other.totalChunks, totalChunks) ||
+                other.totalChunks == totalChunks) &&
+            (identical(other.indexType, indexType) ||
+                other.indexType == indexType) &&
+            (identical(other.indexSizeMb, indexSizeMb) ||
+                other.indexSizeMb == indexSizeMb) &&
+            const DeepCollectionEquality()
+                .equals(other._searchEngines, _searchEngines));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      totalDocuments,
+      totalChunks,
+      indexType,
+      indexSizeMb,
+      const DeepCollectionEquality().hash(_searchEngines));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGStatsResponseImplCopyWith<_$RAGStatsResponseImpl> get copyWith =>
+      __$$RAGStatsResponseImplCopyWithImpl<_$RAGStatsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGStatsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGStatsResponse implements RAGStatsResponse {
+  const factory _RAGStatsResponse(
+          {required final int totalDocuments,
+          required final int totalChunks,
+          required final String indexType,
+          required final double indexSizeMb,
+          required final Map<String, dynamic> searchEngines}) =
+      _$RAGStatsResponseImpl;
+
+  factory _RAGStatsResponse.fromJson(Map<String, dynamic> json) =
+      _$RAGStatsResponseImpl.fromJson;
+
+  @override
+  int get totalDocuments;
+  @override
+  int get totalChunks;
+  @override
+  String get indexType;
+  @override
+  double get indexSizeMb;
+  @override
+  Map<String, dynamic> get searchEngines;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGStatsResponseImplCopyWith<_$RAGStatsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RAGDocument _$RAGDocumentFromJson(Map<String, dynamic> json) {
+  return _RAGDocument.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGDocument {
+  String get id => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+  String get docType => throw _privateConstructorUsedError;
+  int get chunkCount => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+  double get sizeKb => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGDocumentCopyWith<RAGDocument> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGDocumentCopyWith<$Res> {
+  factory $RAGDocumentCopyWith(
+          RAGDocument value, $Res Function(RAGDocument) then) =
+      _$RAGDocumentCopyWithImpl<$Res, RAGDocument>;
+  @useResult
+  $Res call(
+      {String id,
+      String title,
+      String docType,
+      int chunkCount,
+      String createdAt,
+      double sizeKb});
+}
+
+/// @nodoc
+class _$RAGDocumentCopyWithImpl<$Res, $Val extends RAGDocument>
+    implements $RAGDocumentCopyWith<$Res> {
+  _$RAGDocumentCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? title = null,
+    Object? docType = null,
+    Object? chunkCount = null,
+    Object? createdAt = null,
+    Object? sizeKb = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      docType: null == docType
+          ? _value.docType
+          : docType // ignore: cast_nullable_to_non_nullable
+              as String,
+      chunkCount: null == chunkCount
+          ? _value.chunkCount
+          : chunkCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      sizeKb: null == sizeKb
+          ? _value.sizeKb
+          : sizeKb // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGDocumentImplCopyWith<$Res>
+    implements $RAGDocumentCopyWith<$Res> {
+  factory _$$RAGDocumentImplCopyWith(
+          _$RAGDocumentImpl value, $Res Function(_$RAGDocumentImpl) then) =
+      __$$RAGDocumentImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String title,
+      String docType,
+      int chunkCount,
+      String createdAt,
+      double sizeKb});
+}
+
+/// @nodoc
+class __$$RAGDocumentImplCopyWithImpl<$Res>
+    extends _$RAGDocumentCopyWithImpl<$Res, _$RAGDocumentImpl>
+    implements _$$RAGDocumentImplCopyWith<$Res> {
+  __$$RAGDocumentImplCopyWithImpl(
+      _$RAGDocumentImpl _value, $Res Function(_$RAGDocumentImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? title = null,
+    Object? docType = null,
+    Object? chunkCount = null,
+    Object? createdAt = null,
+    Object? sizeKb = null,
+  }) {
+    return _then(_$RAGDocumentImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      docType: null == docType
+          ? _value.docType
+          : docType // ignore: cast_nullable_to_non_nullable
+              as String,
+      chunkCount: null == chunkCount
+          ? _value.chunkCount
+          : chunkCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      sizeKb: null == sizeKb
+          ? _value.sizeKb
+          : sizeKb // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGDocumentImpl implements _RAGDocument {
+  const _$RAGDocumentImpl(
+      {required this.id,
+      required this.title,
+      required this.docType,
+      required this.chunkCount,
+      required this.createdAt,
+      required this.sizeKb});
+
+  factory _$RAGDocumentImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGDocumentImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String title;
+  @override
+  final String docType;
+  @override
+  final int chunkCount;
+  @override
+  final String createdAt;
+  @override
+  final double sizeKb;
+
+  @override
+  String toString() {
+    return 'RAGDocument(id: $id, title: $title, docType: $docType, chunkCount: $chunkCount, createdAt: $createdAt, sizeKb: $sizeKb)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGDocumentImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.docType, docType) || other.docType == docType) &&
+            (identical(other.chunkCount, chunkCount) ||
+                other.chunkCount == chunkCount) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.sizeKb, sizeKb) || other.sizeKb == sizeKb));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, title, docType, chunkCount, createdAt, sizeKb);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGDocumentImplCopyWith<_$RAGDocumentImpl> get copyWith =>
+      __$$RAGDocumentImplCopyWithImpl<_$RAGDocumentImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGDocumentImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGDocument implements RAGDocument {
+  const factory _RAGDocument(
+      {required final String id,
+      required final String title,
+      required final String docType,
+      required final int chunkCount,
+      required final String createdAt,
+      required final double sizeKb}) = _$RAGDocumentImpl;
+
+  factory _RAGDocument.fromJson(Map<String, dynamic> json) =
+      _$RAGDocumentImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get title;
+  @override
+  String get docType;
+  @override
+  int get chunkCount;
+  @override
+  String get createdAt;
+  @override
+  double get sizeKb;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGDocumentImplCopyWith<_$RAGDocumentImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RAGDocumentsResponse _$RAGDocumentsResponseFromJson(Map<String, dynamic> json) {
+  return _RAGDocumentsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGDocumentsResponse {
+  List<RAGDocument> get documents => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGDocumentsResponseCopyWith<RAGDocumentsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGDocumentsResponseCopyWith<$Res> {
+  factory $RAGDocumentsResponseCopyWith(RAGDocumentsResponse value,
+          $Res Function(RAGDocumentsResponse) then) =
+      _$RAGDocumentsResponseCopyWithImpl<$Res, RAGDocumentsResponse>;
+  @useResult
+  $Res call({List<RAGDocument> documents});
+}
+
+/// @nodoc
+class _$RAGDocumentsResponseCopyWithImpl<$Res,
+        $Val extends RAGDocumentsResponse>
+    implements $RAGDocumentsResponseCopyWith<$Res> {
+  _$RAGDocumentsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? documents = null,
+  }) {
+    return _then(_value.copyWith(
+      documents: null == documents
+          ? _value.documents
+          : documents // ignore: cast_nullable_to_non_nullable
+              as List<RAGDocument>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGDocumentsResponseImplCopyWith<$Res>
+    implements $RAGDocumentsResponseCopyWith<$Res> {
+  factory _$$RAGDocumentsResponseImplCopyWith(_$RAGDocumentsResponseImpl value,
+          $Res Function(_$RAGDocumentsResponseImpl) then) =
+      __$$RAGDocumentsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<RAGDocument> documents});
+}
+
+/// @nodoc
+class __$$RAGDocumentsResponseImplCopyWithImpl<$Res>
+    extends _$RAGDocumentsResponseCopyWithImpl<$Res, _$RAGDocumentsResponseImpl>
+    implements _$$RAGDocumentsResponseImplCopyWith<$Res> {
+  __$$RAGDocumentsResponseImplCopyWithImpl(_$RAGDocumentsResponseImpl _value,
+      $Res Function(_$RAGDocumentsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? documents = null,
+  }) {
+    return _then(_$RAGDocumentsResponseImpl(
+      documents: null == documents
+          ? _value._documents
+          : documents // ignore: cast_nullable_to_non_nullable
+              as List<RAGDocument>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGDocumentsResponseImpl implements _RAGDocumentsResponse {
+  const _$RAGDocumentsResponseImpl({required final List<RAGDocument> documents})
+      : _documents = documents;
+
+  factory _$RAGDocumentsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGDocumentsResponseImplFromJson(json);
+
+  final List<RAGDocument> _documents;
+  @override
+  List<RAGDocument> get documents {
+    if (_documents is EqualUnmodifiableListView) return _documents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_documents);
+  }
+
+  @override
+  String toString() {
+    return 'RAGDocumentsResponse(documents: $documents)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGDocumentsResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._documents, _documents));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_documents));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGDocumentsResponseImplCopyWith<_$RAGDocumentsResponseImpl>
+      get copyWith =>
+          __$$RAGDocumentsResponseImplCopyWithImpl<_$RAGDocumentsResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGDocumentsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGDocumentsResponse implements RAGDocumentsResponse {
+  const factory _RAGDocumentsResponse(
+          {required final List<RAGDocument> documents}) =
+      _$RAGDocumentsResponseImpl;
+
+  factory _RAGDocumentsResponse.fromJson(Map<String, dynamic> json) =
+      _$RAGDocumentsResponseImpl.fromJson;
+
+  @override
+  List<RAGDocument> get documents;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGDocumentsResponseImplCopyWith<_$RAGDocumentsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+RAGIngestResponse _$RAGIngestResponseFromJson(Map<String, dynamic> json) {
+  return _RAGIngestResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGIngestResponse {
+  String get docId => throw _privateConstructorUsedError;
+  int get chunksCreated => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGIngestResponseCopyWith<RAGIngestResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGIngestResponseCopyWith<$Res> {
+  factory $RAGIngestResponseCopyWith(
+          RAGIngestResponse value, $Res Function(RAGIngestResponse) then) =
+      _$RAGIngestResponseCopyWithImpl<$Res, RAGIngestResponse>;
+  @useResult
+  $Res call({String docId, int chunksCreated, String title});
+}
+
+/// @nodoc
+class _$RAGIngestResponseCopyWithImpl<$Res, $Val extends RAGIngestResponse>
+    implements $RAGIngestResponseCopyWith<$Res> {
+  _$RAGIngestResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? docId = null,
+    Object? chunksCreated = null,
+    Object? title = null,
+  }) {
+    return _then(_value.copyWith(
+      docId: null == docId
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      chunksCreated: null == chunksCreated
+          ? _value.chunksCreated
+          : chunksCreated // ignore: cast_nullable_to_non_nullable
+              as int,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGIngestResponseImplCopyWith<$Res>
+    implements $RAGIngestResponseCopyWith<$Res> {
+  factory _$$RAGIngestResponseImplCopyWith(_$RAGIngestResponseImpl value,
+          $Res Function(_$RAGIngestResponseImpl) then) =
+      __$$RAGIngestResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String docId, int chunksCreated, String title});
+}
+
+/// @nodoc
+class __$$RAGIngestResponseImplCopyWithImpl<$Res>
+    extends _$RAGIngestResponseCopyWithImpl<$Res, _$RAGIngestResponseImpl>
+    implements _$$RAGIngestResponseImplCopyWith<$Res> {
+  __$$RAGIngestResponseImplCopyWithImpl(_$RAGIngestResponseImpl _value,
+      $Res Function(_$RAGIngestResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? docId = null,
+    Object? chunksCreated = null,
+    Object? title = null,
+  }) {
+    return _then(_$RAGIngestResponseImpl(
+      docId: null == docId
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      chunksCreated: null == chunksCreated
+          ? _value.chunksCreated
+          : chunksCreated // ignore: cast_nullable_to_non_nullable
+              as int,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGIngestResponseImpl implements _RAGIngestResponse {
+  const _$RAGIngestResponseImpl(
+      {required this.docId, required this.chunksCreated, required this.title});
+
+  factory _$RAGIngestResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGIngestResponseImplFromJson(json);
+
+  @override
+  final String docId;
+  @override
+  final int chunksCreated;
+  @override
+  final String title;
+
+  @override
+  String toString() {
+    return 'RAGIngestResponse(docId: $docId, chunksCreated: $chunksCreated, title: $title)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGIngestResponseImpl &&
+            (identical(other.docId, docId) || other.docId == docId) &&
+            (identical(other.chunksCreated, chunksCreated) ||
+                other.chunksCreated == chunksCreated) &&
+            (identical(other.title, title) || other.title == title));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, docId, chunksCreated, title);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGIngestResponseImplCopyWith<_$RAGIngestResponseImpl> get copyWith =>
+      __$$RAGIngestResponseImplCopyWithImpl<_$RAGIngestResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGIngestResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGIngestResponse implements RAGIngestResponse {
+  const factory _RAGIngestResponse(
+      {required final String docId,
+      required final int chunksCreated,
+      required final String title}) = _$RAGIngestResponseImpl;
+
+  factory _RAGIngestResponse.fromJson(Map<String, dynamic> json) =
+      _$RAGIngestResponseImpl.fromJson;
+
+  @override
+  String get docId;
+  @override
+  int get chunksCreated;
+  @override
+  String get title;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGIngestResponseImplCopyWith<_$RAGIngestResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RAGSearchResult _$RAGSearchResultFromJson(Map<String, dynamic> json) {
+  return _RAGSearchResult.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGSearchResult {
+  String get docId => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+  String get content => throw _privateConstructorUsedError;
+  double get score => throw _privateConstructorUsedError;
+  String get docType => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGSearchResultCopyWith<RAGSearchResult> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGSearchResultCopyWith<$Res> {
+  factory $RAGSearchResultCopyWith(
+          RAGSearchResult value, $Res Function(RAGSearchResult) then) =
+      _$RAGSearchResultCopyWithImpl<$Res, RAGSearchResult>;
+  @useResult
+  $Res call(
+      {String docId,
+      String title,
+      String content,
+      double score,
+      String docType});
+}
+
+/// @nodoc
+class _$RAGSearchResultCopyWithImpl<$Res, $Val extends RAGSearchResult>
+    implements $RAGSearchResultCopyWith<$Res> {
+  _$RAGSearchResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? docId = null,
+    Object? title = null,
+    Object? content = null,
+    Object? score = null,
+    Object? docType = null,
+  }) {
+    return _then(_value.copyWith(
+      docId: null == docId
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+      docType: null == docType
+          ? _value.docType
+          : docType // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGSearchResultImplCopyWith<$Res>
+    implements $RAGSearchResultCopyWith<$Res> {
+  factory _$$RAGSearchResultImplCopyWith(_$RAGSearchResultImpl value,
+          $Res Function(_$RAGSearchResultImpl) then) =
+      __$$RAGSearchResultImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String docId,
+      String title,
+      String content,
+      double score,
+      String docType});
+}
+
+/// @nodoc
+class __$$RAGSearchResultImplCopyWithImpl<$Res>
+    extends _$RAGSearchResultCopyWithImpl<$Res, _$RAGSearchResultImpl>
+    implements _$$RAGSearchResultImplCopyWith<$Res> {
+  __$$RAGSearchResultImplCopyWithImpl(
+      _$RAGSearchResultImpl _value, $Res Function(_$RAGSearchResultImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? docId = null,
+    Object? title = null,
+    Object? content = null,
+    Object? score = null,
+    Object? docType = null,
+  }) {
+    return _then(_$RAGSearchResultImpl(
+      docId: null == docId
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double,
+      docType: null == docType
+          ? _value.docType
+          : docType // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGSearchResultImpl implements _RAGSearchResult {
+  const _$RAGSearchResultImpl(
+      {required this.docId,
+      required this.title,
+      required this.content,
+      required this.score,
+      required this.docType});
+
+  factory _$RAGSearchResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGSearchResultImplFromJson(json);
+
+  @override
+  final String docId;
+  @override
+  final String title;
+  @override
+  final String content;
+  @override
+  final double score;
+  @override
+  final String docType;
+
+  @override
+  String toString() {
+    return 'RAGSearchResult(docId: $docId, title: $title, content: $content, score: $score, docType: $docType)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGSearchResultImpl &&
+            (identical(other.docId, docId) || other.docId == docId) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.score, score) || other.score == score) &&
+            (identical(other.docType, docType) || other.docType == docType));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, docId, title, content, score, docType);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGSearchResultImplCopyWith<_$RAGSearchResultImpl> get copyWith =>
+      __$$RAGSearchResultImplCopyWithImpl<_$RAGSearchResultImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGSearchResultImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGSearchResult implements RAGSearchResult {
+  const factory _RAGSearchResult(
+      {required final String docId,
+      required final String title,
+      required final String content,
+      required final double score,
+      required final String docType}) = _$RAGSearchResultImpl;
+
+  factory _RAGSearchResult.fromJson(Map<String, dynamic> json) =
+      _$RAGSearchResultImpl.fromJson;
+
+  @override
+  String get docId;
+  @override
+  String get title;
+  @override
+  String get content;
+  @override
+  double get score;
+  @override
+  String get docType;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGSearchResultImplCopyWith<_$RAGSearchResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RAGSearchResponse _$RAGSearchResponseFromJson(Map<String, dynamic> json) {
+  return _RAGSearchResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGSearchResponse {
+  String get query => throw _privateConstructorUsedError;
+  String get mode => throw _privateConstructorUsedError;
+  List<RAGSearchResult> get results => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGSearchResponseCopyWith<RAGSearchResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGSearchResponseCopyWith<$Res> {
+  factory $RAGSearchResponseCopyWith(
+          RAGSearchResponse value, $Res Function(RAGSearchResponse) then) =
+      _$RAGSearchResponseCopyWithImpl<$Res, RAGSearchResponse>;
+  @useResult
+  $Res call({String query, String mode, List<RAGSearchResult> results});
+}
+
+/// @nodoc
+class _$RAGSearchResponseCopyWithImpl<$Res, $Val extends RAGSearchResponse>
+    implements $RAGSearchResponseCopyWith<$Res> {
+  _$RAGSearchResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? query = null,
+    Object? mode = null,
+    Object? results = null,
+  }) {
+    return _then(_value.copyWith(
+      query: null == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String,
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<RAGSearchResult>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGSearchResponseImplCopyWith<$Res>
+    implements $RAGSearchResponseCopyWith<$Res> {
+  factory _$$RAGSearchResponseImplCopyWith(_$RAGSearchResponseImpl value,
+          $Res Function(_$RAGSearchResponseImpl) then) =
+      __$$RAGSearchResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String query, String mode, List<RAGSearchResult> results});
+}
+
+/// @nodoc
+class __$$RAGSearchResponseImplCopyWithImpl<$Res>
+    extends _$RAGSearchResponseCopyWithImpl<$Res, _$RAGSearchResponseImpl>
+    implements _$$RAGSearchResponseImplCopyWith<$Res> {
+  __$$RAGSearchResponseImplCopyWithImpl(_$RAGSearchResponseImpl _value,
+      $Res Function(_$RAGSearchResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? query = null,
+    Object? mode = null,
+    Object? results = null,
+  }) {
+    return _then(_$RAGSearchResponseImpl(
+      query: null == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String,
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<RAGSearchResult>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGSearchResponseImpl implements _RAGSearchResponse {
+  const _$RAGSearchResponseImpl(
+      {required this.query,
+      required this.mode,
+      required final List<RAGSearchResult> results})
+      : _results = results;
+
+  factory _$RAGSearchResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGSearchResponseImplFromJson(json);
+
+  @override
+  final String query;
+  @override
+  final String mode;
+  final List<RAGSearchResult> _results;
+  @override
+  List<RAGSearchResult> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  @override
+  String toString() {
+    return 'RAGSearchResponse(query: $query, mode: $mode, results: $results)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGSearchResponseImpl &&
+            (identical(other.query, query) || other.query == query) &&
+            (identical(other.mode, mode) || other.mode == mode) &&
+            const DeepCollectionEquality().equals(other._results, _results));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, query, mode, const DeepCollectionEquality().hash(_results));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGSearchResponseImplCopyWith<_$RAGSearchResponseImpl> get copyWith =>
+      __$$RAGSearchResponseImplCopyWithImpl<_$RAGSearchResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGSearchResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGSearchResponse implements RAGSearchResponse {
+  const factory _RAGSearchResponse(
+      {required final String query,
+      required final String mode,
+      required final List<RAGSearchResult> results}) = _$RAGSearchResponseImpl;
+
+  factory _RAGSearchResponse.fromJson(Map<String, dynamic> json) =
+      _$RAGSearchResponseImpl.fromJson;
+
+  @override
+  String get query;
+  @override
+  String get mode;
+  @override
+  List<RAGSearchResult> get results;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGSearchResponseImplCopyWith<_$RAGSearchResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RAGContextResponse _$RAGContextResponseFromJson(Map<String, dynamic> json) {
+  return _RAGContextResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RAGContextResponse {
+  String get context => throw _privateConstructorUsedError;
+  List<RAGSearchResult> get citations => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RAGContextResponseCopyWith<RAGContextResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RAGContextResponseCopyWith<$Res> {
+  factory $RAGContextResponseCopyWith(
+          RAGContextResponse value, $Res Function(RAGContextResponse) then) =
+      _$RAGContextResponseCopyWithImpl<$Res, RAGContextResponse>;
+  @useResult
+  $Res call({String context, List<RAGSearchResult> citations});
+}
+
+/// @nodoc
+class _$RAGContextResponseCopyWithImpl<$Res, $Val extends RAGContextResponse>
+    implements $RAGContextResponseCopyWith<$Res> {
+  _$RAGContextResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? context = null,
+    Object? citations = null,
+  }) {
+    return _then(_value.copyWith(
+      context: null == context
+          ? _value.context
+          : context // ignore: cast_nullable_to_non_nullable
+              as String,
+      citations: null == citations
+          ? _value.citations
+          : citations // ignore: cast_nullable_to_non_nullable
+              as List<RAGSearchResult>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RAGContextResponseImplCopyWith<$Res>
+    implements $RAGContextResponseCopyWith<$Res> {
+  factory _$$RAGContextResponseImplCopyWith(_$RAGContextResponseImpl value,
+          $Res Function(_$RAGContextResponseImpl) then) =
+      __$$RAGContextResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String context, List<RAGSearchResult> citations});
+}
+
+/// @nodoc
+class __$$RAGContextResponseImplCopyWithImpl<$Res>
+    extends _$RAGContextResponseCopyWithImpl<$Res, _$RAGContextResponseImpl>
+    implements _$$RAGContextResponseImplCopyWith<$Res> {
+  __$$RAGContextResponseImplCopyWithImpl(_$RAGContextResponseImpl _value,
+      $Res Function(_$RAGContextResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? context = null,
+    Object? citations = null,
+  }) {
+    return _then(_$RAGContextResponseImpl(
+      context: null == context
+          ? _value.context
+          : context // ignore: cast_nullable_to_non_nullable
+              as String,
+      citations: null == citations
+          ? _value._citations
+          : citations // ignore: cast_nullable_to_non_nullable
+              as List<RAGSearchResult>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RAGContextResponseImpl implements _RAGContextResponse {
+  const _$RAGContextResponseImpl(
+      {required this.context, required final List<RAGSearchResult> citations})
+      : _citations = citations;
+
+  factory _$RAGContextResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RAGContextResponseImplFromJson(json);
+
+  @override
+  final String context;
+  final List<RAGSearchResult> _citations;
+  @override
+  List<RAGSearchResult> get citations {
+    if (_citations is EqualUnmodifiableListView) return _citations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_citations);
+  }
+
+  @override
+  String toString() {
+    return 'RAGContextResponse(context: $context, citations: $citations)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RAGContextResponseImpl &&
+            (identical(other.context, context) || other.context == context) &&
+            const DeepCollectionEquality()
+                .equals(other._citations, _citations));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, context, const DeepCollectionEquality().hash(_citations));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RAGContextResponseImplCopyWith<_$RAGContextResponseImpl> get copyWith =>
+      __$$RAGContextResponseImplCopyWithImpl<_$RAGContextResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RAGContextResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RAGContextResponse implements RAGContextResponse {
+  const factory _RAGContextResponse(
+          {required final String context,
+          required final List<RAGSearchResult> citations}) =
+      _$RAGContextResponseImpl;
+
+  factory _RAGContextResponse.fromJson(Map<String, dynamic> json) =
+      _$RAGContextResponseImpl.fromJson;
+
+  @override
+  String get context;
+  @override
+  List<RAGSearchResult> get citations;
+  @override
+  @JsonKey(ignore: true)
+  _$$RAGContextResponseImplCopyWith<_$RAGContextResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
