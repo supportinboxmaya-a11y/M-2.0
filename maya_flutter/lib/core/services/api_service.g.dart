@@ -3339,6 +3339,167 @@ Map<String, dynamic> _$$HostingLogsResponseImplToJson(
       'lines': instance.lines,
     };
 
+_$RemoteConfigResponseImpl _$$RemoteConfigResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RemoteConfigResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RemoteConfigResponseImpl(
+          host: $checkedConvert('host', (v) => v as String),
+          port: $checkedConvert('port', (v) => (v as num).toInt()),
+          user: $checkedConvert('user', (v) => v as String),
+          hasPassword: $checkedConvert('has_password', (v) => v as bool),
+          hasKey: $checkedConvert('has_key', (v) => v as bool),
+          sshCmd: $checkedConvert('ssh_cmd', (v) => v as String?),
+          scpCmd: $checkedConvert('scp_cmd', (v) => v as String?),
+          paramiko: $checkedConvert('paramiko', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'hasPassword': 'has_password',
+        'hasKey': 'has_key',
+        'sshCmd': 'ssh_cmd',
+        'scpCmd': 'scp_cmd'
+      },
+    );
+
+Map<String, dynamic> _$$RemoteConfigResponseImplToJson(
+    _$RemoteConfigResponseImpl instance) {
+  final val = <String, dynamic>{
+    'host': instance.host,
+    'port': instance.port,
+    'user': instance.user,
+    'has_password': instance.hasPassword,
+    'has_key': instance.hasKey,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('ssh_cmd', instance.sshCmd);
+  writeNotNull('scp_cmd', instance.scpCmd);
+  val['paramiko'] = instance.paramiko;
+  return val;
+}
+
+_$RemoteDeployResponseImpl _$$RemoteDeployResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RemoteDeployResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RemoteDeployResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          app: $checkedConvert('app', (v) => v as String),
+          image: $checkedConvert('image', (v) => v as String),
+          dockerfileDir: $checkedConvert('dockerfile_dir', (v) => v as String?),
+          ports: $checkedConvert(
+              'ports',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e as String),
+                  )),
+          env: $checkedConvert(
+              'env',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e as String),
+                  )),
+          pid: $checkedConvert('pid', (v) => (v as num?)?.toInt()),
+          containerId: $checkedConvert('container_id', (v) => v as String?),
+          output: $checkedConvert('output', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'dockerfileDir': 'dockerfile_dir',
+        'containerId': 'container_id'
+      },
+    );
+
+Map<String, dynamic> _$$RemoteDeployResponseImplToJson(
+    _$RemoteDeployResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'app': instance.app,
+    'image': instance.image,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('dockerfile_dir', instance.dockerfileDir);
+  writeNotNull('ports', instance.ports);
+  writeNotNull('env', instance.env);
+  writeNotNull('pid', instance.pid);
+  writeNotNull('container_id', instance.containerId);
+  writeNotNull('output', instance.output);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$RemoteActionResponseImpl _$$RemoteActionResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RemoteActionResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RemoteActionResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          app: $checkedConvert('app', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          output: $checkedConvert('output', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$RemoteActionResponseImplToJson(
+    _$RemoteActionResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'app': instance.app,
+    'action': instance.action,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('output', instance.output);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$RemoteLogsResponseImpl _$$RemoteLogsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$RemoteLogsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$RemoteLogsResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          app: $checkedConvert('app', (v) => v as String),
+          logs: $checkedConvert('logs', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$RemoteLogsResponseImplToJson(
+        _$RemoteLogsResponseImpl instance) =>
+    <String, dynamic>{
+      'ok': instance.ok,
+      'app': instance.app,
+      'logs': instance.logs,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

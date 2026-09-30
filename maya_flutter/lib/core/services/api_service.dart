@@ -1000,6 +1000,52 @@ class ApiService {
     }
   }
 
+  // Remote VPS Deploy (Phase 16)
+  Future<RemoteConfigResponse> getRemoteConfig() async {
+    final response = await _dio.get(AppConfig.remoteConfig);
+    return RemoteConfigResponse.fromJson(response.data);
+  }
+
+  Future<RemoteDeployResponse> deployRemote({
+    required String app,
+    required String image,
+    String? dockerfileDir,
+    Map<String, String>? ports,
+    Map<String, String>? env,
+  }) async {
+    final data = <String, dynamic>{
+      'app': app,
+      'image': image,
+    };
+    if (dockerfileDir != null) data['dockerfile_dir'] = dockerfileDir;
+    if (ports != null && ports.isNotEmpty) data['ports'] = ports;
+    if (env != null && env.isNotEmpty) data['env'] = env;
+
+    final response = await _dio.post(
+      AppConfig.remoteDeploy,
+      data: data,
+    );
+    return RemoteDeployResponse.fromJson(response.data);
+  }
+
+  Future<RemoteActionResponse> remoteAction({
+    required String app,
+    required String action, // start, stop, restart, logs
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.remoteAction}$app/$action',
+    );
+    return RemoteActionResponse.fromJson(response.data);
+  }
+
+  Future<RemoteLogsResponse> getRemoteLogs(String app, {int lines = 100}) async {
+    final response = await _dio.get(
+      '${AppConfig.remoteAction}$app/logs',
+      queryParameters: {'lines': lines},
+    );
+    return RemoteLogsResponse.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -2511,4 +2557,67 @@ class HostingLogsResponse with _$HostingLogsResponse {
 
   factory HostingLogsResponse.fromJson(Map<String, dynamic> json) =>
       _$HostingLogsResponseFromJson(json);
+}
+
+// Remote VPS Deploy Models (Phase 16)
+@freezed
+class RemoteConfigResponse with _$RemoteConfigResponse {
+  const factory RemoteConfigResponse({
+    required String host,
+    required int port,
+    required String user,
+    required bool hasPassword,
+    required bool hasKey,
+    required String? sshCmd,
+    required String? scpCmd,
+    required bool paramiko,
+  }) = _RemoteConfigResponse;
+
+  factory RemoteConfigResponse.fromJson(Map<String, dynamic> json) =>
+      _$RemoteConfigResponseFromJson(json);
+}
+
+@freezed
+class RemoteDeployResponse with _$RemoteDeployResponse {
+  const factory RemoteDeployResponse({
+    required bool ok,
+    required String app,
+    required String image,
+    String? dockerfileDir,
+    Map<String, String>? ports,
+    Map<String, String>? env,
+    int? pid,
+    String? containerId,
+    String? output,
+    String? error,
+  }) = _RemoteDeployResponse;
+
+  factory RemoteDeployResponse.fromJson(Map<String, dynamic> json) =>
+      _$RemoteDeployResponseFromJson(json);
+}
+
+@freezed
+class RemoteActionResponse with _$RemoteActionResponse {
+  const factory RemoteActionResponse({
+    required bool ok,
+    required String app,
+    required String action,
+    String? output,
+    String? error,
+  }) = _RemoteActionResponse;
+
+  factory RemoteActionResponse.fromJson(Map<String, dynamic> json) =>
+      _$RemoteActionResponseFromJson(json);
+}
+
+@freezed
+class RemoteLogsResponse with _$RemoteLogsResponse {
+  const factory RemoteLogsResponse({
+    required bool ok,
+    required String app,
+    required String logs,
+  }) = _RemoteLogsResponse;
+
+  factory RemoteLogsResponse.fromJson(Map<String, dynamic> json) =>
+      _$RemoteLogsResponseFromJson(json);
 }

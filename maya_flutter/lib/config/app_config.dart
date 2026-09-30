@@ -145,6 +145,11 @@ class AppConfig {
   static const String hostingLogs = '/api/v1/hosting/apps/';
   static const String hostingRemove = '/api/v1/hosting/apps/';
 
+  // Remote VPS Deploy (Phase 16)
+  static const String remoteConfig = '/api/v1/hosting/remote/config';
+  static const String remoteDeploy = '/api/v1/hosting/remote/deploy';
+  static const String remoteAction = '/api/v1/hosting/remote/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

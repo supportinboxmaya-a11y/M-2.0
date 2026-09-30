@@ -22755,3 +22755,1031 @@ abstract class _HostingLogsResponse implements HostingLogsResponse {
   _$$HostingLogsResponseImplCopyWith<_$HostingLogsResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+RemoteConfigResponse _$RemoteConfigResponseFromJson(Map<String, dynamic> json) {
+  return _RemoteConfigResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RemoteConfigResponse {
+  String get host => throw _privateConstructorUsedError;
+  int get port => throw _privateConstructorUsedError;
+  String get user => throw _privateConstructorUsedError;
+  bool get hasPassword => throw _privateConstructorUsedError;
+  bool get hasKey => throw _privateConstructorUsedError;
+  String? get sshCmd => throw _privateConstructorUsedError;
+  String? get scpCmd => throw _privateConstructorUsedError;
+  bool get paramiko => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RemoteConfigResponseCopyWith<RemoteConfigResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RemoteConfigResponseCopyWith<$Res> {
+  factory $RemoteConfigResponseCopyWith(RemoteConfigResponse value,
+          $Res Function(RemoteConfigResponse) then) =
+      _$RemoteConfigResponseCopyWithImpl<$Res, RemoteConfigResponse>;
+  @useResult
+  $Res call(
+      {String host,
+      int port,
+      String user,
+      bool hasPassword,
+      bool hasKey,
+      String? sshCmd,
+      String? scpCmd,
+      bool paramiko});
+}
+
+/// @nodoc
+class _$RemoteConfigResponseCopyWithImpl<$Res,
+        $Val extends RemoteConfigResponse>
+    implements $RemoteConfigResponseCopyWith<$Res> {
+  _$RemoteConfigResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? host = null,
+    Object? port = null,
+    Object? user = null,
+    Object? hasPassword = null,
+    Object? hasKey = null,
+    Object? sshCmd = freezed,
+    Object? scpCmd = freezed,
+    Object? paramiko = null,
+  }) {
+    return _then(_value.copyWith(
+      host: null == host
+          ? _value.host
+          : host // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as int,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as String,
+      hasPassword: null == hasPassword
+          ? _value.hasPassword
+          : hasPassword // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasKey: null == hasKey
+          ? _value.hasKey
+          : hasKey // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sshCmd: freezed == sshCmd
+          ? _value.sshCmd
+          : sshCmd // ignore: cast_nullable_to_non_nullable
+              as String?,
+      scpCmd: freezed == scpCmd
+          ? _value.scpCmd
+          : scpCmd // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paramiko: null == paramiko
+          ? _value.paramiko
+          : paramiko // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RemoteConfigResponseImplCopyWith<$Res>
+    implements $RemoteConfigResponseCopyWith<$Res> {
+  factory _$$RemoteConfigResponseImplCopyWith(_$RemoteConfigResponseImpl value,
+          $Res Function(_$RemoteConfigResponseImpl) then) =
+      __$$RemoteConfigResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String host,
+      int port,
+      String user,
+      bool hasPassword,
+      bool hasKey,
+      String? sshCmd,
+      String? scpCmd,
+      bool paramiko});
+}
+
+/// @nodoc
+class __$$RemoteConfigResponseImplCopyWithImpl<$Res>
+    extends _$RemoteConfigResponseCopyWithImpl<$Res, _$RemoteConfigResponseImpl>
+    implements _$$RemoteConfigResponseImplCopyWith<$Res> {
+  __$$RemoteConfigResponseImplCopyWithImpl(_$RemoteConfigResponseImpl _value,
+      $Res Function(_$RemoteConfigResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? host = null,
+    Object? port = null,
+    Object? user = null,
+    Object? hasPassword = null,
+    Object? hasKey = null,
+    Object? sshCmd = freezed,
+    Object? scpCmd = freezed,
+    Object? paramiko = null,
+  }) {
+    return _then(_$RemoteConfigResponseImpl(
+      host: null == host
+          ? _value.host
+          : host // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as int,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as String,
+      hasPassword: null == hasPassword
+          ? _value.hasPassword
+          : hasPassword // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasKey: null == hasKey
+          ? _value.hasKey
+          : hasKey // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sshCmd: freezed == sshCmd
+          ? _value.sshCmd
+          : sshCmd // ignore: cast_nullable_to_non_nullable
+              as String?,
+      scpCmd: freezed == scpCmd
+          ? _value.scpCmd
+          : scpCmd // ignore: cast_nullable_to_non_nullable
+              as String?,
+      paramiko: null == paramiko
+          ? _value.paramiko
+          : paramiko // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RemoteConfigResponseImpl implements _RemoteConfigResponse {
+  const _$RemoteConfigResponseImpl(
+      {required this.host,
+      required this.port,
+      required this.user,
+      required this.hasPassword,
+      required this.hasKey,
+      required this.sshCmd,
+      required this.scpCmd,
+      required this.paramiko});
+
+  factory _$RemoteConfigResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RemoteConfigResponseImplFromJson(json);
+
+  @override
+  final String host;
+  @override
+  final int port;
+  @override
+  final String user;
+  @override
+  final bool hasPassword;
+  @override
+  final bool hasKey;
+  @override
+  final String? sshCmd;
+  @override
+  final String? scpCmd;
+  @override
+  final bool paramiko;
+
+  @override
+  String toString() {
+    return 'RemoteConfigResponse(host: $host, port: $port, user: $user, hasPassword: $hasPassword, hasKey: $hasKey, sshCmd: $sshCmd, scpCmd: $scpCmd, paramiko: $paramiko)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RemoteConfigResponseImpl &&
+            (identical(other.host, host) || other.host == host) &&
+            (identical(other.port, port) || other.port == port) &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.hasPassword, hasPassword) ||
+                other.hasPassword == hasPassword) &&
+            (identical(other.hasKey, hasKey) || other.hasKey == hasKey) &&
+            (identical(other.sshCmd, sshCmd) || other.sshCmd == sshCmd) &&
+            (identical(other.scpCmd, scpCmd) || other.scpCmd == scpCmd) &&
+            (identical(other.paramiko, paramiko) ||
+                other.paramiko == paramiko));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, host, port, user, hasPassword,
+      hasKey, sshCmd, scpCmd, paramiko);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RemoteConfigResponseImplCopyWith<_$RemoteConfigResponseImpl>
+      get copyWith =>
+          __$$RemoteConfigResponseImplCopyWithImpl<_$RemoteConfigResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RemoteConfigResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RemoteConfigResponse implements RemoteConfigResponse {
+  const factory _RemoteConfigResponse(
+      {required final String host,
+      required final int port,
+      required final String user,
+      required final bool hasPassword,
+      required final bool hasKey,
+      required final String? sshCmd,
+      required final String? scpCmd,
+      required final bool paramiko}) = _$RemoteConfigResponseImpl;
+
+  factory _RemoteConfigResponse.fromJson(Map<String, dynamic> json) =
+      _$RemoteConfigResponseImpl.fromJson;
+
+  @override
+  String get host;
+  @override
+  int get port;
+  @override
+  String get user;
+  @override
+  bool get hasPassword;
+  @override
+  bool get hasKey;
+  @override
+  String? get sshCmd;
+  @override
+  String? get scpCmd;
+  @override
+  bool get paramiko;
+  @override
+  @JsonKey(ignore: true)
+  _$$RemoteConfigResponseImplCopyWith<_$RemoteConfigResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+RemoteDeployResponse _$RemoteDeployResponseFromJson(Map<String, dynamic> json) {
+  return _RemoteDeployResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RemoteDeployResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get app => throw _privateConstructorUsedError;
+  String get image => throw _privateConstructorUsedError;
+  String? get dockerfileDir => throw _privateConstructorUsedError;
+  Map<String, String>? get ports => throw _privateConstructorUsedError;
+  Map<String, String>? get env => throw _privateConstructorUsedError;
+  int? get pid => throw _privateConstructorUsedError;
+  String? get containerId => throw _privateConstructorUsedError;
+  String? get output => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RemoteDeployResponseCopyWith<RemoteDeployResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RemoteDeployResponseCopyWith<$Res> {
+  factory $RemoteDeployResponseCopyWith(RemoteDeployResponse value,
+          $Res Function(RemoteDeployResponse) then) =
+      _$RemoteDeployResponseCopyWithImpl<$Res, RemoteDeployResponse>;
+  @useResult
+  $Res call(
+      {bool ok,
+      String app,
+      String image,
+      String? dockerfileDir,
+      Map<String, String>? ports,
+      Map<String, String>? env,
+      int? pid,
+      String? containerId,
+      String? output,
+      String? error});
+}
+
+/// @nodoc
+class _$RemoteDeployResponseCopyWithImpl<$Res,
+        $Val extends RemoteDeployResponse>
+    implements $RemoteDeployResponseCopyWith<$Res> {
+  _$RemoteDeployResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+    Object? image = null,
+    Object? dockerfileDir = freezed,
+    Object? ports = freezed,
+    Object? env = freezed,
+    Object? pid = freezed,
+    Object? containerId = freezed,
+    Object? output = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String,
+      dockerfileDir: freezed == dockerfileDir
+          ? _value.dockerfileDir
+          : dockerfileDir // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ports: freezed == ports
+          ? _value.ports
+          : ports // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>?,
+      env: freezed == env
+          ? _value.env
+          : env // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>?,
+      pid: freezed == pid
+          ? _value.pid
+          : pid // ignore: cast_nullable_to_non_nullable
+              as int?,
+      containerId: freezed == containerId
+          ? _value.containerId
+          : containerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      output: freezed == output
+          ? _value.output
+          : output // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RemoteDeployResponseImplCopyWith<$Res>
+    implements $RemoteDeployResponseCopyWith<$Res> {
+  factory _$$RemoteDeployResponseImplCopyWith(_$RemoteDeployResponseImpl value,
+          $Res Function(_$RemoteDeployResponseImpl) then) =
+      __$$RemoteDeployResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool ok,
+      String app,
+      String image,
+      String? dockerfileDir,
+      Map<String, String>? ports,
+      Map<String, String>? env,
+      int? pid,
+      String? containerId,
+      String? output,
+      String? error});
+}
+
+/// @nodoc
+class __$$RemoteDeployResponseImplCopyWithImpl<$Res>
+    extends _$RemoteDeployResponseCopyWithImpl<$Res, _$RemoteDeployResponseImpl>
+    implements _$$RemoteDeployResponseImplCopyWith<$Res> {
+  __$$RemoteDeployResponseImplCopyWithImpl(_$RemoteDeployResponseImpl _value,
+      $Res Function(_$RemoteDeployResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+    Object? image = null,
+    Object? dockerfileDir = freezed,
+    Object? ports = freezed,
+    Object? env = freezed,
+    Object? pid = freezed,
+    Object? containerId = freezed,
+    Object? output = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$RemoteDeployResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String,
+      dockerfileDir: freezed == dockerfileDir
+          ? _value.dockerfileDir
+          : dockerfileDir // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ports: freezed == ports
+          ? _value._ports
+          : ports // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>?,
+      env: freezed == env
+          ? _value._env
+          : env // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>?,
+      pid: freezed == pid
+          ? _value.pid
+          : pid // ignore: cast_nullable_to_non_nullable
+              as int?,
+      containerId: freezed == containerId
+          ? _value.containerId
+          : containerId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      output: freezed == output
+          ? _value.output
+          : output // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RemoteDeployResponseImpl implements _RemoteDeployResponse {
+  const _$RemoteDeployResponseImpl(
+      {required this.ok,
+      required this.app,
+      required this.image,
+      this.dockerfileDir,
+      final Map<String, String>? ports,
+      final Map<String, String>? env,
+      this.pid,
+      this.containerId,
+      this.output,
+      this.error})
+      : _ports = ports,
+        _env = env;
+
+  factory _$RemoteDeployResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RemoteDeployResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String app;
+  @override
+  final String image;
+  @override
+  final String? dockerfileDir;
+  final Map<String, String>? _ports;
+  @override
+  Map<String, String>? get ports {
+    final value = _ports;
+    if (value == null) return null;
+    if (_ports is EqualUnmodifiableMapView) return _ports;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  final Map<String, String>? _env;
+  @override
+  Map<String, String>? get env {
+    final value = _env;
+    if (value == null) return null;
+    if (_env is EqualUnmodifiableMapView) return _env;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  final int? pid;
+  @override
+  final String? containerId;
+  @override
+  final String? output;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'RemoteDeployResponse(ok: $ok, app: $app, image: $image, dockerfileDir: $dockerfileDir, ports: $ports, env: $env, pid: $pid, containerId: $containerId, output: $output, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RemoteDeployResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.app, app) || other.app == app) &&
+            (identical(other.image, image) || other.image == image) &&
+            (identical(other.dockerfileDir, dockerfileDir) ||
+                other.dockerfileDir == dockerfileDir) &&
+            const DeepCollectionEquality().equals(other._ports, _ports) &&
+            const DeepCollectionEquality().equals(other._env, _env) &&
+            (identical(other.pid, pid) || other.pid == pid) &&
+            (identical(other.containerId, containerId) ||
+                other.containerId == containerId) &&
+            (identical(other.output, output) || other.output == output) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      ok,
+      app,
+      image,
+      dockerfileDir,
+      const DeepCollectionEquality().hash(_ports),
+      const DeepCollectionEquality().hash(_env),
+      pid,
+      containerId,
+      output,
+      error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RemoteDeployResponseImplCopyWith<_$RemoteDeployResponseImpl>
+      get copyWith =>
+          __$$RemoteDeployResponseImplCopyWithImpl<_$RemoteDeployResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RemoteDeployResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RemoteDeployResponse implements RemoteDeployResponse {
+  const factory _RemoteDeployResponse(
+      {required final bool ok,
+      required final String app,
+      required final String image,
+      final String? dockerfileDir,
+      final Map<String, String>? ports,
+      final Map<String, String>? env,
+      final int? pid,
+      final String? containerId,
+      final String? output,
+      final String? error}) = _$RemoteDeployResponseImpl;
+
+  factory _RemoteDeployResponse.fromJson(Map<String, dynamic> json) =
+      _$RemoteDeployResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get app;
+  @override
+  String get image;
+  @override
+  String? get dockerfileDir;
+  @override
+  Map<String, String>? get ports;
+  @override
+  Map<String, String>? get env;
+  @override
+  int? get pid;
+  @override
+  String? get containerId;
+  @override
+  String? get output;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$RemoteDeployResponseImplCopyWith<_$RemoteDeployResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+RemoteActionResponse _$RemoteActionResponseFromJson(Map<String, dynamic> json) {
+  return _RemoteActionResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RemoteActionResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get app => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String? get output => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RemoteActionResponseCopyWith<RemoteActionResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RemoteActionResponseCopyWith<$Res> {
+  factory $RemoteActionResponseCopyWith(RemoteActionResponse value,
+          $Res Function(RemoteActionResponse) then) =
+      _$RemoteActionResponseCopyWithImpl<$Res, RemoteActionResponse>;
+  @useResult
+  $Res call(
+      {bool ok, String app, String action, String? output, String? error});
+}
+
+/// @nodoc
+class _$RemoteActionResponseCopyWithImpl<$Res,
+        $Val extends RemoteActionResponse>
+    implements $RemoteActionResponseCopyWith<$Res> {
+  _$RemoteActionResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+    Object? action = null,
+    Object? output = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      output: freezed == output
+          ? _value.output
+          : output // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RemoteActionResponseImplCopyWith<$Res>
+    implements $RemoteActionResponseCopyWith<$Res> {
+  factory _$$RemoteActionResponseImplCopyWith(_$RemoteActionResponseImpl value,
+          $Res Function(_$RemoteActionResponseImpl) then) =
+      __$$RemoteActionResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool ok, String app, String action, String? output, String? error});
+}
+
+/// @nodoc
+class __$$RemoteActionResponseImplCopyWithImpl<$Res>
+    extends _$RemoteActionResponseCopyWithImpl<$Res, _$RemoteActionResponseImpl>
+    implements _$$RemoteActionResponseImplCopyWith<$Res> {
+  __$$RemoteActionResponseImplCopyWithImpl(_$RemoteActionResponseImpl _value,
+      $Res Function(_$RemoteActionResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+    Object? action = null,
+    Object? output = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$RemoteActionResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      output: freezed == output
+          ? _value.output
+          : output // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RemoteActionResponseImpl implements _RemoteActionResponse {
+  const _$RemoteActionResponseImpl(
+      {required this.ok,
+      required this.app,
+      required this.action,
+      this.output,
+      this.error});
+
+  factory _$RemoteActionResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RemoteActionResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String app;
+  @override
+  final String action;
+  @override
+  final String? output;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'RemoteActionResponse(ok: $ok, app: $app, action: $action, output: $output, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RemoteActionResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.app, app) || other.app == app) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.output, output) || other.output == output) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ok, app, action, output, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RemoteActionResponseImplCopyWith<_$RemoteActionResponseImpl>
+      get copyWith =>
+          __$$RemoteActionResponseImplCopyWithImpl<_$RemoteActionResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RemoteActionResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RemoteActionResponse implements RemoteActionResponse {
+  const factory _RemoteActionResponse(
+      {required final bool ok,
+      required final String app,
+      required final String action,
+      final String? output,
+      final String? error}) = _$RemoteActionResponseImpl;
+
+  factory _RemoteActionResponse.fromJson(Map<String, dynamic> json) =
+      _$RemoteActionResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get app;
+  @override
+  String get action;
+  @override
+  String? get output;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$RemoteActionResponseImplCopyWith<_$RemoteActionResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+RemoteLogsResponse _$RemoteLogsResponseFromJson(Map<String, dynamic> json) {
+  return _RemoteLogsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RemoteLogsResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get app => throw _privateConstructorUsedError;
+  String get logs => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RemoteLogsResponseCopyWith<RemoteLogsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RemoteLogsResponseCopyWith<$Res> {
+  factory $RemoteLogsResponseCopyWith(
+          RemoteLogsResponse value, $Res Function(RemoteLogsResponse) then) =
+      _$RemoteLogsResponseCopyWithImpl<$Res, RemoteLogsResponse>;
+  @useResult
+  $Res call({bool ok, String app, String logs});
+}
+
+/// @nodoc
+class _$RemoteLogsResponseCopyWithImpl<$Res, $Val extends RemoteLogsResponse>
+    implements $RemoteLogsResponseCopyWith<$Res> {
+  _$RemoteLogsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+    Object? logs = null,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as String,
+      logs: null == logs
+          ? _value.logs
+          : logs // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RemoteLogsResponseImplCopyWith<$Res>
+    implements $RemoteLogsResponseCopyWith<$Res> {
+  factory _$$RemoteLogsResponseImplCopyWith(_$RemoteLogsResponseImpl value,
+          $Res Function(_$RemoteLogsResponseImpl) then) =
+      __$$RemoteLogsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool ok, String app, String logs});
+}
+
+/// @nodoc
+class __$$RemoteLogsResponseImplCopyWithImpl<$Res>
+    extends _$RemoteLogsResponseCopyWithImpl<$Res, _$RemoteLogsResponseImpl>
+    implements _$$RemoteLogsResponseImplCopyWith<$Res> {
+  __$$RemoteLogsResponseImplCopyWithImpl(_$RemoteLogsResponseImpl _value,
+      $Res Function(_$RemoteLogsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+    Object? logs = null,
+  }) {
+    return _then(_$RemoteLogsResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as String,
+      logs: null == logs
+          ? _value.logs
+          : logs // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RemoteLogsResponseImpl implements _RemoteLogsResponse {
+  const _$RemoteLogsResponseImpl(
+      {required this.ok, required this.app, required this.logs});
+
+  factory _$RemoteLogsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RemoteLogsResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String app;
+  @override
+  final String logs;
+
+  @override
+  String toString() {
+    return 'RemoteLogsResponse(ok: $ok, app: $app, logs: $logs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RemoteLogsResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.app, app) || other.app == app) &&
+            (identical(other.logs, logs) || other.logs == logs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ok, app, logs);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RemoteLogsResponseImplCopyWith<_$RemoteLogsResponseImpl> get copyWith =>
+      __$$RemoteLogsResponseImplCopyWithImpl<_$RemoteLogsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RemoteLogsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RemoteLogsResponse implements RemoteLogsResponse {
+  const factory _RemoteLogsResponse(
+      {required final bool ok,
+      required final String app,
+      required final String logs}) = _$RemoteLogsResponseImpl;
+
+  factory _RemoteLogsResponse.fromJson(Map<String, dynamic> json) =
+      _$RemoteLogsResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get app;
+  @override
+  String get logs;
+  @override
+  @JsonKey(ignore: true)
+  _$$RemoteLogsResponseImplCopyWith<_$RemoteLogsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

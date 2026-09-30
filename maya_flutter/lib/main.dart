@@ -1924,6 +1924,20 @@ class _AppDrawer extends ConsumerWidget {
                   onTap: () => Navigator.pop(context),
                 ),
                 _DrawerActionTile(
+                  icon: Icons.cloud_rounded,
+                  label: 'Remote VPS Deploy',
+                  subtitle: 'SSH + Docker deploy to VPS',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _RemoteVpsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
                   icon: Icons.tune_rounded,
                   label: 'Settings',
                   subtitle: 'Preferences & config',
@@ -13289,4 +13303,519 @@ class _DetailRow extends StatelessWidget {
 final hostingAppsProvider = FutureProvider<HostingAppsResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getHostingApps();
+});
+
+// Remote VPS Deploy Screen (Phase 16)
+class _RemoteVpsScreen extends ConsumerStatefulWidget {
+  const _RemoteVpsScreen();
+
+  @override
+  ConsumerState<_RemoteVpsScreen> createState() => _RemoteVpsScreenState();
+}
+
+class _RemoteVpsScreenState extends ConsumerState<_RemoteVpsScreen> {
+  Timer? _refreshTimer;
+  String _selectedApp = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(remoteConfigProvider);
+        ref.invalidate(remoteContainersProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Remote VPS Deploy', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(remoteConfigProvider);
+                ref.invalidate(remoteContainersProvider);
+              },
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // VPS Config Status
+              Consumer(
+                builder: (context, ref, _) {
+                  final configAsync = ref.watch(remoteConfigProvider);
+                  return configAsync.when(
+                    data: (config) => Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: MayaTheme.glassCard(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.cloud_rounded, color: MayaTheme.neonCyan, size: 24),
+                              const SizedBox(width: 12),
+                              const Text('VPS Configuration', style: MayaTheme.titleMedium),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: config.configured ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.error.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  config.configured ? 'CONNECTED' : 'NOT CONFIGURED',
+                                  style: MayaTheme.labelSmall.copyWith(
+                                    color: config.configured ? MayaTheme.neonEmerald : MayaTheme.error,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          _ConfigRow(label: 'Host', value: config.host.isNotEmpty ? config.host : 'Not set'),
+                          _ConfigRow(label: 'Port', value: config.port.toString()),
+                          _ConfigRow(label: 'User', value: config.user.isNotEmpty ? config.user : 'Not set'),
+                          _ConfigRow(label: 'SSH Key', value: config.hasKey ? 'Configured' : 'Not set'),
+                          _ConfigRow(label: 'Password Auth', value: config.hasPassword ? 'Enabled' : 'Disabled'),
+                          _ConfigRow(label: 'Paramiko', value: config.paramiko ? 'Available' : 'Not available'),
+                        ],
+                      ),
+                    ),
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                    ),
+                    error: (err, _) => Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: MayaTheme.glassCard(),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                          const SizedBox(height: 16),
+                          Text('Error loading VPS config', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                          const SizedBox(height: 8),
+                          Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Deploy New Container
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Deploy New Container', style: MayaTheme.titleMedium),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Deploy a Docker container to the remote VPS. Supports building from Dockerfile or running existing images.',
+                      style: MayaTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    _DeployForm(onSuccess: () {
+                      ref.invalidate(remoteContainersProvider);
+                    }),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Container List & Actions
+              Consumer(
+                builder: (context, ref, _) {
+                  final containersAsync = ref.watch(remoteContainersProvider);
+                  return containersAsync.when(
+                    data: (containers) {
+                      if (containers.isEmpty) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: MayaTheme.glassCard(),
+                          child: const Center(
+                            child: Text('No containers running on VPS', style: MayaTheme.bodyMedium),
+                          ),
+                        );
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Running Containers', style: MayaTheme.titleMedium),
+                          const SizedBox(height: 12),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: containers.length,
+                            itemBuilder: (context, index) {
+                              final container = containers[index];
+                              return _RemoteContainerTile(
+                                container: container,
+                                onAction: (action) async {
+                                  final success = await ref.read(apiServiceProvider).remoteAction(app: container.Names?.first ?? '', action: action);
+                                  if (mounted) {
+                                    ref.invalidate(remoteContainersProvider);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('${action.capitalize()} ${success ? 'succeeded' : 'failed'}'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                    ),
+                    error: (err, _) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                          const SizedBox(height: 16),
+                          Text('Error loading containers', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                          const SizedBox(height: 8),
+                          Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ConfigRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _ConfigRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeployForm extends ConsumerStatefulWidget {
+  final VoidCallback onSuccess;
+
+  const _DeployForm({required this.onSuccess});
+
+  @override
+  ConsumerState<_DeployForm> createState() => _DeployFormState();
+}
+
+class _DeployFormState extends ConsumerState<_DeployForm> {
+  final _appController = TextEditingController();
+  final _imageController = TextEditingController();
+  final _dockerfileController = TextEditingController();
+  final _portsController = TextEditingController();
+  final _envController = TextEditingController();
+
+  @override
+  void dispose() {
+    _appController.dispose();
+    _imageController.dispose();
+    _dockerfileController.dispose();
+    _portsController.dispose();
+    _envController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _appController,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            labelText: 'Container Name',
+            labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _imageController,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            labelText: 'Docker Image',
+            labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _dockerfileController,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            labelText: 'Dockerfile Directory (optional)',
+            labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _portsController,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            labelText: 'Ports (host:container, e.g., 8080:80)',
+            labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _envController,
+          style: MayaTheme.bodyMedium,
+          maxLines: 3,
+          decoration: InputDecoration(
+            labelText: 'Environment Variables (KEY=VALUE, one per line)',
+            labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _submit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MayaTheme.neonCyan,
+              foregroundColor: MayaTheme.slate900,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: const Text('Deploy'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _submit() async {
+    if (_appController.text.trim().isEmpty || _imageController.text.trim().isEmpty) return;
+
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final ports = _portsController.text.trim().isNotEmpty
+          ? Map.fromEntries(_portsController.text.split(',').map((e) {
+              final parts = e.split(':');
+              return MapEntry(parts[0].trim(), parts.length > 1 ? parts[1].trim() : parts[0].trim());
+            }))
+          : <String, String>{};
+      final env = _envController.text.trim().isNotEmpty
+          ? Map.fromEntries(_envController.text.split('\n').map((e) {
+              final parts = e.split('=');
+              return MapEntry(parts[0].trim(), parts.length > 1 ? parts[1].trim() : '');
+            }))
+          : <String, String>{};
+
+      final result = await apiService.deployRemote(
+        app: _appController.text.trim(),
+        image: _imageController.text.trim(),
+        dockerfileDir: _dockerfileController.text.trim().isNotEmpty ? _dockerfileController.text.trim() : null,
+        ports: ports.isNotEmpty ? ports : null,
+        env: env.isNotEmpty ? env : null,
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deploy ${result.ok ? 'succeeded' : 'failed'}'),
+            backgroundColor: result.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+        widget.onSuccess();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _RemoteContainerTile extends ConsumerWidget {
+  final Map<String, dynamic> container;
+  final Future<void> Function(String) onAction;
+
+  const _RemoteContainerTile({required this.container, required this.onAction});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final name = (container['Names'] as List?)?.first ?? 'unknown';
+    final status = container['Status'] as String? ?? 'unknown';
+    final image = container['Image'] as String? ?? 'unknown';
+    final ports = container['Ports'] as String? ?? 'none';
+    final isRunning = status.toLowerCase().contains('up');
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isRunning ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.error.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  isRunning ? 'Running' : 'Stopped',
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: isRunning ? MayaTheme.neonEmerald : MayaTheme.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(name, style: MayaTheme.titleSmall),
+              ),
+              const Spacer(),
+              PopupMenuButton(
+                icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+                itemBuilder: (context) => [
+                  if (!isRunning)
+                    const PopupMenuItem(
+                      value: 'start',
+                      child: Row(children: [Icon(Icons.play_arrow_rounded, size: 18), SizedBox(width: 8), Text('Start')]),
+                    ),
+                  if (isRunning)
+                    const PopupMenuItem(
+                      value: 'stop',
+                      child: Row(children: [Icon(Icons.stop_rounded, size: 18, color: MayaTheme.error), SizedBox(width: 8), Text('Stop', style: TextStyle(color: MayaTheme.error))]),
+                    ),
+                  const PopupMenuItem(
+                    value: 'restart',
+                    child: Row(children: [Icon(Icons.restart_alt_rounded, size: 18, color: MayaTheme.neonViolet), SizedBox(width: 8), Text('Restart')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'logs',
+                    child: Row(children: [Icon(Icons.article_rounded, size: 18), SizedBox(width: 8), Text('View Logs')]),
+                  ),
+                ],
+                onSelected: (value) async {
+                  final success = await ref.read(apiServiceProvider).remoteAction(app: container['Names']?.first ?? '', action: value);
+                  if (mounted) {
+                    ref.invalidate(remoteContainersProvider);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${value.capitalize()} ${success ? 'succeeded' : 'failed'}'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RemoteConfigRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _RemoteConfigRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Remote VPS Providers
+final remoteConfigProvider = FutureProvider<RemoteConfigResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRemoteConfig();
+});
+
+final remoteContainersProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRemoteContainers();
 });
