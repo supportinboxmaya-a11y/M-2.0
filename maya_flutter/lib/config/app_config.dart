@@ -156,6 +156,31 @@ class AppConfig {
   static const String cognitivePause = '/api/v1/cognitive/pause';
   static const String cognitiveResume = '/api/v1/cognitive/resume';
 
+  // AGI Architecture (Phase 18 Part 1)
+  static const String kernelStatus = '/api/v1/cognitive/kernel/status';
+  static const String kernelProcessGoal = '/api/v1/cognitive/kernel/process-goal';
+  static const String kernelCheckpoint = '/api/v1/cognitive/kernel/checkpoint';
+  static const String kernelCheckpoints = '/api/v1/cognitive/kernel/checkpoints';
+  static const String kernelAudit = '/api/v1/cognitive/kernel/audit';
+  static const String kernelRestore = '/api/v1/cognitive/kernel/restore';
+  static const String kernelIncompleteGoals = '/api/v1/cognitive/kernel/goals/incomplete';
+  static const String kernelResumeGoal = '/api/v1/cognitive/kernel/goals/';
+  static const String kernelResumeIncomplete = '/api/v1/cognitive/kernel/resume-incomplete';
+
+  static const String planCreate = '/api/v1/cognitive/plan';
+  static const String planGet = '/api/v1/cognitive/plan/';
+  static const String planExecute = '/api/v1/cognitive/plan/';
+  static const String planReplan = '/api/v1/cognitive/plan/';
+
+  static const String synthesizeCreate = '/api/v1/cognitive/synthesize';
+  static const String synthesizeGet = '/api/v1/cognitive/synthesize/';
+  static const String synthesizeStats = '/api/v1/cognitive/synthesize/stats';
+
+  static const String metaStatus = '/api/v1/cognitive/metacognitive/status';
+  static const String metaMonitor = '/api/v1/cognitive/metacognitive/monitor';
+  static const String metaStepResult = '/api/v1/cognitive/metacognitive/step_result';
+  static const String metaEvents = '/api/v1/cognitive/metacognitive/events';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
