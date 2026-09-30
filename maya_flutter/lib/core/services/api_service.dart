@@ -863,6 +863,44 @@ class ApiService {
     return DeviceCommandResult.fromJson(response.data);
   }
 
+  // Instance CRUD (Phase 14)
+  Future<InstancesListResponse> getInstancesList() async {
+    final response = await _dio.get(AppConfig.instancesList);
+    return InstancesListResponse.fromJson(response.data);
+  }
+
+  Future<InstanceCreateResponse> createInstance({
+    required String name,
+    required String persona,
+    List<String>? skills,
+    double budgetUsd = 5.0,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.instancesCreate,
+      data: {
+        'name': name,
+        'persona': persona,
+        'skills': skills ?? [],
+        'budget_usd': budgetUsd,
+      },
+    );
+    return InstanceCreateResponse.fromJson(response.data);
+  }
+
+  Future<InstanceResponse> getInstance(String instanceId) async {
+    final response = await _dio.get('${AppConfig.instancesGet}$instanceId');
+    return InstanceResponse.fromJson(response.data);
+  }
+
+  Future<bool> deleteInstance(String instanceId) async {
+    try {
+      final response = await _dio.delete('${AppConfig.instancesDelete}$instanceId');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -2231,4 +2269,59 @@ class DeviceCommandResult with _$DeviceCommandResult {
 
   factory DeviceCommandResult.fromJson(Map<String, dynamic> json) =>
       _$DeviceCommandResultFromJson(json);
+}
+
+// Instance CRUD Models (Phase 14)
+@freezed
+class InstanceInfo with _$InstanceInfo {
+  const factory InstanceInfo({
+    required String id,
+    required String name,
+    required String persona,
+    required String memoryScope,
+    required List<String> skills,
+    required double budgetUsd,
+    required String owner,
+    required double createdAt,
+  }) = _InstanceInfo;
+
+  factory InstanceInfo.fromJson(Map<String, dynamic> json) =>
+      _$InstanceInfoFromJson(json);
+}
+
+@freezed
+class InstancesListResponse with _$InstancesListResponse {
+  const factory InstancesListResponse({
+    required List<InstanceInfo> instances,
+  }) = _InstancesListResponse;
+
+  factory InstancesListResponse.fromJson(Map<String, dynamic> json) =>
+      _$InstancesListResponseFromJson(json);
+}
+
+@freezed
+class InstanceCreateResponse with _$InstanceCreateResponse {
+  const factory InstanceCreateResponse({
+    required String id,
+    required String name,
+    required String persona,
+    required String memoryScope,
+    required List<String> skills,
+    required double budgetUsd,
+    required String owner,
+    required double createdAt,
+  }) = _InstanceCreateResponse;
+
+  factory InstanceCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$InstanceCreateResponseFromJson(json);
+}
+
+@freezed
+class InstanceResponse with _$InstanceResponse {
+  const factory InstanceResponse({
+    required InstanceInfo instance,
+  }) = _InstanceResponse;
+
+  factory InstanceResponse.fromJson(Map<String, dynamic> json) =>
+      _$InstanceResponseFromJson(json);
 }

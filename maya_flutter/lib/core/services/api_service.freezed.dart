@@ -20327,3 +20327,911 @@ abstract class _DeviceCommandResult implements DeviceCommandResult {
   _$$DeviceCommandResultImplCopyWith<_$DeviceCommandResultImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+InstanceInfo _$InstanceInfoFromJson(Map<String, dynamic> json) {
+  return _InstanceInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$InstanceInfo {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get persona => throw _privateConstructorUsedError;
+  String get memoryScope => throw _privateConstructorUsedError;
+  List<String> get skills => throw _privateConstructorUsedError;
+  double get budgetUsd => throw _privateConstructorUsedError;
+  String get owner => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $InstanceInfoCopyWith<InstanceInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $InstanceInfoCopyWith<$Res> {
+  factory $InstanceInfoCopyWith(
+          InstanceInfo value, $Res Function(InstanceInfo) then) =
+      _$InstanceInfoCopyWithImpl<$Res, InstanceInfo>;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String persona,
+      String memoryScope,
+      List<String> skills,
+      double budgetUsd,
+      String owner,
+      double createdAt});
+}
+
+/// @nodoc
+class _$InstanceInfoCopyWithImpl<$Res, $Val extends InstanceInfo>
+    implements $InstanceInfoCopyWith<$Res> {
+  _$InstanceInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? persona = null,
+    Object? memoryScope = null,
+    Object? skills = null,
+    Object? budgetUsd = null,
+    Object? owner = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      persona: null == persona
+          ? _value.persona
+          : persona // ignore: cast_nullable_to_non_nullable
+              as String,
+      memoryScope: null == memoryScope
+          ? _value.memoryScope
+          : memoryScope // ignore: cast_nullable_to_non_nullable
+              as String,
+      skills: null == skills
+          ? _value.skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      budgetUsd: null == budgetUsd
+          ? _value.budgetUsd
+          : budgetUsd // ignore: cast_nullable_to_non_nullable
+              as double,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$InstanceInfoImplCopyWith<$Res>
+    implements $InstanceInfoCopyWith<$Res> {
+  factory _$$InstanceInfoImplCopyWith(
+          _$InstanceInfoImpl value, $Res Function(_$InstanceInfoImpl) then) =
+      __$$InstanceInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String persona,
+      String memoryScope,
+      List<String> skills,
+      double budgetUsd,
+      String owner,
+      double createdAt});
+}
+
+/// @nodoc
+class __$$InstanceInfoImplCopyWithImpl<$Res>
+    extends _$InstanceInfoCopyWithImpl<$Res, _$InstanceInfoImpl>
+    implements _$$InstanceInfoImplCopyWith<$Res> {
+  __$$InstanceInfoImplCopyWithImpl(
+      _$InstanceInfoImpl _value, $Res Function(_$InstanceInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? persona = null,
+    Object? memoryScope = null,
+    Object? skills = null,
+    Object? budgetUsd = null,
+    Object? owner = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$InstanceInfoImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      persona: null == persona
+          ? _value.persona
+          : persona // ignore: cast_nullable_to_non_nullable
+              as String,
+      memoryScope: null == memoryScope
+          ? _value.memoryScope
+          : memoryScope // ignore: cast_nullable_to_non_nullable
+              as String,
+      skills: null == skills
+          ? _value._skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      budgetUsd: null == budgetUsd
+          ? _value.budgetUsd
+          : budgetUsd // ignore: cast_nullable_to_non_nullable
+              as double,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$InstanceInfoImpl implements _InstanceInfo {
+  const _$InstanceInfoImpl(
+      {required this.id,
+      required this.name,
+      required this.persona,
+      required this.memoryScope,
+      required final List<String> skills,
+      required this.budgetUsd,
+      required this.owner,
+      required this.createdAt})
+      : _skills = skills;
+
+  factory _$InstanceInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$InstanceInfoImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String persona;
+  @override
+  final String memoryScope;
+  final List<String> _skills;
+  @override
+  List<String> get skills {
+    if (_skills is EqualUnmodifiableListView) return _skills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_skills);
+  }
+
+  @override
+  final double budgetUsd;
+  @override
+  final String owner;
+  @override
+  final double createdAt;
+
+  @override
+  String toString() {
+    return 'InstanceInfo(id: $id, name: $name, persona: $persona, memoryScope: $memoryScope, skills: $skills, budgetUsd: $budgetUsd, owner: $owner, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$InstanceInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.persona, persona) || other.persona == persona) &&
+            (identical(other.memoryScope, memoryScope) ||
+                other.memoryScope == memoryScope) &&
+            const DeepCollectionEquality().equals(other._skills, _skills) &&
+            (identical(other.budgetUsd, budgetUsd) ||
+                other.budgetUsd == budgetUsd) &&
+            (identical(other.owner, owner) || other.owner == owner) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      persona,
+      memoryScope,
+      const DeepCollectionEquality().hash(_skills),
+      budgetUsd,
+      owner,
+      createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$InstanceInfoImplCopyWith<_$InstanceInfoImpl> get copyWith =>
+      __$$InstanceInfoImplCopyWithImpl<_$InstanceInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$InstanceInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _InstanceInfo implements InstanceInfo {
+  const factory _InstanceInfo(
+      {required final String id,
+      required final String name,
+      required final String persona,
+      required final String memoryScope,
+      required final List<String> skills,
+      required final double budgetUsd,
+      required final String owner,
+      required final double createdAt}) = _$InstanceInfoImpl;
+
+  factory _InstanceInfo.fromJson(Map<String, dynamic> json) =
+      _$InstanceInfoImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get persona;
+  @override
+  String get memoryScope;
+  @override
+  List<String> get skills;
+  @override
+  double get budgetUsd;
+  @override
+  String get owner;
+  @override
+  double get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$InstanceInfoImplCopyWith<_$InstanceInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+InstancesListResponse _$InstancesListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _InstancesListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$InstancesListResponse {
+  List<InstanceInfo> get instances => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $InstancesListResponseCopyWith<InstancesListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $InstancesListResponseCopyWith<$Res> {
+  factory $InstancesListResponseCopyWith(InstancesListResponse value,
+          $Res Function(InstancesListResponse) then) =
+      _$InstancesListResponseCopyWithImpl<$Res, InstancesListResponse>;
+  @useResult
+  $Res call({List<InstanceInfo> instances});
+}
+
+/// @nodoc
+class _$InstancesListResponseCopyWithImpl<$Res,
+        $Val extends InstancesListResponse>
+    implements $InstancesListResponseCopyWith<$Res> {
+  _$InstancesListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? instances = null,
+  }) {
+    return _then(_value.copyWith(
+      instances: null == instances
+          ? _value.instances
+          : instances // ignore: cast_nullable_to_non_nullable
+              as List<InstanceInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$InstancesListResponseImplCopyWith<$Res>
+    implements $InstancesListResponseCopyWith<$Res> {
+  factory _$$InstancesListResponseImplCopyWith(
+          _$InstancesListResponseImpl value,
+          $Res Function(_$InstancesListResponseImpl) then) =
+      __$$InstancesListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<InstanceInfo> instances});
+}
+
+/// @nodoc
+class __$$InstancesListResponseImplCopyWithImpl<$Res>
+    extends _$InstancesListResponseCopyWithImpl<$Res,
+        _$InstancesListResponseImpl>
+    implements _$$InstancesListResponseImplCopyWith<$Res> {
+  __$$InstancesListResponseImplCopyWithImpl(_$InstancesListResponseImpl _value,
+      $Res Function(_$InstancesListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? instances = null,
+  }) {
+    return _then(_$InstancesListResponseImpl(
+      instances: null == instances
+          ? _value._instances
+          : instances // ignore: cast_nullable_to_non_nullable
+              as List<InstanceInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$InstancesListResponseImpl implements _InstancesListResponse {
+  const _$InstancesListResponseImpl(
+      {required final List<InstanceInfo> instances})
+      : _instances = instances;
+
+  factory _$InstancesListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$InstancesListResponseImplFromJson(json);
+
+  final List<InstanceInfo> _instances;
+  @override
+  List<InstanceInfo> get instances {
+    if (_instances is EqualUnmodifiableListView) return _instances;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_instances);
+  }
+
+  @override
+  String toString() {
+    return 'InstancesListResponse(instances: $instances)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$InstancesListResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._instances, _instances));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_instances));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$InstancesListResponseImplCopyWith<_$InstancesListResponseImpl>
+      get copyWith => __$$InstancesListResponseImplCopyWithImpl<
+          _$InstancesListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$InstancesListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _InstancesListResponse implements InstancesListResponse {
+  const factory _InstancesListResponse(
+          {required final List<InstanceInfo> instances}) =
+      _$InstancesListResponseImpl;
+
+  factory _InstancesListResponse.fromJson(Map<String, dynamic> json) =
+      _$InstancesListResponseImpl.fromJson;
+
+  @override
+  List<InstanceInfo> get instances;
+  @override
+  @JsonKey(ignore: true)
+  _$$InstancesListResponseImplCopyWith<_$InstancesListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+InstanceCreateResponse _$InstanceCreateResponseFromJson(
+    Map<String, dynamic> json) {
+  return _InstanceCreateResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$InstanceCreateResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get persona => throw _privateConstructorUsedError;
+  String get memoryScope => throw _privateConstructorUsedError;
+  List<String> get skills => throw _privateConstructorUsedError;
+  double get budgetUsd => throw _privateConstructorUsedError;
+  String get owner => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $InstanceCreateResponseCopyWith<InstanceCreateResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $InstanceCreateResponseCopyWith<$Res> {
+  factory $InstanceCreateResponseCopyWith(InstanceCreateResponse value,
+          $Res Function(InstanceCreateResponse) then) =
+      _$InstanceCreateResponseCopyWithImpl<$Res, InstanceCreateResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String persona,
+      String memoryScope,
+      List<String> skills,
+      double budgetUsd,
+      String owner,
+      double createdAt});
+}
+
+/// @nodoc
+class _$InstanceCreateResponseCopyWithImpl<$Res,
+        $Val extends InstanceCreateResponse>
+    implements $InstanceCreateResponseCopyWith<$Res> {
+  _$InstanceCreateResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? persona = null,
+    Object? memoryScope = null,
+    Object? skills = null,
+    Object? budgetUsd = null,
+    Object? owner = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      persona: null == persona
+          ? _value.persona
+          : persona // ignore: cast_nullable_to_non_nullable
+              as String,
+      memoryScope: null == memoryScope
+          ? _value.memoryScope
+          : memoryScope // ignore: cast_nullable_to_non_nullable
+              as String,
+      skills: null == skills
+          ? _value.skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      budgetUsd: null == budgetUsd
+          ? _value.budgetUsd
+          : budgetUsd // ignore: cast_nullable_to_non_nullable
+              as double,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$InstanceCreateResponseImplCopyWith<$Res>
+    implements $InstanceCreateResponseCopyWith<$Res> {
+  factory _$$InstanceCreateResponseImplCopyWith(
+          _$InstanceCreateResponseImpl value,
+          $Res Function(_$InstanceCreateResponseImpl) then) =
+      __$$InstanceCreateResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String persona,
+      String memoryScope,
+      List<String> skills,
+      double budgetUsd,
+      String owner,
+      double createdAt});
+}
+
+/// @nodoc
+class __$$InstanceCreateResponseImplCopyWithImpl<$Res>
+    extends _$InstanceCreateResponseCopyWithImpl<$Res,
+        _$InstanceCreateResponseImpl>
+    implements _$$InstanceCreateResponseImplCopyWith<$Res> {
+  __$$InstanceCreateResponseImplCopyWithImpl(
+      _$InstanceCreateResponseImpl _value,
+      $Res Function(_$InstanceCreateResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? persona = null,
+    Object? memoryScope = null,
+    Object? skills = null,
+    Object? budgetUsd = null,
+    Object? owner = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$InstanceCreateResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      persona: null == persona
+          ? _value.persona
+          : persona // ignore: cast_nullable_to_non_nullable
+              as String,
+      memoryScope: null == memoryScope
+          ? _value.memoryScope
+          : memoryScope // ignore: cast_nullable_to_non_nullable
+              as String,
+      skills: null == skills
+          ? _value._skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      budgetUsd: null == budgetUsd
+          ? _value.budgetUsd
+          : budgetUsd // ignore: cast_nullable_to_non_nullable
+              as double,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$InstanceCreateResponseImpl implements _InstanceCreateResponse {
+  const _$InstanceCreateResponseImpl(
+      {required this.id,
+      required this.name,
+      required this.persona,
+      required this.memoryScope,
+      required final List<String> skills,
+      required this.budgetUsd,
+      required this.owner,
+      required this.createdAt})
+      : _skills = skills;
+
+  factory _$InstanceCreateResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$InstanceCreateResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String persona;
+  @override
+  final String memoryScope;
+  final List<String> _skills;
+  @override
+  List<String> get skills {
+    if (_skills is EqualUnmodifiableListView) return _skills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_skills);
+  }
+
+  @override
+  final double budgetUsd;
+  @override
+  final String owner;
+  @override
+  final double createdAt;
+
+  @override
+  String toString() {
+    return 'InstanceCreateResponse(id: $id, name: $name, persona: $persona, memoryScope: $memoryScope, skills: $skills, budgetUsd: $budgetUsd, owner: $owner, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$InstanceCreateResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.persona, persona) || other.persona == persona) &&
+            (identical(other.memoryScope, memoryScope) ||
+                other.memoryScope == memoryScope) &&
+            const DeepCollectionEquality().equals(other._skills, _skills) &&
+            (identical(other.budgetUsd, budgetUsd) ||
+                other.budgetUsd == budgetUsd) &&
+            (identical(other.owner, owner) || other.owner == owner) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      persona,
+      memoryScope,
+      const DeepCollectionEquality().hash(_skills),
+      budgetUsd,
+      owner,
+      createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$InstanceCreateResponseImplCopyWith<_$InstanceCreateResponseImpl>
+      get copyWith => __$$InstanceCreateResponseImplCopyWithImpl<
+          _$InstanceCreateResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$InstanceCreateResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _InstanceCreateResponse implements InstanceCreateResponse {
+  const factory _InstanceCreateResponse(
+      {required final String id,
+      required final String name,
+      required final String persona,
+      required final String memoryScope,
+      required final List<String> skills,
+      required final double budgetUsd,
+      required final String owner,
+      required final double createdAt}) = _$InstanceCreateResponseImpl;
+
+  factory _InstanceCreateResponse.fromJson(Map<String, dynamic> json) =
+      _$InstanceCreateResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get persona;
+  @override
+  String get memoryScope;
+  @override
+  List<String> get skills;
+  @override
+  double get budgetUsd;
+  @override
+  String get owner;
+  @override
+  double get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$InstanceCreateResponseImplCopyWith<_$InstanceCreateResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+InstanceResponse _$InstanceResponseFromJson(Map<String, dynamic> json) {
+  return _InstanceResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$InstanceResponse {
+  InstanceInfo get instance => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $InstanceResponseCopyWith<InstanceResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $InstanceResponseCopyWith<$Res> {
+  factory $InstanceResponseCopyWith(
+          InstanceResponse value, $Res Function(InstanceResponse) then) =
+      _$InstanceResponseCopyWithImpl<$Res, InstanceResponse>;
+  @useResult
+  $Res call({InstanceInfo instance});
+
+  $InstanceInfoCopyWith<$Res> get instance;
+}
+
+/// @nodoc
+class _$InstanceResponseCopyWithImpl<$Res, $Val extends InstanceResponse>
+    implements $InstanceResponseCopyWith<$Res> {
+  _$InstanceResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? instance = null,
+  }) {
+    return _then(_value.copyWith(
+      instance: null == instance
+          ? _value.instance
+          : instance // ignore: cast_nullable_to_non_nullable
+              as InstanceInfo,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $InstanceInfoCopyWith<$Res> get instance {
+    return $InstanceInfoCopyWith<$Res>(_value.instance, (value) {
+      return _then(_value.copyWith(instance: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$InstanceResponseImplCopyWith<$Res>
+    implements $InstanceResponseCopyWith<$Res> {
+  factory _$$InstanceResponseImplCopyWith(_$InstanceResponseImpl value,
+          $Res Function(_$InstanceResponseImpl) then) =
+      __$$InstanceResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({InstanceInfo instance});
+
+  @override
+  $InstanceInfoCopyWith<$Res> get instance;
+}
+
+/// @nodoc
+class __$$InstanceResponseImplCopyWithImpl<$Res>
+    extends _$InstanceResponseCopyWithImpl<$Res, _$InstanceResponseImpl>
+    implements _$$InstanceResponseImplCopyWith<$Res> {
+  __$$InstanceResponseImplCopyWithImpl(_$InstanceResponseImpl _value,
+      $Res Function(_$InstanceResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? instance = null,
+  }) {
+    return _then(_$InstanceResponseImpl(
+      instance: null == instance
+          ? _value.instance
+          : instance // ignore: cast_nullable_to_non_nullable
+              as InstanceInfo,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$InstanceResponseImpl implements _InstanceResponse {
+  const _$InstanceResponseImpl({required this.instance});
+
+  factory _$InstanceResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$InstanceResponseImplFromJson(json);
+
+  @override
+  final InstanceInfo instance;
+
+  @override
+  String toString() {
+    return 'InstanceResponse(instance: $instance)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$InstanceResponseImpl &&
+            (identical(other.instance, instance) ||
+                other.instance == instance));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, instance);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$InstanceResponseImplCopyWith<_$InstanceResponseImpl> get copyWith =>
+      __$$InstanceResponseImplCopyWithImpl<_$InstanceResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$InstanceResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _InstanceResponse implements InstanceResponse {
+  const factory _InstanceResponse({required final InstanceInfo instance}) =
+      _$InstanceResponseImpl;
+
+  factory _InstanceResponse.fromJson(Map<String, dynamic> json) =
+      _$InstanceResponseImpl.fromJson;
+
+  @override
+  InstanceInfo get instance;
+  @override
+  @JsonKey(ignore: true)
+  _$$InstanceResponseImplCopyWith<_$InstanceResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

@@ -128,6 +128,12 @@ class AppConfig {
   static const String deviceCommands = '/api/v1/device/';
   static const String deviceCommandResult = '/api/v1/device/commands/';
 
+  // Instance CRUD (Phase 14)
+  static const String instancesList = '/api/v1/instances';
+  static const String instancesCreate = '/api/v1/instances';
+  static const String instancesGet = '/api/v1/instances/';
+  static const String instancesDelete = '/api/v1/instances/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

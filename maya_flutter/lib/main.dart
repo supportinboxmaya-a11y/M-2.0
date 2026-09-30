@@ -1882,6 +1882,20 @@ class _AppDrawer extends ConsumerWidget {
                   },
                 ),
                 _DrawerActionTile(
+                  icon: Icons.computer_rounded,
+                  label: 'Instance Manager',
+                  subtitle: 'Create & manage Maya instances',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _InstanceScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
                   icon: Icons.dns_rounded,
                   label: 'VPS Status',
                   subtitle: 'Connection: Online',
@@ -10778,7 +10792,840 @@ final ragContextProvider = FutureProvider.family<RAGContextResponse, String>((re
   return apiService.getRAGContext(query: query);
 });
 
-// Phone/Device Control Screen
+// Instance CRUD Screen (Phase 14)
+class _InstanceScreen extends ConsumerStatefulWidget {
+  const _InstanceScreen();
+
+  @override
+  ConsumerState<_InstanceScreen> createState() => _InstanceScreenState();
+}
+
+class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(instancesListProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final instancesAsync = ref.watch(instancesListProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Instance Manager', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(instancesListProvider),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_rounded),
+              onPressed: _showCreateInstanceDialog,
+            ),
+          ],
+        ),
+        body: instancesAsync.when(
+          data: (response) {
+            if (response.instances.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.computer_rounded, size: 64, color: Colors.white24),
+                    const SizedBox(height: 16),
+                    const Text('No instances yet', style: MayaTheme.bodyMedium),
+                    const SizedBox(height: 8),
+                    Text('Tap + to create your first Maya instance',
+                        style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                  ],
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: response.instances.length,
+              itemBuilder: (context, index) {
+                final instance = response.instances[index];
+                return _InstanceTile(instance: instance);
+              },
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+          ),
+          error: (err, _) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                const SizedBox(height: 16),
+                Text('Error loading instances', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                const SizedBox(height: 8),
+                Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCreateInstanceDialog() {
+    final nameController = TextEditingController();
+    final personaController = TextEditingController();
+    final skillsController = TextEditingController();
+    final budgetController = TextEditingController(text: '5.0');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Create Instance', style: MayaTheme.headlineSmall),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                style: MayaTheme.bodyMedium,
+                decoration: InputDecoration(
+                  labelText: 'Instance Name',
+                  labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  filled: true,
+                  fillColor: MayaTheme.slate700,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: personaController,
+                style: MayaTheme.bodyMedium,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: 'Persona',
+                  labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  filled: true,
+                  fillColor: MayaTheme.slate700,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: skillsController,
+                style: MayaTheme.bodyMedium,
+                decoration: InputDecoration(
+                  labelText: 'Skills (comma-separated)',
+                  labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  filled: true,
+                  fillColor: MayaTheme.slate700,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: budgetController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                style: MayaTheme.bodyMedium,
+                decoration: InputDecoration(
+                  labelText: 'Budget (USD)',
+                  labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  filled: true,
+                  fillColor: MayaTheme.slate700,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = nameController.text.trim();
+              final persona = personaController.text.trim();
+              if (name.isEmpty || persona.isEmpty) return;
+
+              final skills = skillsController.text
+                  .split(',')
+                  .map((s) => s.trim())
+                  .where((s) => s.isNotEmpty)
+                  .toList();
+              final budget = double.tryParse(budgetController.text) ?? 5.0;
+
+              try {
+                final apiService = ref.read(apiServiceProvider);
+                await apiService.createInstance(
+                  name: name,
+                  persona: persona,
+                  skills: skills,
+                  budgetUsd: budget,
+                );
+                ref.invalidate(instancesListProvider);
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: const Text('Instance created'), backgroundColor: MayaTheme.neonEmerald),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InstanceTile extends ConsumerWidget {
+  final InstanceInfo instance;
+
+  const _InstanceTile({required this.instance});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.computer_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(instance.name, style: MayaTheme.titleMedium),
+        subtitle: Text(instance.persona, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  const SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            if (value == 'delete') _deleteInstance(context, instance.id);
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Instance ID', value: instance.id),
+                _DetailRow(label: 'Persona', value: instance.persona),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                _DetailRow(label: 'Budget (USD)', value: instance.budgetUsd.toString()),
+                _DetailRow(label: 'Owner', value: instance.owner),
+                _DetailRow(label: 'Created', value: DateTime.fromMillisecondsSinceEpoch((instance.createdAt * 1000).round()).toString()),
+                const SizedBox(height: 12),
+                const Text('Skills', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: instance.skills.map((skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonViolet.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(skill, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                  )).toList(),
+                ),
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // TODO: Navigate to instance detail
+                        },
+                        icon: const Icon(Icons.visibility_rounded),
+                        label: const Text('View Details'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.neonCyan,
+                          side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _deleteInstance(context, instance.id),
+                        icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                        label: const Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.error,
+                          side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteInstance(BuildContext context, String instanceId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Delete Instance?'),
+        content: const Text('This will permanently delete the instance and all its memory. This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) {
+        _deleteInstanceConfirmed(instance.id);
+      }
+    );
+  }
+
+  void _deleteInstanceConfirmed(String instanceId) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final success = await ref.read(apiServiceProvider).deleteInstance(instance.id);
+      if (success && mounted) {
+        ref.invalidate(instancesListProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Instance deleted'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _InstanceTile extends ConsumerWidget {
+  final InstanceInfo instance;
+
+  const _InstanceTile({required this.instance});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.computer_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(instance.name, style: MayaTheme.titleMedium),
+        subtitle: Text(instance.persona, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  const SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            if (value == 'delete') _deleteInstance(context, instance.id);
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Instance ID', value: instance.id),
+                _DetailRow(label: 'Persona', value: instance.persona),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                _DetailRow(label: 'Budget (USD)', value: instance.budgetUsd.toString()),
+                _DetailRow(label: 'Owner', value: instance.owner),
+                _DetailRow(label: 'Created', value: DateTime.fromMillisecondsSinceEpoch((instance.createdAt * 1000).round()).toString()),
+                const SizedBox(height: 12),
+                const Text('Skills', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: instance.skills.map((skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonViolet.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(skill, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                  )).toList(),
+                ),
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // TODO: Navigate to instance detail
+                        },
+                        icon: const Icon(Icons.visibility_rounded),
+                        label: const Text('View Details'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.neonCyan,
+                          side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _deleteInstance(context, instance.id),
+                        icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                        label: const Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.error,
+                          side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteInstance(BuildContext context, String instanceId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Delete Instance?'),
+        content: const Text('This will permanently delete the instance and all its memory. This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) {
+        _deleteInstanceConfirmed(instance.id);
+      }
+    );
+  }
+
+  void _deleteInstanceConfirmed(String instanceId) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final success = await ref.read(apiServiceProvider).deleteInstance(instance.id);
+      if (success && mounted) {
+        ref.invalidate(instancesListProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Instance deleted'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _InstanceTile extends ConsumerWidget {
+  final InstanceInfo instance;
+
+  const _InstanceTile({required this.instance});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.computer_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(instance.name, style: MayaTheme.titleMedium),
+        subtitle: Text(instance.persona, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  const SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            if (value == 'delete') _deleteInstance(context, instance.id);
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Instance ID', value: instance.id),
+                _DetailRow(label: 'Persona', value: instance.persona),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                _DetailRow(label: 'Budget (USD)', value: instance.budgetUsd.toString()),
+                _DetailRow(label: 'Owner', value: instance.owner),
+                _DetailRow(label: 'Created', value: DateTime.fromMillisecondsSinceEpoch((instance.createdAt * 1000).round()).toString()),
+                const SizedBox(height: 12),
+                const Text('Skills', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: instance.skills.map((skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonViolet.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(skill, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                  )).toList(),
+                ),
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // TODO: Navigate to instance detail
+                        },
+                        icon: const Icon(Icons.visibility_rounded),
+                        label: const Text('View Details'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.neonCyan,
+                          side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _deleteInstance(context, instance.id),
+                        icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                        label: const Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.error,
+                          side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteInstance(BuildContext context, String instanceId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Delete Instance?'),
+        content: const Text('This will permanently delete the instance and all its memory. This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) {
+        _deleteInstanceConfirmed(instance.id);
+      }
+    );
+  }
+
+  void _deleteInstanceConfirmed(String instanceId) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final success = await ref.read(apiServiceProvider).deleteInstance(instance.id);
+      if (success && mounted) {
+        ref.invalidate(instancesListProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Instance deleted'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _InstanceTile extends ConsumerWidget {
+  final InstanceInfo instance;
+
+  const _InstanceTile({required this.instance});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.computer_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(instance.name, style: MayaTheme.titleMedium),
+        subtitle: Text(instance.persona, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  const SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            if (value == 'delete') _deleteInstance(context, instance.id);
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Instance ID', value: instance.id),
+                _DetailRow(label: 'Persona', value: instance.persona),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                _DetailRow(label: 'Budget (USD)', value: instance.budgetUsd.toString()),
+                _DetailRow(label: 'Owner', value: instance.owner),
+                _DetailRow(label: 'Created', value: DateTime.fromMillisecondsSinceEpoch((instance.createdAt * 1000).round()).toString()),
+                const SizedBox(height: 12),
+                const Text('Skills', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: instance.skills.map((skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonViolet.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(skill, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                  )).toList(),
+                ),
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Memory Scope', value: instance.memoryScope),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // TODO: Navigate to instance detail
+                        },
+                        icon: const Icon(Icons.visibility_rounded),
+                        label: const Text('View Details'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.neonCyan,
+                          side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _deleteInstance(context, instance.id),
+                        icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                        label: const Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: MayaTheme.error,
+                          side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteInstance(BuildContext context, String instanceId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Delete Instance?'),
+        content: const Text('This will permanently delete the instance and all its memory. This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) {
+        _deleteInstanceConfirmed(instance.id);
+      }
+    );
+  }
+
+  void _deleteInstanceConfirmed(String instanceId) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final success = await ref.read(apiServiceProvider).deleteInstance(instance.id);
+      if (success && mounted) {
+        ref.invalidate(instancesListProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Instance deleted'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+// Instance Providers
+final instancesListProvider = FutureProvider<InstancesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getInstancesList();
+});
 class _PhoneControlScreen extends ConsumerStatefulWidget {
   const _PhoneControlScreen();
 

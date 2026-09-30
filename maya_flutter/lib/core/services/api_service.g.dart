@@ -3009,6 +3009,128 @@ Map<String, dynamic> _$$DeviceCommandResultImplToJson(
   return val;
 }
 
+_$InstanceInfoImpl _$$InstanceInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$InstanceInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$InstanceInfoImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          persona: $checkedConvert('persona', (v) => v as String),
+          memoryScope: $checkedConvert('memory_scope', (v) => v as String),
+          skills: $checkedConvert('skills',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          budgetUsd:
+              $checkedConvert('budget_usd', (v) => (v as num).toDouble()),
+          owner: $checkedConvert('owner', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'memoryScope': 'memory_scope',
+        'budgetUsd': 'budget_usd',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$$InstanceInfoImplToJson(_$InstanceInfoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'persona': instance.persona,
+      'memory_scope': instance.memoryScope,
+      'skills': instance.skills,
+      'budget_usd': instance.budgetUsd,
+      'owner': instance.owner,
+      'created_at': instance.createdAt,
+    };
+
+_$InstancesListResponseImpl _$$InstancesListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$InstancesListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$InstancesListResponseImpl(
+          instances: $checkedConvert(
+              'instances',
+              (v) => (v as List<dynamic>)
+                  .map((e) => InstanceInfo.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$InstancesListResponseImplToJson(
+        _$InstancesListResponseImpl instance) =>
+    <String, dynamic>{
+      'instances': instance.instances,
+    };
+
+_$InstanceCreateResponseImpl _$$InstanceCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$InstanceCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$InstanceCreateResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          persona: $checkedConvert('persona', (v) => v as String),
+          memoryScope: $checkedConvert('memory_scope', (v) => v as String),
+          skills: $checkedConvert('skills',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          budgetUsd:
+              $checkedConvert('budget_usd', (v) => (v as num).toDouble()),
+          owner: $checkedConvert('owner', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'memoryScope': 'memory_scope',
+        'budgetUsd': 'budget_usd',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$$InstanceCreateResponseImplToJson(
+        _$InstanceCreateResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'persona': instance.persona,
+      'memory_scope': instance.memoryScope,
+      'skills': instance.skills,
+      'budget_usd': instance.budgetUsd,
+      'owner': instance.owner,
+      'created_at': instance.createdAt,
+    };
+
+_$InstanceResponseImpl _$$InstanceResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$InstanceResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$InstanceResponseImpl(
+          instance: $checkedConvert(
+              'instance',
+              (v) =>
+                  InstanceInfo.fromJson(Map<String, dynamic>.from(v as Map))),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$InstanceResponseImplToJson(
+        _$InstanceResponseImpl instance) =>
+    <String, dynamic>{
+      'instance': instance.instance,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
