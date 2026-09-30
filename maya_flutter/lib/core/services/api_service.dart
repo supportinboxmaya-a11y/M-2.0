@@ -807,6 +807,62 @@ class ApiService {
     return RAGContextResponse.fromJson(response.data);
   }
 
+  // Device Bridge / Phone Control
+  Future<DeviceListResponse> getDeviceList() async {
+    final response = await _dio.get(AppConfig.deviceList);
+    return DeviceListResponse.fromJson(response.data);
+  }
+
+  Future<DevicePairStartResponse> startDevicePairing({String name = 'My computer'}) async {
+    final response = await _dio.post(
+      AppConfig.devicePairStart,
+      data: {'name': name},
+    );
+    return DevicePairStartResponse.fromJson(response.data);
+  }
+
+  Future<DevicePairCompleteResponse> completeDevicePairing(String code) async {
+    final response = await _dio.post(
+      AppConfig.devicePairComplete,
+      data: {'code': code},
+    );
+    return DevicePairCompleteResponse.fromJson(response.data);
+  }
+
+  Future<bool> revokeDevice(String deviceId) async {
+    try {
+      final response = await _dio.delete('${AppConfig.deviceRevoke}$deviceId');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<DeviceHistoryResponse> getDeviceHistory(String deviceId, {int limit = 50}) async {
+    final response = await _dio.get(
+      '${AppConfig.deviceHistory}$deviceId/history',
+      queryParameters: {'limit': limit},
+    );
+    return DeviceHistoryResponse.fromJson(response.data);
+  }
+
+  Future<DeviceCommandResponse> sendDeviceCommand({
+    required String deviceId,
+    required String action,
+    Map<String, dynamic> params = const {},
+  }) async {
+    final response = await _dio.post(
+      AppConfig.deviceCommand,
+      data: {'device_id': deviceId, 'action': action, 'params': params},
+    );
+    return DeviceCommandResponse.fromJson(response.data);
+  }
+
+  Future<DeviceCommandResult> getDeviceCommandResult(String commandId) async {
+    final response = await _dio.get('${AppConfig.deviceCommandResult}$commandId');
+    return DeviceCommandResult.fromJson(response.data);
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -2076,4 +2132,103 @@ class RAGContextResponse with _$RAGContextResponse {
 
   factory RAGContextResponse.fromJson(Map<String, dynamic> json) =>
       _$RAGContextResponseFromJson(json);
+}
+
+// Device Bridge / Phone Control Models
+@freezed
+class DeviceInfo with _$DeviceInfo {
+  const factory DeviceInfo({
+    required String id,
+    required String name,
+    required double pairedAt,
+    double? lastSeen,
+  }) = _DeviceInfo;
+
+  factory DeviceInfo.fromJson(Map<String, dynamic> json) =>
+      _$DeviceInfoFromJson(json);
+}
+
+@freezed
+class DeviceListResponse with _$DeviceListResponse {
+  const factory DeviceListResponse({
+    required List<DeviceInfo> devices,
+  }) = _DeviceListResponse;
+
+  factory DeviceListResponse.fromJson(Map<String, dynamic> json) =>
+      _$DeviceListResponseFromJson(json);
+}
+
+@freezed
+class DevicePairStartResponse with _$DevicePairStartResponse {
+  const factory DevicePairStartResponse({
+    required String pairingCode,
+    required String name,
+  }) = _DevicePairStartResponse;
+
+  factory DevicePairStartResponse.fromJson(Map<String, dynamic> json) =>
+      _$DevicePairStartResponseFromJson(json);
+}
+
+@freezed
+class DevicePairCompleteResponse with _$DevicePairCompleteResponse {
+  const factory DevicePairCompleteResponse({
+    required String deviceId,
+    required String secret,
+  }) = _DevicePairCompleteResponse;
+
+  factory DevicePairCompleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$DevicePairCompleteResponseFromJson(json);
+}
+
+@freezed
+class DeviceCommandEntry with _$DeviceCommandEntry {
+  const factory DeviceCommandEntry({
+    required String id,
+    required String deviceId,
+    required String action,
+    required Map<String, dynamic> params,
+    required String status,
+    required double createdAt,
+    Map<String, dynamic>? result,
+  }) = _DeviceCommandEntry;
+
+  factory DeviceCommandEntry.fromJson(Map<String, dynamic> json) =>
+      _$DeviceCommandEntryFromJson(json);
+}
+
+@freezed
+class DeviceHistoryResponse with _$DeviceHistoryResponse {
+  const factory DeviceHistoryResponse({
+    required List<DeviceCommandEntry> commands,
+  }) = _DeviceHistoryResponse;
+
+  factory DeviceHistoryResponse.fromJson(Map<String, dynamic> json) =>
+      _$DeviceHistoryResponseFromJson(json);
+}
+
+@freezed
+class DeviceCommandResponse with _$DeviceCommandResponse {
+  const factory DeviceCommandResponse({
+    required String id,
+    required String deviceId,
+    required String action,
+    required Map<String, dynamic> params,
+    required String status,
+    required double createdAt,
+  }) = _DeviceCommandResponse;
+
+  factory DeviceCommandResponse.fromJson(Map<String, dynamic> json) =>
+      _$DeviceCommandResponseFromJson(json);
+}
+
+@freezed
+class DeviceCommandResult with _$DeviceCommandResult {
+  const factory DeviceCommandResult({
+    required String id,
+    required String status,
+    Map<String, dynamic>? result,
+  }) = _DeviceCommandResult;
+
+  factory DeviceCommandResult.fromJson(Map<String, dynamic> json) =>
+      _$DeviceCommandResultFromJson(json);
 }

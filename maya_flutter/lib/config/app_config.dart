@@ -118,6 +118,16 @@ class AppConfig {
   static const String ragSearch = '/api/v1/rag/search';
   static const String ragContext = '/api/v1/rag/context';
 
+  // Phone/Device Control (Phase 13)
+  static const String deviceList = '/api/v1/device/list';
+  static const String devicePairStart = '/api/v1/device/pair/start';
+  static const String devicePairComplete = '/api/v1/device/pair/complete';
+  static const String deviceRevoke = '/api/v1/device/';
+  static const String deviceHistory = '/api/v1/device/';
+  static const String deviceCommand = '/api/v1/device/command';
+  static const String deviceCommands = '/api/v1/device/';
+  static const String deviceCommandResult = '/api/v1/device/commands/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

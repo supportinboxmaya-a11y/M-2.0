@@ -18785,3 +18785,1545 @@ abstract class _RAGContextResponse implements RAGContextResponse {
   _$$RAGContextResponseImplCopyWith<_$RAGContextResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+DeviceInfo _$DeviceInfoFromJson(Map<String, dynamic> json) {
+  return _DeviceInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeviceInfo {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  double get pairedAt => throw _privateConstructorUsedError;
+  double? get lastSeen => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DeviceInfoCopyWith<DeviceInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeviceInfoCopyWith<$Res> {
+  factory $DeviceInfoCopyWith(
+          DeviceInfo value, $Res Function(DeviceInfo) then) =
+      _$DeviceInfoCopyWithImpl<$Res, DeviceInfo>;
+  @useResult
+  $Res call({String id, String name, double pairedAt, double? lastSeen});
+}
+
+/// @nodoc
+class _$DeviceInfoCopyWithImpl<$Res, $Val extends DeviceInfo>
+    implements $DeviceInfoCopyWith<$Res> {
+  _$DeviceInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? pairedAt = null,
+    Object? lastSeen = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      pairedAt: null == pairedAt
+          ? _value.pairedAt
+          : pairedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      lastSeen: freezed == lastSeen
+          ? _value.lastSeen
+          : lastSeen // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeviceInfoImplCopyWith<$Res>
+    implements $DeviceInfoCopyWith<$Res> {
+  factory _$$DeviceInfoImplCopyWith(
+          _$DeviceInfoImpl value, $Res Function(_$DeviceInfoImpl) then) =
+      __$$DeviceInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String name, double pairedAt, double? lastSeen});
+}
+
+/// @nodoc
+class __$$DeviceInfoImplCopyWithImpl<$Res>
+    extends _$DeviceInfoCopyWithImpl<$Res, _$DeviceInfoImpl>
+    implements _$$DeviceInfoImplCopyWith<$Res> {
+  __$$DeviceInfoImplCopyWithImpl(
+      _$DeviceInfoImpl _value, $Res Function(_$DeviceInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? pairedAt = null,
+    Object? lastSeen = freezed,
+  }) {
+    return _then(_$DeviceInfoImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      pairedAt: null == pairedAt
+          ? _value.pairedAt
+          : pairedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      lastSeen: freezed == lastSeen
+          ? _value.lastSeen
+          : lastSeen // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeviceInfoImpl implements _DeviceInfo {
+  const _$DeviceInfoImpl(
+      {required this.id,
+      required this.name,
+      required this.pairedAt,
+      this.lastSeen});
+
+  factory _$DeviceInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeviceInfoImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final double pairedAt;
+  @override
+  final double? lastSeen;
+
+  @override
+  String toString() {
+    return 'DeviceInfo(id: $id, name: $name, pairedAt: $pairedAt, lastSeen: $lastSeen)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeviceInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.pairedAt, pairedAt) ||
+                other.pairedAt == pairedAt) &&
+            (identical(other.lastSeen, lastSeen) ||
+                other.lastSeen == lastSeen));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, pairedAt, lastSeen);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeviceInfoImplCopyWith<_$DeviceInfoImpl> get copyWith =>
+      __$$DeviceInfoImplCopyWithImpl<_$DeviceInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeviceInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeviceInfo implements DeviceInfo {
+  const factory _DeviceInfo(
+      {required final String id,
+      required final String name,
+      required final double pairedAt,
+      final double? lastSeen}) = _$DeviceInfoImpl;
+
+  factory _DeviceInfo.fromJson(Map<String, dynamic> json) =
+      _$DeviceInfoImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  double get pairedAt;
+  @override
+  double? get lastSeen;
+  @override
+  @JsonKey(ignore: true)
+  _$$DeviceInfoImplCopyWith<_$DeviceInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DeviceListResponse _$DeviceListResponseFromJson(Map<String, dynamic> json) {
+  return _DeviceListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeviceListResponse {
+  List<DeviceInfo> get devices => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DeviceListResponseCopyWith<DeviceListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeviceListResponseCopyWith<$Res> {
+  factory $DeviceListResponseCopyWith(
+          DeviceListResponse value, $Res Function(DeviceListResponse) then) =
+      _$DeviceListResponseCopyWithImpl<$Res, DeviceListResponse>;
+  @useResult
+  $Res call({List<DeviceInfo> devices});
+}
+
+/// @nodoc
+class _$DeviceListResponseCopyWithImpl<$Res, $Val extends DeviceListResponse>
+    implements $DeviceListResponseCopyWith<$Res> {
+  _$DeviceListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? devices = null,
+  }) {
+    return _then(_value.copyWith(
+      devices: null == devices
+          ? _value.devices
+          : devices // ignore: cast_nullable_to_non_nullable
+              as List<DeviceInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeviceListResponseImplCopyWith<$Res>
+    implements $DeviceListResponseCopyWith<$Res> {
+  factory _$$DeviceListResponseImplCopyWith(_$DeviceListResponseImpl value,
+          $Res Function(_$DeviceListResponseImpl) then) =
+      __$$DeviceListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<DeviceInfo> devices});
+}
+
+/// @nodoc
+class __$$DeviceListResponseImplCopyWithImpl<$Res>
+    extends _$DeviceListResponseCopyWithImpl<$Res, _$DeviceListResponseImpl>
+    implements _$$DeviceListResponseImplCopyWith<$Res> {
+  __$$DeviceListResponseImplCopyWithImpl(_$DeviceListResponseImpl _value,
+      $Res Function(_$DeviceListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? devices = null,
+  }) {
+    return _then(_$DeviceListResponseImpl(
+      devices: null == devices
+          ? _value._devices
+          : devices // ignore: cast_nullable_to_non_nullable
+              as List<DeviceInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeviceListResponseImpl implements _DeviceListResponse {
+  const _$DeviceListResponseImpl({required final List<DeviceInfo> devices})
+      : _devices = devices;
+
+  factory _$DeviceListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeviceListResponseImplFromJson(json);
+
+  final List<DeviceInfo> _devices;
+  @override
+  List<DeviceInfo> get devices {
+    if (_devices is EqualUnmodifiableListView) return _devices;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_devices);
+  }
+
+  @override
+  String toString() {
+    return 'DeviceListResponse(devices: $devices)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeviceListResponseImpl &&
+            const DeepCollectionEquality().equals(other._devices, _devices));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_devices));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeviceListResponseImplCopyWith<_$DeviceListResponseImpl> get copyWith =>
+      __$$DeviceListResponseImplCopyWithImpl<_$DeviceListResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeviceListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeviceListResponse implements DeviceListResponse {
+  const factory _DeviceListResponse({required final List<DeviceInfo> devices}) =
+      _$DeviceListResponseImpl;
+
+  factory _DeviceListResponse.fromJson(Map<String, dynamic> json) =
+      _$DeviceListResponseImpl.fromJson;
+
+  @override
+  List<DeviceInfo> get devices;
+  @override
+  @JsonKey(ignore: true)
+  _$$DeviceListResponseImplCopyWith<_$DeviceListResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DevicePairStartResponse _$DevicePairStartResponseFromJson(
+    Map<String, dynamic> json) {
+  return _DevicePairStartResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DevicePairStartResponse {
+  String get pairingCode => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DevicePairStartResponseCopyWith<DevicePairStartResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DevicePairStartResponseCopyWith<$Res> {
+  factory $DevicePairStartResponseCopyWith(DevicePairStartResponse value,
+          $Res Function(DevicePairStartResponse) then) =
+      _$DevicePairStartResponseCopyWithImpl<$Res, DevicePairStartResponse>;
+  @useResult
+  $Res call({String pairingCode, String name});
+}
+
+/// @nodoc
+class _$DevicePairStartResponseCopyWithImpl<$Res,
+        $Val extends DevicePairStartResponse>
+    implements $DevicePairStartResponseCopyWith<$Res> {
+  _$DevicePairStartResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pairingCode = null,
+    Object? name = null,
+  }) {
+    return _then(_value.copyWith(
+      pairingCode: null == pairingCode
+          ? _value.pairingCode
+          : pairingCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DevicePairStartResponseImplCopyWith<$Res>
+    implements $DevicePairStartResponseCopyWith<$Res> {
+  factory _$$DevicePairStartResponseImplCopyWith(
+          _$DevicePairStartResponseImpl value,
+          $Res Function(_$DevicePairStartResponseImpl) then) =
+      __$$DevicePairStartResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String pairingCode, String name});
+}
+
+/// @nodoc
+class __$$DevicePairStartResponseImplCopyWithImpl<$Res>
+    extends _$DevicePairStartResponseCopyWithImpl<$Res,
+        _$DevicePairStartResponseImpl>
+    implements _$$DevicePairStartResponseImplCopyWith<$Res> {
+  __$$DevicePairStartResponseImplCopyWithImpl(
+      _$DevicePairStartResponseImpl _value,
+      $Res Function(_$DevicePairStartResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pairingCode = null,
+    Object? name = null,
+  }) {
+    return _then(_$DevicePairStartResponseImpl(
+      pairingCode: null == pairingCode
+          ? _value.pairingCode
+          : pairingCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DevicePairStartResponseImpl implements _DevicePairStartResponse {
+  const _$DevicePairStartResponseImpl(
+      {required this.pairingCode, required this.name});
+
+  factory _$DevicePairStartResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DevicePairStartResponseImplFromJson(json);
+
+  @override
+  final String pairingCode;
+  @override
+  final String name;
+
+  @override
+  String toString() {
+    return 'DevicePairStartResponse(pairingCode: $pairingCode, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DevicePairStartResponseImpl &&
+            (identical(other.pairingCode, pairingCode) ||
+                other.pairingCode == pairingCode) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, pairingCode, name);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DevicePairStartResponseImplCopyWith<_$DevicePairStartResponseImpl>
+      get copyWith => __$$DevicePairStartResponseImplCopyWithImpl<
+          _$DevicePairStartResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DevicePairStartResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DevicePairStartResponse implements DevicePairStartResponse {
+  const factory _DevicePairStartResponse(
+      {required final String pairingCode,
+      required final String name}) = _$DevicePairStartResponseImpl;
+
+  factory _DevicePairStartResponse.fromJson(Map<String, dynamic> json) =
+      _$DevicePairStartResponseImpl.fromJson;
+
+  @override
+  String get pairingCode;
+  @override
+  String get name;
+  @override
+  @JsonKey(ignore: true)
+  _$$DevicePairStartResponseImplCopyWith<_$DevicePairStartResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+DevicePairCompleteResponse _$DevicePairCompleteResponseFromJson(
+    Map<String, dynamic> json) {
+  return _DevicePairCompleteResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DevicePairCompleteResponse {
+  String get deviceId => throw _privateConstructorUsedError;
+  String get secret => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DevicePairCompleteResponseCopyWith<DevicePairCompleteResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DevicePairCompleteResponseCopyWith<$Res> {
+  factory $DevicePairCompleteResponseCopyWith(DevicePairCompleteResponse value,
+          $Res Function(DevicePairCompleteResponse) then) =
+      _$DevicePairCompleteResponseCopyWithImpl<$Res,
+          DevicePairCompleteResponse>;
+  @useResult
+  $Res call({String deviceId, String secret});
+}
+
+/// @nodoc
+class _$DevicePairCompleteResponseCopyWithImpl<$Res,
+        $Val extends DevicePairCompleteResponse>
+    implements $DevicePairCompleteResponseCopyWith<$Res> {
+  _$DevicePairCompleteResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? deviceId = null,
+    Object? secret = null,
+  }) {
+    return _then(_value.copyWith(
+      deviceId: null == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String,
+      secret: null == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DevicePairCompleteResponseImplCopyWith<$Res>
+    implements $DevicePairCompleteResponseCopyWith<$Res> {
+  factory _$$DevicePairCompleteResponseImplCopyWith(
+          _$DevicePairCompleteResponseImpl value,
+          $Res Function(_$DevicePairCompleteResponseImpl) then) =
+      __$$DevicePairCompleteResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String deviceId, String secret});
+}
+
+/// @nodoc
+class __$$DevicePairCompleteResponseImplCopyWithImpl<$Res>
+    extends _$DevicePairCompleteResponseCopyWithImpl<$Res,
+        _$DevicePairCompleteResponseImpl>
+    implements _$$DevicePairCompleteResponseImplCopyWith<$Res> {
+  __$$DevicePairCompleteResponseImplCopyWithImpl(
+      _$DevicePairCompleteResponseImpl _value,
+      $Res Function(_$DevicePairCompleteResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? deviceId = null,
+    Object? secret = null,
+  }) {
+    return _then(_$DevicePairCompleteResponseImpl(
+      deviceId: null == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String,
+      secret: null == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DevicePairCompleteResponseImpl implements _DevicePairCompleteResponse {
+  const _$DevicePairCompleteResponseImpl(
+      {required this.deviceId, required this.secret});
+
+  factory _$DevicePairCompleteResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$DevicePairCompleteResponseImplFromJson(json);
+
+  @override
+  final String deviceId;
+  @override
+  final String secret;
+
+  @override
+  String toString() {
+    return 'DevicePairCompleteResponse(deviceId: $deviceId, secret: $secret)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DevicePairCompleteResponseImpl &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
+            (identical(other.secret, secret) || other.secret == secret));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, deviceId, secret);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DevicePairCompleteResponseImplCopyWith<_$DevicePairCompleteResponseImpl>
+      get copyWith => __$$DevicePairCompleteResponseImplCopyWithImpl<
+          _$DevicePairCompleteResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DevicePairCompleteResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DevicePairCompleteResponse
+    implements DevicePairCompleteResponse {
+  const factory _DevicePairCompleteResponse(
+      {required final String deviceId,
+      required final String secret}) = _$DevicePairCompleteResponseImpl;
+
+  factory _DevicePairCompleteResponse.fromJson(Map<String, dynamic> json) =
+      _$DevicePairCompleteResponseImpl.fromJson;
+
+  @override
+  String get deviceId;
+  @override
+  String get secret;
+  @override
+  @JsonKey(ignore: true)
+  _$$DevicePairCompleteResponseImplCopyWith<_$DevicePairCompleteResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+DeviceCommandEntry _$DeviceCommandEntryFromJson(Map<String, dynamic> json) {
+  return _DeviceCommandEntry.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeviceCommandEntry {
+  String get id => throw _privateConstructorUsedError;
+  String get deviceId => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  Map<String, dynamic> get params => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get result => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DeviceCommandEntryCopyWith<DeviceCommandEntry> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeviceCommandEntryCopyWith<$Res> {
+  factory $DeviceCommandEntryCopyWith(
+          DeviceCommandEntry value, $Res Function(DeviceCommandEntry) then) =
+      _$DeviceCommandEntryCopyWithImpl<$Res, DeviceCommandEntry>;
+  @useResult
+  $Res call(
+      {String id,
+      String deviceId,
+      String action,
+      Map<String, dynamic> params,
+      String status,
+      double createdAt,
+      Map<String, dynamic>? result});
+}
+
+/// @nodoc
+class _$DeviceCommandEntryCopyWithImpl<$Res, $Val extends DeviceCommandEntry>
+    implements $DeviceCommandEntryCopyWith<$Res> {
+  _$DeviceCommandEntryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? deviceId = null,
+    Object? action = null,
+    Object? params = null,
+    Object? status = null,
+    Object? createdAt = null,
+    Object? result = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      deviceId: null == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      params: null == params
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeviceCommandEntryImplCopyWith<$Res>
+    implements $DeviceCommandEntryCopyWith<$Res> {
+  factory _$$DeviceCommandEntryImplCopyWith(_$DeviceCommandEntryImpl value,
+          $Res Function(_$DeviceCommandEntryImpl) then) =
+      __$$DeviceCommandEntryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String deviceId,
+      String action,
+      Map<String, dynamic> params,
+      String status,
+      double createdAt,
+      Map<String, dynamic>? result});
+}
+
+/// @nodoc
+class __$$DeviceCommandEntryImplCopyWithImpl<$Res>
+    extends _$DeviceCommandEntryCopyWithImpl<$Res, _$DeviceCommandEntryImpl>
+    implements _$$DeviceCommandEntryImplCopyWith<$Res> {
+  __$$DeviceCommandEntryImplCopyWithImpl(_$DeviceCommandEntryImpl _value,
+      $Res Function(_$DeviceCommandEntryImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? deviceId = null,
+    Object? action = null,
+    Object? params = null,
+    Object? status = null,
+    Object? createdAt = null,
+    Object? result = freezed,
+  }) {
+    return _then(_$DeviceCommandEntryImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      deviceId: null == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      params: null == params
+          ? _value._params
+          : params // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      result: freezed == result
+          ? _value._result
+          : result // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeviceCommandEntryImpl implements _DeviceCommandEntry {
+  const _$DeviceCommandEntryImpl(
+      {required this.id,
+      required this.deviceId,
+      required this.action,
+      required final Map<String, dynamic> params,
+      required this.status,
+      required this.createdAt,
+      final Map<String, dynamic>? result})
+      : _params = params,
+        _result = result;
+
+  factory _$DeviceCommandEntryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeviceCommandEntryImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String deviceId;
+  @override
+  final String action;
+  final Map<String, dynamic> _params;
+  @override
+  Map<String, dynamic> get params {
+    if (_params is EqualUnmodifiableMapView) return _params;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_params);
+  }
+
+  @override
+  final String status;
+  @override
+  final double createdAt;
+  final Map<String, dynamic>? _result;
+  @override
+  Map<String, dynamic>? get result {
+    final value = _result;
+    if (value == null) return null;
+    if (_result is EqualUnmodifiableMapView) return _result;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'DeviceCommandEntry(id: $id, deviceId: $deviceId, action: $action, params: $params, status: $status, createdAt: $createdAt, result: $result)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeviceCommandEntryImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
+            (identical(other.action, action) || other.action == action) &&
+            const DeepCollectionEquality().equals(other._params, _params) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._result, _result));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      deviceId,
+      action,
+      const DeepCollectionEquality().hash(_params),
+      status,
+      createdAt,
+      const DeepCollectionEquality().hash(_result));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeviceCommandEntryImplCopyWith<_$DeviceCommandEntryImpl> get copyWith =>
+      __$$DeviceCommandEntryImplCopyWithImpl<_$DeviceCommandEntryImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeviceCommandEntryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeviceCommandEntry implements DeviceCommandEntry {
+  const factory _DeviceCommandEntry(
+      {required final String id,
+      required final String deviceId,
+      required final String action,
+      required final Map<String, dynamic> params,
+      required final String status,
+      required final double createdAt,
+      final Map<String, dynamic>? result}) = _$DeviceCommandEntryImpl;
+
+  factory _DeviceCommandEntry.fromJson(Map<String, dynamic> json) =
+      _$DeviceCommandEntryImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get deviceId;
+  @override
+  String get action;
+  @override
+  Map<String, dynamic> get params;
+  @override
+  String get status;
+  @override
+  double get createdAt;
+  @override
+  Map<String, dynamic>? get result;
+  @override
+  @JsonKey(ignore: true)
+  _$$DeviceCommandEntryImplCopyWith<_$DeviceCommandEntryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DeviceHistoryResponse _$DeviceHistoryResponseFromJson(
+    Map<String, dynamic> json) {
+  return _DeviceHistoryResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeviceHistoryResponse {
+  List<DeviceCommandEntry> get commands => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DeviceHistoryResponseCopyWith<DeviceHistoryResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeviceHistoryResponseCopyWith<$Res> {
+  factory $DeviceHistoryResponseCopyWith(DeviceHistoryResponse value,
+          $Res Function(DeviceHistoryResponse) then) =
+      _$DeviceHistoryResponseCopyWithImpl<$Res, DeviceHistoryResponse>;
+  @useResult
+  $Res call({List<DeviceCommandEntry> commands});
+}
+
+/// @nodoc
+class _$DeviceHistoryResponseCopyWithImpl<$Res,
+        $Val extends DeviceHistoryResponse>
+    implements $DeviceHistoryResponseCopyWith<$Res> {
+  _$DeviceHistoryResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? commands = null,
+  }) {
+    return _then(_value.copyWith(
+      commands: null == commands
+          ? _value.commands
+          : commands // ignore: cast_nullable_to_non_nullable
+              as List<DeviceCommandEntry>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeviceHistoryResponseImplCopyWith<$Res>
+    implements $DeviceHistoryResponseCopyWith<$Res> {
+  factory _$$DeviceHistoryResponseImplCopyWith(
+          _$DeviceHistoryResponseImpl value,
+          $Res Function(_$DeviceHistoryResponseImpl) then) =
+      __$$DeviceHistoryResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<DeviceCommandEntry> commands});
+}
+
+/// @nodoc
+class __$$DeviceHistoryResponseImplCopyWithImpl<$Res>
+    extends _$DeviceHistoryResponseCopyWithImpl<$Res,
+        _$DeviceHistoryResponseImpl>
+    implements _$$DeviceHistoryResponseImplCopyWith<$Res> {
+  __$$DeviceHistoryResponseImplCopyWithImpl(_$DeviceHistoryResponseImpl _value,
+      $Res Function(_$DeviceHistoryResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? commands = null,
+  }) {
+    return _then(_$DeviceHistoryResponseImpl(
+      commands: null == commands
+          ? _value._commands
+          : commands // ignore: cast_nullable_to_non_nullable
+              as List<DeviceCommandEntry>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeviceHistoryResponseImpl implements _DeviceHistoryResponse {
+  const _$DeviceHistoryResponseImpl(
+      {required final List<DeviceCommandEntry> commands})
+      : _commands = commands;
+
+  factory _$DeviceHistoryResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeviceHistoryResponseImplFromJson(json);
+
+  final List<DeviceCommandEntry> _commands;
+  @override
+  List<DeviceCommandEntry> get commands {
+    if (_commands is EqualUnmodifiableListView) return _commands;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_commands);
+  }
+
+  @override
+  String toString() {
+    return 'DeviceHistoryResponse(commands: $commands)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeviceHistoryResponseImpl &&
+            const DeepCollectionEquality().equals(other._commands, _commands));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_commands));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeviceHistoryResponseImplCopyWith<_$DeviceHistoryResponseImpl>
+      get copyWith => __$$DeviceHistoryResponseImplCopyWithImpl<
+          _$DeviceHistoryResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeviceHistoryResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeviceHistoryResponse implements DeviceHistoryResponse {
+  const factory _DeviceHistoryResponse(
+          {required final List<DeviceCommandEntry> commands}) =
+      _$DeviceHistoryResponseImpl;
+
+  factory _DeviceHistoryResponse.fromJson(Map<String, dynamic> json) =
+      _$DeviceHistoryResponseImpl.fromJson;
+
+  @override
+  List<DeviceCommandEntry> get commands;
+  @override
+  @JsonKey(ignore: true)
+  _$$DeviceHistoryResponseImplCopyWith<_$DeviceHistoryResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+DeviceCommandResponse _$DeviceCommandResponseFromJson(
+    Map<String, dynamic> json) {
+  return _DeviceCommandResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeviceCommandResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get deviceId => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  Map<String, dynamic> get params => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DeviceCommandResponseCopyWith<DeviceCommandResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeviceCommandResponseCopyWith<$Res> {
+  factory $DeviceCommandResponseCopyWith(DeviceCommandResponse value,
+          $Res Function(DeviceCommandResponse) then) =
+      _$DeviceCommandResponseCopyWithImpl<$Res, DeviceCommandResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String deviceId,
+      String action,
+      Map<String, dynamic> params,
+      String status,
+      double createdAt});
+}
+
+/// @nodoc
+class _$DeviceCommandResponseCopyWithImpl<$Res,
+        $Val extends DeviceCommandResponse>
+    implements $DeviceCommandResponseCopyWith<$Res> {
+  _$DeviceCommandResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? deviceId = null,
+    Object? action = null,
+    Object? params = null,
+    Object? status = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      deviceId: null == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      params: null == params
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeviceCommandResponseImplCopyWith<$Res>
+    implements $DeviceCommandResponseCopyWith<$Res> {
+  factory _$$DeviceCommandResponseImplCopyWith(
+          _$DeviceCommandResponseImpl value,
+          $Res Function(_$DeviceCommandResponseImpl) then) =
+      __$$DeviceCommandResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String deviceId,
+      String action,
+      Map<String, dynamic> params,
+      String status,
+      double createdAt});
+}
+
+/// @nodoc
+class __$$DeviceCommandResponseImplCopyWithImpl<$Res>
+    extends _$DeviceCommandResponseCopyWithImpl<$Res,
+        _$DeviceCommandResponseImpl>
+    implements _$$DeviceCommandResponseImplCopyWith<$Res> {
+  __$$DeviceCommandResponseImplCopyWithImpl(_$DeviceCommandResponseImpl _value,
+      $Res Function(_$DeviceCommandResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? deviceId = null,
+    Object? action = null,
+    Object? params = null,
+    Object? status = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$DeviceCommandResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      deviceId: null == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      params: null == params
+          ? _value._params
+          : params // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeviceCommandResponseImpl implements _DeviceCommandResponse {
+  const _$DeviceCommandResponseImpl(
+      {required this.id,
+      required this.deviceId,
+      required this.action,
+      required final Map<String, dynamic> params,
+      required this.status,
+      required this.createdAt})
+      : _params = params;
+
+  factory _$DeviceCommandResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeviceCommandResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String deviceId;
+  @override
+  final String action;
+  final Map<String, dynamic> _params;
+  @override
+  Map<String, dynamic> get params {
+    if (_params is EqualUnmodifiableMapView) return _params;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_params);
+  }
+
+  @override
+  final String status;
+  @override
+  final double createdAt;
+
+  @override
+  String toString() {
+    return 'DeviceCommandResponse(id: $id, deviceId: $deviceId, action: $action, params: $params, status: $status, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeviceCommandResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
+            (identical(other.action, action) || other.action == action) &&
+            const DeepCollectionEquality().equals(other._params, _params) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, deviceId, action,
+      const DeepCollectionEquality().hash(_params), status, createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeviceCommandResponseImplCopyWith<_$DeviceCommandResponseImpl>
+      get copyWith => __$$DeviceCommandResponseImplCopyWithImpl<
+          _$DeviceCommandResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeviceCommandResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeviceCommandResponse implements DeviceCommandResponse {
+  const factory _DeviceCommandResponse(
+      {required final String id,
+      required final String deviceId,
+      required final String action,
+      required final Map<String, dynamic> params,
+      required final String status,
+      required final double createdAt}) = _$DeviceCommandResponseImpl;
+
+  factory _DeviceCommandResponse.fromJson(Map<String, dynamic> json) =
+      _$DeviceCommandResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get deviceId;
+  @override
+  String get action;
+  @override
+  Map<String, dynamic> get params;
+  @override
+  String get status;
+  @override
+  double get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$DeviceCommandResponseImplCopyWith<_$DeviceCommandResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+DeviceCommandResult _$DeviceCommandResultFromJson(Map<String, dynamic> json) {
+  return _DeviceCommandResult.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeviceCommandResult {
+  String get id => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get result => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DeviceCommandResultCopyWith<DeviceCommandResult> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeviceCommandResultCopyWith<$Res> {
+  factory $DeviceCommandResultCopyWith(
+          DeviceCommandResult value, $Res Function(DeviceCommandResult) then) =
+      _$DeviceCommandResultCopyWithImpl<$Res, DeviceCommandResult>;
+  @useResult
+  $Res call({String id, String status, Map<String, dynamic>? result});
+}
+
+/// @nodoc
+class _$DeviceCommandResultCopyWithImpl<$Res, $Val extends DeviceCommandResult>
+    implements $DeviceCommandResultCopyWith<$Res> {
+  _$DeviceCommandResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? status = null,
+    Object? result = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeviceCommandResultImplCopyWith<$Res>
+    implements $DeviceCommandResultCopyWith<$Res> {
+  factory _$$DeviceCommandResultImplCopyWith(_$DeviceCommandResultImpl value,
+          $Res Function(_$DeviceCommandResultImpl) then) =
+      __$$DeviceCommandResultImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String status, Map<String, dynamic>? result});
+}
+
+/// @nodoc
+class __$$DeviceCommandResultImplCopyWithImpl<$Res>
+    extends _$DeviceCommandResultCopyWithImpl<$Res, _$DeviceCommandResultImpl>
+    implements _$$DeviceCommandResultImplCopyWith<$Res> {
+  __$$DeviceCommandResultImplCopyWithImpl(_$DeviceCommandResultImpl _value,
+      $Res Function(_$DeviceCommandResultImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? status = null,
+    Object? result = freezed,
+  }) {
+    return _then(_$DeviceCommandResultImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      result: freezed == result
+          ? _value._result
+          : result // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeviceCommandResultImpl implements _DeviceCommandResult {
+  const _$DeviceCommandResultImpl(
+      {required this.id,
+      required this.status,
+      final Map<String, dynamic>? result})
+      : _result = result;
+
+  factory _$DeviceCommandResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeviceCommandResultImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String status;
+  final Map<String, dynamic>? _result;
+  @override
+  Map<String, dynamic>? get result {
+    final value = _result;
+    if (value == null) return null;
+    if (_result is EqualUnmodifiableMapView) return _result;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'DeviceCommandResult(id: $id, status: $status, result: $result)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeviceCommandResultImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._result, _result));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, status, const DeepCollectionEquality().hash(_result));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeviceCommandResultImplCopyWith<_$DeviceCommandResultImpl> get copyWith =>
+      __$$DeviceCommandResultImplCopyWithImpl<_$DeviceCommandResultImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeviceCommandResultImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeviceCommandResult implements DeviceCommandResult {
+  const factory _DeviceCommandResult(
+      {required final String id,
+      required final String status,
+      final Map<String, dynamic>? result}) = _$DeviceCommandResultImpl;
+
+  factory _DeviceCommandResult.fromJson(Map<String, dynamic> json) =
+      _$DeviceCommandResultImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get status;
+  @override
+  Map<String, dynamic>? get result;
+  @override
+  @JsonKey(ignore: true)
+  _$$DeviceCommandResultImplCopyWith<_$DeviceCommandResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

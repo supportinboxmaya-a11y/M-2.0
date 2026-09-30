@@ -10749,7 +10749,6 @@ class _RAGCitationTile extends StatelessWidget {
         ],
       ),
     );
-  }
 }
 
 // RAG Providers
@@ -10777,4 +10776,853 @@ final ragContextProvider = FutureProvider.family<RAGContextResponse, String>((re
   }
   final apiService = ref.read(apiServiceProvider);
   return apiService.getRAGContext(query: query);
+});
+
+// Phone/Device Control Screen
+class _PhoneControlScreen extends ConsumerStatefulWidget {
+  const _PhoneControlScreen();
+
+  @override
+  ConsumerState<_PhoneControlScreen> createState() => _PhoneControlScreenState();
+}
+
+class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+  String _pairingCode = '';
+  String _deviceName = 'My computer';
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(deviceListProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Phone / Device Control', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(deviceListProvider),
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.devices_rounded), text: 'Devices'),
+              Tab(icon: Icon(Icons.link_rounded), text: 'Pair Device'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'Command History'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildDevicesTab(),
+            _buildPairTab(),
+            _buildHistoryTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDevicesTab() {
+    final devicesAsync = ref.watch(deviceListProvider);
+
+    return devicesAsync.when(
+      data: (response) {
+        if (response.devices.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.devices_rounded, size: 64, color: Colors.white24),
+                const SizedBox(height: 16),
+                const Text('No paired devices', style: MayaTheme.bodyMedium),
+                const SizedBox(height: 8),
+                Text('Tap "Pair Device" to connect your computer',
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.devices.length,
+          itemBuilder: (context, index) {
+            final device = response.devices[index];
+            return _DeviceTile(
+              device: device,
+              onSendCommand: (action, params) => _sendCommand(device.id, action, params),
+              onRevoke: () => _revokeDevice(device.id),
+            );
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading devices', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPairTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Pair a New Device', style: MayaTheme.titleMedium),
+                const SizedBox(height: 8),
+                const Text(
+                  'Run the Maya Bridge Agent on your computer, then enter the pairing code shown here.',
+                  style: MayaTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: TextEditingController(text: _deviceName),
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'Device Name',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: (v) => _deviceName = v,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _startPairing,
+                    icon: const Icon(Icons.qr_code_rounded),
+                    label: const Text('Generate Pairing Code'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+                if (_pairingCode.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  const Text('Pairing Code (expires in 10 min):', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonCyan.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.5)),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          _pairingCode,
+                          style: MayaTheme.headlineMedium.copyWith(
+                            color: MayaTheme.neonCyan,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 4,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.copy_rounded, color: MayaTheme.neonCyan),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: _pairingCode));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: const Text('Code copied!'), backgroundColor: MayaTheme.neonEmerald),
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Share this code with your computer', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('How to Pair', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                _PairStep(number: 1, text: 'On your computer, run: pip install requests pyautogui pillow'),
+                _PairStep(number: 2, text: 'Run: python maya_bridge_agent.py'),
+                _PairStep(number: 3, text: 'Enter the backend URL (e.g., http://130.210.46.182:8000/api/v1)'),
+                _PairStep(number: 4, text: 'Paste the pairing code above when prompted'),
+                _PairStep(number: 5, text: 'Keep the script running to receive commands'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryTab() {
+    return Consumer(
+      builder: (context, ref, _) {
+        final devicesAsync = ref.watch(deviceListProvider);
+        return devicesAsync.when(
+          data: (response) {
+            if (response.devices.isEmpty) {
+              return const Center(child: Text('No devices to show history for', style: MayaTheme.bodyMedium));
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: response.devices.length,
+              itemBuilder: (context, index) {
+                final device = response.devices[index];
+                return _DeviceHistoryTile(deviceId: device.id, deviceName: device.name);
+              },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+          error: (err, _) => Center(child: Text('Error: $err', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error))),
+        );
+      },
+    );
+  }
+
+  Future<void> _startPairing() async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.startDevicePairing(name: _deviceName);
+      if (mounted) {
+        setState(() => _pairingCode = result.pairingCode);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Pairing code generated'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Future<void> _revokeDevice(String deviceId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Revoke Device?'),
+        content: const Text('This will unpair the device and it can no longer receive commands.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+            child: const Text('Revoke'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      try {
+        final apiService = ref.read(apiServiceProvider);
+        final success = await apiService.revokeDevice(deviceId);
+        if (success && mounted) {
+          ref.invalidate(deviceListProvider);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: const Text('Device revoked'), backgroundColor: MayaTheme.neonEmerald),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _sendCommand(String deviceId, String action, Map<String, dynamic> params) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.sendDeviceCommand(deviceId: deviceId, action: action, params: params);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Command queued: ${result.id}'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _DeviceTile extends StatelessWidget {
+  final DeviceInfo device;
+  final Future<void> Function(String, Map<String, dynamic>) onSendCommand;
+  final VoidCallback onRevoke;
+
+  const _DeviceTile({
+    required this.device,
+    required this.onSendCommand,
+    required this.onRevoke,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.computer_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(device.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          'Last seen: ${device.lastSeen != null ? DateTime.fromMillisecondsSinceEpoch((device.lastSeen! * 1000).round()).toString().substring(0, 19) : "Never"}',
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+        ),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'revoke',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  SizedBox(width: 8),
+                  Text('Revoke', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            if (value == 'revoke') onRevoke();
+          },
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(label: 'Device ID', value: device.id),
+                _DetailRow(label: 'Paired', value: DateTime.fromMillisecondsSinceEpoch((device.pairedAt * 1000).round()).toString()),
+                _DetailRow(label: 'Last Seen', value: device.lastSeen != null ? DateTime.fromMillisecondsSinceEpoch((device.lastSeen! * 1000).round()).toString() : 'Never'),
+                const SizedBox(height: 16),
+                const Text('Quick Actions', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _ActionChip(icon: Icons.mouse_rounded, label: 'Move Mouse', onTap: () => _showMoveMouseDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.touch_app_rounded, label: 'Click', onTap: () => _showClickDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.keyboard_rounded, label: 'Type Text', onTap: () => _showTypeTextDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.keyboard_rounded, label: 'Press Key', onTap: () => _showPressKeyDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.screenshot_rounded, label: 'Screenshot', onTap: () => onSendCommand('screenshot', {})),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMoveMouseDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+    final xController = TextEditingController();
+    final yController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Move Mouse', style: MayaTheme.headlineSmall),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: xController,
+              keyboardType: TextInputType.number,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                labelText: 'X',
+                labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: yController,
+              keyboardType: TextInputType.number,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                labelText: 'Y',
+                labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final x = int.tryParse(xController.text);
+              final y = int.tryParse(yController.text);
+              if (x != null && y != null) {
+                Navigator.pop(context);
+                onSendCommand('move_mouse', {'x': x, 'y': y});
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Move'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showClickDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+    final xController = TextEditingController();
+    final yController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Click', style: MayaTheme.headlineSmall),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: xController,
+              keyboardType: TextInputType.number,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                labelText: 'X (optional)',
+                labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: yController,
+              keyboardType: TextInputType.number,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                labelText: 'Y (optional)',
+                labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final params = <String, dynamic>{};
+              final x = int.tryParse(xController.text);
+              final y = int.tryParse(yController.text);
+              if (x != null) params['x'] = x;
+              if (y != null) params['y'] = y;
+              Navigator.pop(context);
+              onSendCommand('click', params);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Click'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTypeTextDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Type Text', style: MayaTheme.headlineSmall),
+        content: TextField(
+          controller: controller,
+          maxLines: 3,
+          style: MayaTheme.bodyMedium,
+          decoration: InputDecoration(
+            labelText: 'Text to type',
+            labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            filled: true,
+            fillColor: MayaTheme.slate700,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) {
+                Navigator.pop(context);
+                onSendCommand('type_text', {'text': text});
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Type'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPressKeyDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Press Key', style: MayaTheme.headlineSmall),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              style: MayaTheme.bodyMedium,
+              decoration: InputDecoration(
+                labelText: 'Key (e.g., enter, escape, tab, ctrl, alt)',
+                labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              final key = controller.text.trim();
+              if (key.isNotEmpty) {
+                Navigator.pop(context);
+                onSendCommand('press_key', {'key': key});
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan),
+            child: const Text('Press'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionChip({required this.icon, required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: MayaTheme.neonCyan.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: MayaTheme.neonCyan),
+            const SizedBox(width: 6),
+            Text(label, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DetailRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PairStep extends StatelessWidget {
+  final int number;
+  final String text;
+
+  const _PairStep({required this.number, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text('$number', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: MayaTheme.bodyMedium)),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeviceHistoryTile extends ConsumerWidget {
+  final String deviceId;
+  final String deviceName;
+
+  const _DeviceHistoryTile({required this.deviceId, required this.deviceName});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(deviceHistoryProvider(deviceId));
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.history_rounded, color: MayaTheme.neonCyan, size: 20),
+        ),
+        title: Text(deviceName, style: MayaTheme.titleMedium),
+        subtitle: Text('Device ID: ${deviceId.substring(0, 8)}...', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: historyAsync.when(
+              data: (history) {
+                if (history.commands.isEmpty) {
+                  return const Text('No commands yet', style: MayaTheme.bodyMedium);
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: history.commands.length,
+                  itemBuilder: (context, index) {
+                    final cmd = history.commands[index];
+                    return _CommandHistoryTile(cmd: cmd);
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+              error: (err, _) => Text('Error: $err', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommandHistoryTile extends StatelessWidget {
+  final DeviceCommandEntry cmd;
+
+  const _CommandHistoryTile({required this.cmd});
+
+  @override
+  Widget build(BuildContext context) {
+    final time = DateTime.fromMillisecondsSinceEpoch((cmd.createdAt * 1000).round())
+        .toString()
+        .substring(11, 19);
+    Color statusColor;
+    switch (cmd.status) {
+      case 'done':
+        statusColor = MayaTheme.neonEmerald;
+        break;
+      case 'sent':
+        statusColor = MayaTheme.neonCyan;
+        break;
+      case 'pending':
+        statusColor = MayaTheme.neonOrange;
+        break;
+      default:
+        statusColor = Colors.white38;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: MayaTheme.slate700,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: MayaTheme.glassWhite10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(cmd.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: statusColor, fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(width: 8),
+              Text(cmd.action, style: MayaTheme.titleSmall),
+              const Spacer(),
+              Text(time, style: MayaTheme.labelSmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text('Params: ${cmd.params}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+          if (cmd.result != null) ...[
+            const SizedBox(height: 8),
+            Text('Result: ${cmd.result}', style: MayaTheme.bodySmall.copyWith(color: Colors.white70, fontFamily: 'monospace')),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// Device Bridge Providers
+final deviceListProvider = FutureProvider<DeviceListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getDeviceList();
+});
+
+final deviceHistoryProvider = FutureProvider.family<DeviceHistoryResponse, String>((ref, deviceId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getDeviceHistory(deviceId);
 });

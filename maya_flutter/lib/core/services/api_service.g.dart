@@ -2774,6 +2774,241 @@ Map<String, dynamic> _$$RAGContextResponseImplToJson(
       'citations': instance.citations,
     };
 
+_$DeviceInfoImpl _$$DeviceInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$DeviceInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DeviceInfoImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          pairedAt: $checkedConvert('paired_at', (v) => (v as num).toDouble()),
+          lastSeen:
+              $checkedConvert('last_seen', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'pairedAt': 'paired_at', 'lastSeen': 'last_seen'},
+    );
+
+Map<String, dynamic> _$$DeviceInfoImplToJson(_$DeviceInfoImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'paired_at': instance.pairedAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('last_seen', instance.lastSeen);
+  return val;
+}
+
+_$DeviceListResponseImpl _$$DeviceListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DeviceListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DeviceListResponseImpl(
+          devices: $checkedConvert(
+              'devices',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      DeviceInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$DeviceListResponseImplToJson(
+        _$DeviceListResponseImpl instance) =>
+    <String, dynamic>{
+      'devices': instance.devices,
+    };
+
+_$DevicePairStartResponseImpl _$$DevicePairStartResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$DevicePairStartResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DevicePairStartResponseImpl(
+          pairingCode: $checkedConvert('pairing_code', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'pairingCode': 'pairing_code'},
+    );
+
+Map<String, dynamic> _$$DevicePairStartResponseImplToJson(
+        _$DevicePairStartResponseImpl instance) =>
+    <String, dynamic>{
+      'pairing_code': instance.pairingCode,
+      'name': instance.name,
+    };
+
+_$DevicePairCompleteResponseImpl _$$DevicePairCompleteResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$DevicePairCompleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DevicePairCompleteResponseImpl(
+          deviceId: $checkedConvert('device_id', (v) => v as String),
+          secret: $checkedConvert('secret', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'deviceId': 'device_id'},
+    );
+
+Map<String, dynamic> _$$DevicePairCompleteResponseImplToJson(
+        _$DevicePairCompleteResponseImpl instance) =>
+    <String, dynamic>{
+      'device_id': instance.deviceId,
+      'secret': instance.secret,
+    };
+
+_$DeviceCommandEntryImpl _$$DeviceCommandEntryImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DeviceCommandEntryImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DeviceCommandEntryImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          deviceId: $checkedConvert('device_id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          params: $checkedConvert(
+              'params', (v) => Map<String, dynamic>.from(v as Map)),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          result: $checkedConvert(
+              'result',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'deviceId': 'device_id', 'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$DeviceCommandEntryImplToJson(
+    _$DeviceCommandEntryImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'device_id': instance.deviceId,
+    'action': instance.action,
+    'params': instance.params,
+    'status': instance.status,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  return val;
+}
+
+_$DeviceHistoryResponseImpl _$$DeviceHistoryResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DeviceHistoryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DeviceHistoryResponseImpl(
+          commands: $checkedConvert(
+              'commands',
+              (v) => (v as List<dynamic>)
+                  .map((e) => DeviceCommandEntry.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$DeviceHistoryResponseImplToJson(
+        _$DeviceHistoryResponseImpl instance) =>
+    <String, dynamic>{
+      'commands': instance.commands,
+    };
+
+_$DeviceCommandResponseImpl _$$DeviceCommandResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DeviceCommandResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DeviceCommandResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          deviceId: $checkedConvert('device_id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          params: $checkedConvert(
+              'params', (v) => Map<String, dynamic>.from(v as Map)),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'deviceId': 'device_id', 'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$DeviceCommandResponseImplToJson(
+        _$DeviceCommandResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'device_id': instance.deviceId,
+      'action': instance.action,
+      'params': instance.params,
+      'status': instance.status,
+      'created_at': instance.createdAt,
+    };
+
+_$DeviceCommandResultImpl _$$DeviceCommandResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DeviceCommandResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DeviceCommandResultImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          result: $checkedConvert(
+              'result',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$DeviceCommandResultImplToJson(
+    _$DeviceCommandResultImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'status': instance.status,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  return val;
+}
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
