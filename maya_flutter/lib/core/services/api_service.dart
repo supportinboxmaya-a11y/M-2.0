@@ -901,6 +901,105 @@ class ApiService {
     }
   }
 
+  // Hosting API (Phase 15)
+  Future<HostingAppsResponse> getHostingApps() async {
+    final response = await _dio.get(AppConfig.hostingApps);
+    return HostingAppsResponse.fromJson(response.data);
+  }
+
+  Future<HostingDeployResponse> deployHostingApp({
+    required String name,
+    required String kind,
+    String entry = '',
+    String path = '',
+    String command = '',
+    int? port,
+    Map<String, String>? env,
+    String? owner,
+    bool autostart = true,
+    bool tunnel = false,
+  }) async {
+    final data = <String, dynamic>{
+      'name': name,
+      'kind': kind,
+      'entry': entry,
+      'path': path,
+      'command': command,
+      'autostart': autostart,
+      'tunnel': tunnel,
+    };
+    if (entry.isNotEmpty) data['entry'] = entry;
+    if (path.isNotEmpty) data['path'] = path;
+    if (command.isNotEmpty) data['command'] = command;
+    if (port != null) data['port'] = port;
+    if (env != null && env.isNotEmpty) data['env'] = env;
+    if (owner != null) data['owner'] = owner;
+
+    final response = await _dio.post(
+      AppConfig.hostingDeploy,
+      data: data,
+    );
+    return HostingDeployResponse.fromJson(response.data);
+  }
+
+  Future<HostingAppResponse> getHostingApp(String name) async {
+    final response = await _dio.get('${AppConfig.hostingApp}$name');
+    return HostingAppResponse.fromJson(response.data);
+  }
+
+  Future<bool> startHostingApp(String name) async {
+    try {
+      final response = await _dio.post('${AppConfig.hostingStart}$name/start');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> stopHostingApp(String name) async {
+    try {
+      final response = await _dio.post('${AppConfig.hostingStop}$name/stop');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> restartHostingApp(String name) async {
+    try {
+      final response = await _dio.post('${AppConfig.hostingRestart}$name/restart');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> openHostingTunnel(String name) async {
+    try {
+      final response = await _dio.post('${AppConfig.hostingTunnel}$name/tunnel');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<HostingLogsResponse> getHostingLogs(String name, {int lines = 100}) async {
+    final response = await _dio.get(
+      '${AppConfig.hostingLogs}$name/logs',
+      queryParameters: {'lines': lines},
+    );
+    return HostingLogsResponse.fromJson(response.data);
+  }
+
+  Future<bool> removeHostingApp(String name) async {
+    try {
+      final response = await _dio.delete('${AppConfig.hostingRemove}$name');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -2324,4 +2423,92 @@ class InstanceResponse with _$InstanceResponse {
 
   factory InstanceResponse.fromJson(Map<String, dynamic> json) =>
       _$InstanceResponseFromJson(json);
+}
+
+// Hosting API Models (Phase 15)
+@freezed
+class HostingAppInfo with _$HostingAppInfo {
+  const factory HostingAppInfo({
+    required String id,
+    required String name,
+    required String kind,
+    required String entry,
+    required String path,
+    required String command,
+    required int port,
+    required Map<String, String> env,
+    required String owner,
+    required bool autostart,
+    required bool tunnel,
+    required String tunnelUrl,
+    required int pid,
+    required String logFile,
+    required double createdAt,
+    double? startedAt,
+    required bool alive,
+    required bool reachable,
+  }) = _HostingAppInfo;
+
+  factory HostingAppInfo.fromJson(Map<String, dynamic> json) =>
+      _$HostingAppInfoFromJson(json);
+}
+
+@freezed
+class HostingAppsResponse with _$HostingAppsResponse {
+  const factory HostingAppsResponse({
+    required List<HostingAppInfo> apps,
+  }) = _HostingAppsResponse;
+
+  factory HostingAppsResponse.fromJson(Map<String, dynamic> json) =>
+      _$HostingAppsResponseFromJson(json);
+}
+
+@freezed
+class HostingDeployResponse with _$HostingDeployResponse {
+  const factory HostingDeployResponse({
+    required bool ok,
+    required String id,
+    required String name,
+    required String kind,
+    required String entry,
+    required String path,
+    required String command,
+    required int port,
+    required Map<String, String> env,
+    required String owner,
+    required bool autostart,
+    required bool tunnel,
+    String? tunnelUrl,
+    int? pid,
+    String? logFile,
+    double? createdAt,
+    double? startedAt,
+    String? error,
+  }) = _HostingDeployResponse;
+
+  factory HostingDeployResponse.fromJson(Map<String, dynamic> json) =>
+      _$HostingDeployResponseFromJson(json);
+}
+
+@freezed
+class HostingAppResponse with _$HostingAppResponse {
+  const factory HostingAppResponse({
+    required bool ok,
+    required HostingAppInfo app,
+  }) = _HostingAppResponse;
+
+  factory HostingAppResponse.fromJson(Map<String, dynamic> json) =>
+      _$HostingAppResponseFromJson(json);
+}
+
+@freezed
+class HostingLogsResponse with _$HostingLogsResponse {
+  const factory HostingLogsResponse({
+    required bool ok,
+    required String name,
+    required List<String> lines,
+  }) = _HostingLogsResponse;
+
+  factory HostingLogsResponse.fromJson(Map<String, dynamic> json) =>
+      _$HostingLogsResponseFromJson(json);
 }

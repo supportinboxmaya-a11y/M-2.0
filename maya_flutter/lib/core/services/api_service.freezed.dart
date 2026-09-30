@@ -21235,3 +21235,1523 @@ abstract class _InstanceResponse implements InstanceResponse {
   _$$InstanceResponseImplCopyWith<_$InstanceResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+HostingAppInfo _$HostingAppInfoFromJson(Map<String, dynamic> json) {
+  return _HostingAppInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HostingAppInfo {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get kind => throw _privateConstructorUsedError;
+  String get entry => throw _privateConstructorUsedError;
+  String get path => throw _privateConstructorUsedError;
+  String get command => throw _privateConstructorUsedError;
+  int get port => throw _privateConstructorUsedError;
+  Map<String, String> get env => throw _privateConstructorUsedError;
+  String get owner => throw _privateConstructorUsedError;
+  bool get autostart => throw _privateConstructorUsedError;
+  bool get tunnel => throw _privateConstructorUsedError;
+  String get tunnelUrl => throw _privateConstructorUsedError;
+  int get pid => throw _privateConstructorUsedError;
+  String get logFile => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double? get startedAt => throw _privateConstructorUsedError;
+  bool get alive => throw _privateConstructorUsedError;
+  bool get reachable => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HostingAppInfoCopyWith<HostingAppInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HostingAppInfoCopyWith<$Res> {
+  factory $HostingAppInfoCopyWith(
+          HostingAppInfo value, $Res Function(HostingAppInfo) then) =
+      _$HostingAppInfoCopyWithImpl<$Res, HostingAppInfo>;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String kind,
+      String entry,
+      String path,
+      String command,
+      int port,
+      Map<String, String> env,
+      String owner,
+      bool autostart,
+      bool tunnel,
+      String tunnelUrl,
+      int pid,
+      String logFile,
+      double createdAt,
+      double? startedAt,
+      bool alive,
+      bool reachable});
+}
+
+/// @nodoc
+class _$HostingAppInfoCopyWithImpl<$Res, $Val extends HostingAppInfo>
+    implements $HostingAppInfoCopyWith<$Res> {
+  _$HostingAppInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? kind = null,
+    Object? entry = null,
+    Object? path = null,
+    Object? command = null,
+    Object? port = null,
+    Object? env = null,
+    Object? owner = null,
+    Object? autostart = null,
+    Object? tunnel = null,
+    Object? tunnelUrl = null,
+    Object? pid = null,
+    Object? logFile = null,
+    Object? createdAt = null,
+    Object? startedAt = freezed,
+    Object? alive = null,
+    Object? reachable = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as String,
+      entry: null == entry
+          ? _value.entry
+          : entry // ignore: cast_nullable_to_non_nullable
+              as String,
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      command: null == command
+          ? _value.command
+          : command // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as int,
+      env: null == env
+          ? _value.env
+          : env // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      autostart: null == autostart
+          ? _value.autostart
+          : autostart // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnel: null == tunnel
+          ? _value.tunnel
+          : tunnel // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnelUrl: null == tunnelUrl
+          ? _value.tunnelUrl
+          : tunnelUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      pid: null == pid
+          ? _value.pid
+          : pid // ignore: cast_nullable_to_non_nullable
+              as int,
+      logFile: null == logFile
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      startedAt: freezed == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      alive: null == alive
+          ? _value.alive
+          : alive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      reachable: null == reachable
+          ? _value.reachable
+          : reachable // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HostingAppInfoImplCopyWith<$Res>
+    implements $HostingAppInfoCopyWith<$Res> {
+  factory _$$HostingAppInfoImplCopyWith(_$HostingAppInfoImpl value,
+          $Res Function(_$HostingAppInfoImpl) then) =
+      __$$HostingAppInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String kind,
+      String entry,
+      String path,
+      String command,
+      int port,
+      Map<String, String> env,
+      String owner,
+      bool autostart,
+      bool tunnel,
+      String tunnelUrl,
+      int pid,
+      String logFile,
+      double createdAt,
+      double? startedAt,
+      bool alive,
+      bool reachable});
+}
+
+/// @nodoc
+class __$$HostingAppInfoImplCopyWithImpl<$Res>
+    extends _$HostingAppInfoCopyWithImpl<$Res, _$HostingAppInfoImpl>
+    implements _$$HostingAppInfoImplCopyWith<$Res> {
+  __$$HostingAppInfoImplCopyWithImpl(
+      _$HostingAppInfoImpl _value, $Res Function(_$HostingAppInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? kind = null,
+    Object? entry = null,
+    Object? path = null,
+    Object? command = null,
+    Object? port = null,
+    Object? env = null,
+    Object? owner = null,
+    Object? autostart = null,
+    Object? tunnel = null,
+    Object? tunnelUrl = null,
+    Object? pid = null,
+    Object? logFile = null,
+    Object? createdAt = null,
+    Object? startedAt = freezed,
+    Object? alive = null,
+    Object? reachable = null,
+  }) {
+    return _then(_$HostingAppInfoImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as String,
+      entry: null == entry
+          ? _value.entry
+          : entry // ignore: cast_nullable_to_non_nullable
+              as String,
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      command: null == command
+          ? _value.command
+          : command // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as int,
+      env: null == env
+          ? _value._env
+          : env // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      autostart: null == autostart
+          ? _value.autostart
+          : autostart // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnel: null == tunnel
+          ? _value.tunnel
+          : tunnel // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnelUrl: null == tunnelUrl
+          ? _value.tunnelUrl
+          : tunnelUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      pid: null == pid
+          ? _value.pid
+          : pid // ignore: cast_nullable_to_non_nullable
+              as int,
+      logFile: null == logFile
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      startedAt: freezed == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      alive: null == alive
+          ? _value.alive
+          : alive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      reachable: null == reachable
+          ? _value.reachable
+          : reachable // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HostingAppInfoImpl implements _HostingAppInfo {
+  const _$HostingAppInfoImpl(
+      {required this.id,
+      required this.name,
+      required this.kind,
+      required this.entry,
+      required this.path,
+      required this.command,
+      required this.port,
+      required final Map<String, String> env,
+      required this.owner,
+      required this.autostart,
+      required this.tunnel,
+      required this.tunnelUrl,
+      required this.pid,
+      required this.logFile,
+      required this.createdAt,
+      this.startedAt,
+      required this.alive,
+      required this.reachable})
+      : _env = env;
+
+  factory _$HostingAppInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HostingAppInfoImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String kind;
+  @override
+  final String entry;
+  @override
+  final String path;
+  @override
+  final String command;
+  @override
+  final int port;
+  final Map<String, String> _env;
+  @override
+  Map<String, String> get env {
+    if (_env is EqualUnmodifiableMapView) return _env;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_env);
+  }
+
+  @override
+  final String owner;
+  @override
+  final bool autostart;
+  @override
+  final bool tunnel;
+  @override
+  final String tunnelUrl;
+  @override
+  final int pid;
+  @override
+  final String logFile;
+  @override
+  final double createdAt;
+  @override
+  final double? startedAt;
+  @override
+  final bool alive;
+  @override
+  final bool reachable;
+
+  @override
+  String toString() {
+    return 'HostingAppInfo(id: $id, name: $name, kind: $kind, entry: $entry, path: $path, command: $command, port: $port, env: $env, owner: $owner, autostart: $autostart, tunnel: $tunnel, tunnelUrl: $tunnelUrl, pid: $pid, logFile: $logFile, createdAt: $createdAt, startedAt: $startedAt, alive: $alive, reachable: $reachable)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HostingAppInfoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.kind, kind) || other.kind == kind) &&
+            (identical(other.entry, entry) || other.entry == entry) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.command, command) || other.command == command) &&
+            (identical(other.port, port) || other.port == port) &&
+            const DeepCollectionEquality().equals(other._env, _env) &&
+            (identical(other.owner, owner) || other.owner == owner) &&
+            (identical(other.autostart, autostart) ||
+                other.autostart == autostart) &&
+            (identical(other.tunnel, tunnel) || other.tunnel == tunnel) &&
+            (identical(other.tunnelUrl, tunnelUrl) ||
+                other.tunnelUrl == tunnelUrl) &&
+            (identical(other.pid, pid) || other.pid == pid) &&
+            (identical(other.logFile, logFile) || other.logFile == logFile) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.startedAt, startedAt) ||
+                other.startedAt == startedAt) &&
+            (identical(other.alive, alive) || other.alive == alive) &&
+            (identical(other.reachable, reachable) ||
+                other.reachable == reachable));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      kind,
+      entry,
+      path,
+      command,
+      port,
+      const DeepCollectionEquality().hash(_env),
+      owner,
+      autostart,
+      tunnel,
+      tunnelUrl,
+      pid,
+      logFile,
+      createdAt,
+      startedAt,
+      alive,
+      reachable);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HostingAppInfoImplCopyWith<_$HostingAppInfoImpl> get copyWith =>
+      __$$HostingAppInfoImplCopyWithImpl<_$HostingAppInfoImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HostingAppInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HostingAppInfo implements HostingAppInfo {
+  const factory _HostingAppInfo(
+      {required final String id,
+      required final String name,
+      required final String kind,
+      required final String entry,
+      required final String path,
+      required final String command,
+      required final int port,
+      required final Map<String, String> env,
+      required final String owner,
+      required final bool autostart,
+      required final bool tunnel,
+      required final String tunnelUrl,
+      required final int pid,
+      required final String logFile,
+      required final double createdAt,
+      final double? startedAt,
+      required final bool alive,
+      required final bool reachable}) = _$HostingAppInfoImpl;
+
+  factory _HostingAppInfo.fromJson(Map<String, dynamic> json) =
+      _$HostingAppInfoImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get kind;
+  @override
+  String get entry;
+  @override
+  String get path;
+  @override
+  String get command;
+  @override
+  int get port;
+  @override
+  Map<String, String> get env;
+  @override
+  String get owner;
+  @override
+  bool get autostart;
+  @override
+  bool get tunnel;
+  @override
+  String get tunnelUrl;
+  @override
+  int get pid;
+  @override
+  String get logFile;
+  @override
+  double get createdAt;
+  @override
+  double? get startedAt;
+  @override
+  bool get alive;
+  @override
+  bool get reachable;
+  @override
+  @JsonKey(ignore: true)
+  _$$HostingAppInfoImplCopyWith<_$HostingAppInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+HostingAppsResponse _$HostingAppsResponseFromJson(Map<String, dynamic> json) {
+  return _HostingAppsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HostingAppsResponse {
+  List<HostingAppInfo> get apps => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HostingAppsResponseCopyWith<HostingAppsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HostingAppsResponseCopyWith<$Res> {
+  factory $HostingAppsResponseCopyWith(
+          HostingAppsResponse value, $Res Function(HostingAppsResponse) then) =
+      _$HostingAppsResponseCopyWithImpl<$Res, HostingAppsResponse>;
+  @useResult
+  $Res call({List<HostingAppInfo> apps});
+}
+
+/// @nodoc
+class _$HostingAppsResponseCopyWithImpl<$Res, $Val extends HostingAppsResponse>
+    implements $HostingAppsResponseCopyWith<$Res> {
+  _$HostingAppsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? apps = null,
+  }) {
+    return _then(_value.copyWith(
+      apps: null == apps
+          ? _value.apps
+          : apps // ignore: cast_nullable_to_non_nullable
+              as List<HostingAppInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HostingAppsResponseImplCopyWith<$Res>
+    implements $HostingAppsResponseCopyWith<$Res> {
+  factory _$$HostingAppsResponseImplCopyWith(_$HostingAppsResponseImpl value,
+          $Res Function(_$HostingAppsResponseImpl) then) =
+      __$$HostingAppsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<HostingAppInfo> apps});
+}
+
+/// @nodoc
+class __$$HostingAppsResponseImplCopyWithImpl<$Res>
+    extends _$HostingAppsResponseCopyWithImpl<$Res, _$HostingAppsResponseImpl>
+    implements _$$HostingAppsResponseImplCopyWith<$Res> {
+  __$$HostingAppsResponseImplCopyWithImpl(_$HostingAppsResponseImpl _value,
+      $Res Function(_$HostingAppsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? apps = null,
+  }) {
+    return _then(_$HostingAppsResponseImpl(
+      apps: null == apps
+          ? _value._apps
+          : apps // ignore: cast_nullable_to_non_nullable
+              as List<HostingAppInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HostingAppsResponseImpl implements _HostingAppsResponse {
+  const _$HostingAppsResponseImpl({required final List<HostingAppInfo> apps})
+      : _apps = apps;
+
+  factory _$HostingAppsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HostingAppsResponseImplFromJson(json);
+
+  final List<HostingAppInfo> _apps;
+  @override
+  List<HostingAppInfo> get apps {
+    if (_apps is EqualUnmodifiableListView) return _apps;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_apps);
+  }
+
+  @override
+  String toString() {
+    return 'HostingAppsResponse(apps: $apps)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HostingAppsResponseImpl &&
+            const DeepCollectionEquality().equals(other._apps, _apps));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_apps));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HostingAppsResponseImplCopyWith<_$HostingAppsResponseImpl> get copyWith =>
+      __$$HostingAppsResponseImplCopyWithImpl<_$HostingAppsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HostingAppsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HostingAppsResponse implements HostingAppsResponse {
+  const factory _HostingAppsResponse(
+      {required final List<HostingAppInfo> apps}) = _$HostingAppsResponseImpl;
+
+  factory _HostingAppsResponse.fromJson(Map<String, dynamic> json) =
+      _$HostingAppsResponseImpl.fromJson;
+
+  @override
+  List<HostingAppInfo> get apps;
+  @override
+  @JsonKey(ignore: true)
+  _$$HostingAppsResponseImplCopyWith<_$HostingAppsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+HostingDeployResponse _$HostingDeployResponseFromJson(
+    Map<String, dynamic> json) {
+  return _HostingDeployResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HostingDeployResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get kind => throw _privateConstructorUsedError;
+  String get entry => throw _privateConstructorUsedError;
+  String get path => throw _privateConstructorUsedError;
+  String get command => throw _privateConstructorUsedError;
+  int get port => throw _privateConstructorUsedError;
+  Map<String, String> get env => throw _privateConstructorUsedError;
+  String get owner => throw _privateConstructorUsedError;
+  bool get autostart => throw _privateConstructorUsedError;
+  bool get tunnel => throw _privateConstructorUsedError;
+  String? get tunnelUrl => throw _privateConstructorUsedError;
+  int? get pid => throw _privateConstructorUsedError;
+  String? get logFile => throw _privateConstructorUsedError;
+  double? get createdAt => throw _privateConstructorUsedError;
+  double? get startedAt => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HostingDeployResponseCopyWith<HostingDeployResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HostingDeployResponseCopyWith<$Res> {
+  factory $HostingDeployResponseCopyWith(HostingDeployResponse value,
+          $Res Function(HostingDeployResponse) then) =
+      _$HostingDeployResponseCopyWithImpl<$Res, HostingDeployResponse>;
+  @useResult
+  $Res call(
+      {bool ok,
+      String id,
+      String name,
+      String kind,
+      String entry,
+      String path,
+      String command,
+      int port,
+      Map<String, String> env,
+      String owner,
+      bool autostart,
+      bool tunnel,
+      String? tunnelUrl,
+      int? pid,
+      String? logFile,
+      double? createdAt,
+      double? startedAt,
+      String? error});
+}
+
+/// @nodoc
+class _$HostingDeployResponseCopyWithImpl<$Res,
+        $Val extends HostingDeployResponse>
+    implements $HostingDeployResponseCopyWith<$Res> {
+  _$HostingDeployResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? id = null,
+    Object? name = null,
+    Object? kind = null,
+    Object? entry = null,
+    Object? path = null,
+    Object? command = null,
+    Object? port = null,
+    Object? env = null,
+    Object? owner = null,
+    Object? autostart = null,
+    Object? tunnel = null,
+    Object? tunnelUrl = freezed,
+    Object? pid = freezed,
+    Object? logFile = freezed,
+    Object? createdAt = freezed,
+    Object? startedAt = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as String,
+      entry: null == entry
+          ? _value.entry
+          : entry // ignore: cast_nullable_to_non_nullable
+              as String,
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      command: null == command
+          ? _value.command
+          : command // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as int,
+      env: null == env
+          ? _value.env
+          : env // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      autostart: null == autostart
+          ? _value.autostart
+          : autostart // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnel: null == tunnel
+          ? _value.tunnel
+          : tunnel // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnelUrl: freezed == tunnelUrl
+          ? _value.tunnelUrl
+          : tunnelUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      pid: freezed == pid
+          ? _value.pid
+          : pid // ignore: cast_nullable_to_non_nullable
+              as int?,
+      logFile: freezed == logFile
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      startedAt: freezed == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HostingDeployResponseImplCopyWith<$Res>
+    implements $HostingDeployResponseCopyWith<$Res> {
+  factory _$$HostingDeployResponseImplCopyWith(
+          _$HostingDeployResponseImpl value,
+          $Res Function(_$HostingDeployResponseImpl) then) =
+      __$$HostingDeployResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool ok,
+      String id,
+      String name,
+      String kind,
+      String entry,
+      String path,
+      String command,
+      int port,
+      Map<String, String> env,
+      String owner,
+      bool autostart,
+      bool tunnel,
+      String? tunnelUrl,
+      int? pid,
+      String? logFile,
+      double? createdAt,
+      double? startedAt,
+      String? error});
+}
+
+/// @nodoc
+class __$$HostingDeployResponseImplCopyWithImpl<$Res>
+    extends _$HostingDeployResponseCopyWithImpl<$Res,
+        _$HostingDeployResponseImpl>
+    implements _$$HostingDeployResponseImplCopyWith<$Res> {
+  __$$HostingDeployResponseImplCopyWithImpl(_$HostingDeployResponseImpl _value,
+      $Res Function(_$HostingDeployResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? id = null,
+    Object? name = null,
+    Object? kind = null,
+    Object? entry = null,
+    Object? path = null,
+    Object? command = null,
+    Object? port = null,
+    Object? env = null,
+    Object? owner = null,
+    Object? autostart = null,
+    Object? tunnel = null,
+    Object? tunnelUrl = freezed,
+    Object? pid = freezed,
+    Object? logFile = freezed,
+    Object? createdAt = freezed,
+    Object? startedAt = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$HostingDeployResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as String,
+      entry: null == entry
+          ? _value.entry
+          : entry // ignore: cast_nullable_to_non_nullable
+              as String,
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      command: null == command
+          ? _value.command
+          : command // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as int,
+      env: null == env
+          ? _value._env
+          : env // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      owner: null == owner
+          ? _value.owner
+          : owner // ignore: cast_nullable_to_non_nullable
+              as String,
+      autostart: null == autostart
+          ? _value.autostart
+          : autostart // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnel: null == tunnel
+          ? _value.tunnel
+          : tunnel // ignore: cast_nullable_to_non_nullable
+              as bool,
+      tunnelUrl: freezed == tunnelUrl
+          ? _value.tunnelUrl
+          : tunnelUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      pid: freezed == pid
+          ? _value.pid
+          : pid // ignore: cast_nullable_to_non_nullable
+              as int?,
+      logFile: freezed == logFile
+          ? _value.logFile
+          : logFile // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      startedAt: freezed == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HostingDeployResponseImpl implements _HostingDeployResponse {
+  const _$HostingDeployResponseImpl(
+      {required this.ok,
+      required this.id,
+      required this.name,
+      required this.kind,
+      required this.entry,
+      required this.path,
+      required this.command,
+      required this.port,
+      required final Map<String, String> env,
+      required this.owner,
+      required this.autostart,
+      required this.tunnel,
+      this.tunnelUrl,
+      this.pid,
+      this.logFile,
+      this.createdAt,
+      this.startedAt,
+      this.error})
+      : _env = env;
+
+  factory _$HostingDeployResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HostingDeployResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String kind;
+  @override
+  final String entry;
+  @override
+  final String path;
+  @override
+  final String command;
+  @override
+  final int port;
+  final Map<String, String> _env;
+  @override
+  Map<String, String> get env {
+    if (_env is EqualUnmodifiableMapView) return _env;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_env);
+  }
+
+  @override
+  final String owner;
+  @override
+  final bool autostart;
+  @override
+  final bool tunnel;
+  @override
+  final String? tunnelUrl;
+  @override
+  final int? pid;
+  @override
+  final String? logFile;
+  @override
+  final double? createdAt;
+  @override
+  final double? startedAt;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'HostingDeployResponse(ok: $ok, id: $id, name: $name, kind: $kind, entry: $entry, path: $path, command: $command, port: $port, env: $env, owner: $owner, autostart: $autostart, tunnel: $tunnel, tunnelUrl: $tunnelUrl, pid: $pid, logFile: $logFile, createdAt: $createdAt, startedAt: $startedAt, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HostingDeployResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.kind, kind) || other.kind == kind) &&
+            (identical(other.entry, entry) || other.entry == entry) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.command, command) || other.command == command) &&
+            (identical(other.port, port) || other.port == port) &&
+            const DeepCollectionEquality().equals(other._env, _env) &&
+            (identical(other.owner, owner) || other.owner == owner) &&
+            (identical(other.autostart, autostart) ||
+                other.autostart == autostart) &&
+            (identical(other.tunnel, tunnel) || other.tunnel == tunnel) &&
+            (identical(other.tunnelUrl, tunnelUrl) ||
+                other.tunnelUrl == tunnelUrl) &&
+            (identical(other.pid, pid) || other.pid == pid) &&
+            (identical(other.logFile, logFile) || other.logFile == logFile) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.startedAt, startedAt) ||
+                other.startedAt == startedAt) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      ok,
+      id,
+      name,
+      kind,
+      entry,
+      path,
+      command,
+      port,
+      const DeepCollectionEquality().hash(_env),
+      owner,
+      autostart,
+      tunnel,
+      tunnelUrl,
+      pid,
+      logFile,
+      createdAt,
+      startedAt,
+      error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HostingDeployResponseImplCopyWith<_$HostingDeployResponseImpl>
+      get copyWith => __$$HostingDeployResponseImplCopyWithImpl<
+          _$HostingDeployResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HostingDeployResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HostingDeployResponse implements HostingDeployResponse {
+  const factory _HostingDeployResponse(
+      {required final bool ok,
+      required final String id,
+      required final String name,
+      required final String kind,
+      required final String entry,
+      required final String path,
+      required final String command,
+      required final int port,
+      required final Map<String, String> env,
+      required final String owner,
+      required final bool autostart,
+      required final bool tunnel,
+      final String? tunnelUrl,
+      final int? pid,
+      final String? logFile,
+      final double? createdAt,
+      final double? startedAt,
+      final String? error}) = _$HostingDeployResponseImpl;
+
+  factory _HostingDeployResponse.fromJson(Map<String, dynamic> json) =
+      _$HostingDeployResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get kind;
+  @override
+  String get entry;
+  @override
+  String get path;
+  @override
+  String get command;
+  @override
+  int get port;
+  @override
+  Map<String, String> get env;
+  @override
+  String get owner;
+  @override
+  bool get autostart;
+  @override
+  bool get tunnel;
+  @override
+  String? get tunnelUrl;
+  @override
+  int? get pid;
+  @override
+  String? get logFile;
+  @override
+  double? get createdAt;
+  @override
+  double? get startedAt;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$HostingDeployResponseImplCopyWith<_$HostingDeployResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+HostingAppResponse _$HostingAppResponseFromJson(Map<String, dynamic> json) {
+  return _HostingAppResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HostingAppResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  HostingAppInfo get app => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HostingAppResponseCopyWith<HostingAppResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HostingAppResponseCopyWith<$Res> {
+  factory $HostingAppResponseCopyWith(
+          HostingAppResponse value, $Res Function(HostingAppResponse) then) =
+      _$HostingAppResponseCopyWithImpl<$Res, HostingAppResponse>;
+  @useResult
+  $Res call({bool ok, HostingAppInfo app});
+
+  $HostingAppInfoCopyWith<$Res> get app;
+}
+
+/// @nodoc
+class _$HostingAppResponseCopyWithImpl<$Res, $Val extends HostingAppResponse>
+    implements $HostingAppResponseCopyWith<$Res> {
+  _$HostingAppResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as HostingAppInfo,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $HostingAppInfoCopyWith<$Res> get app {
+    return $HostingAppInfoCopyWith<$Res>(_value.app, (value) {
+      return _then(_value.copyWith(app: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$HostingAppResponseImplCopyWith<$Res>
+    implements $HostingAppResponseCopyWith<$Res> {
+  factory _$$HostingAppResponseImplCopyWith(_$HostingAppResponseImpl value,
+          $Res Function(_$HostingAppResponseImpl) then) =
+      __$$HostingAppResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool ok, HostingAppInfo app});
+
+  @override
+  $HostingAppInfoCopyWith<$Res> get app;
+}
+
+/// @nodoc
+class __$$HostingAppResponseImplCopyWithImpl<$Res>
+    extends _$HostingAppResponseCopyWithImpl<$Res, _$HostingAppResponseImpl>
+    implements _$$HostingAppResponseImplCopyWith<$Res> {
+  __$$HostingAppResponseImplCopyWithImpl(_$HostingAppResponseImpl _value,
+      $Res Function(_$HostingAppResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? app = null,
+  }) {
+    return _then(_$HostingAppResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      app: null == app
+          ? _value.app
+          : app // ignore: cast_nullable_to_non_nullable
+              as HostingAppInfo,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HostingAppResponseImpl implements _HostingAppResponse {
+  const _$HostingAppResponseImpl({required this.ok, required this.app});
+
+  factory _$HostingAppResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HostingAppResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final HostingAppInfo app;
+
+  @override
+  String toString() {
+    return 'HostingAppResponse(ok: $ok, app: $app)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HostingAppResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.app, app) || other.app == app));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ok, app);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HostingAppResponseImplCopyWith<_$HostingAppResponseImpl> get copyWith =>
+      __$$HostingAppResponseImplCopyWithImpl<_$HostingAppResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HostingAppResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HostingAppResponse implements HostingAppResponse {
+  const factory _HostingAppResponse(
+      {required final bool ok,
+      required final HostingAppInfo app}) = _$HostingAppResponseImpl;
+
+  factory _HostingAppResponse.fromJson(Map<String, dynamic> json) =
+      _$HostingAppResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  HostingAppInfo get app;
+  @override
+  @JsonKey(ignore: true)
+  _$$HostingAppResponseImplCopyWith<_$HostingAppResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+HostingLogsResponse _$HostingLogsResponseFromJson(Map<String, dynamic> json) {
+  return _HostingLogsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$HostingLogsResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  List<String> get lines => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $HostingLogsResponseCopyWith<HostingLogsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HostingLogsResponseCopyWith<$Res> {
+  factory $HostingLogsResponseCopyWith(
+          HostingLogsResponse value, $Res Function(HostingLogsResponse) then) =
+      _$HostingLogsResponseCopyWithImpl<$Res, HostingLogsResponse>;
+  @useResult
+  $Res call({bool ok, String name, List<String> lines});
+}
+
+/// @nodoc
+class _$HostingLogsResponseCopyWithImpl<$Res, $Val extends HostingLogsResponse>
+    implements $HostingLogsResponseCopyWith<$Res> {
+  _$HostingLogsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? name = null,
+    Object? lines = null,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      lines: null == lines
+          ? _value.lines
+          : lines // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HostingLogsResponseImplCopyWith<$Res>
+    implements $HostingLogsResponseCopyWith<$Res> {
+  factory _$$HostingLogsResponseImplCopyWith(_$HostingLogsResponseImpl value,
+          $Res Function(_$HostingLogsResponseImpl) then) =
+      __$$HostingLogsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool ok, String name, List<String> lines});
+}
+
+/// @nodoc
+class __$$HostingLogsResponseImplCopyWithImpl<$Res>
+    extends _$HostingLogsResponseCopyWithImpl<$Res, _$HostingLogsResponseImpl>
+    implements _$$HostingLogsResponseImplCopyWith<$Res> {
+  __$$HostingLogsResponseImplCopyWithImpl(_$HostingLogsResponseImpl _value,
+      $Res Function(_$HostingLogsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? name = null,
+    Object? lines = null,
+  }) {
+    return _then(_$HostingLogsResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      lines: null == lines
+          ? _value._lines
+          : lines // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$HostingLogsResponseImpl implements _HostingLogsResponse {
+  const _$HostingLogsResponseImpl(
+      {required this.ok, required this.name, required final List<String> lines})
+      : _lines = lines;
+
+  factory _$HostingLogsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HostingLogsResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String name;
+  final List<String> _lines;
+  @override
+  List<String> get lines {
+    if (_lines is EqualUnmodifiableListView) return _lines;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_lines);
+  }
+
+  @override
+  String toString() {
+    return 'HostingLogsResponse(ok: $ok, name: $name, lines: $lines)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HostingLogsResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.name, name) || other.name == name) &&
+            const DeepCollectionEquality().equals(other._lines, _lines));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, ok, name, const DeepCollectionEquality().hash(_lines));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HostingLogsResponseImplCopyWith<_$HostingLogsResponseImpl> get copyWith =>
+      __$$HostingLogsResponseImplCopyWithImpl<_$HostingLogsResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HostingLogsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _HostingLogsResponse implements HostingLogsResponse {
+  const factory _HostingLogsResponse(
+      {required final bool ok,
+      required final String name,
+      required final List<String> lines}) = _$HostingLogsResponseImpl;
+
+  factory _HostingLogsResponse.fromJson(Map<String, dynamic> json) =
+      _$HostingLogsResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get name;
+  @override
+  List<String> get lines;
+  @override
+  @JsonKey(ignore: true)
+  _$$HostingLogsResponseImplCopyWith<_$HostingLogsResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

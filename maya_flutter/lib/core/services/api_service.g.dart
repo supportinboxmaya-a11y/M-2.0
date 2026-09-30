@@ -3131,6 +3131,214 @@ Map<String, dynamic> _$$InstanceResponseImplToJson(
       'instance': instance.instance,
     };
 
+_$HostingAppInfoImpl _$$HostingAppInfoImplFromJson(Map json) => $checkedCreate(
+      r'_$HostingAppInfoImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$HostingAppInfoImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          kind: $checkedConvert('kind', (v) => v as String),
+          entry: $checkedConvert('entry', (v) => v as String),
+          path: $checkedConvert('path', (v) => v as String),
+          command: $checkedConvert('command', (v) => v as String),
+          port: $checkedConvert('port', (v) => (v as num).toInt()),
+          env:
+              $checkedConvert('env', (v) => Map<String, String>.from(v as Map)),
+          owner: $checkedConvert('owner', (v) => v as String),
+          autostart: $checkedConvert('autostart', (v) => v as bool),
+          tunnel: $checkedConvert('tunnel', (v) => v as bool),
+          tunnelUrl: $checkedConvert('tunnel_url', (v) => v as String),
+          pid: $checkedConvert('pid', (v) => (v as num).toInt()),
+          logFile: $checkedConvert('log_file', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          startedAt:
+              $checkedConvert('started_at', (v) => (v as num?)?.toDouble()),
+          alive: $checkedConvert('alive', (v) => v as bool),
+          reachable: $checkedConvert('reachable', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'tunnelUrl': 'tunnel_url',
+        'logFile': 'log_file',
+        'createdAt': 'created_at',
+        'startedAt': 'started_at'
+      },
+    );
+
+Map<String, dynamic> _$$HostingAppInfoImplToJson(
+    _$HostingAppInfoImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'kind': instance.kind,
+    'entry': instance.entry,
+    'path': instance.path,
+    'command': instance.command,
+    'port': instance.port,
+    'env': instance.env,
+    'owner': instance.owner,
+    'autostart': instance.autostart,
+    'tunnel': instance.tunnel,
+    'tunnel_url': instance.tunnelUrl,
+    'pid': instance.pid,
+    'log_file': instance.logFile,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('started_at', instance.startedAt);
+  val['alive'] = instance.alive;
+  val['reachable'] = instance.reachable;
+  return val;
+}
+
+_$HostingAppsResponseImpl _$$HostingAppsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$HostingAppsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$HostingAppsResponseImpl(
+          apps: $checkedConvert(
+              'apps',
+              (v) => (v as List<dynamic>)
+                  .map((e) => HostingAppInfo.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$HostingAppsResponseImplToJson(
+        _$HostingAppsResponseImpl instance) =>
+    <String, dynamic>{
+      'apps': instance.apps,
+    };
+
+_$HostingDeployResponseImpl _$$HostingDeployResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$HostingDeployResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$HostingDeployResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          kind: $checkedConvert('kind', (v) => v as String),
+          entry: $checkedConvert('entry', (v) => v as String),
+          path: $checkedConvert('path', (v) => v as String),
+          command: $checkedConvert('command', (v) => v as String),
+          port: $checkedConvert('port', (v) => (v as num).toInt()),
+          env:
+              $checkedConvert('env', (v) => Map<String, String>.from(v as Map)),
+          owner: $checkedConvert('owner', (v) => v as String),
+          autostart: $checkedConvert('autostart', (v) => v as bool),
+          tunnel: $checkedConvert('tunnel', (v) => v as bool),
+          tunnelUrl: $checkedConvert('tunnel_url', (v) => v as String?),
+          pid: $checkedConvert('pid', (v) => (v as num?)?.toInt()),
+          logFile: $checkedConvert('log_file', (v) => v as String?),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num?)?.toDouble()),
+          startedAt:
+              $checkedConvert('started_at', (v) => (v as num?)?.toDouble()),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'tunnelUrl': 'tunnel_url',
+        'logFile': 'log_file',
+        'createdAt': 'created_at',
+        'startedAt': 'started_at'
+      },
+    );
+
+Map<String, dynamic> _$$HostingDeployResponseImplToJson(
+    _$HostingDeployResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'id': instance.id,
+    'name': instance.name,
+    'kind': instance.kind,
+    'entry': instance.entry,
+    'path': instance.path,
+    'command': instance.command,
+    'port': instance.port,
+    'env': instance.env,
+    'owner': instance.owner,
+    'autostart': instance.autostart,
+    'tunnel': instance.tunnel,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('tunnel_url', instance.tunnelUrl);
+  writeNotNull('pid', instance.pid);
+  writeNotNull('log_file', instance.logFile);
+  writeNotNull('created_at', instance.createdAt);
+  writeNotNull('started_at', instance.startedAt);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$HostingAppResponseImpl _$$HostingAppResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$HostingAppResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$HostingAppResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          app: $checkedConvert(
+              'app',
+              (v) =>
+                  HostingAppInfo.fromJson(Map<String, dynamic>.from(v as Map))),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$HostingAppResponseImplToJson(
+        _$HostingAppResponseImpl instance) =>
+    <String, dynamic>{
+      'ok': instance.ok,
+      'app': instance.app,
+    };
+
+_$HostingLogsResponseImpl _$$HostingLogsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$HostingLogsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$HostingLogsResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          name: $checkedConvert('name', (v) => v as String),
+          lines: $checkedConvert('lines',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$HostingLogsResponseImplToJson(
+        _$HostingLogsResponseImpl instance) =>
+    <String, dynamic>{
+      'ok': instance.ok,
+      'name': instance.name,
+      'lines': instance.lines,
+    };
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

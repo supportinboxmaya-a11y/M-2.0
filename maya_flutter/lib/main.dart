@@ -1896,6 +1896,20 @@ class _AppDrawer extends ConsumerWidget {
                   },
                 ),
                 _DrawerActionTile(
+                  icon: Icons.deployed_code_rounded,
+                  label: 'Hosting Manager',
+                  subtitle: 'Deploy & manage hosted apps',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _HostingScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
                   icon: Icons.dns_rounded,
                   label: 'VPS Status',
                   subtitle: 'Connection: Online',
@@ -12472,4 +12486,807 @@ final deviceListProvider = FutureProvider<DeviceListResponse>((ref) async {
 final deviceHistoryProvider = FutureProvider.family<DeviceHistoryResponse, String>((ref, deviceId) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getDeviceHistory(deviceId);
+});
+
+// Hosting API Screen (Phase 15)
+class _HostingScreen extends ConsumerStatefulWidget {
+  const _HostingScreen();
+
+  @override
+  ConsumerState<_HostingScreen> createState() => _HostingScreenState();
+}
+
+class _HostingScreenState extends ConsumerState<_HostingScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(hostingAppsProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Hosting Manager', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(hostingAppsProvider),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_rounded),
+              onPressed: _showDeployDialog,
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.apps_rounded), text: 'Apps'),
+              Tab(icon: Icon(Icons.rocket_launch_rounded), text: 'Deploy'),
+              Tab(icon: Icon(Icons.person_rounded), text: 'My Apps'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildAppsTab(),
+            _buildDeployTab(),
+            _buildMyAppsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppsTab() {
+    final appsAsync = ref.watch(hostingAppsProvider);
+
+    return appsAsync.when(
+      data: (response) {
+        if (response.apps.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.apps_rounded, size: 64, color: Colors.white24),
+                const SizedBox(height: 16),
+                const Text('No hosted apps yet', style: MayaTheme.bodyMedium),
+                const SizedBox(height: 8),
+                Text('Tap + to deploy your first app',
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.apps.length,
+          itemBuilder: (context, index) {
+            final app = response.apps[index];
+            return _AppTile(app: app);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading apps', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeployTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Deploy New App', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: TextEditingController(),
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'App Name',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: 'python-asgi',
+                  dropdownColor: MayaTheme.slate800,
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'Kind',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'python-asgi', child: Text('Python ASGI (FastAPI, Starlette)')),
+                    DropdownMenuItem(value: 'python', child: Text('Python Script')),
+                    DropdownMenuItem(value: 'node', child: Text('Node.js')),
+                    DropdownMenuItem(value: 'static', child: Text('Static Files')),
+                    DropdownMenuItem(value: 'command', child: Text('Custom Command')),
+                  ],
+                  onChanged: (value) {},
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: TextEditingController(),
+                  style: MayaTheme.bodyMedium,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: 'Entry Point / Command',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: TextEditingController(),
+                  style: MayaTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    labelText: 'Working Directory (optional)',
+                    labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                    filled: true,
+                    fillColor: MayaTheme.slate700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: TextEditingController(),
+                        keyboardType: TextInputType.number,
+                        style: MayaTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          labelText: 'Port (optional, auto-allocated)',
+                          labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                          filled: true,
+                          fillColor: MayaTheme.slate700,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<bool>(
+                        value: true,
+                        dropdownColor: MayaTheme.slate800,
+                        style: MayaTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          labelText: 'Auto-start',
+                          labelStyle: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                          filled: true,
+                          fillColor: MayaTheme.slate700,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: true, child: Text('Yes')),
+                          DropdownMenuItem(value: false, child: Text('No')),
+                        ],
+                        onChanged: (value) {},
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SwitchListTile(
+                  title: const Text('Cloudflare Tunnel'),
+                  subtitle: const Text('Create public HTTPS tunnel'),
+                  value: false,
+                  onChanged: (value) {},
+                  activeColor: MayaTheme.neonCyan,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _deployApp,
+                    icon: const Icon(Icons.rocket_launch_rounded),
+                    label: const Text('Deploy'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Quick Actions for existing apps
+          Consumer(
+            builder: (context, ref, _) {
+              final appsAsync = ref.watch(hostingAppsProvider);
+              return appsAsync.when(
+                data: (response) {
+                  if (response.apps.isEmpty) return const SizedBox();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Quick Actions', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      ...response.apps.map((app) => _QuickActionTile(app: app)).toList(),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox(),
+                error: (_, __) => const SizedBox(),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deployApp() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: const Text('Deploy functionality coming soon'), backgroundColor: MayaTheme.neonCyan),
+    );
+  }
+
+  Widget _buildMyAppsTab() {
+    final appsAsync = ref.watch(hostingAppsProvider);
+
+    return appsAsync.when(
+      data: (response) {
+        if (response.apps.isEmpty) {
+          return const Center(
+            child: Text('No apps deployed yet', style: MayaTheme.bodyMedium),
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: response.apps.length,
+          itemBuilder: (context, index) {
+            final app = response.apps[index];
+            return _MyAppTile(app: app);
+          },
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+      ),
+      error: (err, _) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+            const SizedBox(height: 16),
+            Text('Error loading apps', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            const SizedBox(height: 8),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AppTile extends ConsumerWidget {
+  final HostingAppInfo app;
+
+  const _AppTile({required this.app});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRunning = app.alive;
+    final isReachable = app.reachable;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: (app.alive ? MayaTheme.neonEmerald : MayaTheme.error).withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            isRunning ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+            color: isRunning ? MayaTheme.neonEmerald : MayaTheme.error,
+            size: 20,
+          ),
+        ),
+        title: Text(app.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          '${app.kind} • Port ${app.port} • ${isRunning ? "Running" : "Stopped"}',
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+        ),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            if (!app.alive)
+              const PopupMenuItem(
+                value: 'start',
+                child: Row(
+                  children: [
+                    Icon(Icons.play_arrow_rounded, size: 18),
+                    SizedBox(width: 8),
+                    Text('Start'),
+                  ],
+                ),
+              ),
+            if (app.alive)
+              const PopupMenuItem(
+                value: 'stop',
+                child: Row(
+                  children: [
+                    Icon(Icons.stop_rounded, size: 18, color: MayaTheme.error),
+                    SizedBox(width: 8),
+                    Text('Stop', style: TextStyle(color: MayaTheme.error)),
+                  ],
+                ),
+              ),
+            if (app.alive)
+              const PopupMenuItem(
+                value: 'restart',
+                child: Row(
+                  children: [
+                    Icon(Icons.restart_alt_rounded, size: 18, color: MayaTheme.neonViolet),
+                    SizedBox(width: 8),
+                    Text('Restart'),
+                  ],
+                ),
+              ),
+            const PopupMenuItem(
+              value: 'tunnel',
+              child: Row(
+                children: [
+                  Icon(Icons.cloud_rounded, size: 18, color: MayaTheme.neonViolet),
+                  SizedBox(width: 8),
+                  Text('Open Tunnel'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'logs',
+              child: Row(
+                children: [
+                  Icon(Icons.article_rounded, size: 18),
+                  SizedBox(width: 8),
+                  Text('View Logs'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) async {
+            if (value == 'start') {
+              final success = await ref.read(apiServiceProvider).startHostingApp(app.name);
+              if (mounted) {
+                ref.invalidate(hostingAppsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'App started' : 'Start failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'stop') {
+              final success = await ref.read(apiServiceProvider).stopHostingApp(app.name);
+              if (mounted) {
+                ref.invalidate(hostingAppsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'App stopped' : 'Stop failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'restart') {
+              final success = await ref.read(apiServiceProvider).restartHostingApp(app.name);
+              if (mounted) {
+                ref.invalidate(hostingAppsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'App restarted' : 'Restart failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'tunnel') {
+              final success = await ref.read(apiServiceProvider).openHostingTunnel(app.name);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'Tunnel opened' : 'Tunnel failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'logs') {
+              // TODO: Show logs dialog
+            } else if (value == 'delete') {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: MayaTheme.slate800,
+                  title: const Text('Delete App?'),
+                  content: Text('Delete "${app.name}" and all its data? This cannot be undone.'),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirmed == true) {
+                final success = await ref.read(apiServiceProvider).removeHostingApp(app.name);
+                if (mounted) {
+                  ref.invalidate(hostingAppsProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(success ? 'App deleted' : 'Delete failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                  );
+                }
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MyAppTile extends ConsumerWidget {
+  final HostingAppInfo app;
+
+  const _MyAppTile({required this.app});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRunning = app.alive;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: MayaTheme.glassCard(),
+      child: ExpansionTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isRunning ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.error.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            isRunning ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+            color: isRunning ? MayaTheme.neonEmerald : MayaTheme.error,
+            size: 20,
+          ),
+        ),
+        title: Text(app.name, style: MayaTheme.titleMedium),
+        subtitle: Text(
+          '${app.kind} • Port ${app.port}',
+          style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+        ),
+        trailing: PopupMenuButton(
+          icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+          itemBuilder: (context) => [
+            if (!app.alive)
+              const PopupMenuItem(
+                value: 'start',
+                child: Row(
+                  children: [
+                    Icon(Icons.play_arrow_rounded, size: 18),
+                    SizedBox(width: 8),
+                    Text('Start'),
+                  ],
+                ),
+              ),
+            if (app.alive)
+              const PopupMenuItem(
+                value: 'stop',
+                child: Row(
+                  children: [
+                    Icon(Icons.stop_rounded, size: 18, color: MayaTheme.error),
+                    SizedBox(width: 8),
+                    Text('Stop', style: TextStyle(color: MayaTheme.error)),
+                  ],
+                ),
+              ),
+            if (app.alive)
+              const PopupMenuItem(
+                value: 'restart',
+                child: Row(
+                  children: [
+                    Icon(Icons.restart_alt_rounded, size: 18, color: MayaTheme.neonViolet),
+                    SizedBox(width: 8),
+                    Text('Restart'),
+                  ],
+                ),
+              ),
+            const PopupMenuItem(
+              value: 'tunnel',
+              child: Row(
+                children: [
+                  Icon(Icons.cloud_rounded, size: 18, color: MayaTheme.neonViolet),
+                  SizedBox(width: 8),
+                  Text('Open Tunnel'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'logs',
+              child: Row(
+                children: [
+                  Icon(Icons.article_rounded, size: 18),
+                  SizedBox(width: 8),
+                  Text('View Logs'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                  SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: MayaTheme.error)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) async {
+            if (value == 'start') {
+              final success = await ref.read(apiServiceProvider).startHostingApp(app.name);
+              if (mounted) {
+                ref.invalidate(hostingAppsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'App started' : 'Start failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'stop') {
+              final success = await ref.read(apiServiceProvider).stopHostingApp(app.name);
+              if (mounted) {
+                ref.invalidate(hostingAppsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'App stopped' : 'Stop failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'restart') {
+              final success = await ref.read(apiServiceProvider).restartHostingApp(app.name);
+              if (mounted) {
+                ref.invalidate(hostingAppsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'App restarted' : 'Restart failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'tunnel') {
+              final success = await ref.read(apiServiceProvider).openHostingTunnel(app.name);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(success ? 'Tunnel opened' : 'Tunnel failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                );
+              }
+            } else if (value == 'logs') {
+              final logsResult = await ref.read(apiServiceProvider).getHostingLogs(app.name, limit: 200);
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: MayaTheme.slate800,
+                    title: Text('Logs: ${app.name}'),
+                    content: SizedBox(
+                      width: double.maxFinite,
+                      height: 400,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          logsResult.lines.join('\n'),
+                          style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'),
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+                    ],
+                  ),
+                );
+              }
+            } else if (value == 'delete') {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: MayaTheme.slate800,
+                  title: const Text('Delete App?'),
+                  content: Text('Delete "${app.name}" and all its data? This cannot be undone.'),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirmed == true) {
+                final success = await ref.read(apiServiceProvider).removeHostingApp(app.name);
+                if (mounted) {
+                  ref.invalidate(hostingAppsProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(success ? 'App deleted' : 'Delete failed'), backgroundColor: success ? MayaTheme.neonEmerald : MayaTheme.error),
+                  );
+                }
+              }
+            }
+          },
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActionTile extends StatelessWidget {
+  final HostingAppInfo app;
+
+  const _QuickActionTile({required this.app});
+
+  @override
+  Widget build(BuildContext context) {
+    final isRunning = app.alive;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: (app.alive ? MayaTheme.neonEmerald : MayaTheme.error).withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              app.alive ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+              color: app.alive ? MayaTheme.neonEmerald : MayaTheme.error,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(app.name, style: MayaTheme.titleSmall),
+                Text('${app.kind} • Port ${app.port}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              ],
+            ),
+          ),
+          const Spacer(),
+          if (app.alive)
+            OutlinedButton.icon(
+              onPressed: () => ref.read(apiServiceProvider).stopHostingApp(app.name),
+              icon: const Icon(Icons.stop_rounded, size: 18),
+              label: const Text('Stop'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: MayaTheme.error,
+                side: BorderSide(color: MayaTheme.error.withValues(alpha: 0.5)),
+              ),
+            )
+          else
+            OutlinedButton.icon(
+              onPressed: () => ref.read(apiServiceProvider).startHostingApp(app.name),
+              icon: const Icon(Icons.play_arrow_rounded),
+              label: const Text('Start'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: MayaTheme.neonEmerald,
+                side: BorderSide(color: MayaTheme.neonEmerald.withValues(alpha: 0.5)),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DetailRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Hosting Providers
+final hostingAppsProvider = FutureProvider<HostingAppsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getHostingApps();
 });

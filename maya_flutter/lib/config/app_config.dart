@@ -134,6 +134,17 @@ class AppConfig {
   static const String instancesGet = '/api/v1/instances/';
   static const String instancesDelete = '/api/v1/instances/';
 
+  // Hosting API (Phase 15)
+  static const String hostingApps = '/api/v1/hosting/apps';
+  static const String hostingDeploy = '/api/v1/hosting/deploy';
+  static const String hostingApp = '/api/v1/hosting/apps/';
+  static const String hostingStart = '/api/v1/hosting/apps/';
+  static const String hostingStop = '/api/v1/hosting/apps/';
+  static const String hostingRestart = '/api/v1/hosting/apps/';
+  static const String hostingTunnel = '/api/v1/hosting/apps/';
+  static const String hostingLogs = '/api/v1/hosting/apps/';
+  static const String hostingRemove = '/api/v1/hosting/apps/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
