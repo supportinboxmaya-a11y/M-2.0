@@ -23783,3 +23783,542 @@ abstract class _RemoteLogsResponse implements RemoteLogsResponse {
   _$$RemoteLogsResponseImplCopyWith<_$RemoteLogsResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+CognitiveStatusResponse _$CognitiveStatusResponseFromJson(
+    Map<String, dynamic> json) {
+  return _CognitiveStatusResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CognitiveStatusResponse {
+  bool get enabled => throw _privateConstructorUsedError;
+  bool get running => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get mode => throw _privateConstructorUsedError;
+  int? get cycleCount => throw _privateConstructorUsedError;
+  double? get lastCycleAt => throw _privateConstructorUsedError;
+  String? get currentStep => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CognitiveStatusResponseCopyWith<CognitiveStatusResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CognitiveStatusResponseCopyWith<$Res> {
+  factory $CognitiveStatusResponseCopyWith(CognitiveStatusResponse value,
+          $Res Function(CognitiveStatusResponse) then) =
+      _$CognitiveStatusResponseCopyWithImpl<$Res, CognitiveStatusResponse>;
+  @useResult
+  $Res call(
+      {bool enabled,
+      bool running,
+      String status,
+      String mode,
+      int? cycleCount,
+      double? lastCycleAt,
+      String? currentStep});
+}
+
+/// @nodoc
+class _$CognitiveStatusResponseCopyWithImpl<$Res,
+        $Val extends CognitiveStatusResponse>
+    implements $CognitiveStatusResponseCopyWith<$Res> {
+  _$CognitiveStatusResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? running = null,
+    Object? status = null,
+    Object? mode = null,
+    Object? cycleCount = freezed,
+    Object? lastCycleAt = freezed,
+    Object? currentStep = freezed,
+  }) {
+    return _then(_value.copyWith(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as bool,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+      cycleCount: freezed == cycleCount
+          ? _value.cycleCount
+          : cycleCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastCycleAt: freezed == lastCycleAt
+          ? _value.lastCycleAt
+          : lastCycleAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      currentStep: freezed == currentStep
+          ? _value.currentStep
+          : currentStep // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CognitiveStatusResponseImplCopyWith<$Res>
+    implements $CognitiveStatusResponseCopyWith<$Res> {
+  factory _$$CognitiveStatusResponseImplCopyWith(
+          _$CognitiveStatusResponseImpl value,
+          $Res Function(_$CognitiveStatusResponseImpl) then) =
+      __$$CognitiveStatusResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool enabled,
+      bool running,
+      String status,
+      String mode,
+      int? cycleCount,
+      double? lastCycleAt,
+      String? currentStep});
+}
+
+/// @nodoc
+class __$$CognitiveStatusResponseImplCopyWithImpl<$Res>
+    extends _$CognitiveStatusResponseCopyWithImpl<$Res,
+        _$CognitiveStatusResponseImpl>
+    implements _$$CognitiveStatusResponseImplCopyWith<$Res> {
+  __$$CognitiveStatusResponseImplCopyWithImpl(
+      _$CognitiveStatusResponseImpl _value,
+      $Res Function(_$CognitiveStatusResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? running = null,
+    Object? status = null,
+    Object? mode = null,
+    Object? cycleCount = freezed,
+    Object? lastCycleAt = freezed,
+    Object? currentStep = freezed,
+  }) {
+    return _then(_$CognitiveStatusResponseImpl(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as bool,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+      cycleCount: freezed == cycleCount
+          ? _value.cycleCount
+          : cycleCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastCycleAt: freezed == lastCycleAt
+          ? _value.lastCycleAt
+          : lastCycleAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+      currentStep: freezed == currentStep
+          ? _value.currentStep
+          : currentStep // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CognitiveStatusResponseImpl implements _CognitiveStatusResponse {
+  const _$CognitiveStatusResponseImpl(
+      {required this.enabled,
+      required this.running,
+      required this.status,
+      required this.mode,
+      this.cycleCount,
+      this.lastCycleAt,
+      this.currentStep});
+
+  factory _$CognitiveStatusResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CognitiveStatusResponseImplFromJson(json);
+
+  @override
+  final bool enabled;
+  @override
+  final bool running;
+  @override
+  final String status;
+  @override
+  final String mode;
+  @override
+  final int? cycleCount;
+  @override
+  final double? lastCycleAt;
+  @override
+  final String? currentStep;
+
+  @override
+  String toString() {
+    return 'CognitiveStatusResponse(enabled: $enabled, running: $running, status: $status, mode: $mode, cycleCount: $cycleCount, lastCycleAt: $lastCycleAt, currentStep: $currentStep)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CognitiveStatusResponseImpl &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.running, running) || other.running == running) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.mode, mode) || other.mode == mode) &&
+            (identical(other.cycleCount, cycleCount) ||
+                other.cycleCount == cycleCount) &&
+            (identical(other.lastCycleAt, lastCycleAt) ||
+                other.lastCycleAt == lastCycleAt) &&
+            (identical(other.currentStep, currentStep) ||
+                other.currentStep == currentStep));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, enabled, running, status, mode,
+      cycleCount, lastCycleAt, currentStep);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CognitiveStatusResponseImplCopyWith<_$CognitiveStatusResponseImpl>
+      get copyWith => __$$CognitiveStatusResponseImplCopyWithImpl<
+          _$CognitiveStatusResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CognitiveStatusResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CognitiveStatusResponse implements CognitiveStatusResponse {
+  const factory _CognitiveStatusResponse(
+      {required final bool enabled,
+      required final bool running,
+      required final String status,
+      required final String mode,
+      final int? cycleCount,
+      final double? lastCycleAt,
+      final String? currentStep}) = _$CognitiveStatusResponseImpl;
+
+  factory _CognitiveStatusResponse.fromJson(Map<String, dynamic> json) =
+      _$CognitiveStatusResponseImpl.fromJson;
+
+  @override
+  bool get enabled;
+  @override
+  bool get running;
+  @override
+  String get status;
+  @override
+  String get mode;
+  @override
+  int? get cycleCount;
+  @override
+  double? get lastCycleAt;
+  @override
+  String? get currentStep;
+  @override
+  @JsonKey(ignore: true)
+  _$$CognitiveStatusResponseImplCopyWith<_$CognitiveStatusResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+CognitiveCycleResponse _$CognitiveCycleResponseFromJson(
+    Map<String, dynamic> json) {
+  return _CognitiveCycleResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CognitiveCycleResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get cycleId => throw _privateConstructorUsedError;
+  String get step => throw _privateConstructorUsedError;
+  String get thinking => throw _privateConstructorUsedError;
+  String? get action => throw _privateConstructorUsedError;
+  String? get observation => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CognitiveCycleResponseCopyWith<CognitiveCycleResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CognitiveCycleResponseCopyWith<$Res> {
+  factory $CognitiveCycleResponseCopyWith(CognitiveCycleResponse value,
+          $Res Function(CognitiveCycleResponse) then) =
+      _$CognitiveCycleResponseCopyWithImpl<$Res, CognitiveCycleResponse>;
+  @useResult
+  $Res call(
+      {bool ok,
+      String cycleId,
+      String step,
+      String thinking,
+      String? action,
+      String? observation,
+      String? error});
+}
+
+/// @nodoc
+class _$CognitiveCycleResponseCopyWithImpl<$Res,
+        $Val extends CognitiveCycleResponse>
+    implements $CognitiveCycleResponseCopyWith<$Res> {
+  _$CognitiveCycleResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? cycleId = null,
+    Object? step = null,
+    Object? thinking = null,
+    Object? action = freezed,
+    Object? observation = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      cycleId: null == cycleId
+          ? _value.cycleId
+          : cycleId // ignore: cast_nullable_to_non_nullable
+              as String,
+      step: null == step
+          ? _value.step
+          : step // ignore: cast_nullable_to_non_nullable
+              as String,
+      thinking: null == thinking
+          ? _value.thinking
+          : thinking // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+      observation: freezed == observation
+          ? _value.observation
+          : observation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CognitiveCycleResponseImplCopyWith<$Res>
+    implements $CognitiveCycleResponseCopyWith<$Res> {
+  factory _$$CognitiveCycleResponseImplCopyWith(
+          _$CognitiveCycleResponseImpl value,
+          $Res Function(_$CognitiveCycleResponseImpl) then) =
+      __$$CognitiveCycleResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool ok,
+      String cycleId,
+      String step,
+      String thinking,
+      String? action,
+      String? observation,
+      String? error});
+}
+
+/// @nodoc
+class __$$CognitiveCycleResponseImplCopyWithImpl<$Res>
+    extends _$CognitiveCycleResponseCopyWithImpl<$Res,
+        _$CognitiveCycleResponseImpl>
+    implements _$$CognitiveCycleResponseImplCopyWith<$Res> {
+  __$$CognitiveCycleResponseImplCopyWithImpl(
+      _$CognitiveCycleResponseImpl _value,
+      $Res Function(_$CognitiveCycleResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? cycleId = null,
+    Object? step = null,
+    Object? thinking = null,
+    Object? action = freezed,
+    Object? observation = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$CognitiveCycleResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      cycleId: null == cycleId
+          ? _value.cycleId
+          : cycleId // ignore: cast_nullable_to_non_nullable
+              as String,
+      step: null == step
+          ? _value.step
+          : step // ignore: cast_nullable_to_non_nullable
+              as String,
+      thinking: null == thinking
+          ? _value.thinking
+          : thinking // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+      observation: freezed == observation
+          ? _value.observation
+          : observation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CognitiveCycleResponseImpl implements _CognitiveCycleResponse {
+  const _$CognitiveCycleResponseImpl(
+      {required this.ok,
+      required this.cycleId,
+      required this.step,
+      required this.thinking,
+      this.action,
+      this.observation,
+      this.error});
+
+  factory _$CognitiveCycleResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CognitiveCycleResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String cycleId;
+  @override
+  final String step;
+  @override
+  final String thinking;
+  @override
+  final String? action;
+  @override
+  final String? observation;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'CognitiveCycleResponse(ok: $ok, cycleId: $cycleId, step: $step, thinking: $thinking, action: $action, observation: $observation, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CognitiveCycleResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.cycleId, cycleId) || other.cycleId == cycleId) &&
+            (identical(other.step, step) || other.step == step) &&
+            (identical(other.thinking, thinking) ||
+                other.thinking == thinking) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.observation, observation) ||
+                other.observation == observation) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, ok, cycleId, step, thinking, action, observation, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CognitiveCycleResponseImplCopyWith<_$CognitiveCycleResponseImpl>
+      get copyWith => __$$CognitiveCycleResponseImplCopyWithImpl<
+          _$CognitiveCycleResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CognitiveCycleResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CognitiveCycleResponse implements CognitiveCycleResponse {
+  const factory _CognitiveCycleResponse(
+      {required final bool ok,
+      required final String cycleId,
+      required final String step,
+      required final String thinking,
+      final String? action,
+      final String? observation,
+      final String? error}) = _$CognitiveCycleResponseImpl;
+
+  factory _CognitiveCycleResponse.fromJson(Map<String, dynamic> json) =
+      _$CognitiveCycleResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get cycleId;
+  @override
+  String get step;
+  @override
+  String get thinking;
+  @override
+  String? get action;
+  @override
+  String? get observation;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$CognitiveCycleResponseImplCopyWith<_$CognitiveCycleResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

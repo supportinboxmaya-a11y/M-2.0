@@ -150,6 +150,12 @@ class AppConfig {
   static const String remoteDeploy = '/api/v1/hosting/remote/deploy';
   static const String remoteAction = '/api/v1/hosting/remote/';
 
+  // Cognitive Loop (Phase 17)
+  static const String cognitiveStatus = '/api/v1/cognitive/status';
+  static const String cognitiveCycle = '/api/v1/cognitive/cycle';
+  static const String cognitivePause = '/api/v1/cognitive/pause';
+  static const String cognitiveResume = '/api/v1/cognitive/resume';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

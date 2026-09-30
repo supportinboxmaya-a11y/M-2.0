@@ -1046,6 +1046,35 @@ class ApiService {
     return RemoteLogsResponse.fromJson(response.data);
   }
 
+  // Cognitive Loop (Phase 17)
+  Future<CognitiveStatusResponse> getCognitiveStatus() async {
+    final response = await _dio.get(AppConfig.cognitiveStatus);
+    return CognitiveStatusResponse.fromJson(response.data);
+  }
+
+  Future<CognitiveCycleResponse> triggerCognitiveCycle() async {
+    final response = await _dio.post(AppConfig.cognitiveCycle);
+    return CognitiveCycleResponse.fromJson(response.data);
+  }
+
+  Future<bool> pauseCognitiveLoop() async {
+    try {
+      final response = await _dio.post(AppConfig.cognitivePause);
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> resumeCognitiveLoop() async {
+    try {
+      final response = await _dio.post(AppConfig.cognitiveResume);
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
@@ -2620,4 +2649,37 @@ class RemoteLogsResponse with _$RemoteLogsResponse {
 
   factory RemoteLogsResponse.fromJson(Map<String, dynamic> json) =>
       _$RemoteLogsResponseFromJson(json);
+}
+
+// Cognitive Loop Models (Phase 17)
+@freezed
+class CognitiveStatusResponse with _$CognitiveStatusResponse {
+  const factory CognitiveStatusResponse({
+    required bool enabled,
+    required bool running,
+    required String status,
+    required String mode,
+    int? cycleCount,
+    double? lastCycleAt,
+    String? currentStep,
+  }) = _CognitiveStatusResponse;
+
+  factory CognitiveStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$CognitiveStatusResponseFromJson(json);
+}
+
+@freezed
+class CognitiveCycleResponse with _$CognitiveCycleResponse {
+  const factory CognitiveCycleResponse({
+    required bool ok,
+    required String cycleId,
+    required String step,
+    required String thinking,
+    String? action,
+    String? observation,
+    String? error,
+  }) = _CognitiveCycleResponse;
+
+  factory CognitiveCycleResponse.fromJson(Map<String, dynamic> json) =>
+      _$CognitiveCycleResponseFromJson(json);
 }

@@ -3500,6 +3500,93 @@ Map<String, dynamic> _$$RemoteLogsResponseImplToJson(
       'logs': instance.logs,
     };
 
+_$CognitiveStatusResponseImpl _$$CognitiveStatusResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CognitiveStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CognitiveStatusResponseImpl(
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          running: $checkedConvert('running', (v) => v as bool),
+          status: $checkedConvert('status', (v) => v as String),
+          mode: $checkedConvert('mode', (v) => v as String),
+          cycleCount:
+              $checkedConvert('cycle_count', (v) => (v as num?)?.toInt()),
+          lastCycleAt:
+              $checkedConvert('last_cycle_at', (v) => (v as num?)?.toDouble()),
+          currentStep: $checkedConvert('current_step', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'cycleCount': 'cycle_count',
+        'lastCycleAt': 'last_cycle_at',
+        'currentStep': 'current_step'
+      },
+    );
+
+Map<String, dynamic> _$$CognitiveStatusResponseImplToJson(
+    _$CognitiveStatusResponseImpl instance) {
+  final val = <String, dynamic>{
+    'enabled': instance.enabled,
+    'running': instance.running,
+    'status': instance.status,
+    'mode': instance.mode,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('cycle_count', instance.cycleCount);
+  writeNotNull('last_cycle_at', instance.lastCycleAt);
+  writeNotNull('current_step', instance.currentStep);
+  return val;
+}
+
+_$CognitiveCycleResponseImpl _$$CognitiveCycleResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$CognitiveCycleResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CognitiveCycleResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          cycleId: $checkedConvert('cycle_id', (v) => v as String),
+          step: $checkedConvert('step', (v) => v as String),
+          thinking: $checkedConvert('thinking', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String?),
+          observation: $checkedConvert('observation', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'cycleId': 'cycle_id'},
+    );
+
+Map<String, dynamic> _$$CognitiveCycleResponseImplToJson(
+    _$CognitiveCycleResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'cycle_id': instance.cycleId,
+    'step': instance.step,
+    'thinking': instance.thinking,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('action', instance.action);
+  writeNotNull('observation', instance.observation);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
