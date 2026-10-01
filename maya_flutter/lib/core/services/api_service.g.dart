@@ -6,6 +6,26 @@ part of 'api_service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+KernelCheckpointsResponseWrapper _$KernelCheckpointsResponseWrapperFromJson(
+        Map json) =>
+    $checkedCreate(
+      'KernelCheckpointsResponseWrapper',
+      json,
+      ($checkedConvert) {
+        final val = KernelCheckpointsResponseWrapper(
+          checkpoints: $checkedConvert(
+              'checkpoints', (v) => _checkpointsFromJson(v as List)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$KernelCheckpointsResponseWrapperToJson(
+        KernelCheckpointsResponseWrapper instance) =>
+    <String, dynamic>{
+      'checkpoints': _checkpointsToJson(instance.checkpoints),
+    };
+
 KernelAuditEntry _$KernelAuditEntryFromJson(Map json) => $checkedCreate(
       'KernelAuditEntry',
       json,
@@ -718,50 +738,6 @@ Map<String, dynamic> _$ApprovalItemToJson(ApprovalItem instance) {
   return val;
 }
 
-KernelCheckpointsResponse _$KernelCheckpointsResponseFromJson(Map json) =>
-    $checkedCreate(
-      'KernelCheckpointsResponse',
-      json,
-      ($checkedConvert) {
-        final val = KernelCheckpointsResponse(
-          checkpoints: $checkedConvert(
-              'checkpoints', (v) => _checkpointsFromJson(v as List)),
-        );
-        return val;
-      },
-    );
-
-Map<String, dynamic> _$KernelCheckpointsResponseToJson(
-        KernelCheckpointsResponse instance) =>
-    <String, dynamic>{
-      'checkpoints': _checkpointsToJson(instance.checkpoints),
-    };
-
-KernelCheckpoint _$KernelCheckpointFromJson(Map json) => $checkedCreate(
-      'KernelCheckpoint',
-      json,
-      ($checkedConvert) {
-        final val = KernelCheckpoint(
-          id: $checkedConvert('id', (v) => v as String),
-          goalId: $checkedConvert('goal_id', (v) => v as String),
-          status: $checkedConvert('status', (v) => v as String),
-          timestamp: $checkedConvert('timestamp', (v) => (v as num).toDouble()),
-          stateJson: $checkedConvert('state_json', (v) => v as String? ?? ''),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'goalId': 'goal_id', 'stateJson': 'state_json'},
-    );
-
-Map<String, dynamic> _$KernelCheckpointToJson(KernelCheckpoint instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'goal_id': instance.goalId,
-      'status': instance.status,
-      'timestamp': instance.timestamp,
-      'state_json': instance.stateJson,
-    };
-
 _$KernelStatusResponseImpl _$$KernelStatusResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$KernelStatusResponseImpl',
@@ -866,6 +842,26 @@ Map<String, dynamic> _$$KernelCheckpointResponseImplToJson(
       'goal_id': instance.goalId,
       'status': instance.status,
       'timestamp': instance.timestamp,
+    };
+
+_$KernelCheckpointsResponseImpl _$$KernelCheckpointsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$KernelCheckpointsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$KernelCheckpointsResponseImpl(
+          checkpoints: $checkedConvert(
+              'checkpoints', (v) => _checkpointsFromJson(v as List)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$KernelCheckpointsResponseImplToJson(
+        _$KernelCheckpointsResponseImpl instance) =>
+    <String, dynamic>{
+      'checkpoints': _checkpointsToJson(instance.checkpoints),
     };
 
 _$KernelCheckpointImpl _$$KernelCheckpointImplFromJson(Map json) =>

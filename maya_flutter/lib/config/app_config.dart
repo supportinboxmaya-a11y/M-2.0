@@ -155,6 +155,17 @@ class AppConfig {
   static const String remoteDeploy = '/api/v1/hosting/remote/deploy';
   static const String remoteAction = '/api/v1/hosting/remote/';
 
+  // App Registry + Remote Monitoring (Phase 30)
+  static const String registryList = '/api/v1/hosting/registry';
+  static const String registryRegister = '/api/v1/hosting/registry';
+  static const String registryGet = '/api/v1/hosting/registry/';
+  static const String registryDelete = '/api/v1/hosting/registry/';
+  static const String registrySetMonitor = '/api/v1/hosting/registry/';
+  static const String registryHealthCheck = '/api/v1/hosting/registry/';
+  static const String registryCheckAll = '/api/v1/hosting/registry/check-all';
+  static const String registryRestart = '/api/v1/hosting/registry/';
+  static const String registryLogs = '/api/v1/hosting/registry/';
+
   // Cognitive Loop (Phase 17)
   static const String cognitiveCycle = '/api/v1/cognitive/cycle';
   static const String cognitivePause = '/api/v1/cognitive/pause';

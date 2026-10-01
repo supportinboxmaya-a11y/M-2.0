@@ -1229,6 +1229,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'voice': screen = const _VoiceScreen(); break;
       case 'camera': screen = const _CameraScreen(); break;
       case 'settings': screen = const _SettingsScreen(); break;
+      case 'app_registry': screen = const _AppRegistryScreen(); break;
     }
     if (screen != null && mounted) {
       Navigator.push(context, MaterialPageRoute(builder: (_) => screen!));
@@ -2685,6 +2686,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _RemoteVpsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.apps_rounded,
+                  label: 'App Registry & Monitoring',
+                  subtitle: 'Registered apps, health checks, auto-restart',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _AppRegistryScreen(),
                       ),
                     );
                   },
@@ -14773,8 +14788,734 @@ final remoteContainersProvider = FutureProvider<List<Map<String, dynamic>>>((ref
   return apiService.getRemoteContainers();
 });
 
+// App Registry + Remote Monitoring Providers (Phase 30)
+final registryListProvider = FutureProvider<RegistryListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getRegistryList();
+});
+
+final registryListStreamProvider = StreamProvider<RegistryListResponse>((ref) async* {
+  final apiService = ref.read(apiServiceProvider);
+  while (true) {
+    final result = await apiService.getRegistryList();
+    yield result;
+    await Future.delayed(const Duration(seconds: 30));
+  }
+});
+
+final registryCheckAllProvider = FutureProvider<RegistryCheckAllResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.checkAllRegistryHealth();
+});
+
+// App Registry + Remote Monitoring Screen (Phase 30)
+class _AppRegistryScreen extends ConsumerStatefulWidget {
+  const _AppRegistryScreen();
+
+  @override
+  ConsumerState<_AppRegistryScreen> createState() => _AppRegistryScreenState();
+}
+
+class _AppRegistryScreenState extends ConsumerState<_AppRegistryScreen> {
+  Timer? _refreshTimer;
+  String _selectedApp = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(registryListProvider);
+        ref.invalidate(registryCheckAllProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('App Registry & Monitoring', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(registryListProvider);
+                ref.invalidate(registryCheckAllProvider);
+              },
+            ),
+          ],
+        ),
+        body: Consumer(
+          builder: (context, ref, _) {
+            final listAsync = ref.watch(registryListProvider);
+            final checkAllAsync = ref.watch(registryCheckAllProvider);
+
+            return listAsync.when(
+              data: (listData) {
+                final apps = listData.apps;
+                if (apps.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.apps_rounded, size: 48, color: Colors.white38),
+                        const SizedBox(height: 16),
+                        const Text('No Registered Apps', style: MayaTheme.titleMedium),
+                        const SizedBox(height: 8),
+                        const Text('Deploy an app to VPS to see it here', style: MayaTheme.bodyMedium),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const _RemoteVpsScreen()),
+                            );
+                          },
+                          icon: const Icon(Icons.cloud_upload_rounded),
+                          label: const Text('Deploy to VPS'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: MayaTheme.neonCyan,
+                            foregroundColor: MayaTheme.slate900,
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(registryListProvider);
+                    ref.invalidate(registryCheckAllProvider);
+                  },
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: apps.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final app = apps[index];
+                      return _AppRegistryTile(
+                        app: app,
+                        checkAllAsync: checkAllAsync,
+                        onSelect: () {
+                          setState(() => _selectedApp = app.name);
+                          _showAppDetail(app);
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+              loading: () => const Center(
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+              ),
+              error: (err, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+                    const SizedBox(height: 16),
+                    Text('Error loading apps', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+                    const SizedBox(height: 8),
+                    Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAppDetail(RegistryApp app) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: MayaTheme.slate800,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => _AppDetailSheet(app: app),
+    );
+  }
+}
+
+class _AppDetailSheet extends ConsumerWidget {
+  final RegistryApp app;
+
+  const _AppDetailSheet({required this.app});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: MayaTheme.slate800,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white38,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(app.status).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(_getStatusIcon(app.status), color: _getStatusColor(app.status), size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(app.name, style: MayaTheme.titleLarge),
+                        Text('Image: ${app.image}', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(app.status).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      app.status.toUpperCase(),
+                      style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(app.status)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Divider(color: MayaTheme.glassWhite10),
+              const SizedBox(height: 16),
+              _DetailRow(label: 'Container ID', value: app.containerId.isEmpty ? 'N/A' : app.containerId),
+              _DetailRow(label: 'Image', value: app.image),
+              _DetailRow(label: 'Host', value: app.host.isEmpty ? 'Default VPS' : app.host),
+              _DetailRow(label: 'Status', value: app.status, valueColor: _getStatusColor(app.status)),
+              _DetailRow(label: 'Monitoring', value: app.monitor ? 'Enabled' : 'Disabled'),
+              if (app.deployedAt != null)
+                _DetailRow(label: 'Deployed', value: DateTime.fromMillisecondsSinceEpoch((app.deployedAt! * 1000).round()).toString().substring(0, 19)),
+              if (app.lastSeen != null)
+                _DetailRow(label: 'Last Check-in', value: DateTime.fromMillisecondsSinceEpoch((app.lastSeen! * 1000).round()).toString().substring(0, 19)),
+              if (app.lastError.isNotEmpty) ...[
+                _DetailRow(label: 'Last Error', value: app.lastError, valueColor: MayaTheme.error),
+              ],
+              const SizedBox(height: 24),
+              const Divider(color: MayaTheme.glassWhite10),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        ref.read(apiServiceProvider).setRegistryMonitor(app.name, !app.monitor);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Monitoring ${app.monitor ? 'disabled' : 'enabled'}'), backgroundColor: MayaTheme.neonCyan),
+                        );
+                      },
+                      icon: Icon(app.monitor ? Icons.visibility_off_rounded : Icons.visibility_rounded),
+                      label: Text(app.monitor ? 'Disable Monitoring' : 'Enable Monitoring'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: MayaTheme.neonCyan,
+                        side: BorderSide(color: MayaTheme.neonCyan),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        try {
+                          final apiService = ref.read(apiServiceProvider);
+                          await apiService.restartRegistryApp(app.name);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: const Text('Restart triggered'), backgroundColor: MayaTheme.neonEmerald),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Restart failed: $e'), backgroundColor: MayaTheme.error),
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.restart_alt_rounded),
+                      label: const Text('Restart'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MayaTheme.neonViolet,
+                        foregroundColor: MayaTheme.slate900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    try {
+                      final apiService = ref.read(apiServiceProvider);
+                      final result = await apiService.getRegistryLogs(app.name, lines: 100);
+                      if (mounted) {
+                        _showLogsSheet(context, app.name, result.logs);
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to fetch logs: $e'), backgroundColor: MayaTheme.error),
+                        );
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.article_rounded),
+                  label: const Text('View Logs'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: MayaTheme.neonCyan,
+                    side: BorderSide(color: MayaTheme.neonCyan),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showDeleteConfirmation(context, app);
+                  },
+                  icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                  label: const Text('Unregister', style: TextStyle(color: MayaTheme.error)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: MayaTheme.error,
+                    side: BorderSide(color: MayaTheme.error),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    void _showLogsSheet(BuildContext context, String appName, String logs) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: MayaTheme.slate800,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) => Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white38,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('Logs: $appName', style: MayaTheme.titleLarge),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: SelectableText(
+                      logs,
+                      style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace', color: Colors.white70),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ),
+      );
+    }
+
+    void _showDeleteConfirmation(BuildContext context, RegistryApp app) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: MayaTheme.slate800,
+          title: const Text('Unregister App', style: MayaTheme.titleLarge),
+          content: Text('Are you sure you want to unregister "${app.name}"? This will remove it from the registry but will NOT delete the container on the VPS.', style: MayaTheme.bodyMedium),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  await ref.read(apiServiceProvider).deleteRegistryApp(app.name);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${app.name} unregistered'), backgroundColor: MayaTheme.neonEmerald),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.error,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Unregister'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Color _getStatusColor(String status) {
+      switch (status.toLowerCase()) {
+        case 'running':
+          return MayaTheme.neonEmerald;
+        case 'stopped':
+          return MayaTheme.error;
+        case 'error':
+          return MayaTheme.error;
+        default:
+          return Colors.white38;
+      }
+    }
+
+    IconData _getStatusIcon(String status) {
+      switch (status.toLowerCase()) {
+        case 'running':
+          return Icons.check_circle_rounded;
+        case 'stopped':
+          return Icons.cancel_rounded;
+        case 'error':
+          return Icons.error_rounded;
+        default:
+          return Icons.help_rounded;
+      }
+    }
+  }
+}
+
+class _AppRegistryTile extends ConsumerWidget {
+  final RegistryApp app;
+  final AsyncValue<RegistryCheckAllResponse> checkAllAsync;
+  final VoidCallback onSelect;
+
+  const _AppRegistryTile({
+    required this.app,
+    required this.checkAllAsync,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final checkAllAsync = ref.watch(registryCheckAllProvider);
+    String healthStatus = 'unknown';
+    String? healthError;
+
+    checkAllAsync.whenData((data) {
+      for (final result in data.results) {
+        if (result.name == app.name) {
+          healthStatus = result.status;
+          healthError = result.error;
+        }
+      }
+    });
+
+    Color statusColor;
+    switch (app.status.toLowerCase()) {
+      case 'running':
+        statusColor = MayaTheme.neonEmerald;
+        break;
+      case 'stopped':
+        statusColor = MayaTheme.error;
+        break;
+      case 'error':
+        statusColor = MayaTheme.error;
+        break;
+      default:
+        statusColor = Colors.white38;
+    }
+
+    String healthIndicator = healthStatus;
+    Color healthColor = Colors.white38;
+    if (healthStatus.toLowerCase() == 'running') healthColor = MayaTheme.neonEmerald;
+    if (healthStatus.toLowerCase() == 'stopped' || healthStatus.toLowerCase() == 'error') healthColor = MayaTheme.error;
+
+    return Container(
+      decoration: MayaTheme.glassCard(),
+      child: ListTile(
+        onTap: onSelect,
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: statusColor.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(_getAppIcon(app.image), color: statusColor, size: 24),
+        ),
+        title: Text(app.name, style: MayaTheme.titleMedium),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Image: ${app.image}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: statusColor),
+                  ),
+                  child: Text(
+                    app.status.toUpperCase(),
+                    style: MayaTheme.labelSmall.copyWith(color: statusColor),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: healthColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: healthColor),
+                  ),
+                  child: Text(
+                    'Health: $healthIndicator',
+                    style: MayaTheme.labelSmall.copyWith(color: healthColor),
+                  ),
+                ),
+                if (app.monitor) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: MayaTheme.neonCyan),
+                    ),
+                    child: Text(
+                      'MONITORED',
+                      style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (app.status.toLowerCase() != 'running')
+                IconButton(
+                  icon: const Icon(Icons.restart_alt_rounded, color: MayaTheme.neonViolet),
+                  onPressed: () async {
+                    try {
+                      await ref.read(apiServiceProvider).restartRegistryApp(app.name);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Restart triggered for ${app.name}'), backgroundColor: MayaTheme.neonEmerald),
+                        );
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Restart failed: $e'), backgroundColor: MayaTheme.error),
+                        );
+                      }
+                    }
+                  },
+                  tooltip: 'Restart',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.article_rounded, color: MayaTheme.neonCyan),
+                  onPressed: () async {
+                    try {
+                      final apiService = ref.read(apiServiceProvider);
+                      final result = await apiService.getRegistryLogs(app.name, lines: 100);
+                      if (mounted) {
+                        _showLogsSheet(context, app.name, result.logs);
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                        );
+                      }
+                    }
+                  },
+                  tooltip: 'View Logs',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+                  onPressed: () {},
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+
+    IconData _getAppIcon(String image) {
+      final lower = image.toLowerCase();
+      if (lower.contains('nginx') || lower.contains('http')) return Icons.web_rounded;
+      if (lower.contains('postgres') || lower.contains('mysql') || lower.contains('mongo') || lower.contains('redis')) return Icons.storage_rounded;
+      if (lower.contains('python') || lower.contains('node') || lower.contains('golang') || lower.contains('rust')) return Icons.code_rounded;
+      if (lower.contains('prometheus') || lower.contains('grafana')) return Icons.analytics_rounded;
+      return Icons.apps_rounded;
+    }
+
+    void _showLogsSheet(BuildContext context, String appName, String logs) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: MayaTheme.slate800,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) => Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: MayaTheme.slate800,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white38,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('Logs: $appName', style: MayaTheme.titleLarge),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: SelectableText(
+                      logs,
+                      style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace', color: Colors.white70),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? valueColor;
+
+  const _DetailRow({
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(label, style: MayaTheme.labelMedium.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: valueColor ?? Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // Cognition Loop Screen (Phase 17)
-class _CognitionLoopScreen extends ConsumerStatefulWidget {
   const _CognitionLoopScreen();
 
   @override

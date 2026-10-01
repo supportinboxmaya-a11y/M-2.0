@@ -104,6 +104,10 @@ class AppScreenMapping {
     'camera': 'camera',
     'vision': 'camera',
     'settings': 'settings',
+    'app registry': 'app_registry',
+    'registry': 'app_registry',
+    'app monitoring': 'app_registry',
+    'monitoring': 'app_registry',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -133,6 +137,7 @@ class AppScreenMapping {
     'voice': 'Voice Control',
     'camera': 'Vision AI',
     'settings': 'Settings',
+    'app_registry': 'App Registry & Monitoring',
   };
 
   static String? resolveScreenRoute(String command) {

@@ -1716,12 +1716,12 @@ class ApiService {
     return CoreInvokeModelResponse.fromJson(response.data);
   }
 
-  Future<CoreCheckpointResponse> createCheckpoint() async {
+  Future<CoreCheckpointResponse> createCoreCheckpoint() async {
     final response = await _dio.post(AppConfig.coreCheckpoint);
     return CoreCheckpointResponse.fromJson(response.data);
   }
 
-  Future<CoreRestoreCheckpointResponse> restoreCheckpoint(String checkpointId) async {
+  Future<CoreRestoreCheckpointResponse> restoreCoreCheckpoint(String checkpointId) async {
     final response = await _dio.post(
       AppConfig.coreRestoreCheckpoint,
       data: {"checkpoint_id": checkpointId},
@@ -2084,172 +2084,6 @@ class ApiService {
     return ApprovalModeResponse.fromJson(response.data);
   }
 
-// AGI Architecture (Phase 18 Part 1)
-  Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
-    final response = await _dio.get(
-      AppConfig.kernelStatus,
-      queryParameters: {'summary': summary},
-    );
-    return KernelStatusResponse.fromJson(response.data);
-  }
-
-  Future<KernelProcessGoalResponse> processGoal({
-    required String description,
-    String priority = 'normal',
-    bool execute = false,
-    Map<String, dynamic>? metadata,
-  }) async {
-    final response = await _dio.post(
-      AppConfig.kernelProcessGoal,
-      data: {
-        'description': description,
-        'priority': priority,
-        'execute': execute,
-        'metadata': metadata ?? {},
-      },
-    );
-    return KernelProcessGoalResponse.fromJson(response.data);
-  }
-
-  Future<KernelCheckpointResponse> createCheckpoint() async {
-    final response = await _dio.post(AppConfig.kernelCheckpoint);
-    return KernelCheckpointResponse.fromJson(response.data);
-  }
-
-  Future<KernelCheckpointsResponse> getCheckpoints() async {
-    final response = await _dio.get(AppConfig.kernelCheckpoints);
-    return KernelCheckpointsResponse.fromJson(response.data);
-  }
-
-  Future<KernelAuditResponse> getKernelAudit({int limit = 5}) async {
-    final response = await _dio.get(
-      AppConfig.kernelAudit,
-      queryParameters: {'limit': limit},
-    );
-    return KernelAuditResponse.fromJson(response.data);
-  }
-
-  Future<KernelRestoreResponse> restoreCheckpoint(String checkpointId) async {
-    final response = await _dio.post(
-      AppConfig.kernelRestore,
-      data: {'checkpoint_id': checkpointId},
-    );
-    return KernelRestoreResponse.fromJson(response.data);
-  }
-
-  Future<KernelIncompleteGoalsResponse> getIncompleteGoals() async {
-    final response = await _dio.get(AppConfig.kernelIncompleteGoals);
-    return KernelIncompleteGoalsResponse.fromJson(response.data);
-  }
-
-  Future<KernelResumeGoalResponse> resumeGoal(String goalId, {bool execute = false}) async {
-    final response = await _dio.post(
-      '${AppConfig.kernelResumeGoal}$goalId/resume',
-      data: {'execute': execute},
-    );
-    return KernelResumeGoalResponse.fromJson(response.data);
-  }
-
-  Future<KernelResumeIncompleteResponse> resumeIncomplete({bool planProposals = true, int maxGoals = 3}) async {
-    final response = await _dio.post(
-      AppConfig.kernelResumeIncomplete,
-      data: {'plan_proposals': planProposals, 'max_goals': maxGoals},
-    );
-    return KernelResumeIncompleteResponse.fromJson(response.data);
-  }
-
-  Future<PlanCreateResponse> createPlan(String goalId) async {
-    final response = await _dio.post(
-      AppConfig.planCreate,
-      data: {'goal_id': goalId},
-    );
-    return PlanCreateResponse.fromJson(response.data);
-  }
-
-  Future<PlanGetResponse> getPlan(String planId) async {
-    final response = await _dio.get('${AppConfig.planGet}$planId');
-    return PlanGetResponse.fromJson(response.data);
-  }
-
-  Future<PlanExecuteResponse> executePlan(String planId) async {
-    final response = await _dio.post('${AppConfig.planExecute}$planId/execute');
-    return PlanExecuteResponse.fromJson(response.data);
-  }
-
-  Future<PlanReplanResponse> replanPlan(String planId, {int fromStep = 0, String? reason}) async {
-    final response = await _dio.post(
-      '${AppConfig.planReplan}$planId/replan',
-      data: {'from_step': fromStep, 'reason': reason ?? ''},
-    );
-    return PlanReplanResponse.fromJson(response.data);
-  }
-
-  Future<SynthesizeCreateResponse> createSynthesis({
-    required String goal,
-    List<String>? requirements,
-    bool asyncMode = true,
-  }) async {
-    final response = await _dio.post(
-      AppConfig.synthesizeCreate,
-      data: {
-        'goal': goal,
-        'requirements': requirements ?? [],
-        'async': asyncMode,
-      },
-    );
-    return SynthesizeCreateResponse.fromJson(response.data);
-  }
-
-  Future<SynthesizeGetResponse> getSynthesis(String jobId) async {
-    final response = await _dio.get('${AppConfig.synthesizeGet}$jobId');
-    return SynthesizeGetResponse.fromJson(response.data);
-  }
-
-  Future<SynthesizeStatsResponse> getSynthesizeStats() async {
-    final response = await _dio.get(AppConfig.synthesizeStats);
-    return SynthesizeStatsResponse.fromJson(response.data);
-  }
-
-  Future<MetaStatusResponse> getMetaStatus() async {
-    final response = await _dio.get(AppConfig.metaStatus);
-    return MetaStatusResponse.fromJson(response.data);
-  }
-
-  Future<MetaMonitorResponse> monitorMeta({required String context}) async {
-    final response = await _dio.post(
-      AppConfig.metaMonitor,
-      data: {'context': context},
-    );
-    return MetaMonitorResponse.fromJson(response.data);
-  }
-
-  Future<MetaStepResultResponse> submitMetaStepResult({
-    required String context,
-    required dynamic expected,
-    required dynamic actual,
-    required bool verified,
-  }) async {
-    final response = await _dio.post(
-      AppConfig.metaStepResult,
-      data: {
-        'context': context,
-        'expected': expected,
-        'actual': actual,
-        'verified': verified,
-      },
-    );
-    return MetaStepResultResponse.fromJson(response.data);
-  }
-
-  Future<MetaEventsResponse> getMetaEvents({int limit = 5}) async {
-    final response = await _dio.get(
-      AppConfig.metaEvents,
-      queryParameters: {'limit': limit},
-    );
-    return MetaEventsResponse.fromJson(response.data);
-  }
-
-
 // AGI Architecture Models (Phase 18 Part 1)
 @freezed
 class KernelStatusResponse with _$KernelStatusResponse {
@@ -2294,6 +2128,38 @@ class KernelCheckpointResponse with _$KernelCheckpointResponse {
   factory KernelCheckpointResponse.fromJson(Map<String, dynamic> json) =>
       _$KernelCheckpointResponseFromJson(json);
 }
+
+@freezed
+class KernelCheckpointsResponse with _$KernelCheckpointsResponse {
+  const factory KernelCheckpointsResponse({
+    @JsonKey(fromJson: _checkpointsFromJson, toJson: _checkpointsToJson)
+    required List<KernelCheckpoint> checkpoints,
+  }) = _KernelCheckpointsResponse;
+
+  factory KernelCheckpointsResponse.fromJson(Map<String, dynamic> json) =>
+      _$KernelCheckpointsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class KernelCheckpointsResponseWrapper {
+  @JsonKey(fromJson: _checkpointsFromJson, toJson: _checkpointsToJson)
+  final List<KernelCheckpoint> checkpoints;
+
+  const KernelCheckpointsResponseWrapper({
+    required this.checkpoints,
+  });
+
+  factory KernelCheckpointsResponseWrapper.fromJson(Map<String, dynamic> json) =>
+      _$KernelCheckpointsResponseWrapperFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KernelCheckpointsResponseWrapperToJson(this);
+}
+
+List<KernelCheckpoint> _checkpointsFromJson(List<dynamic> json) =>
+    json.map((e) => KernelCheckpoint.fromJson(e as Map<String, dynamic>)).toList();
+
+List<dynamic> _checkpointsToJson(List<KernelCheckpoint> checkpoints) =>
+    checkpoints.map((e) => e.toJson()).toList();
 
 
 
@@ -5277,278 +5143,3 @@ class CognitiveCycleResponse with _$CognitiveCycleResponse {
       _$CognitiveCycleResponseFromJson(json);
 }
 
-// AGI Architecture Models (Phase 18 Part 1)
-@freezed
-class KernelStatusResponse with _$KernelStatusResponse {
-  const factory KernelStatusResponse({
-    required bool running,
-    required String status,
-    required int activeGoals,
-    required int activeAgents,
-    required int memoryItems,
-    required int totalCheckpoints,
-    required String uptime,
-  }) = _KernelStatusResponse;
-
-  factory KernelStatusResponse.fromJson(Map<String, dynamic> json) =>
-      _$KernelStatusResponseFromJson(json);
-}
-
-@freezed
-class KernelProcessGoalResponse with _$KernelProcessGoalResponse {
-  const factory KernelProcessGoalResponse({
-    required bool ok,
-    required String goalId,
-    required String status,
-    required String plan,
-    List<String>? steps,
-  }) = _KernelProcessGoalResponse;
-
-  factory KernelProcessGoalResponse.fromJson(Map<String, dynamic> json) =>
-      _$KernelProcessGoalResponseFromJson(json);
-}
-
-@freezed
-class KernelCheckpointResponse with _$KernelCheckpointResponse {
-  const factory KernelCheckpointResponse({
-    required bool ok,
-    required String checkpointId,
-    required String goalId,
-    required String status,
-    required double timestamp,
-  }) = _KernelCheckpointResponse;
-
-  factory KernelCheckpointResponse.fromJson(Map<String, dynamic> json) =>
-      _$KernelCheckpointResponseFromJson(json);
-}
-
-@JsonSerializable()
-class KernelCheckpointsResponse {
-  @JsonKey(fromJson: _checkpointsFromJson, toJson: _checkpointsToJson)
-  final List<KernelCheckpoint> checkpoints;
-
-  const KernelCheckpointsResponse({
-    required this.checkpoints,
-  });
-
-  factory KernelCheckpointsResponse.fromJson(Map<String, dynamic> json) =>
-      _$KernelCheckpointsResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$KernelCheckpointsResponseToJson(this);
-}
-
-List<KernelCheckpoint> _checkpointsFromJson(List<dynamic> json) =>
-    json.map((e) => KernelCheckpoint.fromJson(e as Map<String, dynamic>)).toList();
-
-List<dynamic> _checkpointsToJson(List<KernelCheckpoint> checkpoints) =>
-    checkpoints.map((e) => e.toJson()).toList();
-
-@JsonSerializable()
-class KernelCheckpoint {
-  final String id;
-  final String goalId;
-  final String status;
-  final double timestamp;
-  @JsonKey(includeIfNull: false)
-  final String stateJson;
-
-  const KernelCheckpoint({
-    required this.id,
-    required this.goalId,
-    required this.status,
-    required this.timestamp,
-    this.stateJson = '',
-  });
-
-  factory KernelCheckpoint.fromJson(Map<String, dynamic> json) =>
-      _$KernelCheckpointFromJson(json);
-
-  Map<String, dynamic> toJson() => _$KernelCheckpointToJson(this);
-}
-
-@freezed
-class KernelAuditResponse with _$KernelAuditResponse {
-  const factory KernelAuditResponse({
-    required List<KernelAuditEntry> entries,
-  }) = _KernelAuditResponse;
-
-  factory KernelAuditResponse.fromJson(Map<String, dynamic> json) =>
-      _$KernelAuditResponseFromJson(json);
-}
-
-@JsonSerializable()
-class KernelAuditEntry {
-  final String id;
-  final String action;
-  final String goalId;
-  final String result;
-  final double timestamp;
-
-  const KernelAuditEntry({
-    required this.id,
-    required this.action,
-    required this.goalId,
-    required this.result,
-    required this.timestamp,
-  });
-
-  factory KernelAuditEntry.fromJson(Map<String, dynamic> json) =>
-      _$KernelAuditEntryFromJson(json);
-
-  Map<String, dynamic> toJson() => _$KernelAuditEntryToJson(this);
-}
-
-@freezed
-class PlanCreateResponse with _$PlanCreateResponse {
-  const factory PlanCreateResponse({
-    required String planId,
-    required String goal,
-    required List<PlanStep> steps,
-  }) = _PlanCreateResponse;
-
-  factory PlanCreateResponse.fromJson(Map<String, dynamic> json) =>
-      _$PlanCreateResponseFromJson(json);
-}
-
-@JsonSerializable()
-class PlanStep {
-  final String id;
-  final String description;
-  final String agent;
-  final String tool;
-  final Map<String, dynamic> params;
-  final String status;
-
-  const PlanStep({
-    required this.id,
-    required this.description,
-    required this.agent,
-    required this.tool,
-    required this.params,
-    required this.status,
-  });
-
-  factory PlanStep.fromJson(Map<String, dynamic> json) =>
-      _$PlanStepFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PlanStepToJson(this);
-}
-
-@freezed
-class PlanGetResponse with _$PlanGetResponse {
-  const factory PlanGetResponse({
-    required String planId,
-    required String goal,
-    required String status,
-    required List<PlanStep> steps,
-    String? currentStep,
-  }) = _PlanGetResponse;
-
-  factory PlanGetResponse.fromJson(Map<String, dynamic> json) =>
-      _$PlanGetResponseFromJson(json);
-}
-
-@freezed
-class PlanExecuteResponse with _$PlanExecuteResponse {
-  const factory PlanExecuteResponse({
-    required bool ok,
-    required String planId,
-    required String result,
-  }) = _PlanExecuteResponse;
-
-  factory PlanExecuteResponse.fromJson(Map<String, dynamic> json) =>
-      _$PlanExecuteResponseFromJson(json);
-}
-
-@freezed
-class SynthesizeCreateResponse with _$SynthesizeCreateResponse {
-  const factory SynthesizeCreateResponse({
-    required String jobId,
-    required String status,
-  }) = _SynthesizeCreateResponse;
-
-  factory SynthesizeCreateResponse.fromJson(Map<String, dynamic> json) =>
-      _$SynthesizeCreateResponseFromJson(json);
-}
-
-@freezed
-class SynthesizeGetResponse with _$SynthesizeGetResponse {
-  const factory SynthesizeGetResponse({
-    required String jobId,
-    required String status,
-    required String result,
-    Map<String, dynamic>? artifacts,
-  }) = _SynthesizeGetResponse;
-
-  factory SynthesizeGetResponse.fromJson(Map<String, dynamic> json) =>
-      _$SynthesizeGetResponseFromJson(json);
-}
-
-@freezed
-class MetaStatusResponse with _$MetaStatusResponse {
-  const factory MetaStatusResponse({
-    required bool running,
-    required int monitoredSteps,
-    required int errorsDetected,
-    required int correctionsApplied,
-  }) = _MetaStatusResponse;
-
-  factory MetaStatusResponse.fromJson(Map<String, dynamic> json) =>
-      _$MetaStatusResponseFromJson(json);
-}
-
-@freezed
-class MetaMonitorResponse with _$MetaMonitorResponse {
-  const factory MetaMonitorResponse({
-    required bool ok,
-    required String stepId,
-    required String status,
-    String? correction,
-  }) = _MetaMonitorResponse;
-
-  factory MetaMonitorResponse.fromJson(Map<String, dynamic> json) =>
-      _$MetaMonitorResponseFromJson(json);
-}
-
-@freezed
-class MetaStepResultResponse with _$MetaStepResultResponse {
-  const factory MetaStepResultResponse({
-    required bool ok,
-    required String stepId,
-    required bool verified,
-    String? issues,
-  }) = _MetaStepResultResponse;
-
-  factory MetaStepResultResponse.fromJson(Map<String, dynamic> json) =>
-      _$MetaStepResultResponseFromJson(json);
-}
-
-@freezed
-class MetaEventsResponse with _$MetaEventsResponse {
-  const factory MetaEventsResponse({
-    required List<MetaEvent> events,
-  }) = _MetaEventsResponse;
-
-  factory MetaEventsResponse.fromJson(Map<String, dynamic> json) =>
-      _$MetaEventsResponseFromJson(json);
-}
-
-@JsonSerializable()
-class MetaEvent {
-  final String id;
-  final String type;
-  final String description;
-  final double timestamp;
-
-  const MetaEvent({
-    required this.id,
-    required this.type,
-    required this.description,
-    required this.timestamp,
-  });
-
-  factory MetaEvent.fromJson(Map<String, dynamic> json) =>
-      _$MetaEventFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MetaEventToJson(this);
-}
