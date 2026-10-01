@@ -2,13 +2,15 @@
 Maya 2.0 — Publish Engine (Phase 21)
 
 Guarded real-world publish action for static sites. Uses the existing
-WebBuilderTool to deploy to Netlify, but wraps it with a hard approval
-gate and a permanent, write-once audit trail.
+WebBuilderTool to deploy to Netlify, but wraps it with a risk-based
+approval gate and a permanent, write-once audit trail.
 
 Flow:
   1. Propose — save full proposed content + metadata to audit DB
-  2. Approve — show exact content in approval prompt, block until decision
-  3. Execute — on approval, call WebBuilderTool.deploy(); on reject, log it
+  2. Risk Check — classify as low-risk (auto-apply) or high-risk (needs approval)
+  3. Low-risk: auto-apply, log result
+  4. High-risk: show exact content in approval prompt, block until decision
+  5. On approval: call WebBuilderTool.deploy(); on reject, log it
 
 The audit row's ``files_json`` is set at proposal time and NEVER modified.
 Only the ``action`` field advances (proposed → published/rejected/failed).
@@ -23,6 +25,7 @@ import uuid
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional
 
+from config.constants import RISK_LOW, RISK_HIGH, RISK_CRITICAL
 from config.settings import STORAGE_DIR
 
 PUBLISH_DIR = STORAGE_DIR / "publish"
@@ -30,8 +33,71 @@ PUBLISH_DIR.mkdir(parents=True, exist_ok=True)
 PUBLISH_DB = str(PUBLISH_DIR / "publish_audit.db")
 
 
+# ── Risk Classification for Publish Requests ──────────────────────────────
+
+# Low-risk: UI text changes, minor config, read-only, documentation
+LOW_RISK_KEYWORDS = [
+    "ui text", "text change", "copy change", "copy update",
+    "minor config", "config tweak", "read-only", "documentation",
+    "readme", "docs/", "changelog", "license", "comment",
+    "color", "font", "spacing", "margin", "padding",
+    "typo", "spelling", "grammar", "wording", "label",
+    "button text", "link text", "heading", "title",
+    "meta tag", "seo", "alt text", "title tag",
+]
+
+# High-risk: code deploy, VPS/instance change, delete, security, autonomous
+HIGH_RISK_KEYWORDS = [
+    "code deploy", "deploy code", "push code", "git push",
+    "vps", "instance", "server", "container",
+    "delete", "destroy", "terminate", "remove",
+    "security", "auth", "password", "secret", "key",
+    "autonomous", "auto mode", "cognition", "cognitive",
+    "database", "drop", "truncate", "wipe",
+    "production", "prod", "live",
+    "payment", "billing", "charge", "spend",
+    "docker restart", "docker start", "docker stop",
+    "docker kill", "docker rm", "docker rmi",
+    "shutdown", "reboot", "poweroff",
+]
+
+
+def classify_publish_risk(site_name: str, files: Dict[str, str], description: str = "") -> str:
+    """Classify publish request as 'low' or 'high' risk.
+    
+    Returns: 'low' or 'high'
+    """
+    # Combine all content for analysis
+    content = f"{site_name} {description} "
+    for path, body in files.items():
+        content += f" {path} {body}"
+    
+    content_lower = content.lower()
+    
+    # Check high-risk first (more conservative)
+    for kw in HIGH_RISK_KEYWORDS:
+        if kw in content_lower:
+            return RISK_HIGH
+    
+    # Check low-risk
+    for kw in LOW_RISK_KEYWORDS:
+        if kw in content_lower:
+            return RISK_LOW
+    
+    # Default to high-risk for safety (unknown = high-risk)
+    return RISK_HIGH
+
+
 class PublishEngine:
-    """Publish static sites with a hard approval gate and permanent audit."""
+    """Publish static sites with a risk-based approval gate and permanent audit.
+
+    Flow:
+      1. Propose — save full proposed content + metadata to audit DB
+      2. Risk Check — classify as low-risk (auto-apply) or high-risk (needs approval)
+      3. Low-risk: auto-apply, log result
+      4. High-risk: show exact content in approval prompt, block until decision
+      5. On approval: call WebBuilderTool.deploy(); on reject, log it
+    """
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
@@ -52,6 +118,7 @@ class PublishEngine:
                     approver    TEXT DEFAULT '',
                     result_url  TEXT DEFAULT '',
                     error       TEXT DEFAULT '',
+                    risk_level  TEXT DEFAULT 'high',
                     created_at  REAL,
                     decided_at  REAL
                 );
@@ -89,12 +156,16 @@ class PublishEngine:
     ) -> Dict[str, Any]:
         """Create a publish proposal and persist it to the audit DB.
 
-        Returns the proposal dict.  The ``files_json`` field is frozen at
-        this point and never modified, providing a permanent record of
-        exactly what was proposed.
+        Returns the proposal dict with risk classification.  
+        The ``files_json`` field is frozen at this point and never modified,
+        providing a permanent record of exactly what was proposed.
         """
         pid = uuid.uuid4().hex[:12]
         now = time.time()
+        
+        # Classify risk level
+        risk_level = classify_publish_risk(site_name, files, description)
+        
         record = {
             "id": pid,
             "site_name": site_name,
@@ -104,6 +175,7 @@ class PublishEngine:
             "approver": "",
             "result_url": "",
             "error": "",
+            "risk_level": risk_level,
             "created_at": now,
             "decided_at": None,
         }
@@ -112,8 +184,8 @@ class PublishEngine:
                 c.execute(
                     "INSERT INTO publish_audit "
                     "(id, site_name, files_json, description, action, "
-                    "approver, result_url, error, created_at, decided_at) "
-                    "VALUES (?,?,?,?,?,?,?,?,?,?)",
+                    "approver, result_url, error, risk_level, created_at, decided_at) "
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                     (
                         record["id"],
                         record["site_name"],
@@ -123,6 +195,7 @@ class PublishEngine:
                         record["approver"],
                         record["result_url"],
                         record["error"],
+                        record["risk_level"],
                         record["created_at"],
                         record["decided_at"],
                     ),
@@ -133,19 +206,19 @@ class PublishEngine:
 
     # ── Guarded publish ───────────────────────────────────────────────────
 
-    def publish(
+def publish(
         self,
         proposal_id: str,
         approval: Any,
         user: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
-        """Execute the publish for *proposal_id* through the approval gate.
+        """Execute the publish for *proposal_id* through the risk-based approval gate.
 
         1. Load the proposal (must exist and be 'proposed')
-        2. Show exact content in the approval prompt
-        3. Block until approved/rejected
-        4. On approval: call WebBuilderTool.deploy(), log result
-        5. On rejection: log rejection
+        2. Check risk level:
+           - Low-risk: auto-apply, log result, return success
+           - High-risk: show exact content in approval prompt, block until decision
+        3. On approval: call WebBuilderTool.deploy(); on reject, log it
 
         Returns the updated proposal dict with result.
         """
@@ -157,17 +230,17 @@ class PublishEngine:
 
         site_name = record["site_name"]
         description = record.get("description", "")
+        risk_level = record.get("risk_level", RISK_HIGH)
         try:
             files: Dict[str, str] = json.loads(record["files_json"])
         except (json.JSONDecodeError, TypeError):
             return {"error": "Corrupted files_json in proposal"}
 
-        # Render exact content for approval prompt
+        # Render exact content for approval prompt (used for high-risk)
         content_lines = [f"Site: {site_name}"]
         if description:
             content_lines.append(f"Description: {description}")
         content_lines.append("")
-        # Sort for deterministic display order
         for path in sorted(files.keys()):
             body = files[path]
             content_lines.append(f"--- {path} ---")
@@ -178,7 +251,50 @@ class PublishEngine:
             content_lines.append("")
         reason_text = "\n".join(content_lines)
 
-        # ── Hard approval gate (critical — gates in ALL modes) ────────
+        # ── Low-risk: Auto-apply ────────────────────────────────────
+        if risk_level == RISK_LOW:
+            user_label = user.get("email", user.get("username", "unknown")) if user else "system"
+            self._update_record(proposal_id, {
+                "action": "approved",
+                "approver": user_label,
+                "decided_at": time.time(),
+            })
+
+            from tools.code.web_builder_tool import WebBuilderTool
+            wbt = WebBuilderTool()
+
+            try:
+                result = wbt.deploy(name=site_name, files=files)
+                if result.startswith("OK:"):
+                    url = result.split("Live URL:")[-1].strip() if "Live URL:" in result else ""
+                    self._update_record(proposal_id, {
+                        "action": "published",
+                        "result_url": url,
+                    })
+                    return {
+                        "status": "published",
+                        "site_name": site_name,
+                        "url": url,
+                        "proposal_id": proposal_id,
+                        "risk_level": "low",
+                        "auto_applied": True,
+                    }
+                else:
+                    error_msg = result
+                    self._update_record(proposal_id, {
+                        "action": "failed",
+                        "error": error_msg[:500],
+                    })
+                    return {"error": error_msg}
+            except Exception as e:
+                err = str(e)
+                self._update_record(proposal_id, {
+                    "action": "failed",
+                    "error": err[:500],
+                })
+                return {"error": err}
+
+        # ── High-risk: Show exact content in approval prompt ────────
         action_label = f"Publish to Netlify: {site_name}"
         user_label = user.get("email", user.get("username", "unknown")) if user else "unknown"
 
@@ -213,7 +329,6 @@ class PublishEngine:
         try:
             result = wbt.deploy(name=site_name, files=files)
             if result.startswith("OK:"):
-                # Extract URL from result like "OK: deployed 'site'. Live URL: https://..."
                 url = result.split("Live URL:")[-1].strip() if "Live URL:" in result else ""
                 self._update_record(proposal_id, {
                     "action": "published",
@@ -224,9 +339,11 @@ class PublishEngine:
                     "site_name": site_name,
                     "url": url,
                     "proposal_id": proposal_id,
+                    "risk_level": "high",
+                    "auto_applied": False,
                 }
             else:
-                error_msg = result  # Error: ...
+                error_msg = result
                 self._update_record(proposal_id, {
                     "action": "failed",
                     "error": error_msg[:500],
@@ -240,24 +357,94 @@ class PublishEngine:
             })
             return {"error": err}
 
-    # ── Query ─────────────────────────────────────────────────────────────
-
-    def list_history(self) -> List[Dict[str, Any]]:
-        """List all publish proposals, newest first."""
-        try:
-            with self._conn() as c:
-                rows = c.execute(
-                    "SELECT id, site_name, description, action, "
-                    "approver, result_url, created_at, decided_at "
-                    "FROM publish_audit ORDER BY created_at DESC"
-                ).fetchall()
-            return [dict(r) for r in rows]
-        except Exception:
-            return []
-
     def get_proposal(self, proposal_id: str) -> Optional[Dict[str, Any]]:
         """Get a single proposal with full detail (including files_json)."""
         return self._get_record(proposal_id)
+
+    def decide(
+        self,
+        proposal_id: str,
+        decision: str,
+        user: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Decide on a publish proposal (approve or reject).
+        
+        Args:
+            proposal_id: The ID of the proposal to decide on
+            decision: Either "approve" or "reject"
+            user: Optional user info for audit log
+            
+        Returns:
+            Updated proposal dict with result
+        """
+        record = self._get_record(proposal_id)
+        if not record:
+            return {"error": "Proposal not found"}
+        if record["action"] != "proposed":
+            return {"error": f"Proposal is '{record['action']}' — must be 'proposed'"}
+        
+        if decision not in ("approve", "reject"):
+            return {"error": "Decision must be 'approve' or 'reject'"}
+        
+        site_name = record["site_name"]
+        description = record.get("description", "")
+        risk_level = record.get("risk_level", RISK_HIGH)
+        try:
+            files: Dict[str, str] = json.loads(record["files_json"])
+        except (json.JSONDecodeError, TypeError):
+            return {"error": "Corrupted files_json in proposal"}
+        
+        user_label = user.get("email", user.get("username", "unknown")) if user else "unknown"
+        
+        if decision == "reject":
+            self._update_record(proposal_id, {
+                "action": "rejected",
+                "approver": user_label,
+                "decided_at": time.time(),
+                "error": "Rejected by user",
+            })
+            return {"error": "Publish rejected by user"}
+        
+        # decision == "approve"
+        self._update_record(proposal_id, {
+            "action": "approved",
+            "approver": user_label,
+            "decided_at": time.time(),
+        })
+        
+        from tools.code.web_builder_tool import WebBuilderTool
+        wbt = WebBuilderTool()
+        
+        try:
+            result = wbt.deploy(name=site_name, files=files)
+            if result.startswith("OK:"):
+                url = result.split("Live URL:")[-1].strip() if "Live URL:" in result else ""
+                self._update_record(proposal_id, {
+                    "action": "published",
+                    "result_url": url,
+                })
+                return {
+                    "status": "published",
+                    "site_name": site_name,
+                    "url": url,
+                    "proposal_id": proposal_id,
+                    "risk_level": risk_level,
+                    "auto_applied": False,
+                }
+            else:
+                error_msg = result
+                self._update_record(proposal_id, {
+                    "action": "failed",
+                    "error": error_msg[:500],
+                })
+                return {"error": error_msg}
+        except Exception as e:
+            err = str(e)
+            self._update_record(proposal_id, {
+                "action": "failed",
+                "error": err[:500],
+            })
+            return {"error": err}
 
     # ── Internals ─────────────────────────────────────────────────────────
 

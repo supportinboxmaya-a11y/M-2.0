@@ -2023,6 +2023,17 @@ class ApiService {
     return PublishHistoryDetailResponse.fromJson(response.data);
   }
 
+  Future<PublishDecideResponse> decidePublish({
+    required String proposalId,
+    required String decision, // 'approve' or 'reject'
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.publishHistoryDetail}$proposalId/decide',
+      data: {'decision': decision},
+    );
+    return PublishDecideResponse.fromJson(response.data);
+  }
+
   // Approvals System (Phase 21 Enhanced)
   Future<ApprovalRequestResponse> requestApproval({
     required String action,
@@ -3564,6 +3575,7 @@ class PublishHistoryItem {
   final String action;
   final String approver;
   final String resultUrl;
+  final String riskLevel;
   final double createdAt;
   final double? decidedAt;
 
@@ -3574,6 +3586,7 @@ class PublishHistoryItem {
     required this.action,
     required this.approver,
     required this.resultUrl,
+    required this.riskLevel,
     required this.createdAt,
     this.decidedAt,
   });
@@ -3595,12 +3608,29 @@ class PublishHistoryDetailResponse with _$PublishHistoryDetailResponse {
     required String approver,
     required String resultUrl,
     required String error,
+    required String riskLevel,
     required double createdAt,
     double? decidedAt,
   }) = _PublishHistoryDetailResponse;
 
   factory PublishHistoryDetailResponse.fromJson(Map<String, dynamic> json) =>
       _$PublishHistoryDetailResponseFromJson(json);
+}
+
+@freezed
+class PublishDecideResponse with _$PublishDecideResponse {
+  const factory PublishDecideResponse({
+    required String status,
+    required String siteName,
+    required String url,
+    required String proposalId,
+    required String riskLevel,
+    bool? autoApplied,
+    String? error,
+  }) = _PublishDecideResponse;
+
+  factory PublishDecideResponse.fromJson(Map<String, dynamic> json) =>
+      _$PublishDecideResponseFromJson(json);
 }
 
 // Approvals System Models (Phase 21 Enhanced)

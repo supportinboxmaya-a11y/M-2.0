@@ -17670,6 +17670,22 @@ class _PublishHistoryCard extends ConsumerWidget {
         statusIcon = Icons.help_rounded;
     }
 
+    // Risk level color
+    Color riskColor;
+    switch (proposal.riskLevel.toLowerCase()) {
+      case 'low':
+        riskColor = MayaTheme.neonEmerald;
+        break;
+      case 'high':
+        riskColor = MayaTheme.error;
+        break;
+      case 'critical':
+        riskColor = MayaTheme.error;
+        break;
+      default:
+        riskColor = MayaTheme.neonOrange;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: MayaTheme.glassCard(),
@@ -17714,6 +17730,19 @@ class _PublishHistoryCard extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: riskColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: riskColor),
+                    ),
+                    child: Text(
+                      'RISK: ${proposal.riskLevel.toUpperCase()}',
+                      style: MayaTheme.labelSmall.copyWith(color: riskColor),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
                   Text(
                     DateTime.fromMillisecondsSinceEpoch((proposal.createdAt * 1000).round()).toString().substring(0, 19),
                     style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
@@ -17740,9 +17769,24 @@ class _PublishProposalCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Color riskColor;
+    switch (proposal.riskLevel.toLowerCase()) {
+      case 'low':
+        riskColor = MayaTheme.neonEmerald;
+        break;
+      case 'high':
+        riskColor = MayaTheme.error;
+        break;
+      case 'critical':
+        riskColor = MayaTheme.error;
+        break;
+      default:
+        riskColor = MayaTheme.neonOrange;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.neonOrange),
+      decoration: MayaTheme.glassCardGlow(glowColor: riskColor),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -17751,10 +17795,10 @@ class _PublishProposalCard extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: MayaTheme.neonOrange.withValues(alpha: 0.2),
+                  color: riskColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.pending_rounded, color: MayaTheme.neonOrange, size: 24),
+                child: Icon(Icons.pending_rounded, color: riskColor, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -17768,9 +17812,27 @@ class _PublishProposalCard extends ConsumerWidget {
                   ],
                 ),
               ),
-              Text(
-                'AWAITING APPROVAL',
-                style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonOrange),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'AWAITING APPROVAL',
+                    style: MayaTheme.labelMedium.copyWith(color: riskColor),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: riskColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: riskColor),
+                    ),
+                    child: Text(
+                      'RISK: ${proposal.riskLevel.toUpperCase()}',
+                      style: MayaTheme.labelSmall.copyWith(color: riskColor),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -17794,7 +17856,7 @@ class _PublishProposalCard extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _showDetailAndDecide(context, ref, proposal.id, false),
@@ -17807,6 +17869,19 @@ class _PublishProposalCard extends ConsumerWidget {
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _showDetailAndDecide(context, ref, proposal.id, false, askMoreInfo: true),
+                  icon: const Icon(Icons.help_outline_rounded),
+                  label: const Text('More Info'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: MayaTheme.neonCyan,
+                    side: BorderSide(color: MayaTheme.neonCyan),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -17814,7 +17889,7 @@ class _PublishProposalCard extends ConsumerWidget {
     );
   }
 
-  Future<void> _showDetailAndDecide(BuildContext context, WidgetRef ref, String proposalId, bool approve) async {
+  Future<void> _showDetailAndDecide(BuildContext context, WidgetRef ref, String proposalId, bool approve, {bool askMoreInfo = false}) async {
     // Show detail dialog first, then execute
     final detailAsync = ref.watch(publishHistoryDetailProvider(proposalId));
     
@@ -17822,7 +17897,7 @@ class _PublishProposalCard extends ConsumerWidget {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: MayaTheme.slate800,
-        title: const Text('Publish Proposal Detail', style: MayaTheme.titleLarge),
+        title: Text(askMoreInfo ? 'Request More Information' : (approve ? 'Approve & Publish?' : 'Reject?'), style: MayaTheme.titleLarge),
         content: SizedBox(
           width: double.maxFinite,
           child: detailAsync.when(
@@ -17832,6 +17907,7 @@ class _PublishProposalCard extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildDetailRow('Site Name', detail.siteName),
+                  _buildDetailRow('Risk Level', detail.riskLevel.toUpperCase()),
                   _buildDetailRow('Status', detail.action.toUpperCase()),
                   _buildDetailRow('Description', detail.description.isEmpty ? '—' : detail.description),
                   const Divider(color: MayaTheme.glassWhite10, height: 24),
@@ -17846,6 +17922,10 @@ class _PublishProposalCard extends ConsumerWidget {
                     const Divider(color: MayaTheme.glassWhite10, height: 24),
                     Text('URL: ${detail.resultUrl}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonCyan)),
                   ],
+                  if (askMoreInfo) ...[
+                    const Divider(color: MayaTheme.glassWhite10, height: 24),
+                    const Text('Additional information requested from Maya. Please provide more details about this proposal.', style: MayaTheme.bodyMedium),
+                  ],
                 ],
               ),
             ),
@@ -17858,17 +17938,31 @@ class _PublishProposalCard extends ConsumerWidget {
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _executeDecision(ref, proposalId, approve);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.error,
-              foregroundColor: approve ? MayaTheme.slate900 : Colors.white,
+          if (askMoreInfo)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _askMoreInfo(ref, proposalId);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonCyan,
+                foregroundColor: MayaTheme.slate900,
+              ),
+              child: const Text('Send Info Request'),
+            )
+          else ...[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _executeDecision(ref, proposalId, approve);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.error,
+                foregroundColor: approve ? MayaTheme.slate900 : Colors.white,
+              ),
+              child: Text(approve ? 'Approve & Publish' : 'Reject'),
             ),
-            child: Text(approve ? 'Approve & Publish' : 'Reject'),
-          ),
+          ],
         ],
       ),
     );
@@ -17877,26 +17971,18 @@ class _PublishProposalCard extends ConsumerWidget {
   Future<void> _executeDecision(WidgetRef ref, String proposalId, bool approve) async {
     try {
       final apiService = ref.read(apiServiceProvider);
-      if (approve) {
-        // The proposePublish endpoint will trigger the approval flow
-        // For now, we just need to trigger the publish again
-        // The backend will handle the approval internally
-        final result = await apiService.proposePublish(
-          siteName: '', // This won't be used since we're re-publishing
-          files: {},   // This won't be used
-          description: '',
-        );
-        // Actually, we need a different approach - the backend publish endpoint
-        // takes the proposal_id and handles approval internally
-        // Let me call the publish endpoint directly
-      } else {
-        // For rejection, we need to use the publish endpoint which will reject
-      }
+      final decision = approve ? 'approve' : 'reject';
+      final result = await apiService.decidePublish(
+        proposalId: proposalId,
+        decision: decision,
+      );
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(approve ? 'Publish approved and deployed!' : 'Publish rejected'),
+            content: Text(approve 
+                ? 'Publish approved and deployed! URL: ${result.url}' 
+                : 'Publish rejected'),
             backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
           ),
         );

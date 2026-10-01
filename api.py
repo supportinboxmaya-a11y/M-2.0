@@ -4035,7 +4035,22 @@ try:
             raise HTTPException(status_code=404, detail="Proposal not found")
         return proposal
 
-    print("Phase 21 active: guarded publish (hard approval + permanent audit)")
+    @app.post("/api/v1/publish/{proposal_id}/decide")
+    async def _p21_publish_decide(
+        proposal_id: str, 
+        decision: str,  # "approve" or "reject"
+        user=Depends(get_current_user),
+    ):
+        """Decide on a publish proposal (approve or reject)."""
+        _p21_check_execute(user)
+        if decision not in ("approve", "reject"):
+            raise HTTPException(status_code=400, detail="Decision must be 'approve' or 'reject'")
+        result = _p21_engine.decide(proposal_id, decision, user)
+        if "error" in result:
+            raise HTTPException(status_code=403 if "rejected" in result.get("error", "") else 500, detail=result["error"])
+        return result
+
+    print("Phase 21 active: guarded publish (risk-based approval + permanent audit)")
 except Exception as _p21_err:
     print(f"WARNING: Phase 21 publish engine not loaded: {_p21_err}")
 # ══════════════ End Phase 21 integration ══════════════

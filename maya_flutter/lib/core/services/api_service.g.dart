@@ -634,6 +634,7 @@ PublishHistoryItem _$PublishHistoryItemFromJson(Map json) => $checkedCreate(
           action: $checkedConvert('action', (v) => v as String),
           approver: $checkedConvert('approver', (v) => v as String),
           resultUrl: $checkedConvert('result_url', (v) => v as String),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String),
           createdAt:
               $checkedConvert('created_at', (v) => (v as num).toDouble()),
           decidedAt:
@@ -644,6 +645,7 @@ PublishHistoryItem _$PublishHistoryItemFromJson(Map json) => $checkedCreate(
       fieldKeyMap: const {
         'siteName': 'site_name',
         'resultUrl': 'result_url',
+        'riskLevel': 'risk_level',
         'createdAt': 'created_at',
         'decidedAt': 'decided_at'
       },
@@ -657,6 +659,7 @@ Map<String, dynamic> _$PublishHistoryItemToJson(PublishHistoryItem instance) {
     'action': instance.action,
     'approver': instance.approver,
     'result_url': instance.resultUrl,
+    'risk_level': instance.riskLevel,
     'created_at': instance.createdAt,
   };
 
@@ -2903,6 +2906,7 @@ _$PublishHistoryDetailResponseImpl _$$PublishHistoryDetailResponseImplFromJson(
           approver: $checkedConvert('approver', (v) => v as String),
           resultUrl: $checkedConvert('result_url', (v) => v as String),
           error: $checkedConvert('error', (v) => v as String),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String),
           createdAt:
               $checkedConvert('created_at', (v) => (v as num).toDouble()),
           decidedAt:
@@ -2914,6 +2918,7 @@ _$PublishHistoryDetailResponseImpl _$$PublishHistoryDetailResponseImplFromJson(
         'siteName': 'site_name',
         'filesJson': 'files_json',
         'resultUrl': 'result_url',
+        'riskLevel': 'risk_level',
         'createdAt': 'created_at',
         'decidedAt': 'decided_at'
       },
@@ -2930,6 +2935,7 @@ Map<String, dynamic> _$$PublishHistoryDetailResponseImplToJson(
     'approver': instance.approver,
     'result_url': instance.resultUrl,
     'error': instance.error,
+    'risk_level': instance.riskLevel,
     'created_at': instance.createdAt,
   };
 
@@ -2940,6 +2946,51 @@ Map<String, dynamic> _$$PublishHistoryDetailResponseImplToJson(
   }
 
   writeNotNull('decided_at', instance.decidedAt);
+  return val;
+}
+
+_$PublishDecideResponseImpl _$$PublishDecideResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$PublishDecideResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PublishDecideResponseImpl(
+          status: $checkedConvert('status', (v) => v as String),
+          siteName: $checkedConvert('site_name', (v) => v as String),
+          url: $checkedConvert('url', (v) => v as String),
+          proposalId: $checkedConvert('proposal_id', (v) => v as String),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String),
+          autoApplied: $checkedConvert('auto_applied', (v) => v as bool?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'siteName': 'site_name',
+        'proposalId': 'proposal_id',
+        'riskLevel': 'risk_level',
+        'autoApplied': 'auto_applied'
+      },
+    );
+
+Map<String, dynamic> _$$PublishDecideResponseImplToJson(
+    _$PublishDecideResponseImpl instance) {
+  final val = <String, dynamic>{
+    'status': instance.status,
+    'site_name': instance.siteName,
+    'url': instance.url,
+    'proposal_id': instance.proposalId,
+    'risk_level': instance.riskLevel,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('auto_applied', instance.autoApplied);
+  writeNotNull('error', instance.error);
   return val;
 }
 

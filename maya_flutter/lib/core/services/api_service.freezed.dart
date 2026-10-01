@@ -14152,6 +14152,7 @@ mixin _$PublishHistoryDetailResponse {
   String get approver => throw _privateConstructorUsedError;
   String get resultUrl => throw _privateConstructorUsedError;
   String get error => throw _privateConstructorUsedError;
+  String get riskLevel => throw _privateConstructorUsedError;
   double get createdAt => throw _privateConstructorUsedError;
   double? get decidedAt => throw _privateConstructorUsedError;
 
@@ -14178,6 +14179,7 @@ abstract class $PublishHistoryDetailResponseCopyWith<$Res> {
       String approver,
       String resultUrl,
       String error,
+      String riskLevel,
       double createdAt,
       double? decidedAt});
 }
@@ -14204,6 +14206,7 @@ class _$PublishHistoryDetailResponseCopyWithImpl<$Res,
     Object? approver = null,
     Object? resultUrl = null,
     Object? error = null,
+    Object? riskLevel = null,
     Object? createdAt = null,
     Object? decidedAt = freezed,
   }) {
@@ -14240,6 +14243,10 @@ class _$PublishHistoryDetailResponseCopyWithImpl<$Res,
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -14270,6 +14277,7 @@ abstract class _$$PublishHistoryDetailResponseImplCopyWith<$Res>
       String approver,
       String resultUrl,
       String error,
+      String riskLevel,
       double createdAt,
       double? decidedAt});
 }
@@ -14295,6 +14303,7 @@ class __$$PublishHistoryDetailResponseImplCopyWithImpl<$Res>
     Object? approver = null,
     Object? resultUrl = null,
     Object? error = null,
+    Object? riskLevel = null,
     Object? createdAt = null,
     Object? decidedAt = freezed,
   }) {
@@ -14331,6 +14340,10 @@ class __$$PublishHistoryDetailResponseImplCopyWithImpl<$Res>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -14356,6 +14369,7 @@ class _$PublishHistoryDetailResponseImpl
       required this.approver,
       required this.resultUrl,
       required this.error,
+      required this.riskLevel,
       required this.createdAt,
       this.decidedAt});
 
@@ -14380,13 +14394,15 @@ class _$PublishHistoryDetailResponseImpl
   @override
   final String error;
   @override
+  final String riskLevel;
+  @override
   final double createdAt;
   @override
   final double? decidedAt;
 
   @override
   String toString() {
-    return 'PublishHistoryDetailResponse(id: $id, siteName: $siteName, filesJson: $filesJson, description: $description, action: $action, approver: $approver, resultUrl: $resultUrl, error: $error, createdAt: $createdAt, decidedAt: $decidedAt)';
+    return 'PublishHistoryDetailResponse(id: $id, siteName: $siteName, filesJson: $filesJson, description: $description, action: $action, approver: $approver, resultUrl: $resultUrl, error: $error, riskLevel: $riskLevel, createdAt: $createdAt, decidedAt: $decidedAt)';
   }
 
   @override
@@ -14407,6 +14423,8 @@ class _$PublishHistoryDetailResponseImpl
             (identical(other.resultUrl, resultUrl) ||
                 other.resultUrl == resultUrl) &&
             (identical(other.error, error) || other.error == error) &&
+            (identical(other.riskLevel, riskLevel) ||
+                other.riskLevel == riskLevel) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.decidedAt, decidedAt) ||
@@ -14415,8 +14433,19 @@ class _$PublishHistoryDetailResponseImpl
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, siteName, filesJson,
-      description, action, approver, resultUrl, error, createdAt, decidedAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      siteName,
+      filesJson,
+      description,
+      action,
+      approver,
+      resultUrl,
+      error,
+      riskLevel,
+      createdAt,
+      decidedAt);
 
   @JsonKey(ignore: true)
   @override
@@ -14445,6 +14474,7 @@ abstract class _PublishHistoryDetailResponse
       required final String approver,
       required final String resultUrl,
       required final String error,
+      required final String riskLevel,
       required final double createdAt,
       final double? decidedAt}) = _$PublishHistoryDetailResponseImpl;
 
@@ -14468,6 +14498,8 @@ abstract class _PublishHistoryDetailResponse
   @override
   String get error;
   @override
+  String get riskLevel;
+  @override
   double get createdAt;
   @override
   double? get decidedAt;
@@ -14475,6 +14507,276 @@ abstract class _PublishHistoryDetailResponse
   @JsonKey(ignore: true)
   _$$PublishHistoryDetailResponseImplCopyWith<
           _$PublishHistoryDetailResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+PublishDecideResponse _$PublishDecideResponseFromJson(
+    Map<String, dynamic> json) {
+  return _PublishDecideResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PublishDecideResponse {
+  String get status => throw _privateConstructorUsedError;
+  String get siteName => throw _privateConstructorUsedError;
+  String get url => throw _privateConstructorUsedError;
+  String get proposalId => throw _privateConstructorUsedError;
+  String get riskLevel => throw _privateConstructorUsedError;
+  bool? get autoApplied => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PublishDecideResponseCopyWith<PublishDecideResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PublishDecideResponseCopyWith<$Res> {
+  factory $PublishDecideResponseCopyWith(PublishDecideResponse value,
+          $Res Function(PublishDecideResponse) then) =
+      _$PublishDecideResponseCopyWithImpl<$Res, PublishDecideResponse>;
+  @useResult
+  $Res call(
+      {String status,
+      String siteName,
+      String url,
+      String proposalId,
+      String riskLevel,
+      bool? autoApplied,
+      String? error});
+}
+
+/// @nodoc
+class _$PublishDecideResponseCopyWithImpl<$Res,
+        $Val extends PublishDecideResponse>
+    implements $PublishDecideResponseCopyWith<$Res> {
+  _$PublishDecideResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = null,
+    Object? siteName = null,
+    Object? url = null,
+    Object? proposalId = null,
+    Object? riskLevel = null,
+    Object? autoApplied = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteName: null == siteName
+          ? _value.siteName
+          : siteName // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      proposalId: null == proposalId
+          ? _value.proposalId
+          : proposalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
+      autoApplied: freezed == autoApplied
+          ? _value.autoApplied
+          : autoApplied // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PublishDecideResponseImplCopyWith<$Res>
+    implements $PublishDecideResponseCopyWith<$Res> {
+  factory _$$PublishDecideResponseImplCopyWith(
+          _$PublishDecideResponseImpl value,
+          $Res Function(_$PublishDecideResponseImpl) then) =
+      __$$PublishDecideResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String status,
+      String siteName,
+      String url,
+      String proposalId,
+      String riskLevel,
+      bool? autoApplied,
+      String? error});
+}
+
+/// @nodoc
+class __$$PublishDecideResponseImplCopyWithImpl<$Res>
+    extends _$PublishDecideResponseCopyWithImpl<$Res,
+        _$PublishDecideResponseImpl>
+    implements _$$PublishDecideResponseImplCopyWith<$Res> {
+  __$$PublishDecideResponseImplCopyWithImpl(_$PublishDecideResponseImpl _value,
+      $Res Function(_$PublishDecideResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = null,
+    Object? siteName = null,
+    Object? url = null,
+    Object? proposalId = null,
+    Object? riskLevel = null,
+    Object? autoApplied = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$PublishDecideResponseImpl(
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteName: null == siteName
+          ? _value.siteName
+          : siteName // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      proposalId: null == proposalId
+          ? _value.proposalId
+          : proposalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
+      autoApplied: freezed == autoApplied
+          ? _value.autoApplied
+          : autoApplied // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PublishDecideResponseImpl implements _PublishDecideResponse {
+  const _$PublishDecideResponseImpl(
+      {required this.status,
+      required this.siteName,
+      required this.url,
+      required this.proposalId,
+      required this.riskLevel,
+      this.autoApplied,
+      this.error});
+
+  factory _$PublishDecideResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PublishDecideResponseImplFromJson(json);
+
+  @override
+  final String status;
+  @override
+  final String siteName;
+  @override
+  final String url;
+  @override
+  final String proposalId;
+  @override
+  final String riskLevel;
+  @override
+  final bool? autoApplied;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'PublishDecideResponse(status: $status, siteName: $siteName, url: $url, proposalId: $proposalId, riskLevel: $riskLevel, autoApplied: $autoApplied, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PublishDecideResponseImpl &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.siteName, siteName) ||
+                other.siteName == siteName) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.proposalId, proposalId) ||
+                other.proposalId == proposalId) &&
+            (identical(other.riskLevel, riskLevel) ||
+                other.riskLevel == riskLevel) &&
+            (identical(other.autoApplied, autoApplied) ||
+                other.autoApplied == autoApplied) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, status, siteName, url,
+      proposalId, riskLevel, autoApplied, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PublishDecideResponseImplCopyWith<_$PublishDecideResponseImpl>
+      get copyWith => __$$PublishDecideResponseImplCopyWithImpl<
+          _$PublishDecideResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PublishDecideResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PublishDecideResponse implements PublishDecideResponse {
+  const factory _PublishDecideResponse(
+      {required final String status,
+      required final String siteName,
+      required final String url,
+      required final String proposalId,
+      required final String riskLevel,
+      final bool? autoApplied,
+      final String? error}) = _$PublishDecideResponseImpl;
+
+  factory _PublishDecideResponse.fromJson(Map<String, dynamic> json) =
+      _$PublishDecideResponseImpl.fromJson;
+
+  @override
+  String get status;
+  @override
+  String get siteName;
+  @override
+  String get url;
+  @override
+  String get proposalId;
+  @override
+  String get riskLevel;
+  @override
+  bool? get autoApplied;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$PublishDecideResponseImplCopyWith<_$PublishDecideResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
