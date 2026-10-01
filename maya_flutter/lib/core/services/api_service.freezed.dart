@@ -12747,6 +12747,906 @@ abstract class _SandboxExecuteResponse implements SandboxExecuteResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+MissionListResponse _$MissionListResponseFromJson(Map<String, dynamic> json) {
+  return _MissionListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MissionListResponse {
+  List<MissionInfo> get missions => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MissionListResponseCopyWith<MissionListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MissionListResponseCopyWith<$Res> {
+  factory $MissionListResponseCopyWith(
+          MissionListResponse value, $Res Function(MissionListResponse) then) =
+      _$MissionListResponseCopyWithImpl<$Res, MissionListResponse>;
+  @useResult
+  $Res call({List<MissionInfo> missions});
+}
+
+/// @nodoc
+class _$MissionListResponseCopyWithImpl<$Res, $Val extends MissionListResponse>
+    implements $MissionListResponseCopyWith<$Res> {
+  _$MissionListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? missions = null,
+  }) {
+    return _then(_value.copyWith(
+      missions: null == missions
+          ? _value.missions
+          : missions // ignore: cast_nullable_to_non_nullable
+              as List<MissionInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$MissionListResponseImplCopyWith<$Res>
+    implements $MissionListResponseCopyWith<$Res> {
+  factory _$$MissionListResponseImplCopyWith(_$MissionListResponseImpl value,
+          $Res Function(_$MissionListResponseImpl) then) =
+      __$$MissionListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<MissionInfo> missions});
+}
+
+/// @nodoc
+class __$$MissionListResponseImplCopyWithImpl<$Res>
+    extends _$MissionListResponseCopyWithImpl<$Res, _$MissionListResponseImpl>
+    implements _$$MissionListResponseImplCopyWith<$Res> {
+  __$$MissionListResponseImplCopyWithImpl(_$MissionListResponseImpl _value,
+      $Res Function(_$MissionListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? missions = null,
+  }) {
+    return _then(_$MissionListResponseImpl(
+      missions: null == missions
+          ? _value._missions
+          : missions // ignore: cast_nullable_to_non_nullable
+              as List<MissionInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$MissionListResponseImpl implements _MissionListResponse {
+  const _$MissionListResponseImpl({required final List<MissionInfo> missions})
+      : _missions = missions;
+
+  factory _$MissionListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MissionListResponseImplFromJson(json);
+
+  final List<MissionInfo> _missions;
+  @override
+  List<MissionInfo> get missions {
+    if (_missions is EqualUnmodifiableListView) return _missions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_missions);
+  }
+
+  @override
+  String toString() {
+    return 'MissionListResponse(missions: $missions)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MissionListResponseImpl &&
+            const DeepCollectionEquality().equals(other._missions, _missions));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_missions));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MissionListResponseImplCopyWith<_$MissionListResponseImpl> get copyWith =>
+      __$$MissionListResponseImplCopyWithImpl<_$MissionListResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MissionListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MissionListResponse implements MissionListResponse {
+  const factory _MissionListResponse(
+      {required final List<MissionInfo> missions}) = _$MissionListResponseImpl;
+
+  factory _MissionListResponse.fromJson(Map<String, dynamic> json) =
+      _$MissionListResponseImpl.fromJson;
+
+  @override
+  List<MissionInfo> get missions;
+  @override
+  @JsonKey(ignore: true)
+  _$$MissionListResponseImplCopyWith<_$MissionListResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BusinessAnalyzeResponse _$BusinessAnalyzeResponseFromJson(
+    Map<String, dynamic> json) {
+  return _BusinessAnalyzeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BusinessAnalyzeResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get missionId => throw _privateConstructorUsedError;
+  String get objectiveId => throw _privateConstructorUsedError;
+  String get objectiveDesc => throw _privateConstructorUsedError;
+  Map<String, String> get agentResponses => throw _privateConstructorUsedError;
+  String get combinedSummary => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BusinessAnalyzeResponseCopyWith<BusinessAnalyzeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BusinessAnalyzeResponseCopyWith<$Res> {
+  factory $BusinessAnalyzeResponseCopyWith(BusinessAnalyzeResponse value,
+          $Res Function(BusinessAnalyzeResponse) then) =
+      _$BusinessAnalyzeResponseCopyWithImpl<$Res, BusinessAnalyzeResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String missionId,
+      String objectiveId,
+      String objectiveDesc,
+      Map<String, String> agentResponses,
+      String combinedSummary,
+      double createdAt});
+}
+
+/// @nodoc
+class _$BusinessAnalyzeResponseCopyWithImpl<$Res,
+        $Val extends BusinessAnalyzeResponse>
+    implements $BusinessAnalyzeResponseCopyWith<$Res> {
+  _$BusinessAnalyzeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? missionId = null,
+    Object? objectiveId = null,
+    Object? objectiveDesc = null,
+    Object? agentResponses = null,
+    Object? combinedSummary = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      missionId: null == missionId
+          ? _value.missionId
+          : missionId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveId: null == objectiveId
+          ? _value.objectiveId
+          : objectiveId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveDesc: null == objectiveDesc
+          ? _value.objectiveDesc
+          : objectiveDesc // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentResponses: null == agentResponses
+          ? _value.agentResponses
+          : agentResponses // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      combinedSummary: null == combinedSummary
+          ? _value.combinedSummary
+          : combinedSummary // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BusinessAnalyzeResponseImplCopyWith<$Res>
+    implements $BusinessAnalyzeResponseCopyWith<$Res> {
+  factory _$$BusinessAnalyzeResponseImplCopyWith(
+          _$BusinessAnalyzeResponseImpl value,
+          $Res Function(_$BusinessAnalyzeResponseImpl) then) =
+      __$$BusinessAnalyzeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String missionId,
+      String objectiveId,
+      String objectiveDesc,
+      Map<String, String> agentResponses,
+      String combinedSummary,
+      double createdAt});
+}
+
+/// @nodoc
+class __$$BusinessAnalyzeResponseImplCopyWithImpl<$Res>
+    extends _$BusinessAnalyzeResponseCopyWithImpl<$Res,
+        _$BusinessAnalyzeResponseImpl>
+    implements _$$BusinessAnalyzeResponseImplCopyWith<$Res> {
+  __$$BusinessAnalyzeResponseImplCopyWithImpl(
+      _$BusinessAnalyzeResponseImpl _value,
+      $Res Function(_$BusinessAnalyzeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? missionId = null,
+    Object? objectiveId = null,
+    Object? objectiveDesc = null,
+    Object? agentResponses = null,
+    Object? combinedSummary = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$BusinessAnalyzeResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      missionId: null == missionId
+          ? _value.missionId
+          : missionId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveId: null == objectiveId
+          ? _value.objectiveId
+          : objectiveId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveDesc: null == objectiveDesc
+          ? _value.objectiveDesc
+          : objectiveDesc // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentResponses: null == agentResponses
+          ? _value._agentResponses
+          : agentResponses // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      combinedSummary: null == combinedSummary
+          ? _value.combinedSummary
+          : combinedSummary // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BusinessAnalyzeResponseImpl implements _BusinessAnalyzeResponse {
+  const _$BusinessAnalyzeResponseImpl(
+      {required this.id,
+      required this.missionId,
+      required this.objectiveId,
+      required this.objectiveDesc,
+      required final Map<String, String> agentResponses,
+      required this.combinedSummary,
+      required this.createdAt})
+      : _agentResponses = agentResponses;
+
+  factory _$BusinessAnalyzeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BusinessAnalyzeResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String missionId;
+  @override
+  final String objectiveId;
+  @override
+  final String objectiveDesc;
+  final Map<String, String> _agentResponses;
+  @override
+  Map<String, String> get agentResponses {
+    if (_agentResponses is EqualUnmodifiableMapView) return _agentResponses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_agentResponses);
+  }
+
+  @override
+  final String combinedSummary;
+  @override
+  final double createdAt;
+
+  @override
+  String toString() {
+    return 'BusinessAnalyzeResponse(id: $id, missionId: $missionId, objectiveId: $objectiveId, objectiveDesc: $objectiveDesc, agentResponses: $agentResponses, combinedSummary: $combinedSummary, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BusinessAnalyzeResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.missionId, missionId) ||
+                other.missionId == missionId) &&
+            (identical(other.objectiveId, objectiveId) ||
+                other.objectiveId == objectiveId) &&
+            (identical(other.objectiveDesc, objectiveDesc) ||
+                other.objectiveDesc == objectiveDesc) &&
+            const DeepCollectionEquality()
+                .equals(other._agentResponses, _agentResponses) &&
+            (identical(other.combinedSummary, combinedSummary) ||
+                other.combinedSummary == combinedSummary) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      missionId,
+      objectiveId,
+      objectiveDesc,
+      const DeepCollectionEquality().hash(_agentResponses),
+      combinedSummary,
+      createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BusinessAnalyzeResponseImplCopyWith<_$BusinessAnalyzeResponseImpl>
+      get copyWith => __$$BusinessAnalyzeResponseImplCopyWithImpl<
+          _$BusinessAnalyzeResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BusinessAnalyzeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BusinessAnalyzeResponse implements BusinessAnalyzeResponse {
+  const factory _BusinessAnalyzeResponse(
+      {required final String id,
+      required final String missionId,
+      required final String objectiveId,
+      required final String objectiveDesc,
+      required final Map<String, String> agentResponses,
+      required final String combinedSummary,
+      required final double createdAt}) = _$BusinessAnalyzeResponseImpl;
+
+  factory _BusinessAnalyzeResponse.fromJson(Map<String, dynamic> json) =
+      _$BusinessAnalyzeResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get missionId;
+  @override
+  String get objectiveId;
+  @override
+  String get objectiveDesc;
+  @override
+  Map<String, String> get agentResponses;
+  @override
+  String get combinedSummary;
+  @override
+  double get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$BusinessAnalyzeResponseImplCopyWith<_$BusinessAnalyzeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+BusinessReportsListResponse _$BusinessReportsListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _BusinessReportsListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BusinessReportsListResponse {
+  List<BusinessReportSummary> get reports => throw _privateConstructorUsedError;
+  int get count => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BusinessReportsListResponseCopyWith<BusinessReportsListResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BusinessReportsListResponseCopyWith<$Res> {
+  factory $BusinessReportsListResponseCopyWith(
+          BusinessReportsListResponse value,
+          $Res Function(BusinessReportsListResponse) then) =
+      _$BusinessReportsListResponseCopyWithImpl<$Res,
+          BusinessReportsListResponse>;
+  @useResult
+  $Res call({List<BusinessReportSummary> reports, int count});
+}
+
+/// @nodoc
+class _$BusinessReportsListResponseCopyWithImpl<$Res,
+        $Val extends BusinessReportsListResponse>
+    implements $BusinessReportsListResponseCopyWith<$Res> {
+  _$BusinessReportsListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? reports = null,
+    Object? count = null,
+  }) {
+    return _then(_value.copyWith(
+      reports: null == reports
+          ? _value.reports
+          : reports // ignore: cast_nullable_to_non_nullable
+              as List<BusinessReportSummary>,
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BusinessReportsListResponseImplCopyWith<$Res>
+    implements $BusinessReportsListResponseCopyWith<$Res> {
+  factory _$$BusinessReportsListResponseImplCopyWith(
+          _$BusinessReportsListResponseImpl value,
+          $Res Function(_$BusinessReportsListResponseImpl) then) =
+      __$$BusinessReportsListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<BusinessReportSummary> reports, int count});
+}
+
+/// @nodoc
+class __$$BusinessReportsListResponseImplCopyWithImpl<$Res>
+    extends _$BusinessReportsListResponseCopyWithImpl<$Res,
+        _$BusinessReportsListResponseImpl>
+    implements _$$BusinessReportsListResponseImplCopyWith<$Res> {
+  __$$BusinessReportsListResponseImplCopyWithImpl(
+      _$BusinessReportsListResponseImpl _value,
+      $Res Function(_$BusinessReportsListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? reports = null,
+    Object? count = null,
+  }) {
+    return _then(_$BusinessReportsListResponseImpl(
+      reports: null == reports
+          ? _value._reports
+          : reports // ignore: cast_nullable_to_non_nullable
+              as List<BusinessReportSummary>,
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BusinessReportsListResponseImpl
+    implements _BusinessReportsListResponse {
+  const _$BusinessReportsListResponseImpl(
+      {required final List<BusinessReportSummary> reports, required this.count})
+      : _reports = reports;
+
+  factory _$BusinessReportsListResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$BusinessReportsListResponseImplFromJson(json);
+
+  final List<BusinessReportSummary> _reports;
+  @override
+  List<BusinessReportSummary> get reports {
+    if (_reports is EqualUnmodifiableListView) return _reports;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_reports);
+  }
+
+  @override
+  final int count;
+
+  @override
+  String toString() {
+    return 'BusinessReportsListResponse(reports: $reports, count: $count)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BusinessReportsListResponseImpl &&
+            const DeepCollectionEquality().equals(other._reports, _reports) &&
+            (identical(other.count, count) || other.count == count));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_reports), count);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BusinessReportsListResponseImplCopyWith<_$BusinessReportsListResponseImpl>
+      get copyWith => __$$BusinessReportsListResponseImplCopyWithImpl<
+          _$BusinessReportsListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BusinessReportsListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BusinessReportsListResponse
+    implements BusinessReportsListResponse {
+  const factory _BusinessReportsListResponse(
+      {required final List<BusinessReportSummary> reports,
+      required final int count}) = _$BusinessReportsListResponseImpl;
+
+  factory _BusinessReportsListResponse.fromJson(Map<String, dynamic> json) =
+      _$BusinessReportsListResponseImpl.fromJson;
+
+  @override
+  List<BusinessReportSummary> get reports;
+  @override
+  int get count;
+  @override
+  @JsonKey(ignore: true)
+  _$$BusinessReportsListResponseImplCopyWith<_$BusinessReportsListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+BusinessReportDetailResponse _$BusinessReportDetailResponseFromJson(
+    Map<String, dynamic> json) {
+  return _BusinessReportDetailResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BusinessReportDetailResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get missionId => throw _privateConstructorUsedError;
+  String get objectiveId => throw _privateConstructorUsedError;
+  String get objectiveDesc => throw _privateConstructorUsedError;
+  Map<String, String> get agentResponses => throw _privateConstructorUsedError;
+  String get combinedSummary => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BusinessReportDetailResponseCopyWith<BusinessReportDetailResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BusinessReportDetailResponseCopyWith<$Res> {
+  factory $BusinessReportDetailResponseCopyWith(
+          BusinessReportDetailResponse value,
+          $Res Function(BusinessReportDetailResponse) then) =
+      _$BusinessReportDetailResponseCopyWithImpl<$Res,
+          BusinessReportDetailResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String missionId,
+      String objectiveId,
+      String objectiveDesc,
+      Map<String, String> agentResponses,
+      String combinedSummary,
+      double createdAt});
+}
+
+/// @nodoc
+class _$BusinessReportDetailResponseCopyWithImpl<$Res,
+        $Val extends BusinessReportDetailResponse>
+    implements $BusinessReportDetailResponseCopyWith<$Res> {
+  _$BusinessReportDetailResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? missionId = null,
+    Object? objectiveId = null,
+    Object? objectiveDesc = null,
+    Object? agentResponses = null,
+    Object? combinedSummary = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      missionId: null == missionId
+          ? _value.missionId
+          : missionId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveId: null == objectiveId
+          ? _value.objectiveId
+          : objectiveId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveDesc: null == objectiveDesc
+          ? _value.objectiveDesc
+          : objectiveDesc // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentResponses: null == agentResponses
+          ? _value.agentResponses
+          : agentResponses // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      combinedSummary: null == combinedSummary
+          ? _value.combinedSummary
+          : combinedSummary // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BusinessReportDetailResponseImplCopyWith<$Res>
+    implements $BusinessReportDetailResponseCopyWith<$Res> {
+  factory _$$BusinessReportDetailResponseImplCopyWith(
+          _$BusinessReportDetailResponseImpl value,
+          $Res Function(_$BusinessReportDetailResponseImpl) then) =
+      __$$BusinessReportDetailResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String missionId,
+      String objectiveId,
+      String objectiveDesc,
+      Map<String, String> agentResponses,
+      String combinedSummary,
+      double createdAt});
+}
+
+/// @nodoc
+class __$$BusinessReportDetailResponseImplCopyWithImpl<$Res>
+    extends _$BusinessReportDetailResponseCopyWithImpl<$Res,
+        _$BusinessReportDetailResponseImpl>
+    implements _$$BusinessReportDetailResponseImplCopyWith<$Res> {
+  __$$BusinessReportDetailResponseImplCopyWithImpl(
+      _$BusinessReportDetailResponseImpl _value,
+      $Res Function(_$BusinessReportDetailResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? missionId = null,
+    Object? objectiveId = null,
+    Object? objectiveDesc = null,
+    Object? agentResponses = null,
+    Object? combinedSummary = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$BusinessReportDetailResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      missionId: null == missionId
+          ? _value.missionId
+          : missionId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveId: null == objectiveId
+          ? _value.objectiveId
+          : objectiveId // ignore: cast_nullable_to_non_nullable
+              as String,
+      objectiveDesc: null == objectiveDesc
+          ? _value.objectiveDesc
+          : objectiveDesc // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentResponses: null == agentResponses
+          ? _value._agentResponses
+          : agentResponses // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
+      combinedSummary: null == combinedSummary
+          ? _value.combinedSummary
+          : combinedSummary // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BusinessReportDetailResponseImpl
+    implements _BusinessReportDetailResponse {
+  const _$BusinessReportDetailResponseImpl(
+      {required this.id,
+      required this.missionId,
+      required this.objectiveId,
+      required this.objectiveDesc,
+      required final Map<String, String> agentResponses,
+      required this.combinedSummary,
+      required this.createdAt})
+      : _agentResponses = agentResponses;
+
+  factory _$BusinessReportDetailResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$BusinessReportDetailResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String missionId;
+  @override
+  final String objectiveId;
+  @override
+  final String objectiveDesc;
+  final Map<String, String> _agentResponses;
+  @override
+  Map<String, String> get agentResponses {
+    if (_agentResponses is EqualUnmodifiableMapView) return _agentResponses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_agentResponses);
+  }
+
+  @override
+  final String combinedSummary;
+  @override
+  final double createdAt;
+
+  @override
+  String toString() {
+    return 'BusinessReportDetailResponse(id: $id, missionId: $missionId, objectiveId: $objectiveId, objectiveDesc: $objectiveDesc, agentResponses: $agentResponses, combinedSummary: $combinedSummary, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BusinessReportDetailResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.missionId, missionId) ||
+                other.missionId == missionId) &&
+            (identical(other.objectiveId, objectiveId) ||
+                other.objectiveId == objectiveId) &&
+            (identical(other.objectiveDesc, objectiveDesc) ||
+                other.objectiveDesc == objectiveDesc) &&
+            const DeepCollectionEquality()
+                .equals(other._agentResponses, _agentResponses) &&
+            (identical(other.combinedSummary, combinedSummary) ||
+                other.combinedSummary == combinedSummary) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      missionId,
+      objectiveId,
+      objectiveDesc,
+      const DeepCollectionEquality().hash(_agentResponses),
+      combinedSummary,
+      createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BusinessReportDetailResponseImplCopyWith<
+          _$BusinessReportDetailResponseImpl>
+      get copyWith => __$$BusinessReportDetailResponseImplCopyWithImpl<
+          _$BusinessReportDetailResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BusinessReportDetailResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BusinessReportDetailResponse
+    implements BusinessReportDetailResponse {
+  const factory _BusinessReportDetailResponse(
+      {required final String id,
+      required final String missionId,
+      required final String objectiveId,
+      required final String objectiveDesc,
+      required final Map<String, String> agentResponses,
+      required final String combinedSummary,
+      required final double createdAt}) = _$BusinessReportDetailResponseImpl;
+
+  factory _BusinessReportDetailResponse.fromJson(Map<String, dynamic> json) =
+      _$BusinessReportDetailResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get missionId;
+  @override
+  String get objectiveId;
+  @override
+  String get objectiveDesc;
+  @override
+  Map<String, String> get agentResponses;
+  @override
+  String get combinedSummary;
+  @override
+  double get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$BusinessReportDetailResponseImplCopyWith<
+          _$BusinessReportDetailResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 HealthCheckResult _$HealthCheckResultFromJson(Map<String, dynamic> json) {
   return _HealthCheckResult.fromJson(json);
 }

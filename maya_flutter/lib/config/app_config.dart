@@ -202,6 +202,12 @@ class AppConfig {
   static const String metaStepResult = '/api/v1/cognitive/metacognitive/step_result';
   static const String metaEvents = '/api/v1/cognitive/metacognitive/events';
 
+  // Business Analysis (Phase 20)
+  static const String missionsList = '/api/v1/cognitive/missions';
+  static const String missionAnalyze = '/api/v1/cognitive/missions/';
+  static const String missionReports = '/api/v1/cognitive/missions/';
+  static const String missionReportDetail = '/api/v1/cognitive/missions/';
+
   // Maya Cognitive Core (Phase 19)
   static const String coreStatus = '/api/v1/maya/core/status';
   static const String coreInitialize = '/api/v1/maya/core/initialize';

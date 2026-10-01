@@ -537,6 +537,92 @@ Map<String, dynamic> _$WMItemToJson(WMItem instance) {
   return val;
 }
 
+MissionInfo _$MissionInfoFromJson(Map json) => $checkedCreate(
+      'MissionInfo',
+      json,
+      ($checkedConvert) {
+        final val = MissionInfo(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          missionType: $checkedConvert('mission_type', (v) => v as String),
+          active: $checkedConvert('active', (v) => v as bool),
+          selfGen: $checkedConvert('self_gen', (v) => v as bool),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt: $checkedConvert('updated_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'missionType': 'mission_type',
+        'selfGen': 'self_gen',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$MissionInfoToJson(MissionInfo instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'description': instance.description,
+    'mission_type': instance.missionType,
+    'active': instance.active,
+    'self_gen': instance.selfGen,
+    'status': instance.status,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated_at', instance.updatedAt?.toIso8601String());
+  return val;
+}
+
+BusinessReportSummary _$BusinessReportSummaryFromJson(Map json) =>
+    $checkedCreate(
+      'BusinessReportSummary',
+      json,
+      ($checkedConvert) {
+        final val = BusinessReportSummary(
+          id: $checkedConvert('id', (v) => v as String),
+          missionId: $checkedConvert('mission_id', (v) => v as String),
+          objectiveId: $checkedConvert('objective_id', (v) => v as String),
+          objectiveDesc: $checkedConvert('objective_desc', (v) => v as String),
+          combinedSummary:
+              $checkedConvert('combined_summary', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'missionId': 'mission_id',
+        'objectiveId': 'objective_id',
+        'objectiveDesc': 'objective_desc',
+        'combinedSummary': 'combined_summary',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$BusinessReportSummaryToJson(
+        BusinessReportSummary instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'mission_id': instance.missionId,
+      'objective_id': instance.objectiveId,
+      'objective_desc': instance.objectiveDesc,
+      'combined_summary': instance.combinedSummary,
+      'created_at': instance.createdAt,
+    };
+
 KernelCheckpointsResponse _$KernelCheckpointsResponseFromJson(Map json) =>
     $checkedCreate(
       'KernelCheckpointsResponse',
@@ -2498,6 +2584,139 @@ Map<String, dynamic> _$$SandboxExecuteResponseImplToJson(
   writeNotNull('execution_time_ms', instance.executionTimeMs);
   return val;
 }
+
+_$MissionListResponseImpl _$$MissionListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$MissionListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$MissionListResponseImpl(
+          missions: $checkedConvert(
+              'missions',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      MissionInfo.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$MissionListResponseImplToJson(
+        _$MissionListResponseImpl instance) =>
+    <String, dynamic>{
+      'missions': instance.missions,
+    };
+
+_$BusinessAnalyzeResponseImpl _$$BusinessAnalyzeResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$BusinessAnalyzeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BusinessAnalyzeResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          missionId: $checkedConvert('mission_id', (v) => v as String),
+          objectiveId: $checkedConvert('objective_id', (v) => v as String),
+          objectiveDesc: $checkedConvert('objective_desc', (v) => v as String),
+          agentResponses: $checkedConvert(
+              'agent_responses', (v) => Map<String, String>.from(v as Map)),
+          combinedSummary:
+              $checkedConvert('combined_summary', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'missionId': 'mission_id',
+        'objectiveId': 'objective_id',
+        'objectiveDesc': 'objective_desc',
+        'agentResponses': 'agent_responses',
+        'combinedSummary': 'combined_summary',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$$BusinessAnalyzeResponseImplToJson(
+        _$BusinessAnalyzeResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'mission_id': instance.missionId,
+      'objective_id': instance.objectiveId,
+      'objective_desc': instance.objectiveDesc,
+      'agent_responses': instance.agentResponses,
+      'combined_summary': instance.combinedSummary,
+      'created_at': instance.createdAt,
+    };
+
+_$BusinessReportsListResponseImpl _$$BusinessReportsListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$BusinessReportsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BusinessReportsListResponseImpl(
+          reports: $checkedConvert(
+              'reports',
+              (v) => (v as List<dynamic>)
+                  .map((e) => BusinessReportSummary.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          count: $checkedConvert('count', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BusinessReportsListResponseImplToJson(
+        _$BusinessReportsListResponseImpl instance) =>
+    <String, dynamic>{
+      'reports': instance.reports,
+      'count': instance.count,
+    };
+
+_$BusinessReportDetailResponseImpl _$$BusinessReportDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$BusinessReportDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BusinessReportDetailResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          missionId: $checkedConvert('mission_id', (v) => v as String),
+          objectiveId: $checkedConvert('objective_id', (v) => v as String),
+          objectiveDesc: $checkedConvert('objective_desc', (v) => v as String),
+          agentResponses: $checkedConvert(
+              'agent_responses', (v) => Map<String, String>.from(v as Map)),
+          combinedSummary:
+              $checkedConvert('combined_summary', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'missionId': 'mission_id',
+        'objectiveId': 'objective_id',
+        'objectiveDesc': 'objective_desc',
+        'agentResponses': 'agent_responses',
+        'combinedSummary': 'combined_summary',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$$BusinessReportDetailResponseImplToJson(
+        _$BusinessReportDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'mission_id': instance.missionId,
+      'objective_id': instance.objectiveId,
+      'objective_desc': instance.objectiveDesc,
+      'agent_responses': instance.agentResponses,
+      'combined_summary': instance.combinedSummary,
+      'created_at': instance.createdAt,
+    };
 
 _$HealthCheckResultImpl _$$HealthCheckResultImplFromJson(Map json) =>
     $checkedCreate(

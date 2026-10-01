@@ -1797,6 +1797,20 @@ class _AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
+                _DrawerActionTile(
+                  icon: Icons.analytics_rounded,
+                  label: 'Business Analysis',
+                  subtitle: 'Missions, reports, 4-agent analysis pipeline',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _BusinessAnalysisScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -15960,6 +15974,663 @@ class _CoreStatCard extends StatelessWidget {
   }
 }
 
+// Business Analysis Screen (Phase 20)
+class _BusinessAnalysisScreen extends ConsumerStatefulWidget {
+  const _BusinessAnalysisScreen();
+
+  @override
+  ConsumerState<_BusinessAnalysisScreen> createState() => _BusinessAnalysisScreenState();
+}
+
+class _BusinessAnalysisScreenState extends ConsumerState<_BusinessAnalysisScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Business Analysis', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => ref.invalidate(businessMissionsProvider),
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.business_rounded), text: 'Missions & Reports'),
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Run Analysis'),
+              Tab(icon: Icon(Icons.description_rounded), text: 'Report Detail'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _BusinessMissionsTab(),
+            _RunAnalysisTab(),
+            _ReportDetailTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BusinessMissionsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final missionsAsync = ref.watch(businessMissionsProvider);
+
+    return missionsAsync.when(
+      data: (data) => data.missions.isEmpty
+          ? _emptyState('No Business Missions', 'Create a business mission to start analysis', Icons.business_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Business Missions', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Select a mission to view its analysis reports',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.missions.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final mission = data.missions[index];
+                      return _MissionCard(mission: mission);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => _errorState(err.toString()),
+    );
+  }
+}
+
+class _MissionCard extends ConsumerWidget {
+  final MissionInfo mission;
+
+  const _MissionCard({required this.mission});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.business_rounded, color: MayaTheme.neonEmerald, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(mission.name, style: MayaTheme.titleMedium),
+                    Text('ID: ${mission.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                    if (mission.description.isNotEmpty)
+                      Text(mission.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white38), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: mission.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: mission.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                    ),
+                    child: Text(
+                      mission.active ? 'ACTIVE' : 'INACTIVE',
+                      style: MayaTheme.labelSmall.copyWith(color: mission.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text('Created: ${mission.createdAt.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _MissionReportsList(missionId: mission.id),
+        ],
+      ),
+    );
+  }
+}
+
+class _MissionReportsList extends ConsumerWidget {
+  final String missionId;
+
+  const _MissionReportsList({required this.missionId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reportsAsync = ref.watch(businessReportsProvider(missionId));
+
+    return reportsAsync.when(
+      data: (data) => data.reports.isEmpty
+          ? Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: const Center(child: Text('No reports yet. Run an analysis to generate reports.', style: MayaTheme.bodyMedium)),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Reports', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.reports.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (_, index) {
+                    final report = data.reports[index];
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: MayaTheme.glassCard(),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(report.objectiveDesc, style: MayaTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                const SizedBox(height: 4),
+                                Text('Report ID: ${report.id} • ${DateTime.fromMillisecondsSinceEpoch((report.createdAt * 1000).round()).toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.arrow_forward_ios_rounded, color: MayaTheme.neonCyan, size: 18),
+                            onPressed: () => _showReportDetail(context, ref, missionId, report.id),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+      loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)))),
+      error: (err, _) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: MayaTheme.glassCard(),
+        child: Text('Error loading reports: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+      ),
+    );
+  }
+
+  void _showReportDetail(BuildContext context, WidgetRef ref, String missionId, String reportId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _ReportDetailView(missionId: missionId, reportId: reportId),
+      ),
+    );
+  }
+}
+
+class _RunAnalysisTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final missionsAsync = ref.watch(businessMissionsFamily(false));
+
+    return missionsAsync.when(
+      data: (data) => data.missions.isEmpty
+          ? _emptyState('No Business Missions', 'Create a business mission first in the Cognition Loop screen', Icons.business_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Run Business Analysis', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Select a mission and objective to run the 4-agent analysis pipeline (Pricing → Finance → Marketing → Strategy)',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 24),
+                  _AnalysisForm(missions: data.missions),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => _errorState(err.toString()),
+    );
+  }
+}
+
+class _AnalysisForm extends ConsumerStatefulWidget {
+  final List<MissionInfo> missions;
+
+  const _AnalysisForm({required this.missions});
+
+  @override
+  ConsumerState<_AnalysisForm> createState() => _AnalysisFormState();
+}
+
+class _AnalysisFormState extends ConsumerState<_AnalysisForm> {
+  String? _selectedMissionId;
+  String _selectedObjectiveId = '';
+  BusinessAnalyzeResponse? _result;
+  bool _isLoading = false;
+
+  Future<void> _runAnalysis() async {
+    if (_selectedMissionId == null) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.runBusinessAnalysis(
+        missionId: _selectedMissionId!,
+        objectiveId: _selectedObjectiveId.isEmpty ? null : _selectedObjectiveId,
+      );
+      setState(() {
+        _result = result;
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Analysis complete: ${result.id}'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Analysis failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: MayaTheme.glassCard(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Select Mission', style: MayaTheme.labelMedium),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                value: _selectedMissionId,
+                decoration: InputDecoration(
+                  hintText: 'Choose a business mission',
+                  filled: true,
+                  fillColor: MayaTheme.slate700,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+                dropdownColor: MayaTheme.slate800,
+                style: MayaTheme.bodyMedium,
+                items: widget.missions.map((m) => DropdownMenuItem(value: m.id, child: Text(m.name))).toList(),
+                onChanged: (v) => setState(() => _selectedMissionId = v),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: TextEditingController(text: _selectedObjectiveId),
+                style: MayaTheme.bodyMedium,
+                onChanged: (v) => _selectedObjectiveId = v,
+                decoration: InputDecoration(
+                  labelText: 'Objective ID (optional)',
+                  hintText: 'Leave empty to auto-select highest priority pending objective',
+                  filled: true,
+                  fillColor: MayaTheme.slate700,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _runAnalysis,
+                  icon: _isLoading
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: MayaTheme.slate900))
+                      : const Icon(Icons.analytics_rounded),
+                  label: Text(_isLoading ? 'Analyzing...' : 'Run Analysis'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MayaTheme.neonCyan,
+                    foregroundColor: MayaTheme.slate900,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (_result != null) ...[
+          const SizedBox(height: 24),
+          _AnalysisResultCard(result: _result!),
+        ],
+      ],
+    );
+  }
+}
+
+class _AnalysisResultCard extends StatelessWidget {
+  final BusinessAnalyzeResponse result;
+
+  const _AnalysisResultCard({required this.result});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.neonEmerald),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.check_circle_rounded, color: MayaTheme.neonEmerald, size: 24),
+              const SizedBox(width: 8),
+              Text('Analysis Complete', style: MayaTheme.titleMedium.copyWith(color: MayaTheme.neonEmerald)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text('Report ID: ${result.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+          Text('Objective: ${result.objectiveDesc}', style: MayaTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 16),
+          const Text('Executive Summary', style: MayaTheme.labelMedium),
+          const SizedBox(height: 8),
+          Text(result.combinedSummary, style: MayaTheme.bodyMedium),
+          const SizedBox(height: 16),
+          const Text('Agent Responses', style: MayaTheme.labelMedium),
+          const SizedBox(height: 8),
+          ...result.agentResponses.entries.map((entry) => Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(entry.key.toUpperCase(), style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan)),
+                const SizedBox(height: 4),
+                Text(entry.value, style: MayaTheme.bodySmall, maxLines: 4, overflow: TextOverflow.ellipsis),
+              ],
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReportDetailTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Report Detail', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Navigate from the Missions & Reports tab to view a full report with all agent responses',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(32),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              children: [
+                Icon(Icons.description_rounded, size: 48, color: Colors.white38),
+                const SizedBox(height: 16),
+                const Text('Select a report from the Missions & Reports tab', style: MayaTheme.bodyMedium),
+                const SizedBox(height: 8),
+                Text('to view the full detail with all agent responses', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReportDetailView extends ConsumerWidget {
+  final String missionId;
+  final String reportId;
+
+  const _ReportDetailView({required this.missionId, required this.reportId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detailAsync = ref.watch(businessReportDetailProvider((missionId: missionId, reportId: reportId)));
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Report Detail', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: detailAsync.when(
+          data: (detail) => SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.description_rounded, color: MayaTheme.neonEmerald, size: 28),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Report: ${detail.id}', style: MayaTheme.titleMedium),
+                          Text('Mission: ${detail.missionId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                          Text('Objective: ${detail.objectiveId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                          Text('Created: ${DateTime.fromMillisecondsSinceEpoch((detail.createdAt * 1000).round()).toString()}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text('Objective Description', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: MayaTheme.glassCard(),
+                  child: Text(detail.objectiveDesc, style: MayaTheme.bodyMedium),
+                ),
+                const SizedBox(height: 24),
+                const Text('Executive Summary', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.neonEmerald),
+                  child: Text(detail.combinedSummary, style: MayaTheme.bodyMedium),
+                ),
+                const SizedBox(height: 24),
+                const Text('Agent Responses', style: MayaTheme.labelMedium),
+                const SizedBox(height: 8),
+                ...detail.agentResponses.entries.map((entry) => Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(16),
+                  decoration: MayaTheme.glassCard(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(entry.key.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SelectableText(entry.value, style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace')),
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          ),
+          loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+          error: (err, _) => Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+              const SizedBox(height: 16),
+              Text('Error loading report', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+              const SizedBox(height: 8),
+              Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          )),
+        ),
+      ),
+    );
+  }
+}
+
+Widget _emptyState(String title, String subtitle, IconData icon) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 48, color: Colors.white38),
+        const SizedBox(height: 16),
+        Text(title, style: MayaTheme.titleMedium),
+        const SizedBox(height: 8),
+        Text(subtitle, style: MayaTheme.bodyMedium.copyWith(color: Colors.white54), textAlign: TextAlign.center),
+      ],
+    ),
+  );
+}
+
+Widget _errorState(String error) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(error, style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ],
+    ),
+  );
+}
+
+class _CoreStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _CoreStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
 // AGI Architecture Part 2 Providers
 // Synthesizer
 final synthesizeListProvider = FutureProvider<SynthesizeListResponse>((ref) async {
@@ -16033,4 +16704,25 @@ final coreCheckpointsProvider = FutureProvider<CoreCheckpointsResponse>((ref) as
 final coreAuditProvider = FutureProvider<CoreAuditResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getCoreAudit();
+});
+
+// Business Analysis Providers (Phase 20)
+final businessMissionsProvider = FutureProvider<MissionListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBusinessMissions();
+});
+
+final businessMissionsFamily = FutureProvider.family<MissionListResponse, bool>((ref, activeOnly) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBusinessMissions(activeOnly: activeOnly);
+});
+
+final businessReportsProvider = FutureProvider.family<BusinessReportsListResponse, String>((ref, missionId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBusinessReports(missionId);
+});
+
+final businessReportDetailProvider = FutureProvider.family<BusinessReportDetailResponse, ({String missionId, String reportId})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBusinessReport(missionId: params.missionId, reportId: params.reportId);
 });

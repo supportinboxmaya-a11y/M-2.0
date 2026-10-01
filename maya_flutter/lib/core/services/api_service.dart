@@ -1868,6 +1868,47 @@ class ApiService {
     return SandboxExecuteResponse.fromJson(response.data);
   }
 
+  // Business Analysis (Phase 20)
+  Future<MissionListResponse> getBusinessMissions({bool activeOnly = false}) async {
+    final response = await _dio.get(
+      AppConfig.missionsList,
+      queryParameters: {
+        'mission_type': 'business',
+        'active_only': activeOnly,
+      },
+    );
+    return MissionListResponse.fromJson(response.data);
+  }
+
+  Future<BusinessAnalyzeResponse> runBusinessAnalysis({
+    required String missionId,
+    String? objectiveId,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.missionAnalyze}$missionId/analyze',
+      data: {
+        if (objectiveId != null) 'objective_id': objectiveId,
+      },
+    );
+    return BusinessAnalyzeResponse.fromJson(response.data);
+  }
+
+  Future<BusinessReportsListResponse> getBusinessReports(String missionId) async {
+    final response = await _dio.get(
+      '${AppConfig.missionReports}$missionId/reports',
+    );
+    return BusinessReportsListResponse.fromJson(response.data);
+  }
+
+  Future<BusinessReportDetailResponse> getBusinessReport({
+    required String missionId,
+    required String reportId,
+  }) async {
+    final response = await _dio.get(
+      '${AppConfig.missionReportDetail}$missionId/reports/$reportId',
+    );
+    return BusinessReportDetailResponse.fromJson(response.data);
+  }
 
 // AGI Architecture (Phase 18 Part 1)
   Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
@@ -3212,6 +3253,114 @@ class SandboxExecuteResponse with _$SandboxExecuteResponse {
 
   factory SandboxExecuteResponse.fromJson(Map<String, dynamic> json) =>
       _$SandboxExecuteResponseFromJson(json);
+}
+
+// Business Analysis Models (Phase 20)
+@freezed
+class MissionListResponse with _$MissionListResponse {
+  const factory MissionListResponse({
+    required List<MissionInfo> missions,
+  }) = _MissionListResponse;
+
+  factory MissionListResponse.fromJson(Map<String, dynamic> json) =>
+      _$MissionListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class MissionInfo {
+  final String id;
+  final String name;
+  final String description;
+  final String missionType;
+  final bool active;
+  final bool selfGen;
+  final String status;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+
+  const MissionInfo({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.missionType,
+    required this.active,
+    required this.selfGen,
+    required this.status,
+    required this.createdAt,
+    this.updatedAt,
+  });
+
+  factory MissionInfo.fromJson(Map<String, dynamic> json) =>
+      _$MissionInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MissionInfoToJson(this);
+}
+
+@freezed
+class BusinessAnalyzeResponse with _$BusinessAnalyzeResponse {
+  const factory BusinessAnalyzeResponse({
+    required String id,
+    required String missionId,
+    required String objectiveId,
+    required String objectiveDesc,
+    required Map<String, String> agentResponses,
+    required String combinedSummary,
+    required double createdAt,
+  }) = _BusinessAnalyzeResponse;
+
+  factory BusinessAnalyzeResponse.fromJson(Map<String, dynamic> json) =>
+      _$BusinessAnalyzeResponseFromJson(json);
+}
+
+@freezed
+class BusinessReportsListResponse with _$BusinessReportsListResponse {
+  const factory BusinessReportsListResponse({
+    required List<BusinessReportSummary> reports,
+    required int count,
+  }) = _BusinessReportsListResponse;
+
+  factory BusinessReportsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$BusinessReportsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class BusinessReportSummary {
+  final String id;
+  final String missionId;
+  final String objectiveId;
+  final String objectiveDesc;
+  final String combinedSummary;
+  final double createdAt;
+
+  const BusinessReportSummary({
+    required this.id,
+    required this.missionId,
+    required this.objectiveId,
+    required this.objectiveDesc,
+    required this.combinedSummary,
+    required this.createdAt,
+  });
+
+  factory BusinessReportSummary.fromJson(Map<String, dynamic> json) =>
+      _$BusinessReportSummaryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BusinessReportSummaryToJson(this);
+}
+
+@freezed
+class BusinessReportDetailResponse with _$BusinessReportDetailResponse {
+  const factory BusinessReportDetailResponse({
+    required String id,
+    required String missionId,
+    required String objectiveId,
+    required String objectiveDesc,
+    required Map<String, String> agentResponses,
+    required String combinedSummary,
+    required double createdAt,
+  }) = _BusinessReportDetailResponse;
+
+  factory BusinessReportDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$BusinessReportDetailResponseFromJson(json);
 }
 
 @freezed
