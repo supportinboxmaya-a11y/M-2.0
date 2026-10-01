@@ -1529,6 +1529,346 @@ class ApiService {
     return ProceduralComposeResponse.fromJson(response.data);
   }
 
+  // Maya Cognitive Core (Phase 19)
+
+  Future<CoreStatusResponse> getCoreStatus() async {
+    final response = await _dio.get(AppConfig.coreStatus);
+    return CoreStatusResponse.fromJson(response.data);
+  }
+
+  Future<CoreInitializeResponse> initializeCore() async {
+    final response = await _dio.post(AppConfig.coreInitialize);
+    return CoreInitializeResponse.fromJson(response.data);
+  }
+
+  Future<CoreLoopResponse> startCoreLoop({double interval = 30.0}) async {
+    final response = await _dio.post(
+      AppConfig.coreLoopStart,
+      queryParameters: {"interval": interval},
+    );
+    return CoreLoopResponse.fromJson(response.data);
+  }
+
+  Future<CoreLoopResponse> pauseCoreLoop() async {
+    final response = await _dio.post(AppConfig.coreLoopPause);
+    return CoreLoopResponse.fromJson(response.data);
+  }
+
+  Future<CoreLoopResponse> resumeCoreLoop() async {
+    final response = await _dio.post(AppConfig.coreLoopResume);
+    return CoreLoopResponse.fromJson(response.data);
+  }
+
+  Future<CoreLoopResponse> stopCoreLoop() async {
+    final response = await _dio.post(AppConfig.coreLoopStop);
+    return CoreLoopResponse.fromJson(response.data);
+  }
+
+  Future<CoreMissionResponse> runMission({
+    required String description,
+    String missionType = "general",
+    bool selfGen = true,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.coreRunMission,
+      data: {
+        "description": description,
+        "mission_type": missionType,
+        "self_gen": selfGen,
+      },
+    );
+    return CoreMissionResponse.fromJson(response.data);
+  }
+
+  Future<CoreGoalResponse> executeGoal({
+    required String goal,
+    int maxSteps = 10,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.coreExecuteGoal,
+      data: {
+        "goal": goal,
+        "max_steps": maxSteps,
+      },
+    );
+    return CoreGoalResponse.fromJson(response.data);
+  }
+
+  Future<CoreIdentityResponse> getIdentity() async {
+    final response = await _dio.get(AppConfig.coreIdentity);
+    return CoreIdentityResponse.fromJson(response.data);
+  }
+
+  Future<CoreModelsResponse> getModels() async {
+    final response = await _dio.get(AppConfig.coreModels);
+    return CoreModelsResponse.fromJson(response.data);
+  }
+
+  Future<CoreSwitchModelResponse> switchModel(String modelId) async {
+    final response = await _dio.post(
+      AppConfig.coreSwitchModel,
+      data: {"model_id": modelId},
+    );
+    return CoreSwitchModelResponse.fromJson(response.data);
+  }
+
+  Future<CoreInvokeModelResponse> invokeModel({
+    required String prompt,
+    String? modelId,
+    String taskType = "general",
+    int maxTokens = 4000,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.coreInvokeModel,
+      data: {
+        "prompt": prompt,
+        if (modelId != null) "model_id": modelId,
+        "task_type": taskType,
+        "max_tokens": maxTokens,
+      },
+    );
+    return CoreInvokeModelResponse.fromJson(response.data);
+  }
+
+  Future<CoreCheckpointResponse> createCheckpoint() async {
+    final response = await _dio.post(AppConfig.coreCheckpoint);
+    return CoreCheckpointResponse.fromJson(response.data);
+  }
+
+  Future<CoreRestoreCheckpointResponse> restoreCheckpoint(String checkpointId) async {
+    final response = await _dio.post(
+      AppConfig.coreRestoreCheckpoint,
+      data: {"checkpoint_id": checkpointId},
+    );
+    return CoreRestoreCheckpointResponse.fromJson(response.data);
+  }
+
+  Future<CoreCheckpointsResponse> listCheckpoints() async {
+    final response = await _dio.get(AppConfig.coreCheckpoints);
+    return CoreCheckpointsResponse.fromJson(response.data);
+  }
+
+  Future<CoreAuditResponse> getCoreAudit({int limit = 50}) async {
+    final response = await _dio.get(
+      AppConfig.coreAudit,
+      queryParameters: {"limit": limit},
+    );
+    return CoreAuditResponse.fromJson(response.data);
+  }
+
+  Future<CoreShutdownResponse> shutdownCore() async {
+    final response = await _dio.post(AppConfig.coreShutdown);
+    return CoreShutdownResponse.fromJson(response.data);
+  }
+
+  // Hippocampus / Episodic Memory
+  Future<EpisodicListResponse> getEpisodicMemory({
+    int limit = 50,
+    String? outcome,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.episodicList,
+      queryParameters: {
+        "limit": limit,
+        if (outcome != null) "outcome": outcome,
+      },
+    );
+    return EpisodicListResponse.fromJson(response.data);
+  }
+
+  Future<EpisodicSearchResponse> searchEpisodicMemory({
+    required String goal,
+    int limit = 10,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.episodicSearch,
+      queryParameters: {"goal": goal, "limit": limit},
+    );
+    return EpisodicSearchResponse.fromJson(response.data);
+  }
+
+  Future<EpisodicStatsResponse> getEpisodicStats() async {
+    final response = await _dio.get(AppConfig.episodicStats);
+    return EpisodicStatsResponse.fromJson(response.data);
+  }
+
+  Future<HippocampusSchemaQueryResponse> queryHippocampusSchema({
+    required String query,
+    int limit = 10,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.hippocampusSchemaQuery,
+      data: {"query": query, "limit": limit},
+    );
+    return HippocampusSchemaQueryResponse.fromJson(response.data);
+  }
+
+  Future<HippocampusSchemaApplyResponse> applyHippocampusSchema({
+    required String schemaId,
+    required Map<String, dynamic> context,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.hippocampusSchemaApply,
+      data: {"schema_id": schemaId, "context": context},
+    );
+    return HippocampusSchemaApplyResponse.fromJson(response.data);
+  }
+
+  // Semantic Memory / Knowledge
+  Future<KnowledgeQueryResponse> queryKnowledge({
+    String query = "",
+    String? domain,
+    int limit = 5,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.knowledgeQuery,
+      queryParameters: {
+        if (query.isNotEmpty) "q": query,
+        if (domain != null) "domain": domain,
+        "limit": limit,
+      },
+    );
+    return KnowledgeQueryResponse.fromJson(response.data);
+  }
+
+  Future<KnowledgeStatsResponse> getKnowledgeStats() async {
+    final response = await _dio.get(AppConfig.knowledgeStats);
+    return KnowledgeStatsResponse.fromJson(response.data);
+  }
+
+  Future<KnowledgeLearnResponse> learnKnowledge({
+    required String proposition,
+    double confidence = 0.6,
+    String source = "testimony",
+    String domain = "general",
+    Map<String, dynamic>? evidence,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.knowledgeLearn,
+      data: {
+        "proposition": proposition,
+        "confidence": confidence,
+        "source": source,
+        "domain": domain,
+        if (evidence != null) "evidence": evidence,
+      },
+    );
+    return KnowledgeLearnResponse.fromJson(response.data);
+  }
+
+  // Working Memory
+  Future<WorkingMemoryAddResponse> addWorkingMemory({
+    required String content,
+    String type = "fact",
+    double attention = 1.0,
+    Map<String, dynamic>? metadata,
+    Map<String, dynamic>? bindings,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.workingMemoryAdd,
+      data: {
+        "content": content,
+        "type": type,
+        "attention": attention,
+        if (metadata != null) "metadata": metadata,
+        if (bindings != null) "bindings": bindings,
+      },
+    );
+    return WorkingMemoryAddResponse.fromJson(response.data);
+  }
+
+  Future<WorkingMemorySearchResponse> searchWorkingMemory({
+    required String query,
+    int limit = 10,
+    String? type,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.workingMemorySearch,
+      queryParameters: {
+        "q": query,
+        "limit": limit,
+        if (type != null) "type": type,
+      },
+    );
+    return WorkingMemorySearchResponse.fromJson(response.data);
+  }
+
+  Future<WorkingMemoryCapacityResponse> getWorkingMemoryCapacity() async {
+    final response = await _dio.get(AppConfig.workingMemoryCapacity);
+    return WorkingMemoryCapacityResponse.fromJson(response.data);
+  }
+
+  // Working Memory v2
+  Future<WMAddResponse> wmAdd({
+    required String content,
+    String? chunkId,
+    double attention = 1.0,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.workingMemoryV2Add,
+      data: {
+        "content": content,
+        if (chunkId != null) "chunk_id": chunkId,
+        "attention": attention,
+      },
+    );
+    return WMAddResponse.fromJson(response.data);
+  }
+
+  Future<WMRetrieveResponse> wmRetrieve({
+    required String query,
+    int limit = 10,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.workingMemoryV2Retrieve,
+      data: {"query": query, "limit": limit},
+    );
+    return WMRetrieveResponse.fromJson(response.data);
+  }
+
+  Future<WMDecayResponse> wmDecay() async {
+    final response = await _dio.post(AppConfig.workingMemoryV2Decay);
+    return WMDecayResponse.fromJson(response.data);
+  }
+
+  // Browser & Sandbox
+  Future<BrowserActionResponse> browserAction({
+    required String action,
+    String? url,
+    String? selector,
+    String? text,
+    String? query,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.browserAction,
+      data: {
+        "action": action,
+        if (url != null) "url": url,
+        if (selector != null) "selector": selector,
+        if (text != null) "text": text,
+        if (query != null) "query": query,
+      },
+    );
+    return BrowserActionResponse.fromJson(response.data);
+  }
+
+  Future<SandboxExecuteResponse> sandboxExecute({
+    required String code,
+    String language = "python",
+    int timeoutSeconds = 30,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.sandboxExecute,
+      data: {
+        "code": code,
+        "language": language,
+        "timeout_seconds": timeoutSeconds,
+      },
+    );
+    return SandboxExecuteResponse.fromJson(response.data);
+  }
+
+
 // AGI Architecture (Phase 18 Part 1)
   Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
     final response = await _dio.get(
@@ -2331,6 +2671,547 @@ class ProceduralComposeResponse with _$ProceduralComposeResponse {
 
   factory ProceduralComposeResponse.fromJson(Map<String, dynamic> json) =>
       _$ProceduralComposeResponseFromJson(json);
+}
+
+// Maya Cognitive Core Models (Phase 19)
+@freezed
+class CoreStatusResponse with _$CoreStatusResponse {
+  const factory CoreStatusResponse({
+    required bool initialized,
+    required bool loopRunning,
+    required double loopInterval,
+    required int cycleCount,
+    required String activeModel,
+    required Map<String, dynamic> identity,
+    required Map<String, dynamic> selfState,
+    required Map<String, dynamic> kernelStatus,
+  }) = _CoreStatusResponse;
+
+  factory CoreStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreStatusResponseFromJson(json);
+}
+
+@freezed
+class CoreInitializeResponse with _$CoreInitializeResponse {
+  const factory CoreInitializeResponse({
+    required bool success,
+    required String message,
+  }) = _CoreInitializeResponse;
+
+  factory CoreInitializeResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreInitializeResponseFromJson(json);
+}
+
+@freezed
+class CoreLoopResponse with _$CoreLoopResponse {
+  const factory CoreLoopResponse({
+    required bool success,
+    double? interval,
+  }) = _CoreLoopResponse;
+
+  factory CoreLoopResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreLoopResponseFromJson(json);
+}
+
+@freezed
+class CoreMissionResponse with _$CoreMissionResponse {
+  const factory CoreMissionResponse({
+    required bool success,
+    required String missionId,
+    String? result,
+  }) = _CoreMissionResponse;
+
+  factory CoreMissionResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreMissionResponseFromJson(json);
+}
+
+@freezed
+class CoreGoalResponse with _$CoreGoalResponse {
+  const factory CoreGoalResponse({
+    required bool success,
+    required String goalId,
+    required int stepsExecuted,
+    String? result,
+  }) = _CoreGoalResponse;
+
+  factory CoreGoalResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreGoalResponseFromJson(json);
+}
+
+@freezed
+class CoreIdentityResponse with _$CoreIdentityResponse {
+  const factory CoreIdentityResponse({
+    required String id,
+    required String name,
+    required String purpose,
+    required List<String> values,
+    required DateTime createdAt,
+    required int version,
+  }) = _CoreIdentityResponse;
+
+  factory CoreIdentityResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreIdentityResponseFromJson(json);
+}
+
+@freezed
+class CoreModelsResponse with _$CoreModelsResponse {
+  const factory CoreModelsResponse({
+    required String activeModel,
+    required List<String> fallbackChain,
+    required List<ModelInfo> availableModels,
+  }) = _CoreModelsResponse;
+
+  factory CoreModelsResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreModelsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ModelInfo {
+  final String id;
+  final String provider;
+  final String taskType;
+  final bool available;
+
+  const ModelInfo({
+    required this.id,
+    required this.provider,
+    required this.taskType,
+    required this.available,
+  });
+
+  factory ModelInfo.fromJson(Map<String, dynamic> json) =>
+      _$ModelInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ModelInfoToJson(this);
+}
+
+@freezed
+class CoreSwitchModelResponse with _$CoreSwitchModelResponse {
+  const factory CoreSwitchModelResponse({
+    required bool success,
+    required String activeModel,
+  }) = _CoreSwitchModelResponse;
+
+  factory CoreSwitchModelResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreSwitchModelResponseFromJson(json);
+}
+
+@freezed
+class CoreInvokeModelResponse with _$CoreInvokeModelResponse {
+  const factory CoreInvokeModelResponse({
+    required String modelId,
+    required String content,
+    required int tokensUsed,
+    required double latencyMs,
+    bool? cached,
+  }) = _CoreInvokeModelResponse;
+
+  factory CoreInvokeModelResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreInvokeModelResponseFromJson(json);
+}
+
+@freezed
+class CoreCheckpointResponse with _$CoreCheckpointResponse {
+  const factory CoreCheckpointResponse({
+    required String checkpointId,
+    required DateTime timestamp,
+  }) = _CoreCheckpointResponse;
+
+  factory CoreCheckpointResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreCheckpointResponseFromJson(json);
+}
+
+@freezed
+class CoreRestoreCheckpointResponse with _$CoreRestoreCheckpointResponse {
+  const factory CoreRestoreCheckpointResponse({
+    required bool success,
+    required String checkpointId,
+  }) = _CoreRestoreCheckpointResponse;
+
+  factory CoreRestoreCheckpointResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreRestoreCheckpointResponseFromJson(json);
+}
+
+@freezed
+class CoreCheckpointsResponse with _$CoreCheckpointsResponse {
+  const factory CoreCheckpointsResponse({
+    required List<CheckpointInfo> checkpoints,
+  }) = _CoreCheckpointsResponse;
+
+  factory CoreCheckpointsResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreCheckpointsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class CheckpointInfo {
+  final String id;
+  final DateTime timestamp;
+  final int cycleCount;
+  final String description;
+
+  const CheckpointInfo({
+    required this.id,
+    required this.timestamp,
+    required this.cycleCount,
+    required this.description,
+  });
+
+  factory CheckpointInfo.fromJson(Map<String, dynamic> json) =>
+      _$CheckpointInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CheckpointInfoToJson(this);
+}
+
+@freezed
+class CoreAuditResponse with _$CoreAuditResponse {
+  const factory CoreAuditResponse({
+    required List<AuditEntry> audit,
+  }) = _CoreAuditResponse;
+
+  factory CoreAuditResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreAuditResponseFromJson(json);
+}
+
+@JsonSerializable()
+class AuditEntry {
+  final String eventType;
+  final String details;
+  final DateTime timestamp;
+  final int cycleId;
+
+  const AuditEntry({
+    required this.eventType,
+    required this.details,
+    required this.timestamp,
+    required this.cycleId,
+  });
+
+  factory AuditEntry.fromJson(Map<String, dynamic> json) =>
+      _$AuditEntryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AuditEntryToJson(this);
+}
+
+@freezed
+class CoreShutdownResponse with _$CoreShutdownResponse {
+  const factory CoreShutdownResponse({
+    required bool success,
+    required String message,
+  }) = _CoreShutdownResponse;
+
+  factory CoreShutdownResponse.fromJson(Map<String, dynamic> json) =>
+      _$CoreShutdownResponseFromJson(json);
+}
+
+// Hippocampus / Episodic Memory Models
+@freezed
+class EpisodicListResponse with _$EpisodicListResponse {
+  const factory EpisodicListResponse({
+    required List<EpisodicMemory> episodes,
+  }) = _EpisodicListResponse;
+
+  factory EpisodicListResponse.fromJson(Map<String, dynamic> json) =>
+      _$EpisodicListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class EpisodicMemory {
+  final String id;
+  final String goal;
+  final String outcome;
+  final double confidence;
+  final DateTime timestamp;
+  final Map<String, dynamic>? metadata;
+
+  const EpisodicMemory({
+    required this.id,
+    required this.goal,
+    required this.outcome,
+    required this.confidence,
+    required this.timestamp,
+    this.metadata,
+  });
+
+  factory EpisodicMemory.fromJson(Map<String, dynamic> json) =>
+      _$EpisodicMemoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EpisodicMemoryToJson(this);
+}
+
+@freezed
+class EpisodicSearchResponse with _$EpisodicSearchResponse {
+  const factory EpisodicSearchResponse({
+    required List<EpisodicMemory> episodes,
+  }) = _EpisodicSearchResponse;
+
+  factory EpisodicSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$EpisodicSearchResponseFromJson(json);
+}
+
+@freezed
+class EpisodicStatsResponse with _$EpisodicStatsResponse {
+  const factory EpisodicStatsResponse({
+    required int totalEpisodes,
+    required int successfulEpisodes,
+    required int failedEpisodes,
+    required double avgConfidence,
+    required Map<String, int> outcomesByType,
+  }) = _EpisodicStatsResponse;
+
+  factory EpisodicStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$EpisodicStatsResponseFromJson(json);
+}
+
+@freezed
+class HippocampusSchemaQueryResponse with _$HippocampusSchemaQueryResponse {
+  const factory HippocampusSchemaQueryResponse({
+    required List<SchemaInfo> schemas,
+  }) = _HippocampusSchemaQueryResponse;
+
+  factory HippocampusSchemaQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$HippocampusSchemaQueryResponseFromJson(json);
+}
+
+@JsonSerializable()
+class SchemaInfo {
+  final String id;
+  final String name;
+  final String description;
+  final double relevance;
+  final Map<String, dynamic>? parameters;
+
+  const SchemaInfo({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.relevance,
+    this.parameters,
+  });
+
+  factory SchemaInfo.fromJson(Map<String, dynamic> json) =>
+      _$SchemaInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SchemaInfoToJson(this);
+}
+
+@freezed
+class HippocampusSchemaApplyResponse with _$HippocampusSchemaApplyResponse {
+  const factory HippocampusSchemaApplyResponse({
+    required bool success,
+    required String schemaId,
+    String? result,
+  }) = _HippocampusSchemaApplyResponse;
+
+  factory HippocampusSchemaApplyResponse.fromJson(Map<String, dynamic> json) =>
+      _$HippocampusSchemaApplyResponseFromJson(json);
+}
+
+// Semantic Memory / Knowledge Models
+@freezed
+class KnowledgeQueryResponse with _$KnowledgeQueryResponse {
+  const factory KnowledgeQueryResponse({
+    required List<KnowledgeItem> results,
+  }) = _KnowledgeQueryResponse;
+
+  factory KnowledgeQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$KnowledgeQueryResponseFromJson(json);
+}
+
+@JsonSerializable()
+class KnowledgeItem {
+  final String id;
+  final String proposition;
+  final double confidence;
+  final String source;
+  final String domain;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final List<String> evidence;
+
+  const KnowledgeItem({
+    required this.id,
+    required this.proposition,
+    required this.confidence,
+    required this.source,
+    required this.domain,
+    required this.createdAt,
+    this.updatedAt,
+    required this.evidence,
+  });
+
+  factory KnowledgeItem.fromJson(Map<String, dynamic> json) =>
+      _$KnowledgeItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KnowledgeItemToJson(this);
+}
+
+@freezed
+class KnowledgeStatsResponse with _$KnowledgeStatsResponse {
+  const factory KnowledgeStatsResponse({
+    required int totalBeliefs,
+    required int domains,
+    required double avgConfidence,
+    required int retrievalEngine,
+  }) = _KnowledgeStatsResponse;
+
+  factory KnowledgeStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$KnowledgeStatsResponseFromJson(json);
+}
+
+@freezed
+class KnowledgeLearnResponse with _$KnowledgeLearnResponse {
+  const factory KnowledgeLearnResponse({
+    required String beliefId,
+    required double confidence,
+    required String action, // "created" or "merged"
+  }) = _KnowledgeLearnResponse;
+
+  factory KnowledgeLearnResponse.fromJson(Map<String, dynamic> json) =>
+      _$KnowledgeLearnResponseFromJson(json);
+}
+
+// Working Memory Models
+@freezed
+class WorkingMemoryAddResponse with _$WorkingMemoryAddResponse {
+  const factory WorkingMemoryAddResponse({
+    required String slotId,
+  }) = _WorkingMemoryAddResponse;
+
+  factory WorkingMemoryAddResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkingMemoryAddResponseFromJson(json);
+}
+
+@freezed
+class WorkingMemorySearchResponse with _$WorkingMemorySearchResponse {
+  const factory WorkingMemorySearchResponse({
+    required List<WorkingMemoryItem> results,
+  }) = _WorkingMemorySearchResponse;
+
+  factory WorkingMemorySearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkingMemorySearchResponseFromJson(json);
+}
+
+@JsonSerializable()
+class WorkingMemoryItem {
+  final String id;
+  final String content;
+  final String type;
+  final double attention;
+  final Map<String, dynamic>? metadata;
+  final Map<String, dynamic>? bindings;
+  final DateTime createdAt;
+
+  const WorkingMemoryItem({
+    required this.id,
+    required this.content,
+    required this.type,
+    required this.attention,
+    this.metadata,
+    this.bindings,
+    required this.createdAt,
+  });
+
+  factory WorkingMemoryItem.fromJson(Map<String, dynamic> json) =>
+      _$WorkingMemoryItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WorkingMemoryItemToJson(this);
+}
+
+@freezed
+class WorkingMemoryCapacityResponse with _$WorkingMemoryCapacityResponse {
+  const factory WorkingMemoryCapacityResponse({
+    required int totalSlots,
+    required int usedSlots,
+    required int freeSlots,
+    required Map<String, int> byType,
+    required double totalAttention,
+  }) = _WorkingMemoryCapacityResponse;
+
+  factory WorkingMemoryCapacityResponse.fromJson(Map<String, dynamic> json) =>
+      _$WorkingMemoryCapacityResponseFromJson(json);
+}
+
+// Working Memory v2 Models
+@freezed
+class WMAddResponse with _$WMAddResponse {
+  const factory WMAddResponse({
+    required String itemId,
+    required bool success,
+  }) = _WMAddResponse;
+
+  factory WMAddResponse.fromJson(Map<String, dynamic> json) =>
+      _$WMAddResponseFromJson(json);
+}
+
+@freezed
+class WMRetrieveResponse with _$WMRetrieveResponse {
+  const factory WMRetrieveResponse({
+    required List<WMItem> results,
+  }) = _WMRetrieveResponse;
+
+  factory WMRetrieveResponse.fromJson(Map<String, dynamic> json) =>
+      _$WMRetrieveResponseFromJson(json);
+}
+
+@JsonSerializable()
+class WMItem {
+  final String id;
+  final String content;
+  final String? chunkId;
+  final double attention;
+  final DateTime createdAt;
+
+  const WMItem({
+    required this.id,
+    required this.content,
+    this.chunkId,
+    required this.attention,
+    required this.createdAt,
+  });
+
+  factory WMItem.fromJson(Map<String, dynamic> json) =>
+      _$WMItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WMItemToJson(this);
+}
+
+@freezed
+class WMDecayResponse with _$WMDecayResponse {
+  const factory WMDecayResponse({
+    required int removed,
+  }) = _WMDecayResponse;
+
+  factory WMDecayResponse.fromJson(Map<String, dynamic> json) =>
+      _$WMDecayResponseFromJson(json);
+}
+
+// Browser & Sandbox Models
+@freezed
+class BrowserActionResponse with _$BrowserActionResponse {
+  const factory BrowserActionResponse({
+    required bool success,
+    String? content,
+    String? url,
+    String? screenshotPath,
+    String? error,
+  }) = _BrowserActionResponse;
+
+  factory BrowserActionResponse.fromJson(Map<String, dynamic> json) =>
+      _$BrowserActionResponseFromJson(json);
+}
+
+@freezed
+class SandboxExecuteResponse with _$SandboxExecuteResponse {
+  const factory SandboxExecuteResponse({
+    required bool success,
+    String? output,
+    String? error,
+    int? exitCode,
+    double? executionTimeMs,
+  }) = _SandboxExecuteResponse;
+
+  factory SandboxExecuteResponse.fromJson(Map<String, dynamic> json) =>
+      _$SandboxExecuteResponseFromJson(json);
 }
 
 @freezed

@@ -202,6 +202,49 @@ class AppConfig {
   static const String metaStepResult = '/api/v1/cognitive/metacognitive/step_result';
   static const String metaEvents = '/api/v1/cognitive/metacognitive/events';
 
+  // Maya Cognitive Core (Phase 19)
+  static const String coreStatus = '/api/v1/maya/core/status';
+  static const String coreInitialize = '/api/v1/maya/core/initialize';
+  static const String coreLoopStart = '/api/v1/maya/core/loop/start';
+  static const String coreLoopPause = '/api/v1/maya/core/loop/pause';
+  static const String coreLoopResume = '/api/v1/maya/core/loop/resume';
+  static const String coreLoopStop = '/api/v1/maya/core/loop/stop';
+  static const String coreRunMission = '/api/v1/maya/core/mission';
+  static const String coreExecuteGoal = '/api/v1/maya/core/goal/execute';
+  static const String coreIdentity = '/api/v1/maya/core/identity';
+  static const String coreModels = '/api/v1/maya/core/models';
+  static const String coreSwitchModel = '/api/v1/maya/core/models/switch';
+  static const String coreInvokeModel = '/api/v1/maya/core/models/invoke';
+  static const String coreCheckpoint = '/api/v1/maya/core/checkpoint';
+  static const String coreRestoreCheckpoint = '/api/v1/maya/core/checkpoint/restore';
+  static const String coreCheckpoints = '/api/v1/maya/core/checkpoints';
+  static const String coreAudit = '/api/v1/maya/core/audit';
+  static const String coreShutdown = '/api/v1/maya/core/shutdown';
+
+  // Hippocampus / Episodic Memory
+  static const String episodicList = '/api/v1/cognitive/memory/episodic';
+  static const String episodicSearch = '/api/v1/cognitive/memory/episodic/search';
+  static const String episodicStats = '/api/v1/cognitive/memory/episodic/stats';
+  static const String hippocampusSchemaQuery = '/hippocampus/schema/query';
+  static const String hippocampusSchemaApply = '/hippocampus/schema/apply';
+
+  // Semantic Memory / Knowledge
+  static const String knowledgeQuery = '/api/v1/cognitive/knowledge/query';
+  static const String knowledgeStats = '/api/v1/cognitive/knowledge/stats';
+  static const String knowledgeLearn = '/api/v1/cognitive/knowledge/learn';
+
+  // Working Memory
+  static const String workingMemoryAdd = '/api/v1/cognitive/memory/working/add';
+  static const String workingMemorySearch = '/api/v1/cognitive/memory/working/search';
+  static const String workingMemoryCapacity = '/api/v1/cognitive/memory/working/capacity';
+  static const String workingMemoryV2Add = '/working-memory/add';
+  static const String workingMemoryV2Retrieve = '/working-memory/retrieve';
+  static const String workingMemoryV2Decay = '/working-memory/decay';
+
+  // Browser & Sandbox
+  static const String browserAction = '/browser/action';
+  static const String sandboxExecute = '/sandbox/execute';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
