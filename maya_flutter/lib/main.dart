@@ -1769,6 +1769,20 @@ class _AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
+                _DrawerActionTile(
+                  icon: Icons.architecture_rounded,
+                  label: 'AGI Architecture',
+                  subtitle: 'Synthesizer, Society, Procedural Memory',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _AGIArchitectureScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -14192,4 +14206,505 @@ class _StatCard extends StatelessWidget {
 final cognitiveStatusProvider = FutureProvider<CognitiveStatusResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getCognitiveStatus();
+});
+
+// AGI Architecture Screen
+class _AGIArchitectureScreen extends ConsumerStatefulWidget {
+  const _AGIArchitectureScreen();
+
+  @override
+  ConsumerState<_AGIArchitectureScreen> createState() => _AGIArchitectureScreenState();
+}
+
+class _AGIArchitectureScreenState extends ConsumerState<_AGIArchitectureScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('AGI Architecture', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.architecture_rounded), text: 'Synthesizer'),
+              Tab(icon: Icon(Icons.groups_rounded), text: 'Society'),
+              Tab(icon: Icon(Icons.memory_rounded), text: 'Procedural Memory'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _SynthesizerTab(),
+            _SocietyTab(),
+            _ProceduralMemoryTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SynthesizerTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(synthesizeListProvider);
+
+    return async.when(
+      data: (data) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Synthesis Jobs', style: MayaTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Manage and monitor cognitive synthesis operations',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 16),
+            if (data.items.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(32),
+                decoration: MayaTheme.glassCard(),
+                child: const Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.architecture_rounded, size: 48, color: Colors.white38),
+                      SizedBox(height: 16),
+                      Text('No synthesis jobs found', style: MayaTheme.bodyMedium),
+                    ],
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: data.items.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, index) {
+                  final item = data.items[index];
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: MayaTheme.glassCard(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item.name, style: MayaTheme.titleMedium),
+                                  const SizedBox(height: 4),
+                                  Text(item.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
+                            ),
+                            _StatusChip(status: item.status),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time_rounded, size: 14, color: Colors.white38),
+                            const SizedBox(width: 4),
+                            Text('Created: ${item.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                            const SizedBox(width: 16),
+                            if (item.completedAt != null) ...[
+                              Icon(Icons.check_circle_rounded, size: 14, color: Colors.white38),
+                              const SizedBox(width: 4),
+                              Text('Completed: ${item.completedAt!.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading synthesis jobs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String status;
+
+  const _StatusChip({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    Color color;
+    switch (status.toLowerCase()) {
+      case 'completed':
+        color = MayaTheme.neonEmerald;
+        break;
+      case 'running':
+        color = MayaTheme.neonCyan;
+        break;
+      case 'failed':
+        color = MayaTheme.error;
+        break;
+      case 'pending':
+        color = MayaTheme.neonOrange;
+        break;
+      default:
+        color = Colors.white38;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color, width: 1),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: MayaTheme.labelSmall.copyWith(color: color),
+      ),
+    );
+  }
+}
+
+class _SocietyTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(societyStatusProvider);
+    final agentsAsync = ref.watch(societyAgentsProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Agent Society', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Multi-agent coordination and task tendering',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          // Status Overview
+          statusAsync.when(
+            data: (status) => Row(
+              children: [
+                Expanded(child: _SocietyStatCard(label: 'Total Agents', value: status.totalAgents.toString(), color: MayaTheme.neonCyan, icon: Icons.people_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _SocietyStatCard(label: 'Active', value: status.activeAgents.toString(), color: MayaTheme.neonEmerald, icon: Icons.circle_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _SocietyStatCard(label: 'Queued Tasks', value: status.tasksQueued.toString(), color: MayaTheme.neonOrange, icon: Icons.queue_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _SocietyStatCard(label: 'Running', value: status.tasksRunning.toString(), color: MayaTheme.neonViolet, icon: Icons.play_circle_rounded)),
+              ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+          const SizedBox(height: 24),
+          // Agents List
+          const Text('Agents', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          agentsAsync.when(
+            data: (data) => data.agents.isEmpty
+                ? Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(32),
+                    decoration: MayaTheme.glassCard(),
+                    child: const Center(child: Text('No agents spawned', style: MayaTheme.bodyMedium)),
+                  )
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.agents.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final agent = data.agents[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(Icons.psychology_rounded, color: MayaTheme.neonViolet, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(agent.role, style: MayaTheme.titleMedium),
+                                  Text('ID: ${agent.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                  if (agent.capabilities != null && agent.capabilities!.isNotEmpty)
+                                    Text('Capabilities: ${agent.capabilities!.keys.join(', ')}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                ],
+                              ),
+                            ),
+                            _StatusChip(status: agent.status),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SocietyStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _SocietyStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProceduralMemoryTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final listAsync = ref.watch(proceduralListProvider);
+    final statsAsync = ref.watch(proceduralStatsProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Procedural Memory', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Learned skills and procedural knowledge',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          // Stats
+          statsAsync.when(
+            data: (stats) => Row(
+              children: [
+                Expanded(child: _ProcStatCard(label: 'Total Skills', value: stats.totalSkills.toString(), color: MayaTheme.neonCyan, icon: Icons.memory_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _ProcStatCard(label: 'Verified', value: stats.verifiedSkills.toString(), color: MayaTheme.neonEmerald, icon: Icons.verified_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _ProcStatCard(label: 'Avg Confidence', value: stats.avgConfidence.toStringAsFixed(2), color: MayaTheme.neonViolet, icon: Icons.trending_up_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _ProcStatCard(label: 'Avg Success Rate', value: '${(stats.avgSuccessRate * 100).toStringAsFixed(1)}%', color: MayaTheme.neonOrange, icon: Icons.check_circle_rounded)),
+              ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+          const SizedBox(height: 24),
+          // Skills List
+          const Text('Skills', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          listAsync.when(
+            data: (data) => data.skills.isEmpty
+                ? Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(32),
+                    decoration: MayaTheme.glassCard(),
+                    child: const Center(child: Text('No skills learned yet', style: MayaTheme.bodyMedium)),
+                  )
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.skills.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final skill = data.skills[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(skill.name, style: MayaTheme.titleMedium),
+                                          const SizedBox(width: 8),
+                                          if (skill.verified)
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                                                borderRadius: BorderRadius.circular(8),
+                                                border: Border.all(color: MayaTheme.neonEmerald),
+                                              ),
+                                              child: Text('VERIFIED', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonEmerald)),
+                                            ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(skill.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text('Confidence: ${(skill.confidence * 100).toStringAsFixed(1)}%', style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                                    Text('Success Rate: ${(skill.successRate * 100).toStringAsFixed(1)}%', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                    Text('Uses: ${skill.usageCount}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: skill.applicableGoals.take(4).map((goal) => Chip(
+                                label: Text(goal, style: MayaTheme.labelSmall),
+                                backgroundColor: MayaTheme.neonCyan.withValues(alpha: 0.1),
+                                side: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.3)),
+                              )).toList(),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProcStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _ProcStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+// AGI Architecture Part 2 Providers
+// Synthesizer
+final synthesizeListProvider = FutureProvider<SynthesizeListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSynthesisList();
+});
+
+// Society
+final societyStatusProvider = FutureProvider<SocietyStatusResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSocietyStatus();
+});
+
+final societyAgentsProvider = FutureProvider<SocietyAgentsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSocietyAgents();
+});
+
+// Procedural Memory
+final proceduralListProvider = FutureProvider<ProceduralListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProceduralSkills();
+});
+
+final proceduralStatsProvider = FutureProvider<ProceduralStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProceduralStats();
 });

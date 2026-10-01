@@ -3951,6 +3951,3295 @@ abstract class _MetaEventsResponse implements MetaEventsResponse {
       throw _privateConstructorUsedError;
 }
 
+SynthesizeListResponse _$SynthesizeListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SynthesizeListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SynthesizeListResponse {
+  List<SynthesisItem> get items => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SynthesizeListResponseCopyWith<SynthesizeListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SynthesizeListResponseCopyWith<$Res> {
+  factory $SynthesizeListResponseCopyWith(SynthesizeListResponse value,
+          $Res Function(SynthesizeListResponse) then) =
+      _$SynthesizeListResponseCopyWithImpl<$Res, SynthesizeListResponse>;
+  @useResult
+  $Res call({List<SynthesisItem> items});
+}
+
+/// @nodoc
+class _$SynthesizeListResponseCopyWithImpl<$Res,
+        $Val extends SynthesizeListResponse>
+    implements $SynthesizeListResponseCopyWith<$Res> {
+  _$SynthesizeListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? items = null,
+  }) {
+    return _then(_value.copyWith(
+      items: null == items
+          ? _value.items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<SynthesisItem>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SynthesizeListResponseImplCopyWith<$Res>
+    implements $SynthesizeListResponseCopyWith<$Res> {
+  factory _$$SynthesizeListResponseImplCopyWith(
+          _$SynthesizeListResponseImpl value,
+          $Res Function(_$SynthesizeListResponseImpl) then) =
+      __$$SynthesizeListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<SynthesisItem> items});
+}
+
+/// @nodoc
+class __$$SynthesizeListResponseImplCopyWithImpl<$Res>
+    extends _$SynthesizeListResponseCopyWithImpl<$Res,
+        _$SynthesizeListResponseImpl>
+    implements _$$SynthesizeListResponseImplCopyWith<$Res> {
+  __$$SynthesizeListResponseImplCopyWithImpl(
+      _$SynthesizeListResponseImpl _value,
+      $Res Function(_$SynthesizeListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? items = null,
+  }) {
+    return _then(_$SynthesizeListResponseImpl(
+      items: null == items
+          ? _value._items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<SynthesisItem>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SynthesizeListResponseImpl implements _SynthesizeListResponse {
+  const _$SynthesizeListResponseImpl({required final List<SynthesisItem> items})
+      : _items = items;
+
+  factory _$SynthesizeListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SynthesizeListResponseImplFromJson(json);
+
+  final List<SynthesisItem> _items;
+  @override
+  List<SynthesisItem> get items {
+    if (_items is EqualUnmodifiableListView) return _items;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_items);
+  }
+
+  @override
+  String toString() {
+    return 'SynthesizeListResponse(items: $items)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SynthesizeListResponseImpl &&
+            const DeepCollectionEquality().equals(other._items, _items));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_items));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SynthesizeListResponseImplCopyWith<_$SynthesizeListResponseImpl>
+      get copyWith => __$$SynthesizeListResponseImplCopyWithImpl<
+          _$SynthesizeListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SynthesizeListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SynthesizeListResponse implements SynthesizeListResponse {
+  const factory _SynthesizeListResponse(
+          {required final List<SynthesisItem> items}) =
+      _$SynthesizeListResponseImpl;
+
+  factory _SynthesizeListResponse.fromJson(Map<String, dynamic> json) =
+      _$SynthesizeListResponseImpl.fromJson;
+
+  @override
+  List<SynthesisItem> get items;
+  @override
+  @JsonKey(ignore: true)
+  _$$SynthesizeListResponseImplCopyWith<_$SynthesizeListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyStatusResponse _$SocietyStatusResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SocietyStatusResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyStatusResponse {
+  int get totalAgents => throw _privateConstructorUsedError;
+  int get activeAgents => throw _privateConstructorUsedError;
+  int get tasksQueued => throw _privateConstructorUsedError;
+  int get tasksRunning => throw _privateConstructorUsedError;
+  int get tasksCompleted => throw _privateConstructorUsedError;
+  int get tasksFailed => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyStatusResponseCopyWith<SocietyStatusResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyStatusResponseCopyWith<$Res> {
+  factory $SocietyStatusResponseCopyWith(SocietyStatusResponse value,
+          $Res Function(SocietyStatusResponse) then) =
+      _$SocietyStatusResponseCopyWithImpl<$Res, SocietyStatusResponse>;
+  @useResult
+  $Res call(
+      {int totalAgents,
+      int activeAgents,
+      int tasksQueued,
+      int tasksRunning,
+      int tasksCompleted,
+      int tasksFailed});
+}
+
+/// @nodoc
+class _$SocietyStatusResponseCopyWithImpl<$Res,
+        $Val extends SocietyStatusResponse>
+    implements $SocietyStatusResponseCopyWith<$Res> {
+  _$SocietyStatusResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalAgents = null,
+    Object? activeAgents = null,
+    Object? tasksQueued = null,
+    Object? tasksRunning = null,
+    Object? tasksCompleted = null,
+    Object? tasksFailed = null,
+  }) {
+    return _then(_value.copyWith(
+      totalAgents: null == totalAgents
+          ? _value.totalAgents
+          : totalAgents // ignore: cast_nullable_to_non_nullable
+              as int,
+      activeAgents: null == activeAgents
+          ? _value.activeAgents
+          : activeAgents // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksQueued: null == tasksQueued
+          ? _value.tasksQueued
+          : tasksQueued // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksRunning: null == tasksRunning
+          ? _value.tasksRunning
+          : tasksRunning // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksCompleted: null == tasksCompleted
+          ? _value.tasksCompleted
+          : tasksCompleted // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksFailed: null == tasksFailed
+          ? _value.tasksFailed
+          : tasksFailed // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyStatusResponseImplCopyWith<$Res>
+    implements $SocietyStatusResponseCopyWith<$Res> {
+  factory _$$SocietyStatusResponseImplCopyWith(
+          _$SocietyStatusResponseImpl value,
+          $Res Function(_$SocietyStatusResponseImpl) then) =
+      __$$SocietyStatusResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int totalAgents,
+      int activeAgents,
+      int tasksQueued,
+      int tasksRunning,
+      int tasksCompleted,
+      int tasksFailed});
+}
+
+/// @nodoc
+class __$$SocietyStatusResponseImplCopyWithImpl<$Res>
+    extends _$SocietyStatusResponseCopyWithImpl<$Res,
+        _$SocietyStatusResponseImpl>
+    implements _$$SocietyStatusResponseImplCopyWith<$Res> {
+  __$$SocietyStatusResponseImplCopyWithImpl(_$SocietyStatusResponseImpl _value,
+      $Res Function(_$SocietyStatusResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalAgents = null,
+    Object? activeAgents = null,
+    Object? tasksQueued = null,
+    Object? tasksRunning = null,
+    Object? tasksCompleted = null,
+    Object? tasksFailed = null,
+  }) {
+    return _then(_$SocietyStatusResponseImpl(
+      totalAgents: null == totalAgents
+          ? _value.totalAgents
+          : totalAgents // ignore: cast_nullable_to_non_nullable
+              as int,
+      activeAgents: null == activeAgents
+          ? _value.activeAgents
+          : activeAgents // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksQueued: null == tasksQueued
+          ? _value.tasksQueued
+          : tasksQueued // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksRunning: null == tasksRunning
+          ? _value.tasksRunning
+          : tasksRunning // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksCompleted: null == tasksCompleted
+          ? _value.tasksCompleted
+          : tasksCompleted // ignore: cast_nullable_to_non_nullable
+              as int,
+      tasksFailed: null == tasksFailed
+          ? _value.tasksFailed
+          : tasksFailed // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyStatusResponseImpl implements _SocietyStatusResponse {
+  const _$SocietyStatusResponseImpl(
+      {required this.totalAgents,
+      required this.activeAgents,
+      required this.tasksQueued,
+      required this.tasksRunning,
+      required this.tasksCompleted,
+      required this.tasksFailed});
+
+  factory _$SocietyStatusResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietyStatusResponseImplFromJson(json);
+
+  @override
+  final int totalAgents;
+  @override
+  final int activeAgents;
+  @override
+  final int tasksQueued;
+  @override
+  final int tasksRunning;
+  @override
+  final int tasksCompleted;
+  @override
+  final int tasksFailed;
+
+  @override
+  String toString() {
+    return 'SocietyStatusResponse(totalAgents: $totalAgents, activeAgents: $activeAgents, tasksQueued: $tasksQueued, tasksRunning: $tasksRunning, tasksCompleted: $tasksCompleted, tasksFailed: $tasksFailed)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyStatusResponseImpl &&
+            (identical(other.totalAgents, totalAgents) ||
+                other.totalAgents == totalAgents) &&
+            (identical(other.activeAgents, activeAgents) ||
+                other.activeAgents == activeAgents) &&
+            (identical(other.tasksQueued, tasksQueued) ||
+                other.tasksQueued == tasksQueued) &&
+            (identical(other.tasksRunning, tasksRunning) ||
+                other.tasksRunning == tasksRunning) &&
+            (identical(other.tasksCompleted, tasksCompleted) ||
+                other.tasksCompleted == tasksCompleted) &&
+            (identical(other.tasksFailed, tasksFailed) ||
+                other.tasksFailed == tasksFailed));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, totalAgents, activeAgents,
+      tasksQueued, tasksRunning, tasksCompleted, tasksFailed);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyStatusResponseImplCopyWith<_$SocietyStatusResponseImpl>
+      get copyWith => __$$SocietyStatusResponseImplCopyWithImpl<
+          _$SocietyStatusResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyStatusResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyStatusResponse implements SocietyStatusResponse {
+  const factory _SocietyStatusResponse(
+      {required final int totalAgents,
+      required final int activeAgents,
+      required final int tasksQueued,
+      required final int tasksRunning,
+      required final int tasksCompleted,
+      required final int tasksFailed}) = _$SocietyStatusResponseImpl;
+
+  factory _SocietyStatusResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyStatusResponseImpl.fromJson;
+
+  @override
+  int get totalAgents;
+  @override
+  int get activeAgents;
+  @override
+  int get tasksQueued;
+  @override
+  int get tasksRunning;
+  @override
+  int get tasksCompleted;
+  @override
+  int get tasksFailed;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyStatusResponseImplCopyWith<_$SocietyStatusResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietySpawnResponse _$SocietySpawnResponseFromJson(Map<String, dynamic> json) {
+  return _SocietySpawnResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietySpawnResponse {
+  String get agentId => throw _privateConstructorUsedError;
+  String get role => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietySpawnResponseCopyWith<SocietySpawnResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietySpawnResponseCopyWith<$Res> {
+  factory $SocietySpawnResponseCopyWith(SocietySpawnResponse value,
+          $Res Function(SocietySpawnResponse) then) =
+      _$SocietySpawnResponseCopyWithImpl<$Res, SocietySpawnResponse>;
+  @useResult
+  $Res call({String agentId, String role, String status});
+}
+
+/// @nodoc
+class _$SocietySpawnResponseCopyWithImpl<$Res,
+        $Val extends SocietySpawnResponse>
+    implements $SocietySpawnResponseCopyWith<$Res> {
+  _$SocietySpawnResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? agentId = null,
+    Object? role = null,
+    Object? status = null,
+  }) {
+    return _then(_value.copyWith(
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietySpawnResponseImplCopyWith<$Res>
+    implements $SocietySpawnResponseCopyWith<$Res> {
+  factory _$$SocietySpawnResponseImplCopyWith(_$SocietySpawnResponseImpl value,
+          $Res Function(_$SocietySpawnResponseImpl) then) =
+      __$$SocietySpawnResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String agentId, String role, String status});
+}
+
+/// @nodoc
+class __$$SocietySpawnResponseImplCopyWithImpl<$Res>
+    extends _$SocietySpawnResponseCopyWithImpl<$Res, _$SocietySpawnResponseImpl>
+    implements _$$SocietySpawnResponseImplCopyWith<$Res> {
+  __$$SocietySpawnResponseImplCopyWithImpl(_$SocietySpawnResponseImpl _value,
+      $Res Function(_$SocietySpawnResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? agentId = null,
+    Object? role = null,
+    Object? status = null,
+  }) {
+    return _then(_$SocietySpawnResponseImpl(
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietySpawnResponseImpl implements _SocietySpawnResponse {
+  const _$SocietySpawnResponseImpl(
+      {required this.agentId, required this.role, required this.status});
+
+  factory _$SocietySpawnResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietySpawnResponseImplFromJson(json);
+
+  @override
+  final String agentId;
+  @override
+  final String role;
+  @override
+  final String status;
+
+  @override
+  String toString() {
+    return 'SocietySpawnResponse(agentId: $agentId, role: $role, status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietySpawnResponseImpl &&
+            (identical(other.agentId, agentId) || other.agentId == agentId) &&
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, agentId, role, status);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietySpawnResponseImplCopyWith<_$SocietySpawnResponseImpl>
+      get copyWith =>
+          __$$SocietySpawnResponseImplCopyWithImpl<_$SocietySpawnResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietySpawnResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietySpawnResponse implements SocietySpawnResponse {
+  const factory _SocietySpawnResponse(
+      {required final String agentId,
+      required final String role,
+      required final String status}) = _$SocietySpawnResponseImpl;
+
+  factory _SocietySpawnResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietySpawnResponseImpl.fromJson;
+
+  @override
+  String get agentId;
+  @override
+  String get role;
+  @override
+  String get status;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietySpawnResponseImplCopyWith<_$SocietySpawnResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyAgentsResponse _$SocietyAgentsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SocietyAgentsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyAgentsResponse {
+  List<SocietyAgent> get agents => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyAgentsResponseCopyWith<SocietyAgentsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyAgentsResponseCopyWith<$Res> {
+  factory $SocietyAgentsResponseCopyWith(SocietyAgentsResponse value,
+          $Res Function(SocietyAgentsResponse) then) =
+      _$SocietyAgentsResponseCopyWithImpl<$Res, SocietyAgentsResponse>;
+  @useResult
+  $Res call({List<SocietyAgent> agents});
+}
+
+/// @nodoc
+class _$SocietyAgentsResponseCopyWithImpl<$Res,
+        $Val extends SocietyAgentsResponse>
+    implements $SocietyAgentsResponseCopyWith<$Res> {
+  _$SocietyAgentsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? agents = null,
+  }) {
+    return _then(_value.copyWith(
+      agents: null == agents
+          ? _value.agents
+          : agents // ignore: cast_nullable_to_non_nullable
+              as List<SocietyAgent>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyAgentsResponseImplCopyWith<$Res>
+    implements $SocietyAgentsResponseCopyWith<$Res> {
+  factory _$$SocietyAgentsResponseImplCopyWith(
+          _$SocietyAgentsResponseImpl value,
+          $Res Function(_$SocietyAgentsResponseImpl) then) =
+      __$$SocietyAgentsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<SocietyAgent> agents});
+}
+
+/// @nodoc
+class __$$SocietyAgentsResponseImplCopyWithImpl<$Res>
+    extends _$SocietyAgentsResponseCopyWithImpl<$Res,
+        _$SocietyAgentsResponseImpl>
+    implements _$$SocietyAgentsResponseImplCopyWith<$Res> {
+  __$$SocietyAgentsResponseImplCopyWithImpl(_$SocietyAgentsResponseImpl _value,
+      $Res Function(_$SocietyAgentsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? agents = null,
+  }) {
+    return _then(_$SocietyAgentsResponseImpl(
+      agents: null == agents
+          ? _value._agents
+          : agents // ignore: cast_nullable_to_non_nullable
+              as List<SocietyAgent>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyAgentsResponseImpl implements _SocietyAgentsResponse {
+  const _$SocietyAgentsResponseImpl({required final List<SocietyAgent> agents})
+      : _agents = agents;
+
+  factory _$SocietyAgentsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietyAgentsResponseImplFromJson(json);
+
+  final List<SocietyAgent> _agents;
+  @override
+  List<SocietyAgent> get agents {
+    if (_agents is EqualUnmodifiableListView) return _agents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_agents);
+  }
+
+  @override
+  String toString() {
+    return 'SocietyAgentsResponse(agents: $agents)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyAgentsResponseImpl &&
+            const DeepCollectionEquality().equals(other._agents, _agents));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_agents));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyAgentsResponseImplCopyWith<_$SocietyAgentsResponseImpl>
+      get copyWith => __$$SocietyAgentsResponseImplCopyWithImpl<
+          _$SocietyAgentsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyAgentsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyAgentsResponse implements SocietyAgentsResponse {
+  const factory _SocietyAgentsResponse(
+      {required final List<SocietyAgent> agents}) = _$SocietyAgentsResponseImpl;
+
+  factory _SocietyAgentsResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyAgentsResponseImpl.fromJson;
+
+  @override
+  List<SocietyAgent> get agents;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyAgentsResponseImplCopyWith<_$SocietyAgentsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyTaskResponse _$SocietyTaskResponseFromJson(Map<String, dynamic> json) {
+  return _SocietyTaskResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyTaskResponse {
+  String get taskId => throw _privateConstructorUsedError;
+  String get agentId => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  Map<String, dynamic> get task => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyTaskResponseCopyWith<SocietyTaskResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyTaskResponseCopyWith<$Res> {
+  factory $SocietyTaskResponseCopyWith(
+          SocietyTaskResponse value, $Res Function(SocietyTaskResponse) then) =
+      _$SocietyTaskResponseCopyWithImpl<$Res, SocietyTaskResponse>;
+  @useResult
+  $Res call(
+      {String taskId,
+      String agentId,
+      String status,
+      Map<String, dynamic> task});
+}
+
+/// @nodoc
+class _$SocietyTaskResponseCopyWithImpl<$Res, $Val extends SocietyTaskResponse>
+    implements $SocietyTaskResponseCopyWith<$Res> {
+  _$SocietyTaskResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? agentId = null,
+    Object? status = null,
+    Object? task = null,
+  }) {
+    return _then(_value.copyWith(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      task: null == task
+          ? _value.task
+          : task // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyTaskResponseImplCopyWith<$Res>
+    implements $SocietyTaskResponseCopyWith<$Res> {
+  factory _$$SocietyTaskResponseImplCopyWith(_$SocietyTaskResponseImpl value,
+          $Res Function(_$SocietyTaskResponseImpl) then) =
+      __$$SocietyTaskResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String taskId,
+      String agentId,
+      String status,
+      Map<String, dynamic> task});
+}
+
+/// @nodoc
+class __$$SocietyTaskResponseImplCopyWithImpl<$Res>
+    extends _$SocietyTaskResponseCopyWithImpl<$Res, _$SocietyTaskResponseImpl>
+    implements _$$SocietyTaskResponseImplCopyWith<$Res> {
+  __$$SocietyTaskResponseImplCopyWithImpl(_$SocietyTaskResponseImpl _value,
+      $Res Function(_$SocietyTaskResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? agentId = null,
+    Object? status = null,
+    Object? task = null,
+  }) {
+    return _then(_$SocietyTaskResponseImpl(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      task: null == task
+          ? _value._task
+          : task // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyTaskResponseImpl implements _SocietyTaskResponse {
+  const _$SocietyTaskResponseImpl(
+      {required this.taskId,
+      required this.agentId,
+      required this.status,
+      required final Map<String, dynamic> task})
+      : _task = task;
+
+  factory _$SocietyTaskResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietyTaskResponseImplFromJson(json);
+
+  @override
+  final String taskId;
+  @override
+  final String agentId;
+  @override
+  final String status;
+  final Map<String, dynamic> _task;
+  @override
+  Map<String, dynamic> get task {
+    if (_task is EqualUnmodifiableMapView) return _task;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_task);
+  }
+
+  @override
+  String toString() {
+    return 'SocietyTaskResponse(taskId: $taskId, agentId: $agentId, status: $status, task: $task)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyTaskResponseImpl &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.agentId, agentId) || other.agentId == agentId) &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._task, _task));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, taskId, agentId, status,
+      const DeepCollectionEquality().hash(_task));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyTaskResponseImplCopyWith<_$SocietyTaskResponseImpl> get copyWith =>
+      __$$SocietyTaskResponseImplCopyWithImpl<_$SocietyTaskResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyTaskResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyTaskResponse implements SocietyTaskResponse {
+  const factory _SocietyTaskResponse(
+      {required final String taskId,
+      required final String agentId,
+      required final String status,
+      required final Map<String, dynamic> task}) = _$SocietyTaskResponseImpl;
+
+  factory _SocietyTaskResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyTaskResponseImpl.fromJson;
+
+  @override
+  String get taskId;
+  @override
+  String get agentId;
+  @override
+  String get status;
+  @override
+  Map<String, dynamic> get task;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyTaskResponseImplCopyWith<_$SocietyTaskResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SocietyTenderResponse _$SocietyTenderResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SocietyTenderResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyTenderResponse {
+  String get taskId => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  Map<String, dynamic> get taskSpec => throw _privateConstructorUsedError;
+  String get deadline => throw _privateConstructorUsedError;
+  List<String> get eligibleRoles => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyTenderResponseCopyWith<SocietyTenderResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyTenderResponseCopyWith<$Res> {
+  factory $SocietyTenderResponseCopyWith(SocietyTenderResponse value,
+          $Res Function(SocietyTenderResponse) then) =
+      _$SocietyTenderResponseCopyWithImpl<$Res, SocietyTenderResponse>;
+  @useResult
+  $Res call(
+      {String taskId,
+      String status,
+      Map<String, dynamic> taskSpec,
+      String deadline,
+      List<String> eligibleRoles});
+}
+
+/// @nodoc
+class _$SocietyTenderResponseCopyWithImpl<$Res,
+        $Val extends SocietyTenderResponse>
+    implements $SocietyTenderResponseCopyWith<$Res> {
+  _$SocietyTenderResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? status = null,
+    Object? taskSpec = null,
+    Object? deadline = null,
+    Object? eligibleRoles = null,
+  }) {
+    return _then(_value.copyWith(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskSpec: null == taskSpec
+          ? _value.taskSpec
+          : taskSpec // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      deadline: null == deadline
+          ? _value.deadline
+          : deadline // ignore: cast_nullable_to_non_nullable
+              as String,
+      eligibleRoles: null == eligibleRoles
+          ? _value.eligibleRoles
+          : eligibleRoles // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyTenderResponseImplCopyWith<$Res>
+    implements $SocietyTenderResponseCopyWith<$Res> {
+  factory _$$SocietyTenderResponseImplCopyWith(
+          _$SocietyTenderResponseImpl value,
+          $Res Function(_$SocietyTenderResponseImpl) then) =
+      __$$SocietyTenderResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String taskId,
+      String status,
+      Map<String, dynamic> taskSpec,
+      String deadline,
+      List<String> eligibleRoles});
+}
+
+/// @nodoc
+class __$$SocietyTenderResponseImplCopyWithImpl<$Res>
+    extends _$SocietyTenderResponseCopyWithImpl<$Res,
+        _$SocietyTenderResponseImpl>
+    implements _$$SocietyTenderResponseImplCopyWith<$Res> {
+  __$$SocietyTenderResponseImplCopyWithImpl(_$SocietyTenderResponseImpl _value,
+      $Res Function(_$SocietyTenderResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? status = null,
+    Object? taskSpec = null,
+    Object? deadline = null,
+    Object? eligibleRoles = null,
+  }) {
+    return _then(_$SocietyTenderResponseImpl(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskSpec: null == taskSpec
+          ? _value._taskSpec
+          : taskSpec // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      deadline: null == deadline
+          ? _value.deadline
+          : deadline // ignore: cast_nullable_to_non_nullable
+              as String,
+      eligibleRoles: null == eligibleRoles
+          ? _value._eligibleRoles
+          : eligibleRoles // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyTenderResponseImpl implements _SocietyTenderResponse {
+  const _$SocietyTenderResponseImpl(
+      {required this.taskId,
+      required this.status,
+      required final Map<String, dynamic> taskSpec,
+      required this.deadline,
+      required final List<String> eligibleRoles})
+      : _taskSpec = taskSpec,
+        _eligibleRoles = eligibleRoles;
+
+  factory _$SocietyTenderResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietyTenderResponseImplFromJson(json);
+
+  @override
+  final String taskId;
+  @override
+  final String status;
+  final Map<String, dynamic> _taskSpec;
+  @override
+  Map<String, dynamic> get taskSpec {
+    if (_taskSpec is EqualUnmodifiableMapView) return _taskSpec;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_taskSpec);
+  }
+
+  @override
+  final String deadline;
+  final List<String> _eligibleRoles;
+  @override
+  List<String> get eligibleRoles {
+    if (_eligibleRoles is EqualUnmodifiableListView) return _eligibleRoles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_eligibleRoles);
+  }
+
+  @override
+  String toString() {
+    return 'SocietyTenderResponse(taskId: $taskId, status: $status, taskSpec: $taskSpec, deadline: $deadline, eligibleRoles: $eligibleRoles)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyTenderResponseImpl &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._taskSpec, _taskSpec) &&
+            (identical(other.deadline, deadline) ||
+                other.deadline == deadline) &&
+            const DeepCollectionEquality()
+                .equals(other._eligibleRoles, _eligibleRoles));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      taskId,
+      status,
+      const DeepCollectionEquality().hash(_taskSpec),
+      deadline,
+      const DeepCollectionEquality().hash(_eligibleRoles));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyTenderResponseImplCopyWith<_$SocietyTenderResponseImpl>
+      get copyWith => __$$SocietyTenderResponseImplCopyWithImpl<
+          _$SocietyTenderResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyTenderResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyTenderResponse implements SocietyTenderResponse {
+  const factory _SocietyTenderResponse(
+      {required final String taskId,
+      required final String status,
+      required final Map<String, dynamic> taskSpec,
+      required final String deadline,
+      required final List<String> eligibleRoles}) = _$SocietyTenderResponseImpl;
+
+  factory _SocietyTenderResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyTenderResponseImpl.fromJson;
+
+  @override
+  String get taskId;
+  @override
+  String get status;
+  @override
+  Map<String, dynamic> get taskSpec;
+  @override
+  String get deadline;
+  @override
+  List<String> get eligibleRoles;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyTenderResponseImplCopyWith<_$SocietyTenderResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyBidResponse _$SocietyBidResponseFromJson(Map<String, dynamic> json) {
+  return _SocietyBidResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyBidResponse {
+  String get taskId => throw _privateConstructorUsedError;
+  String get agentId => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double? get score => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyBidResponseCopyWith<SocietyBidResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyBidResponseCopyWith<$Res> {
+  factory $SocietyBidResponseCopyWith(
+          SocietyBidResponse value, $Res Function(SocietyBidResponse) then) =
+      _$SocietyBidResponseCopyWithImpl<$Res, SocietyBidResponse>;
+  @useResult
+  $Res call({String taskId, String agentId, String status, double? score});
+}
+
+/// @nodoc
+class _$SocietyBidResponseCopyWithImpl<$Res, $Val extends SocietyBidResponse>
+    implements $SocietyBidResponseCopyWith<$Res> {
+  _$SocietyBidResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? agentId = null,
+    Object? status = null,
+    Object? score = freezed,
+  }) {
+    return _then(_value.copyWith(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      score: freezed == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyBidResponseImplCopyWith<$Res>
+    implements $SocietyBidResponseCopyWith<$Res> {
+  factory _$$SocietyBidResponseImplCopyWith(_$SocietyBidResponseImpl value,
+          $Res Function(_$SocietyBidResponseImpl) then) =
+      __$$SocietyBidResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String taskId, String agentId, String status, double? score});
+}
+
+/// @nodoc
+class __$$SocietyBidResponseImplCopyWithImpl<$Res>
+    extends _$SocietyBidResponseCopyWithImpl<$Res, _$SocietyBidResponseImpl>
+    implements _$$SocietyBidResponseImplCopyWith<$Res> {
+  __$$SocietyBidResponseImplCopyWithImpl(_$SocietyBidResponseImpl _value,
+      $Res Function(_$SocietyBidResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? agentId = null,
+    Object? status = null,
+    Object? score = freezed,
+  }) {
+    return _then(_$SocietyBidResponseImpl(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      score: freezed == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyBidResponseImpl implements _SocietyBidResponse {
+  const _$SocietyBidResponseImpl(
+      {required this.taskId,
+      required this.agentId,
+      required this.status,
+      this.score});
+
+  factory _$SocietyBidResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietyBidResponseImplFromJson(json);
+
+  @override
+  final String taskId;
+  @override
+  final String agentId;
+  @override
+  final String status;
+  @override
+  final double? score;
+
+  @override
+  String toString() {
+    return 'SocietyBidResponse(taskId: $taskId, agentId: $agentId, status: $status, score: $score)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyBidResponseImpl &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.agentId, agentId) || other.agentId == agentId) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.score, score) || other.score == score));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, taskId, agentId, status, score);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyBidResponseImplCopyWith<_$SocietyBidResponseImpl> get copyWith =>
+      __$$SocietyBidResponseImplCopyWithImpl<_$SocietyBidResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyBidResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyBidResponse implements SocietyBidResponse {
+  const factory _SocietyBidResponse(
+      {required final String taskId,
+      required final String agentId,
+      required final String status,
+      final double? score}) = _$SocietyBidResponseImpl;
+
+  factory _SocietyBidResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyBidResponseImpl.fromJson;
+
+  @override
+  String get taskId;
+  @override
+  String get agentId;
+  @override
+  String get status;
+  @override
+  double? get score;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyBidResponseImplCopyWith<_$SocietyBidResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SocietyAwardResponse _$SocietyAwardResponseFromJson(Map<String, dynamic> json) {
+  return _SocietyAwardResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyAwardResponse {
+  String get taskId => throw _privateConstructorUsedError;
+  String get agentId => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyAwardResponseCopyWith<SocietyAwardResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyAwardResponseCopyWith<$Res> {
+  factory $SocietyAwardResponseCopyWith(SocietyAwardResponse value,
+          $Res Function(SocietyAwardResponse) then) =
+      _$SocietyAwardResponseCopyWithImpl<$Res, SocietyAwardResponse>;
+  @useResult
+  $Res call({String taskId, String agentId, String status});
+}
+
+/// @nodoc
+class _$SocietyAwardResponseCopyWithImpl<$Res,
+        $Val extends SocietyAwardResponse>
+    implements $SocietyAwardResponseCopyWith<$Res> {
+  _$SocietyAwardResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? agentId = null,
+    Object? status = null,
+  }) {
+    return _then(_value.copyWith(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyAwardResponseImplCopyWith<$Res>
+    implements $SocietyAwardResponseCopyWith<$Res> {
+  factory _$$SocietyAwardResponseImplCopyWith(_$SocietyAwardResponseImpl value,
+          $Res Function(_$SocietyAwardResponseImpl) then) =
+      __$$SocietyAwardResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String taskId, String agentId, String status});
+}
+
+/// @nodoc
+class __$$SocietyAwardResponseImplCopyWithImpl<$Res>
+    extends _$SocietyAwardResponseCopyWithImpl<$Res, _$SocietyAwardResponseImpl>
+    implements _$$SocietyAwardResponseImplCopyWith<$Res> {
+  __$$SocietyAwardResponseImplCopyWithImpl(_$SocietyAwardResponseImpl _value,
+      $Res Function(_$SocietyAwardResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskId = null,
+    Object? agentId = null,
+    Object? status = null,
+  }) {
+    return _then(_$SocietyAwardResponseImpl(
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      agentId: null == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyAwardResponseImpl implements _SocietyAwardResponse {
+  const _$SocietyAwardResponseImpl(
+      {required this.taskId, required this.agentId, required this.status});
+
+  factory _$SocietyAwardResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SocietyAwardResponseImplFromJson(json);
+
+  @override
+  final String taskId;
+  @override
+  final String agentId;
+  @override
+  final String status;
+
+  @override
+  String toString() {
+    return 'SocietyAwardResponse(taskId: $taskId, agentId: $agentId, status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyAwardResponseImpl &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.agentId, agentId) || other.agentId == agentId) &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, taskId, agentId, status);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyAwardResponseImplCopyWith<_$SocietyAwardResponseImpl>
+      get copyWith =>
+          __$$SocietyAwardResponseImplCopyWithImpl<_$SocietyAwardResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyAwardResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyAwardResponse implements SocietyAwardResponse {
+  const factory _SocietyAwardResponse(
+      {required final String taskId,
+      required final String agentId,
+      required final String status}) = _$SocietyAwardResponseImpl;
+
+  factory _SocietyAwardResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyAwardResponseImpl.fromJson;
+
+  @override
+  String get taskId;
+  @override
+  String get agentId;
+  @override
+  String get status;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyAwardResponseImplCopyWith<_$SocietyAwardResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyBlackboardWriteResponse _$SocietyBlackboardWriteResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SocietyBlackboardWriteResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyBlackboardWriteResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String get key => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyBlackboardWriteResponseCopyWith<SocietyBlackboardWriteResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyBlackboardWriteResponseCopyWith<$Res> {
+  factory $SocietyBlackboardWriteResponseCopyWith(
+          SocietyBlackboardWriteResponse value,
+          $Res Function(SocietyBlackboardWriteResponse) then) =
+      _$SocietyBlackboardWriteResponseCopyWithImpl<$Res,
+          SocietyBlackboardWriteResponse>;
+  @useResult
+  $Res call({bool success, String key});
+}
+
+/// @nodoc
+class _$SocietyBlackboardWriteResponseCopyWithImpl<$Res,
+        $Val extends SocietyBlackboardWriteResponse>
+    implements $SocietyBlackboardWriteResponseCopyWith<$Res> {
+  _$SocietyBlackboardWriteResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? key = null,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyBlackboardWriteResponseImplCopyWith<$Res>
+    implements $SocietyBlackboardWriteResponseCopyWith<$Res> {
+  factory _$$SocietyBlackboardWriteResponseImplCopyWith(
+          _$SocietyBlackboardWriteResponseImpl value,
+          $Res Function(_$SocietyBlackboardWriteResponseImpl) then) =
+      __$$SocietyBlackboardWriteResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, String key});
+}
+
+/// @nodoc
+class __$$SocietyBlackboardWriteResponseImplCopyWithImpl<$Res>
+    extends _$SocietyBlackboardWriteResponseCopyWithImpl<$Res,
+        _$SocietyBlackboardWriteResponseImpl>
+    implements _$$SocietyBlackboardWriteResponseImplCopyWith<$Res> {
+  __$$SocietyBlackboardWriteResponseImplCopyWithImpl(
+      _$SocietyBlackboardWriteResponseImpl _value,
+      $Res Function(_$SocietyBlackboardWriteResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? key = null,
+  }) {
+    return _then(_$SocietyBlackboardWriteResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyBlackboardWriteResponseImpl
+    implements _SocietyBlackboardWriteResponse {
+  const _$SocietyBlackboardWriteResponseImpl(
+      {required this.success, required this.key});
+
+  factory _$SocietyBlackboardWriteResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SocietyBlackboardWriteResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String key;
+
+  @override
+  String toString() {
+    return 'SocietyBlackboardWriteResponse(success: $success, key: $key)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyBlackboardWriteResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.key, key) || other.key == key));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, key);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyBlackboardWriteResponseImplCopyWith<
+          _$SocietyBlackboardWriteResponseImpl>
+      get copyWith => __$$SocietyBlackboardWriteResponseImplCopyWithImpl<
+          _$SocietyBlackboardWriteResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyBlackboardWriteResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyBlackboardWriteResponse
+    implements SocietyBlackboardWriteResponse {
+  const factory _SocietyBlackboardWriteResponse(
+      {required final bool success,
+      required final String key}) = _$SocietyBlackboardWriteResponseImpl;
+
+  factory _SocietyBlackboardWriteResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyBlackboardWriteResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String get key;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyBlackboardWriteResponseImplCopyWith<
+          _$SocietyBlackboardWriteResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyBlackboardReadResponse _$SocietyBlackboardReadResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SocietyBlackboardReadResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyBlackboardReadResponse {
+  bool get found => throw _privateConstructorUsedError;
+  String get key => throw _privateConstructorUsedError;
+  dynamic get value => throw _privateConstructorUsedError;
+  List<String> get tags => throw _privateConstructorUsedError;
+  int? get ttl => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyBlackboardReadResponseCopyWith<SocietyBlackboardReadResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyBlackboardReadResponseCopyWith<$Res> {
+  factory $SocietyBlackboardReadResponseCopyWith(
+          SocietyBlackboardReadResponse value,
+          $Res Function(SocietyBlackboardReadResponse) then) =
+      _$SocietyBlackboardReadResponseCopyWithImpl<$Res,
+          SocietyBlackboardReadResponse>;
+  @useResult
+  $Res call(
+      {bool found, String key, dynamic value, List<String> tags, int? ttl});
+}
+
+/// @nodoc
+class _$SocietyBlackboardReadResponseCopyWithImpl<$Res,
+        $Val extends SocietyBlackboardReadResponse>
+    implements $SocietyBlackboardReadResponseCopyWith<$Res> {
+  _$SocietyBlackboardReadResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? found = null,
+    Object? key = null,
+    Object? value = freezed,
+    Object? tags = null,
+    Object? ttl = freezed,
+  }) {
+    return _then(_value.copyWith(
+      found: null == found
+          ? _value.found
+          : found // ignore: cast_nullable_to_non_nullable
+              as bool,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      tags: null == tags
+          ? _value.tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      ttl: freezed == ttl
+          ? _value.ttl
+          : ttl // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyBlackboardReadResponseImplCopyWith<$Res>
+    implements $SocietyBlackboardReadResponseCopyWith<$Res> {
+  factory _$$SocietyBlackboardReadResponseImplCopyWith(
+          _$SocietyBlackboardReadResponseImpl value,
+          $Res Function(_$SocietyBlackboardReadResponseImpl) then) =
+      __$$SocietyBlackboardReadResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool found, String key, dynamic value, List<String> tags, int? ttl});
+}
+
+/// @nodoc
+class __$$SocietyBlackboardReadResponseImplCopyWithImpl<$Res>
+    extends _$SocietyBlackboardReadResponseCopyWithImpl<$Res,
+        _$SocietyBlackboardReadResponseImpl>
+    implements _$$SocietyBlackboardReadResponseImplCopyWith<$Res> {
+  __$$SocietyBlackboardReadResponseImplCopyWithImpl(
+      _$SocietyBlackboardReadResponseImpl _value,
+      $Res Function(_$SocietyBlackboardReadResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? found = null,
+    Object? key = null,
+    Object? value = freezed,
+    Object? tags = null,
+    Object? ttl = freezed,
+  }) {
+    return _then(_$SocietyBlackboardReadResponseImpl(
+      found: null == found
+          ? _value.found
+          : found // ignore: cast_nullable_to_non_nullable
+              as bool,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      tags: null == tags
+          ? _value._tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      ttl: freezed == ttl
+          ? _value.ttl
+          : ttl // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyBlackboardReadResponseImpl
+    implements _SocietyBlackboardReadResponse {
+  const _$SocietyBlackboardReadResponseImpl(
+      {required this.found,
+      required this.key,
+      required this.value,
+      required final List<String> tags,
+      this.ttl})
+      : _tags = tags;
+
+  factory _$SocietyBlackboardReadResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SocietyBlackboardReadResponseImplFromJson(json);
+
+  @override
+  final bool found;
+  @override
+  final String key;
+  @override
+  final dynamic value;
+  final List<String> _tags;
+  @override
+  List<String> get tags {
+    if (_tags is EqualUnmodifiableListView) return _tags;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tags);
+  }
+
+  @override
+  final int? ttl;
+
+  @override
+  String toString() {
+    return 'SocietyBlackboardReadResponse(found: $found, key: $key, value: $value, tags: $tags, ttl: $ttl)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyBlackboardReadResponseImpl &&
+            (identical(other.found, found) || other.found == found) &&
+            (identical(other.key, key) || other.key == key) &&
+            const DeepCollectionEquality().equals(other.value, value) &&
+            const DeepCollectionEquality().equals(other._tags, _tags) &&
+            (identical(other.ttl, ttl) || other.ttl == ttl));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      found,
+      key,
+      const DeepCollectionEquality().hash(value),
+      const DeepCollectionEquality().hash(_tags),
+      ttl);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyBlackboardReadResponseImplCopyWith<
+          _$SocietyBlackboardReadResponseImpl>
+      get copyWith => __$$SocietyBlackboardReadResponseImplCopyWithImpl<
+          _$SocietyBlackboardReadResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyBlackboardReadResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyBlackboardReadResponse
+    implements SocietyBlackboardReadResponse {
+  const factory _SocietyBlackboardReadResponse(
+      {required final bool found,
+      required final String key,
+      required final dynamic value,
+      required final List<String> tags,
+      final int? ttl}) = _$SocietyBlackboardReadResponseImpl;
+
+  factory _SocietyBlackboardReadResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyBlackboardReadResponseImpl.fromJson;
+
+  @override
+  bool get found;
+  @override
+  String get key;
+  @override
+  dynamic get value;
+  @override
+  List<String> get tags;
+  @override
+  int? get ttl;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyBlackboardReadResponseImplCopyWith<
+          _$SocietyBlackboardReadResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SocietyBlackboardQueryResponse _$SocietyBlackboardQueryResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SocietyBlackboardQueryResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SocietyBlackboardQueryResponse {
+  List<BlackboardEntry> get entries => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SocietyBlackboardQueryResponseCopyWith<SocietyBlackboardQueryResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SocietyBlackboardQueryResponseCopyWith<$Res> {
+  factory $SocietyBlackboardQueryResponseCopyWith(
+          SocietyBlackboardQueryResponse value,
+          $Res Function(SocietyBlackboardQueryResponse) then) =
+      _$SocietyBlackboardQueryResponseCopyWithImpl<$Res,
+          SocietyBlackboardQueryResponse>;
+  @useResult
+  $Res call({List<BlackboardEntry> entries});
+}
+
+/// @nodoc
+class _$SocietyBlackboardQueryResponseCopyWithImpl<$Res,
+        $Val extends SocietyBlackboardQueryResponse>
+    implements $SocietyBlackboardQueryResponseCopyWith<$Res> {
+  _$SocietyBlackboardQueryResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entries = null,
+  }) {
+    return _then(_value.copyWith(
+      entries: null == entries
+          ? _value.entries
+          : entries // ignore: cast_nullable_to_non_nullable
+              as List<BlackboardEntry>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SocietyBlackboardQueryResponseImplCopyWith<$Res>
+    implements $SocietyBlackboardQueryResponseCopyWith<$Res> {
+  factory _$$SocietyBlackboardQueryResponseImplCopyWith(
+          _$SocietyBlackboardQueryResponseImpl value,
+          $Res Function(_$SocietyBlackboardQueryResponseImpl) then) =
+      __$$SocietyBlackboardQueryResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<BlackboardEntry> entries});
+}
+
+/// @nodoc
+class __$$SocietyBlackboardQueryResponseImplCopyWithImpl<$Res>
+    extends _$SocietyBlackboardQueryResponseCopyWithImpl<$Res,
+        _$SocietyBlackboardQueryResponseImpl>
+    implements _$$SocietyBlackboardQueryResponseImplCopyWith<$Res> {
+  __$$SocietyBlackboardQueryResponseImplCopyWithImpl(
+      _$SocietyBlackboardQueryResponseImpl _value,
+      $Res Function(_$SocietyBlackboardQueryResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entries = null,
+  }) {
+    return _then(_$SocietyBlackboardQueryResponseImpl(
+      entries: null == entries
+          ? _value._entries
+          : entries // ignore: cast_nullable_to_non_nullable
+              as List<BlackboardEntry>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SocietyBlackboardQueryResponseImpl
+    implements _SocietyBlackboardQueryResponse {
+  const _$SocietyBlackboardQueryResponseImpl(
+      {required final List<BlackboardEntry> entries})
+      : _entries = entries;
+
+  factory _$SocietyBlackboardQueryResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SocietyBlackboardQueryResponseImplFromJson(json);
+
+  final List<BlackboardEntry> _entries;
+  @override
+  List<BlackboardEntry> get entries {
+    if (_entries is EqualUnmodifiableListView) return _entries;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_entries);
+  }
+
+  @override
+  String toString() {
+    return 'SocietyBlackboardQueryResponse(entries: $entries)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SocietyBlackboardQueryResponseImpl &&
+            const DeepCollectionEquality().equals(other._entries, _entries));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_entries));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SocietyBlackboardQueryResponseImplCopyWith<
+          _$SocietyBlackboardQueryResponseImpl>
+      get copyWith => __$$SocietyBlackboardQueryResponseImplCopyWithImpl<
+          _$SocietyBlackboardQueryResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SocietyBlackboardQueryResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SocietyBlackboardQueryResponse
+    implements SocietyBlackboardQueryResponse {
+  const factory _SocietyBlackboardQueryResponse(
+          {required final List<BlackboardEntry> entries}) =
+      _$SocietyBlackboardQueryResponseImpl;
+
+  factory _SocietyBlackboardQueryResponse.fromJson(Map<String, dynamic> json) =
+      _$SocietyBlackboardQueryResponseImpl.fromJson;
+
+  @override
+  List<BlackboardEntry> get entries;
+  @override
+  @JsonKey(ignore: true)
+  _$$SocietyBlackboardQueryResponseImplCopyWith<
+          _$SocietyBlackboardQueryResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProceduralListResponse _$ProceduralListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProceduralListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProceduralListResponse {
+  List<ProceduralSkill> get skills => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProceduralListResponseCopyWith<ProceduralListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProceduralListResponseCopyWith<$Res> {
+  factory $ProceduralListResponseCopyWith(ProceduralListResponse value,
+          $Res Function(ProceduralListResponse) then) =
+      _$ProceduralListResponseCopyWithImpl<$Res, ProceduralListResponse>;
+  @useResult
+  $Res call({List<ProceduralSkill> skills, int total});
+}
+
+/// @nodoc
+class _$ProceduralListResponseCopyWithImpl<$Res,
+        $Val extends ProceduralListResponse>
+    implements $ProceduralListResponseCopyWith<$Res> {
+  _$ProceduralListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skills = null,
+    Object? total = null,
+  }) {
+    return _then(_value.copyWith(
+      skills: null == skills
+          ? _value.skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<ProceduralSkill>,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProceduralListResponseImplCopyWith<$Res>
+    implements $ProceduralListResponseCopyWith<$Res> {
+  factory _$$ProceduralListResponseImplCopyWith(
+          _$ProceduralListResponseImpl value,
+          $Res Function(_$ProceduralListResponseImpl) then) =
+      __$$ProceduralListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ProceduralSkill> skills, int total});
+}
+
+/// @nodoc
+class __$$ProceduralListResponseImplCopyWithImpl<$Res>
+    extends _$ProceduralListResponseCopyWithImpl<$Res,
+        _$ProceduralListResponseImpl>
+    implements _$$ProceduralListResponseImplCopyWith<$Res> {
+  __$$ProceduralListResponseImplCopyWithImpl(
+      _$ProceduralListResponseImpl _value,
+      $Res Function(_$ProceduralListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skills = null,
+    Object? total = null,
+  }) {
+    return _then(_$ProceduralListResponseImpl(
+      skills: null == skills
+          ? _value._skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<ProceduralSkill>,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProceduralListResponseImpl implements _ProceduralListResponse {
+  const _$ProceduralListResponseImpl(
+      {required final List<ProceduralSkill> skills, required this.total})
+      : _skills = skills;
+
+  factory _$ProceduralListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProceduralListResponseImplFromJson(json);
+
+  final List<ProceduralSkill> _skills;
+  @override
+  List<ProceduralSkill> get skills {
+    if (_skills is EqualUnmodifiableListView) return _skills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_skills);
+  }
+
+  @override
+  final int total;
+
+  @override
+  String toString() {
+    return 'ProceduralListResponse(skills: $skills, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProceduralListResponseImpl &&
+            const DeepCollectionEquality().equals(other._skills, _skills) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_skills), total);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProceduralListResponseImplCopyWith<_$ProceduralListResponseImpl>
+      get copyWith => __$$ProceduralListResponseImplCopyWithImpl<
+          _$ProceduralListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProceduralListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProceduralListResponse implements ProceduralListResponse {
+  const factory _ProceduralListResponse(
+      {required final List<ProceduralSkill> skills,
+      required final int total}) = _$ProceduralListResponseImpl;
+
+  factory _ProceduralListResponse.fromJson(Map<String, dynamic> json) =
+      _$ProceduralListResponseImpl.fromJson;
+
+  @override
+  List<ProceduralSkill> get skills;
+  @override
+  int get total;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProceduralListResponseImplCopyWith<_$ProceduralListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProceduralApplicableResponse _$ProceduralApplicableResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProceduralApplicableResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProceduralApplicableResponse {
+  List<ProceduralSkill> get skills => throw _privateConstructorUsedError;
+  String get goal => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProceduralApplicableResponseCopyWith<ProceduralApplicableResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProceduralApplicableResponseCopyWith<$Res> {
+  factory $ProceduralApplicableResponseCopyWith(
+          ProceduralApplicableResponse value,
+          $Res Function(ProceduralApplicableResponse) then) =
+      _$ProceduralApplicableResponseCopyWithImpl<$Res,
+          ProceduralApplicableResponse>;
+  @useResult
+  $Res call({List<ProceduralSkill> skills, String goal});
+}
+
+/// @nodoc
+class _$ProceduralApplicableResponseCopyWithImpl<$Res,
+        $Val extends ProceduralApplicableResponse>
+    implements $ProceduralApplicableResponseCopyWith<$Res> {
+  _$ProceduralApplicableResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skills = null,
+    Object? goal = null,
+  }) {
+    return _then(_value.copyWith(
+      skills: null == skills
+          ? _value.skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<ProceduralSkill>,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProceduralApplicableResponseImplCopyWith<$Res>
+    implements $ProceduralApplicableResponseCopyWith<$Res> {
+  factory _$$ProceduralApplicableResponseImplCopyWith(
+          _$ProceduralApplicableResponseImpl value,
+          $Res Function(_$ProceduralApplicableResponseImpl) then) =
+      __$$ProceduralApplicableResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ProceduralSkill> skills, String goal});
+}
+
+/// @nodoc
+class __$$ProceduralApplicableResponseImplCopyWithImpl<$Res>
+    extends _$ProceduralApplicableResponseCopyWithImpl<$Res,
+        _$ProceduralApplicableResponseImpl>
+    implements _$$ProceduralApplicableResponseImplCopyWith<$Res> {
+  __$$ProceduralApplicableResponseImplCopyWithImpl(
+      _$ProceduralApplicableResponseImpl _value,
+      $Res Function(_$ProceduralApplicableResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skills = null,
+    Object? goal = null,
+  }) {
+    return _then(_$ProceduralApplicableResponseImpl(
+      skills: null == skills
+          ? _value._skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<ProceduralSkill>,
+      goal: null == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProceduralApplicableResponseImpl
+    implements _ProceduralApplicableResponse {
+  const _$ProceduralApplicableResponseImpl(
+      {required final List<ProceduralSkill> skills, required this.goal})
+      : _skills = skills;
+
+  factory _$ProceduralApplicableResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$ProceduralApplicableResponseImplFromJson(json);
+
+  final List<ProceduralSkill> _skills;
+  @override
+  List<ProceduralSkill> get skills {
+    if (_skills is EqualUnmodifiableListView) return _skills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_skills);
+  }
+
+  @override
+  final String goal;
+
+  @override
+  String toString() {
+    return 'ProceduralApplicableResponse(skills: $skills, goal: $goal)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProceduralApplicableResponseImpl &&
+            const DeepCollectionEquality().equals(other._skills, _skills) &&
+            (identical(other.goal, goal) || other.goal == goal));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_skills), goal);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProceduralApplicableResponseImplCopyWith<
+          _$ProceduralApplicableResponseImpl>
+      get copyWith => __$$ProceduralApplicableResponseImplCopyWithImpl<
+          _$ProceduralApplicableResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProceduralApplicableResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProceduralApplicableResponse
+    implements ProceduralApplicableResponse {
+  const factory _ProceduralApplicableResponse(
+      {required final List<ProceduralSkill> skills,
+      required final String goal}) = _$ProceduralApplicableResponseImpl;
+
+  factory _ProceduralApplicableResponse.fromJson(Map<String, dynamic> json) =
+      _$ProceduralApplicableResponseImpl.fromJson;
+
+  @override
+  List<ProceduralSkill> get skills;
+  @override
+  String get goal;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProceduralApplicableResponseImplCopyWith<
+          _$ProceduralApplicableResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProceduralUseResponse _$ProceduralUseResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProceduralUseResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProceduralUseResponse {
+  String get skillId => throw _privateConstructorUsedError;
+  bool get success => throw _privateConstructorUsedError;
+  double get newConfidence => throw _privateConstructorUsedError;
+  int get newUsageCount => throw _privateConstructorUsedError;
+  double? get reward => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProceduralUseResponseCopyWith<ProceduralUseResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProceduralUseResponseCopyWith<$Res> {
+  factory $ProceduralUseResponseCopyWith(ProceduralUseResponse value,
+          $Res Function(ProceduralUseResponse) then) =
+      _$ProceduralUseResponseCopyWithImpl<$Res, ProceduralUseResponse>;
+  @useResult
+  $Res call(
+      {String skillId,
+      bool success,
+      double newConfidence,
+      int newUsageCount,
+      double? reward});
+}
+
+/// @nodoc
+class _$ProceduralUseResponseCopyWithImpl<$Res,
+        $Val extends ProceduralUseResponse>
+    implements $ProceduralUseResponseCopyWith<$Res> {
+  _$ProceduralUseResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skillId = null,
+    Object? success = null,
+    Object? newConfidence = null,
+    Object? newUsageCount = null,
+    Object? reward = freezed,
+  }) {
+    return _then(_value.copyWith(
+      skillId: null == skillId
+          ? _value.skillId
+          : skillId // ignore: cast_nullable_to_non_nullable
+              as String,
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      newConfidence: null == newConfidence
+          ? _value.newConfidence
+          : newConfidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      newUsageCount: null == newUsageCount
+          ? _value.newUsageCount
+          : newUsageCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      reward: freezed == reward
+          ? _value.reward
+          : reward // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProceduralUseResponseImplCopyWith<$Res>
+    implements $ProceduralUseResponseCopyWith<$Res> {
+  factory _$$ProceduralUseResponseImplCopyWith(
+          _$ProceduralUseResponseImpl value,
+          $Res Function(_$ProceduralUseResponseImpl) then) =
+      __$$ProceduralUseResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String skillId,
+      bool success,
+      double newConfidence,
+      int newUsageCount,
+      double? reward});
+}
+
+/// @nodoc
+class __$$ProceduralUseResponseImplCopyWithImpl<$Res>
+    extends _$ProceduralUseResponseCopyWithImpl<$Res,
+        _$ProceduralUseResponseImpl>
+    implements _$$ProceduralUseResponseImplCopyWith<$Res> {
+  __$$ProceduralUseResponseImplCopyWithImpl(_$ProceduralUseResponseImpl _value,
+      $Res Function(_$ProceduralUseResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skillId = null,
+    Object? success = null,
+    Object? newConfidence = null,
+    Object? newUsageCount = null,
+    Object? reward = freezed,
+  }) {
+    return _then(_$ProceduralUseResponseImpl(
+      skillId: null == skillId
+          ? _value.skillId
+          : skillId // ignore: cast_nullable_to_non_nullable
+              as String,
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      newConfidence: null == newConfidence
+          ? _value.newConfidence
+          : newConfidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      newUsageCount: null == newUsageCount
+          ? _value.newUsageCount
+          : newUsageCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      reward: freezed == reward
+          ? _value.reward
+          : reward // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProceduralUseResponseImpl implements _ProceduralUseResponse {
+  const _$ProceduralUseResponseImpl(
+      {required this.skillId,
+      required this.success,
+      required this.newConfidence,
+      required this.newUsageCount,
+      this.reward});
+
+  factory _$ProceduralUseResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProceduralUseResponseImplFromJson(json);
+
+  @override
+  final String skillId;
+  @override
+  final bool success;
+  @override
+  final double newConfidence;
+  @override
+  final int newUsageCount;
+  @override
+  final double? reward;
+
+  @override
+  String toString() {
+    return 'ProceduralUseResponse(skillId: $skillId, success: $success, newConfidence: $newConfidence, newUsageCount: $newUsageCount, reward: $reward)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProceduralUseResponseImpl &&
+            (identical(other.skillId, skillId) || other.skillId == skillId) &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.newConfidence, newConfidence) ||
+                other.newConfidence == newConfidence) &&
+            (identical(other.newUsageCount, newUsageCount) ||
+                other.newUsageCount == newUsageCount) &&
+            (identical(other.reward, reward) || other.reward == reward));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, skillId, success, newConfidence, newUsageCount, reward);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProceduralUseResponseImplCopyWith<_$ProceduralUseResponseImpl>
+      get copyWith => __$$ProceduralUseResponseImplCopyWithImpl<
+          _$ProceduralUseResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProceduralUseResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProceduralUseResponse implements ProceduralUseResponse {
+  const factory _ProceduralUseResponse(
+      {required final String skillId,
+      required final bool success,
+      required final double newConfidence,
+      required final int newUsageCount,
+      final double? reward}) = _$ProceduralUseResponseImpl;
+
+  factory _ProceduralUseResponse.fromJson(Map<String, dynamic> json) =
+      _$ProceduralUseResponseImpl.fromJson;
+
+  @override
+  String get skillId;
+  @override
+  bool get success;
+  @override
+  double get newConfidence;
+  @override
+  int get newUsageCount;
+  @override
+  double? get reward;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProceduralUseResponseImplCopyWith<_$ProceduralUseResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProceduralStatsResponse _$ProceduralStatsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProceduralStatsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProceduralStatsResponse {
+  int get totalSkills => throw _privateConstructorUsedError;
+  int get verifiedSkills => throw _privateConstructorUsedError;
+  double get avgConfidence => throw _privateConstructorUsedError;
+  double get avgSuccessRate => throw _privateConstructorUsedError;
+  int get totalUsages => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProceduralStatsResponseCopyWith<ProceduralStatsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProceduralStatsResponseCopyWith<$Res> {
+  factory $ProceduralStatsResponseCopyWith(ProceduralStatsResponse value,
+          $Res Function(ProceduralStatsResponse) then) =
+      _$ProceduralStatsResponseCopyWithImpl<$Res, ProceduralStatsResponse>;
+  @useResult
+  $Res call(
+      {int totalSkills,
+      int verifiedSkills,
+      double avgConfidence,
+      double avgSuccessRate,
+      int totalUsages});
+}
+
+/// @nodoc
+class _$ProceduralStatsResponseCopyWithImpl<$Res,
+        $Val extends ProceduralStatsResponse>
+    implements $ProceduralStatsResponseCopyWith<$Res> {
+  _$ProceduralStatsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalSkills = null,
+    Object? verifiedSkills = null,
+    Object? avgConfidence = null,
+    Object? avgSuccessRate = null,
+    Object? totalUsages = null,
+  }) {
+    return _then(_value.copyWith(
+      totalSkills: null == totalSkills
+          ? _value.totalSkills
+          : totalSkills // ignore: cast_nullable_to_non_nullable
+              as int,
+      verifiedSkills: null == verifiedSkills
+          ? _value.verifiedSkills
+          : verifiedSkills // ignore: cast_nullable_to_non_nullable
+              as int,
+      avgConfidence: null == avgConfidence
+          ? _value.avgConfidence
+          : avgConfidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      avgSuccessRate: null == avgSuccessRate
+          ? _value.avgSuccessRate
+          : avgSuccessRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      totalUsages: null == totalUsages
+          ? _value.totalUsages
+          : totalUsages // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProceduralStatsResponseImplCopyWith<$Res>
+    implements $ProceduralStatsResponseCopyWith<$Res> {
+  factory _$$ProceduralStatsResponseImplCopyWith(
+          _$ProceduralStatsResponseImpl value,
+          $Res Function(_$ProceduralStatsResponseImpl) then) =
+      __$$ProceduralStatsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int totalSkills,
+      int verifiedSkills,
+      double avgConfidence,
+      double avgSuccessRate,
+      int totalUsages});
+}
+
+/// @nodoc
+class __$$ProceduralStatsResponseImplCopyWithImpl<$Res>
+    extends _$ProceduralStatsResponseCopyWithImpl<$Res,
+        _$ProceduralStatsResponseImpl>
+    implements _$$ProceduralStatsResponseImplCopyWith<$Res> {
+  __$$ProceduralStatsResponseImplCopyWithImpl(
+      _$ProceduralStatsResponseImpl _value,
+      $Res Function(_$ProceduralStatsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalSkills = null,
+    Object? verifiedSkills = null,
+    Object? avgConfidence = null,
+    Object? avgSuccessRate = null,
+    Object? totalUsages = null,
+  }) {
+    return _then(_$ProceduralStatsResponseImpl(
+      totalSkills: null == totalSkills
+          ? _value.totalSkills
+          : totalSkills // ignore: cast_nullable_to_non_nullable
+              as int,
+      verifiedSkills: null == verifiedSkills
+          ? _value.verifiedSkills
+          : verifiedSkills // ignore: cast_nullable_to_non_nullable
+              as int,
+      avgConfidence: null == avgConfidence
+          ? _value.avgConfidence
+          : avgConfidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      avgSuccessRate: null == avgSuccessRate
+          ? _value.avgSuccessRate
+          : avgSuccessRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      totalUsages: null == totalUsages
+          ? _value.totalUsages
+          : totalUsages // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProceduralStatsResponseImpl implements _ProceduralStatsResponse {
+  const _$ProceduralStatsResponseImpl(
+      {required this.totalSkills,
+      required this.verifiedSkills,
+      required this.avgConfidence,
+      required this.avgSuccessRate,
+      required this.totalUsages});
+
+  factory _$ProceduralStatsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProceduralStatsResponseImplFromJson(json);
+
+  @override
+  final int totalSkills;
+  @override
+  final int verifiedSkills;
+  @override
+  final double avgConfidence;
+  @override
+  final double avgSuccessRate;
+  @override
+  final int totalUsages;
+
+  @override
+  String toString() {
+    return 'ProceduralStatsResponse(totalSkills: $totalSkills, verifiedSkills: $verifiedSkills, avgConfidence: $avgConfidence, avgSuccessRate: $avgSuccessRate, totalUsages: $totalUsages)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProceduralStatsResponseImpl &&
+            (identical(other.totalSkills, totalSkills) ||
+                other.totalSkills == totalSkills) &&
+            (identical(other.verifiedSkills, verifiedSkills) ||
+                other.verifiedSkills == verifiedSkills) &&
+            (identical(other.avgConfidence, avgConfidence) ||
+                other.avgConfidence == avgConfidence) &&
+            (identical(other.avgSuccessRate, avgSuccessRate) ||
+                other.avgSuccessRate == avgSuccessRate) &&
+            (identical(other.totalUsages, totalUsages) ||
+                other.totalUsages == totalUsages));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, totalSkills, verifiedSkills,
+      avgConfidence, avgSuccessRate, totalUsages);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProceduralStatsResponseImplCopyWith<_$ProceduralStatsResponseImpl>
+      get copyWith => __$$ProceduralStatsResponseImplCopyWithImpl<
+          _$ProceduralStatsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProceduralStatsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProceduralStatsResponse implements ProceduralStatsResponse {
+  const factory _ProceduralStatsResponse(
+      {required final int totalSkills,
+      required final int verifiedSkills,
+      required final double avgConfidence,
+      required final double avgSuccessRate,
+      required final int totalUsages}) = _$ProceduralStatsResponseImpl;
+
+  factory _ProceduralStatsResponse.fromJson(Map<String, dynamic> json) =
+      _$ProceduralStatsResponseImpl.fromJson;
+
+  @override
+  int get totalSkills;
+  @override
+  int get verifiedSkills;
+  @override
+  double get avgConfidence;
+  @override
+  double get avgSuccessRate;
+  @override
+  int get totalUsages;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProceduralStatsResponseImplCopyWith<_$ProceduralStatsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProceduralSearchResponse _$ProceduralSearchResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProceduralSearchResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProceduralSearchResponse {
+  List<ProceduralSkill> get skills => throw _privateConstructorUsedError;
+  String get query => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProceduralSearchResponseCopyWith<ProceduralSearchResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProceduralSearchResponseCopyWith<$Res> {
+  factory $ProceduralSearchResponseCopyWith(ProceduralSearchResponse value,
+          $Res Function(ProceduralSearchResponse) then) =
+      _$ProceduralSearchResponseCopyWithImpl<$Res, ProceduralSearchResponse>;
+  @useResult
+  $Res call({List<ProceduralSkill> skills, String query});
+}
+
+/// @nodoc
+class _$ProceduralSearchResponseCopyWithImpl<$Res,
+        $Val extends ProceduralSearchResponse>
+    implements $ProceduralSearchResponseCopyWith<$Res> {
+  _$ProceduralSearchResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skills = null,
+    Object? query = null,
+  }) {
+    return _then(_value.copyWith(
+      skills: null == skills
+          ? _value.skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<ProceduralSkill>,
+      query: null == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProceduralSearchResponseImplCopyWith<$Res>
+    implements $ProceduralSearchResponseCopyWith<$Res> {
+  factory _$$ProceduralSearchResponseImplCopyWith(
+          _$ProceduralSearchResponseImpl value,
+          $Res Function(_$ProceduralSearchResponseImpl) then) =
+      __$$ProceduralSearchResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ProceduralSkill> skills, String query});
+}
+
+/// @nodoc
+class __$$ProceduralSearchResponseImplCopyWithImpl<$Res>
+    extends _$ProceduralSearchResponseCopyWithImpl<$Res,
+        _$ProceduralSearchResponseImpl>
+    implements _$$ProceduralSearchResponseImplCopyWith<$Res> {
+  __$$ProceduralSearchResponseImplCopyWithImpl(
+      _$ProceduralSearchResponseImpl _value,
+      $Res Function(_$ProceduralSearchResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skills = null,
+    Object? query = null,
+  }) {
+    return _then(_$ProceduralSearchResponseImpl(
+      skills: null == skills
+          ? _value._skills
+          : skills // ignore: cast_nullable_to_non_nullable
+              as List<ProceduralSkill>,
+      query: null == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProceduralSearchResponseImpl implements _ProceduralSearchResponse {
+  const _$ProceduralSearchResponseImpl(
+      {required final List<ProceduralSkill> skills, required this.query})
+      : _skills = skills;
+
+  factory _$ProceduralSearchResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProceduralSearchResponseImplFromJson(json);
+
+  final List<ProceduralSkill> _skills;
+  @override
+  List<ProceduralSkill> get skills {
+    if (_skills is EqualUnmodifiableListView) return _skills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_skills);
+  }
+
+  @override
+  final String query;
+
+  @override
+  String toString() {
+    return 'ProceduralSearchResponse(skills: $skills, query: $query)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProceduralSearchResponseImpl &&
+            const DeepCollectionEquality().equals(other._skills, _skills) &&
+            (identical(other.query, query) || other.query == query));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_skills), query);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProceduralSearchResponseImplCopyWith<_$ProceduralSearchResponseImpl>
+      get copyWith => __$$ProceduralSearchResponseImplCopyWithImpl<
+          _$ProceduralSearchResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProceduralSearchResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProceduralSearchResponse implements ProceduralSearchResponse {
+  const factory _ProceduralSearchResponse(
+      {required final List<ProceduralSkill> skills,
+      required final String query}) = _$ProceduralSearchResponseImpl;
+
+  factory _ProceduralSearchResponse.fromJson(Map<String, dynamic> json) =
+      _$ProceduralSearchResponseImpl.fromJson;
+
+  @override
+  List<ProceduralSkill> get skills;
+  @override
+  String get query;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProceduralSearchResponseImplCopyWith<_$ProceduralSearchResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProceduralComposeResponse _$ProceduralComposeResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProceduralComposeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProceduralComposeResponse {
+  String get skillId => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  bool get verified => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProceduralComposeResponseCopyWith<ProceduralComposeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProceduralComposeResponseCopyWith<$Res> {
+  factory $ProceduralComposeResponseCopyWith(ProceduralComposeResponse value,
+          $Res Function(ProceduralComposeResponse) then) =
+      _$ProceduralComposeResponseCopyWithImpl<$Res, ProceduralComposeResponse>;
+  @useResult
+  $Res call({String skillId, String name, String description, bool verified});
+}
+
+/// @nodoc
+class _$ProceduralComposeResponseCopyWithImpl<$Res,
+        $Val extends ProceduralComposeResponse>
+    implements $ProceduralComposeResponseCopyWith<$Res> {
+  _$ProceduralComposeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skillId = null,
+    Object? name = null,
+    Object? description = null,
+    Object? verified = null,
+  }) {
+    return _then(_value.copyWith(
+      skillId: null == skillId
+          ? _value.skillId
+          : skillId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      verified: null == verified
+          ? _value.verified
+          : verified // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProceduralComposeResponseImplCopyWith<$Res>
+    implements $ProceduralComposeResponseCopyWith<$Res> {
+  factory _$$ProceduralComposeResponseImplCopyWith(
+          _$ProceduralComposeResponseImpl value,
+          $Res Function(_$ProceduralComposeResponseImpl) then) =
+      __$$ProceduralComposeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String skillId, String name, String description, bool verified});
+}
+
+/// @nodoc
+class __$$ProceduralComposeResponseImplCopyWithImpl<$Res>
+    extends _$ProceduralComposeResponseCopyWithImpl<$Res,
+        _$ProceduralComposeResponseImpl>
+    implements _$$ProceduralComposeResponseImplCopyWith<$Res> {
+  __$$ProceduralComposeResponseImplCopyWithImpl(
+      _$ProceduralComposeResponseImpl _value,
+      $Res Function(_$ProceduralComposeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? skillId = null,
+    Object? name = null,
+    Object? description = null,
+    Object? verified = null,
+  }) {
+    return _then(_$ProceduralComposeResponseImpl(
+      skillId: null == skillId
+          ? _value.skillId
+          : skillId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      verified: null == verified
+          ? _value.verified
+          : verified // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProceduralComposeResponseImpl implements _ProceduralComposeResponse {
+  const _$ProceduralComposeResponseImpl(
+      {required this.skillId,
+      required this.name,
+      required this.description,
+      required this.verified});
+
+  factory _$ProceduralComposeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProceduralComposeResponseImplFromJson(json);
+
+  @override
+  final String skillId;
+  @override
+  final String name;
+  @override
+  final String description;
+  @override
+  final bool verified;
+
+  @override
+  String toString() {
+    return 'ProceduralComposeResponse(skillId: $skillId, name: $name, description: $description, verified: $verified)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProceduralComposeResponseImpl &&
+            (identical(other.skillId, skillId) || other.skillId == skillId) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.verified, verified) ||
+                other.verified == verified));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, skillId, name, description, verified);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProceduralComposeResponseImplCopyWith<_$ProceduralComposeResponseImpl>
+      get copyWith => __$$ProceduralComposeResponseImplCopyWithImpl<
+          _$ProceduralComposeResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProceduralComposeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProceduralComposeResponse implements ProceduralComposeResponse {
+  const factory _ProceduralComposeResponse(
+      {required final String skillId,
+      required final String name,
+      required final String description,
+      required final bool verified}) = _$ProceduralComposeResponseImpl;
+
+  factory _ProceduralComposeResponse.fromJson(Map<String, dynamic> json) =
+      _$ProceduralComposeResponseImpl.fromJson;
+
+  @override
+  String get skillId;
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  bool get verified;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProceduralComposeResponseImplCopyWith<_$ProceduralComposeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 HealthCheckResult _$HealthCheckResultFromJson(Map<String, dynamic> json) {
   return _HealthCheckResult.fromJson(json);
 }

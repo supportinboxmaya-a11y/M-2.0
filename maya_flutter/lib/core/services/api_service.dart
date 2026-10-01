@@ -1333,6 +1333,202 @@ class ApiService {
     return MetaEventsResponse.fromJson(response.data);
   }
 
+
+  // AGI Architecture Part 2 (Phase 18 Part 2) - Synthesizer, Society, Procedural Memory
+
+  // Synthesizer
+  Future<SynthesizeListResponse> getSynthesisList() async {
+    final response = await _dio.get(AppConfig.synthesizeList);
+    return SynthesizeListResponse.fromJson(response.data);
+  }
+
+  // Society
+  Future<SocietyStatusResponse> getSocietyStatus() async {
+    final response = await _dio.get(AppConfig.societyStatus);
+    return SocietyStatusResponse.fromJson(response.data);
+  }
+
+  Future<SocietySpawnResponse> spawnAgent({
+    required String role,
+    required String spec,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.societySpawn,
+      data: {"role": role, "spec": spec},
+    );
+    return SocietySpawnResponse.fromJson(response.data);
+  }
+
+  Future<SocietyAgentsResponse> getSocietyAgents() async {
+    final response = await _dio.get(AppConfig.societyAgents);
+    return SocietyAgentsResponse.fromJson(response.data);
+  }
+
+  Future<SocietyTaskResponse> assignAgentTask({
+    required String agentId,
+    required Map<String, dynamic> task,
+  }) async {
+    final response = await _dio.post(
+      "${AppConfig.societyAgentTask}$agentId/task",
+      data: task,
+    );
+    return SocietyTaskResponse.fromJson(response.data);
+  }
+
+  Future<SocietyTenderResponse> tenderTask({
+    required Map<String, dynamic> taskSpec,
+    required String deadline,
+    List<String>? eligibleRoles,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.societyTender,
+      data: {
+        "task_spec": taskSpec,
+        "deadline": deadline,
+        "eligible_roles": eligibleRoles ?? [],
+      },
+    );
+    return SocietyTenderResponse.fromJson(response.data);
+  }
+
+  Future<SocietyBidResponse> bidTask({
+    required String taskId,
+    required String agentId,
+  }) async {
+    final response = await _dio.post(
+      "${AppConfig.societyBid}$taskId/bid",
+      data: {"agent_id": agentId},
+    );
+    return SocietyBidResponse.fromJson(response.data);
+  }
+
+  Future<SocietyAwardResponse> awardTask({
+    required String taskId,
+    required String agentId,
+  }) async {
+    final response = await _dio.post(
+      "${AppConfig.societyAward}$taskId/award",
+      data: {"agent_id": agentId},
+    );
+    return SocietyAwardResponse.fromJson(response.data);
+  }
+
+  Future<SocietyBlackboardWriteResponse> writeBlackboard({
+    required String agentId,
+    required String key,
+    required dynamic value,
+    List<String>? tags,
+    int? ttl,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.societyBlackboardWrite,
+      data: {
+        "agent_id": agentId,
+        "key": key,
+        "value": value,
+        "tags": tags ?? [],
+        "ttl": ttl,
+      },
+    );
+    return SocietyBlackboardWriteResponse.fromJson(response.data);
+  }
+
+  Future<SocietyBlackboardReadResponse> readBlackboard({
+    required String key,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.societyBlackboardRead,
+      queryParameters: {"key": key},
+    );
+    return SocietyBlackboardReadResponse.fromJson(response.data);
+  }
+
+  Future<SocietyBlackboardQueryResponse> queryBlackboard({
+    required String pattern,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.societyBlackboardQuery,
+      queryParameters: {"pattern": pattern},
+    );
+    return SocietyBlackboardQueryResponse.fromJson(response.data);
+  }
+
+  // Procedural Memory
+  Future<ProceduralListResponse> getProceduralSkills({
+    bool? verified,
+    int limit = 10,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.proceduralList,
+      queryParameters: {
+        if (verified != null) "verified": verified,
+        "limit": limit,
+      },
+    );
+    return ProceduralListResponse.fromJson(response.data);
+  }
+
+  Future<ProceduralApplicableResponse> getApplicableProcedures({
+    required String goal,
+    String? context,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.proceduralApplicable,
+      queryParameters: {
+        "goal": goal,
+        if (context != null) "context": context,
+      },
+    );
+    return ProceduralApplicableResponse.fromJson(response.data);
+  }
+
+  Future<ProceduralUseResponse> useProceduralSkill({
+    required String skillId,
+    required bool success,
+    double? reward,
+  }) async {
+    final response = await _dio.post(
+      "${AppConfig.proceduralUse}$skillId/use",
+      data: {
+        "success": success,
+        if (reward != null) "reward": reward,
+      },
+    );
+    return ProceduralUseResponse.fromJson(response.data);
+  }
+
+  Future<ProceduralStatsResponse> getProceduralStats() async {
+    final response = await _dio.get(AppConfig.proceduralStats);
+    return ProceduralStatsResponse.fromJson(response.data);
+  }
+
+  Future<ProceduralSearchResponse> searchProcedural({
+    required String query,
+    int limit = 10,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.proceduralSearch,
+      queryParameters: {"q": query, "limit": limit},
+    );
+    return ProceduralSearchResponse.fromJson(response.data);
+  }
+
+  Future<ProceduralComposeResponse> composeProcedural({
+    required List<String> skillIds,
+    required String name,
+    required String description,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.proceduralCompose,
+      data: {
+        "skill_ids": skillIds,
+        "name": name,
+        "description": description,
+      },
+    );
+    return ProceduralComposeResponse.fromJson(response.data);
+  }
+
 // AGI Architecture (Phase 18 Part 1)
   Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
     final response = await _dio.get(
@@ -1818,6 +2014,323 @@ class MetaEvent {
       _$MetaEventFromJson(json);
 
   Map<String, dynamic> toJson() => _$MetaEventToJson(this);
+}
+
+// Synthesizer Models (Phase 18 Part 2)
+@freezed
+class SynthesizeListResponse with _$SynthesizeListResponse {
+  const factory SynthesizeListResponse({
+    required List<SynthesisItem> items,
+  }) = _SynthesizeListResponse;
+
+  factory SynthesizeListResponse.fromJson(Map<String, dynamic> json) =>
+      _$SynthesizeListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class SynthesisItem {
+  final String id;
+  final String name;
+  final String description;
+  final String status;
+  final DateTime createdAt;
+  final DateTime? completedAt;
+  final Map<String, dynamic>? result;
+
+  const SynthesisItem({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.status,
+    required this.createdAt,
+    this.completedAt,
+    this.result,
+  });
+
+  factory SynthesisItem.fromJson(Map<String, dynamic> json) =>
+      _$SynthesisItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SynthesisItemToJson(this);
+}
+
+// Society Models (Phase 18 Part 2)
+@freezed
+class SocietyStatusResponse with _$SocietyStatusResponse {
+  const factory SocietyStatusResponse({
+    required int totalAgents,
+    required int activeAgents,
+    required int tasksQueued,
+    required int tasksRunning,
+    required int tasksCompleted,
+    required int tasksFailed,
+  }) = _SocietyStatusResponse;
+
+  factory SocietyStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyStatusResponseFromJson(json);
+}
+
+@freezed
+class SocietySpawnResponse with _$SocietySpawnResponse {
+  const factory SocietySpawnResponse({
+    required String agentId,
+    required String role,
+    required String status,
+  }) = _SocietySpawnResponse;
+
+  factory SocietySpawnResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietySpawnResponseFromJson(json);
+}
+
+@freezed
+class SocietyAgentsResponse with _$SocietyAgentsResponse {
+  const factory SocietyAgentsResponse({
+    required List<SocietyAgent> agents,
+  }) = _SocietyAgentsResponse;
+
+  factory SocietyAgentsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyAgentsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class SocietyAgent {
+  final String id;
+  final String role;
+  final String status;
+  final Map<String, dynamic>? capabilities;
+  final DateTime createdAt;
+  final DateTime? lastActive;
+
+  const SocietyAgent({
+    required this.id,
+    required this.role,
+    required this.status,
+    this.capabilities,
+    required this.createdAt,
+    this.lastActive,
+  });
+
+  factory SocietyAgent.fromJson(Map<String, dynamic> json) =>
+      _$SocietyAgentFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SocietyAgentToJson(this);
+}
+
+@freezed
+class SocietyTaskResponse with _$SocietyTaskResponse {
+  const factory SocietyTaskResponse({
+    required String taskId,
+    required String agentId,
+    required String status,
+    required Map<String, dynamic> task,
+  }) = _SocietyTaskResponse;
+
+  factory SocietyTaskResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyTaskResponseFromJson(json);
+}
+
+@freezed
+class SocietyTenderResponse with _$SocietyTenderResponse {
+  const factory SocietyTenderResponse({
+    required String taskId,
+    required String status,
+    required Map<String, dynamic> taskSpec,
+    required String deadline,
+    required List<String> eligibleRoles,
+  }) = _SocietyTenderResponse;
+
+  factory SocietyTenderResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyTenderResponseFromJson(json);
+}
+
+@freezed
+class SocietyBidResponse with _$SocietyBidResponse {
+  const factory SocietyBidResponse({
+    required String taskId,
+    required String agentId,
+    required String status,
+    double? score,
+  }) = _SocietyBidResponse;
+
+  factory SocietyBidResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyBidResponseFromJson(json);
+}
+
+@freezed
+class SocietyAwardResponse with _$SocietyAwardResponse {
+  const factory SocietyAwardResponse({
+    required String taskId,
+    required String agentId,
+    required String status,
+  }) = _SocietyAwardResponse;
+
+  factory SocietyAwardResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyAwardResponseFromJson(json);
+}
+
+@freezed
+class SocietyBlackboardWriteResponse with _$SocietyBlackboardWriteResponse {
+  const factory SocietyBlackboardWriteResponse({
+    required bool success,
+    required String key,
+  }) = _SocietyBlackboardWriteResponse;
+
+  factory SocietyBlackboardWriteResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyBlackboardWriteResponseFromJson(json);
+}
+
+@freezed
+class SocietyBlackboardReadResponse with _$SocietyBlackboardReadResponse {
+  const factory SocietyBlackboardReadResponse({
+    required bool found,
+    required String key,
+    required dynamic value,
+    required List<String> tags,
+    int? ttl,
+  }) = _SocietyBlackboardReadResponse;
+
+  factory SocietyBlackboardReadResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyBlackboardReadResponseFromJson(json);
+}
+
+@freezed
+class SocietyBlackboardQueryResponse with _$SocietyBlackboardQueryResponse {
+  const factory SocietyBlackboardQueryResponse({
+    required List<BlackboardEntry> entries,
+  }) = _SocietyBlackboardQueryResponse;
+
+  factory SocietyBlackboardQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$SocietyBlackboardQueryResponseFromJson(json);
+}
+
+@JsonSerializable()
+class BlackboardEntry {
+  final String key;
+  final dynamic value;
+  final List<String> tags;
+  final int? ttl;
+  final DateTime createdAt;
+  final String agentId;
+
+  const BlackboardEntry({
+    required this.key,
+    required this.value,
+    required this.tags,
+    this.ttl,
+    required this.createdAt,
+    required this.agentId,
+  });
+
+  factory BlackboardEntry.fromJson(Map<String, dynamic> json) =>
+      _$BlackboardEntryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BlackboardEntryToJson(this);
+}
+
+// Procedural Memory Models (Phase 18 Part 2)
+@freezed
+class ProceduralListResponse with _$ProceduralListResponse {
+  const factory ProceduralListResponse({
+    required List<ProceduralSkill> skills,
+    required int total,
+  }) = _ProceduralListResponse;
+
+  factory ProceduralListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ProceduralSkill {
+  final String id;
+  final String name;
+  final String description;
+  final bool verified;
+  final double confidence;
+  final int usageCount;
+  final double successRate;
+  final List<String> applicableGoals;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+
+  const ProceduralSkill({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.verified,
+    required this.confidence,
+    required this.usageCount,
+    required this.successRate,
+    required this.applicableGoals,
+    required this.createdAt,
+    this.updatedAt,
+  });
+
+  factory ProceduralSkill.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralSkillFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProceduralSkillToJson(this);
+}
+
+@freezed
+class ProceduralApplicableResponse with _$ProceduralApplicableResponse {
+  const factory ProceduralApplicableResponse({
+    required List<ProceduralSkill> skills,
+    required String goal,
+  }) = _ProceduralApplicableResponse;
+
+  factory ProceduralApplicableResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralApplicableResponseFromJson(json);
+}
+
+@freezed
+class ProceduralUseResponse with _$ProceduralUseResponse {
+  const factory ProceduralUseResponse({
+    required String skillId,
+    required bool success,
+    required double newConfidence,
+    required int newUsageCount,
+    double? reward,
+  }) = _ProceduralUseResponse;
+
+  factory ProceduralUseResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralUseResponseFromJson(json);
+}
+
+@freezed
+class ProceduralStatsResponse with _$ProceduralStatsResponse {
+  const factory ProceduralStatsResponse({
+    required int totalSkills,
+    required int verifiedSkills,
+    required double avgConfidence,
+    required double avgSuccessRate,
+    required int totalUsages,
+  }) = _ProceduralStatsResponse;
+
+  factory ProceduralStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralStatsResponseFromJson(json);
+}
+
+@freezed
+class ProceduralSearchResponse with _$ProceduralSearchResponse {
+  const factory ProceduralSearchResponse({
+    required List<ProceduralSkill> skills,
+    required String query,
+  }) = _ProceduralSearchResponse;
+
+  factory ProceduralSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralSearchResponseFromJson(json);
+}
+
+@freezed
+class ProceduralComposeResponse with _$ProceduralComposeResponse {
+  const factory ProceduralComposeResponse({
+    required String skillId,
+    required String name,
+    required String description,
+    required bool verified,
+  }) = _ProceduralComposeResponse;
+
+  factory ProceduralComposeResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProceduralComposeResponseFromJson(json);
 }
 
 @freezed

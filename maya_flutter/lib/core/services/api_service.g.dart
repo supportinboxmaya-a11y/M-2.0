@@ -78,6 +78,191 @@ Map<String, dynamic> _$MetaEventToJson(MetaEvent instance) => <String, dynamic>{
       'timestamp': instance.timestamp,
     };
 
+SynthesisItem _$SynthesisItemFromJson(Map json) => $checkedCreate(
+      'SynthesisItem',
+      json,
+      ($checkedConvert) {
+        final val = SynthesisItem(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          completedAt: $checkedConvert('completed_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+          result: $checkedConvert(
+              'result',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'createdAt': 'created_at',
+        'completedAt': 'completed_at'
+      },
+    );
+
+Map<String, dynamic> _$SynthesisItemToJson(SynthesisItem instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'description': instance.description,
+    'status': instance.status,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('completed_at', instance.completedAt?.toIso8601String());
+  writeNotNull('result', instance.result);
+  return val;
+}
+
+SocietyAgent _$SocietyAgentFromJson(Map json) => $checkedCreate(
+      'SocietyAgent',
+      json,
+      ($checkedConvert) {
+        final val = SocietyAgent(
+          id: $checkedConvert('id', (v) => v as String),
+          role: $checkedConvert('role', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          capabilities: $checkedConvert(
+              'capabilities',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          lastActive: $checkedConvert('last_active',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'createdAt': 'created_at',
+        'lastActive': 'last_active'
+      },
+    );
+
+Map<String, dynamic> _$SocietyAgentToJson(SocietyAgent instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'role': instance.role,
+    'status': instance.status,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('capabilities', instance.capabilities);
+  val['created_at'] = instance.createdAt.toIso8601String();
+  writeNotNull('last_active', instance.lastActive?.toIso8601String());
+  return val;
+}
+
+BlackboardEntry _$BlackboardEntryFromJson(Map json) => $checkedCreate(
+      'BlackboardEntry',
+      json,
+      ($checkedConvert) {
+        final val = BlackboardEntry(
+          key: $checkedConvert('key', (v) => v as String),
+          value: $checkedConvert('value', (v) => v),
+          tags: $checkedConvert('tags',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          ttl: $checkedConvert('ttl', (v) => (v as num?)?.toInt()),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          agentId: $checkedConvert('agent_id', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at', 'agentId': 'agent_id'},
+    );
+
+Map<String, dynamic> _$BlackboardEntryToJson(BlackboardEntry instance) {
+  final val = <String, dynamic>{
+    'key': instance.key,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('value', instance.value);
+  val['tags'] = instance.tags;
+  writeNotNull('ttl', instance.ttl);
+  val['created_at'] = instance.createdAt.toIso8601String();
+  val['agent_id'] = instance.agentId;
+  return val;
+}
+
+ProceduralSkill _$ProceduralSkillFromJson(Map json) => $checkedCreate(
+      'ProceduralSkill',
+      json,
+      ($checkedConvert) {
+        final val = ProceduralSkill(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          verified: $checkedConvert('verified', (v) => v as bool),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num).toDouble()),
+          usageCount: $checkedConvert('usage_count', (v) => (v as num).toInt()),
+          successRate:
+              $checkedConvert('success_rate', (v) => (v as num).toDouble()),
+          applicableGoals: $checkedConvert('applicable_goals',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt: $checkedConvert('updated_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'usageCount': 'usage_count',
+        'successRate': 'success_rate',
+        'applicableGoals': 'applicable_goals',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$ProceduralSkillToJson(ProceduralSkill instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'description': instance.description,
+    'verified': instance.verified,
+    'confidence': instance.confidence,
+    'usage_count': instance.usageCount,
+    'success_rate': instance.successRate,
+    'applicable_goals': instance.applicableGoals,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated_at', instance.updatedAt?.toIso8601String());
+  return val;
+}
+
 KernelCheckpointsResponse _$KernelCheckpointsResponseFromJson(Map json) =>
     $checkedCreate(
       'KernelCheckpointsResponse',
@@ -709,6 +894,496 @@ Map<String, dynamic> _$$MetaEventsResponseImplToJson(
         _$MetaEventsResponseImpl instance) =>
     <String, dynamic>{
       'events': instance.events,
+    };
+
+_$SynthesizeListResponseImpl _$$SynthesizeListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SynthesizeListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SynthesizeListResponseImpl(
+          items: $checkedConvert(
+              'items',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SynthesisItem.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SynthesizeListResponseImplToJson(
+        _$SynthesizeListResponseImpl instance) =>
+    <String, dynamic>{
+      'items': instance.items,
+    };
+
+_$SocietyStatusResponseImpl _$$SocietyStatusResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietyStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietyStatusResponseImpl(
+          totalAgents:
+              $checkedConvert('total_agents', (v) => (v as num).toInt()),
+          activeAgents:
+              $checkedConvert('active_agents', (v) => (v as num).toInt()),
+          tasksQueued:
+              $checkedConvert('tasks_queued', (v) => (v as num).toInt()),
+          tasksRunning:
+              $checkedConvert('tasks_running', (v) => (v as num).toInt()),
+          tasksCompleted:
+              $checkedConvert('tasks_completed', (v) => (v as num).toInt()),
+          tasksFailed:
+              $checkedConvert('tasks_failed', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalAgents': 'total_agents',
+        'activeAgents': 'active_agents',
+        'tasksQueued': 'tasks_queued',
+        'tasksRunning': 'tasks_running',
+        'tasksCompleted': 'tasks_completed',
+        'tasksFailed': 'tasks_failed'
+      },
+    );
+
+Map<String, dynamic> _$$SocietyStatusResponseImplToJson(
+        _$SocietyStatusResponseImpl instance) =>
+    <String, dynamic>{
+      'total_agents': instance.totalAgents,
+      'active_agents': instance.activeAgents,
+      'tasks_queued': instance.tasksQueued,
+      'tasks_running': instance.tasksRunning,
+      'tasks_completed': instance.tasksCompleted,
+      'tasks_failed': instance.tasksFailed,
+    };
+
+_$SocietySpawnResponseImpl _$$SocietySpawnResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietySpawnResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietySpawnResponseImpl(
+          agentId: $checkedConvert('agent_id', (v) => v as String),
+          role: $checkedConvert('role', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'agentId': 'agent_id'},
+    );
+
+Map<String, dynamic> _$$SocietySpawnResponseImplToJson(
+        _$SocietySpawnResponseImpl instance) =>
+    <String, dynamic>{
+      'agent_id': instance.agentId,
+      'role': instance.role,
+      'status': instance.status,
+    };
+
+_$SocietyAgentsResponseImpl _$$SocietyAgentsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietyAgentsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietyAgentsResponseImpl(
+          agents: $checkedConvert(
+              'agents',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SocietyAgent.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SocietyAgentsResponseImplToJson(
+        _$SocietyAgentsResponseImpl instance) =>
+    <String, dynamic>{
+      'agents': instance.agents,
+    };
+
+_$SocietyTaskResponseImpl _$$SocietyTaskResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietyTaskResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietyTaskResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          agentId: $checkedConvert('agent_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          task: $checkedConvert(
+              'task', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id', 'agentId': 'agent_id'},
+    );
+
+Map<String, dynamic> _$$SocietyTaskResponseImplToJson(
+        _$SocietyTaskResponseImpl instance) =>
+    <String, dynamic>{
+      'task_id': instance.taskId,
+      'agent_id': instance.agentId,
+      'status': instance.status,
+      'task': instance.task,
+    };
+
+_$SocietyTenderResponseImpl _$$SocietyTenderResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietyTenderResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietyTenderResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          taskSpec: $checkedConvert(
+              'task_spec', (v) => Map<String, dynamic>.from(v as Map)),
+          deadline: $checkedConvert('deadline', (v) => v as String),
+          eligibleRoles: $checkedConvert('eligible_roles',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'taskId': 'task_id',
+        'taskSpec': 'task_spec',
+        'eligibleRoles': 'eligible_roles'
+      },
+    );
+
+Map<String, dynamic> _$$SocietyTenderResponseImplToJson(
+        _$SocietyTenderResponseImpl instance) =>
+    <String, dynamic>{
+      'task_id': instance.taskId,
+      'status': instance.status,
+      'task_spec': instance.taskSpec,
+      'deadline': instance.deadline,
+      'eligible_roles': instance.eligibleRoles,
+    };
+
+_$SocietyBidResponseImpl _$$SocietyBidResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietyBidResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietyBidResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          agentId: $checkedConvert('agent_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          score: $checkedConvert('score', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id', 'agentId': 'agent_id'},
+    );
+
+Map<String, dynamic> _$$SocietyBidResponseImplToJson(
+    _$SocietyBidResponseImpl instance) {
+  final val = <String, dynamic>{
+    'task_id': instance.taskId,
+    'agent_id': instance.agentId,
+    'status': instance.status,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('score', instance.score);
+  return val;
+}
+
+_$SocietyAwardResponseImpl _$$SocietyAwardResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SocietyAwardResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SocietyAwardResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          agentId: $checkedConvert('agent_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id', 'agentId': 'agent_id'},
+    );
+
+Map<String, dynamic> _$$SocietyAwardResponseImplToJson(
+        _$SocietyAwardResponseImpl instance) =>
+    <String, dynamic>{
+      'task_id': instance.taskId,
+      'agent_id': instance.agentId,
+      'status': instance.status,
+    };
+
+_$SocietyBlackboardWriteResponseImpl
+    _$$SocietyBlackboardWriteResponseImplFromJson(Map json) => $checkedCreate(
+          r'_$SocietyBlackboardWriteResponseImpl',
+          json,
+          ($checkedConvert) {
+            final val = _$SocietyBlackboardWriteResponseImpl(
+              success: $checkedConvert('success', (v) => v as bool),
+              key: $checkedConvert('key', (v) => v as String),
+            );
+            return val;
+          },
+        );
+
+Map<String, dynamic> _$$SocietyBlackboardWriteResponseImplToJson(
+        _$SocietyBlackboardWriteResponseImpl instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'key': instance.key,
+    };
+
+_$SocietyBlackboardReadResponseImpl
+    _$$SocietyBlackboardReadResponseImplFromJson(Map json) => $checkedCreate(
+          r'_$SocietyBlackboardReadResponseImpl',
+          json,
+          ($checkedConvert) {
+            final val = _$SocietyBlackboardReadResponseImpl(
+              found: $checkedConvert('found', (v) => v as bool),
+              key: $checkedConvert('key', (v) => v as String),
+              value: $checkedConvert('value', (v) => v),
+              tags: $checkedConvert('tags',
+                  (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+              ttl: $checkedConvert('ttl', (v) => (v as num?)?.toInt()),
+            );
+            return val;
+          },
+        );
+
+Map<String, dynamic> _$$SocietyBlackboardReadResponseImplToJson(
+    _$SocietyBlackboardReadResponseImpl instance) {
+  final val = <String, dynamic>{
+    'found': instance.found,
+    'key': instance.key,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('value', instance.value);
+  val['tags'] = instance.tags;
+  writeNotNull('ttl', instance.ttl);
+  return val;
+}
+
+_$SocietyBlackboardQueryResponseImpl
+    _$$SocietyBlackboardQueryResponseImplFromJson(Map json) => $checkedCreate(
+          r'_$SocietyBlackboardQueryResponseImpl',
+          json,
+          ($checkedConvert) {
+            final val = _$SocietyBlackboardQueryResponseImpl(
+              entries: $checkedConvert(
+                  'entries',
+                  (v) => (v as List<dynamic>)
+                      .map((e) => BlackboardEntry.fromJson(
+                          Map<String, dynamic>.from(e as Map)))
+                      .toList()),
+            );
+            return val;
+          },
+        );
+
+Map<String, dynamic> _$$SocietyBlackboardQueryResponseImplToJson(
+        _$SocietyBlackboardQueryResponseImpl instance) =>
+    <String, dynamic>{
+      'entries': instance.entries,
+    };
+
+_$ProceduralListResponseImpl _$$ProceduralListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProceduralListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProceduralListResponseImpl(
+          skills: $checkedConvert(
+              'skills',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ProceduralSkill.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          total: $checkedConvert('total', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProceduralListResponseImplToJson(
+        _$ProceduralListResponseImpl instance) =>
+    <String, dynamic>{
+      'skills': instance.skills,
+      'total': instance.total,
+    };
+
+_$ProceduralApplicableResponseImpl _$$ProceduralApplicableResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProceduralApplicableResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProceduralApplicableResponseImpl(
+          skills: $checkedConvert(
+              'skills',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ProceduralSkill.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          goal: $checkedConvert('goal', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProceduralApplicableResponseImplToJson(
+        _$ProceduralApplicableResponseImpl instance) =>
+    <String, dynamic>{
+      'skills': instance.skills,
+      'goal': instance.goal,
+    };
+
+_$ProceduralUseResponseImpl _$$ProceduralUseResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProceduralUseResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProceduralUseResponseImpl(
+          skillId: $checkedConvert('skill_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+          newConfidence:
+              $checkedConvert('new_confidence', (v) => (v as num).toDouble()),
+          newUsageCount:
+              $checkedConvert('new_usage_count', (v) => (v as num).toInt()),
+          reward: $checkedConvert('reward', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'skillId': 'skill_id',
+        'newConfidence': 'new_confidence',
+        'newUsageCount': 'new_usage_count'
+      },
+    );
+
+Map<String, dynamic> _$$ProceduralUseResponseImplToJson(
+    _$ProceduralUseResponseImpl instance) {
+  final val = <String, dynamic>{
+    'skill_id': instance.skillId,
+    'success': instance.success,
+    'new_confidence': instance.newConfidence,
+    'new_usage_count': instance.newUsageCount,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('reward', instance.reward);
+  return val;
+}
+
+_$ProceduralStatsResponseImpl _$$ProceduralStatsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProceduralStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProceduralStatsResponseImpl(
+          totalSkills:
+              $checkedConvert('total_skills', (v) => (v as num).toInt()),
+          verifiedSkills:
+              $checkedConvert('verified_skills', (v) => (v as num).toInt()),
+          avgConfidence:
+              $checkedConvert('avg_confidence', (v) => (v as num).toDouble()),
+          avgSuccessRate:
+              $checkedConvert('avg_success_rate', (v) => (v as num).toDouble()),
+          totalUsages:
+              $checkedConvert('total_usages', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalSkills': 'total_skills',
+        'verifiedSkills': 'verified_skills',
+        'avgConfidence': 'avg_confidence',
+        'avgSuccessRate': 'avg_success_rate',
+        'totalUsages': 'total_usages'
+      },
+    );
+
+Map<String, dynamic> _$$ProceduralStatsResponseImplToJson(
+        _$ProceduralStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_skills': instance.totalSkills,
+      'verified_skills': instance.verifiedSkills,
+      'avg_confidence': instance.avgConfidence,
+      'avg_success_rate': instance.avgSuccessRate,
+      'total_usages': instance.totalUsages,
+    };
+
+_$ProceduralSearchResponseImpl _$$ProceduralSearchResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProceduralSearchResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProceduralSearchResponseImpl(
+          skills: $checkedConvert(
+              'skills',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ProceduralSkill.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          query: $checkedConvert('query', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProceduralSearchResponseImplToJson(
+        _$ProceduralSearchResponseImpl instance) =>
+    <String, dynamic>{
+      'skills': instance.skills,
+      'query': instance.query,
+    };
+
+_$ProceduralComposeResponseImpl _$$ProceduralComposeResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProceduralComposeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProceduralComposeResponseImpl(
+          skillId: $checkedConvert('skill_id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          verified: $checkedConvert('verified', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'skillId': 'skill_id'},
+    );
+
+Map<String, dynamic> _$$ProceduralComposeResponseImplToJson(
+        _$ProceduralComposeResponseImpl instance) =>
+    <String, dynamic>{
+      'skill_id': instance.skillId,
+      'name': instance.name,
+      'description': instance.description,
+      'verified': instance.verified,
     };
 
 _$HealthCheckResultImpl _$$HealthCheckResultImplFromJson(Map json) =>

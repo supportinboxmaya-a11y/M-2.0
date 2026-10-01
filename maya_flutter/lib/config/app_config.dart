@@ -175,6 +175,27 @@ class AppConfig {
   static const String synthesizeCreate = '/api/v1/cognitive/synthesize';
   static const String synthesizeGet = '/api/v1/cognitive/synthesize/';
   static const String synthesizeStats = '/api/v1/cognitive/synthesize/stats';
+  static const String synthesizeList = '/api/v1/cognitive/synthesize/list';
+
+  // Society (Phase 18 Part 2)
+  static const String societyStatus = '/api/v1/cognitive/society/status';
+  static const String societySpawn = '/api/v1/cognitive/society/spawn';
+  static const String societyAgents = '/api/v1/cognitive/society/agents';
+  static const String societyAgentTask = '/api/v1/cognitive/society/agents/';
+  static const String societyTender = '/api/v1/cognitive/society/tender';
+  static const String societyBid = '/api/v1/cognitive/society/tasks/';
+  static const String societyAward = '/api/v1/cognitive/society/tasks/';
+  static const String societyBlackboardWrite = '/api/v1/cognitive/society/blackboard/write';
+  static const String societyBlackboardRead = '/api/v1/cognitive/society/blackboard/read';
+  static const String societyBlackboardQuery = '/api/v1/cognitive/society/blackboard/query';
+
+  // Procedural Memory (Phase 18 Part 2)
+  static const String proceduralList = '/api/v1/cognitive/memory/procedural/skills';
+  static const String proceduralApplicable = '/api/v1/cognitive/memory/procedural/applicable';
+  static const String proceduralUse = '/api/v1/cognitive/memory/procedural/skills/';
+  static const String proceduralStats = '/api/v1/cognitive/memory/procedural/stats';
+  static const String proceduralSearch = '/api/v1/cognitive/memory/procedural/search';
+  static const String proceduralCompose = '/api/v1/cognitive/memory/procedural/compose';
 
   static const String metaStatus = '/api/v1/cognitive/metacognitive/status';
   static const String metaMonitor = '/api/v1/cognitive/metacognitive/monitor';
