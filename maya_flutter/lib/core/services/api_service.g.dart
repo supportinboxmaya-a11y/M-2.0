@@ -670,6 +670,51 @@ Map<String, dynamic> _$PublishHistoryItemToJson(PublishHistoryItem instance) {
   return val;
 }
 
+ApprovalItem _$ApprovalItemFromJson(Map json) => $checkedCreate(
+      'ApprovalItem',
+      json,
+      ($checkedConvert) {
+        final val = ApprovalItem(
+          id: $checkedConvert('id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          reason: $checkedConvert('reason', (v) => v as String),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+          decidedAt: $checkedConvert('decided_at', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'riskLevel': 'risk_level',
+        'taskId': 'task_id',
+        'createdAt': 'created_at',
+        'decidedAt': 'decided_at'
+      },
+    );
+
+Map<String, dynamic> _$ApprovalItemToJson(ApprovalItem instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'action': instance.action,
+    'reason': instance.reason,
+    'risk_level': instance.riskLevel,
+    'status': instance.status,
+    'task_id': instance.taskId,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('decided_at', instance.decidedAt);
+  return val;
+}
+
 KernelCheckpointsResponse _$KernelCheckpointsResponseFromJson(Map json) =>
     $checkedCreate(
       'KernelCheckpointsResponse',
@@ -2897,6 +2942,115 @@ Map<String, dynamic> _$$PublishHistoryDetailResponseImplToJson(
   writeNotNull('decided_at', instance.decidedAt);
   return val;
 }
+
+_$ApprovalRequestResponseImpl _$$ApprovalRequestResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ApprovalRequestResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ApprovalRequestResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          reason: $checkedConvert('reason', (v) => v as String),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'riskLevel': 'risk_level', 'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$ApprovalRequestResponseImplToJson(
+        _$ApprovalRequestResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'action': instance.action,
+      'reason': instance.reason,
+      'risk_level': instance.riskLevel,
+      'status': instance.status,
+      'created_at': instance.createdAt,
+    };
+
+_$ApprovalsListResponseImpl _$$ApprovalsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ApprovalsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ApprovalsListResponseImpl(
+          approvals: $checkedConvert(
+              'approvals',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ApprovalItem.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ApprovalsListResponseImplToJson(
+        _$ApprovalsListResponseImpl instance) =>
+    <String, dynamic>{
+      'approvals': instance.approvals,
+    };
+
+_$ApprovalDecideResponseImpl _$$ApprovalDecideResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ApprovalDecideResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ApprovalDecideResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          reason: $checkedConvert('reason', (v) => v as String),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+          decidedAt: $checkedConvert('decided_at', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'riskLevel': 'risk_level',
+        'taskId': 'task_id',
+        'createdAt': 'created_at',
+        'decidedAt': 'decided_at'
+      },
+    );
+
+Map<String, dynamic> _$$ApprovalDecideResponseImplToJson(
+        _$ApprovalDecideResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'action': instance.action,
+      'reason': instance.reason,
+      'risk_level': instance.riskLevel,
+      'status': instance.status,
+      'task_id': instance.taskId,
+      'created_at': instance.createdAt,
+      'decided_at': instance.decidedAt,
+    };
+
+_$ApprovalModeResponseImpl _$$ApprovalModeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ApprovalModeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ApprovalModeResponseImpl(
+          mode: $checkedConvert('mode', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ApprovalModeResponseImplToJson(
+        _$ApprovalModeResponseImpl instance) =>
+    <String, dynamic>{
+      'mode': instance.mode,
+    };
 
 _$HealthCheckResultImpl _$$HealthCheckResultImplFromJson(Map json) =>
     $checkedCreate(

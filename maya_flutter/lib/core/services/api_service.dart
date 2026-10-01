@@ -1937,6 +1937,56 @@ class ApiService {
     return PublishHistoryDetailResponse.fromJson(response.data);
   }
 
+  // Approvals System (Phase 21 Enhanced)
+  Future<ApprovalRequestResponse> requestApproval({
+    required String action,
+    String reason = '',
+    String riskLevel = 'low',
+  }) async {
+    final response = await _dio.post(
+      AppConfig.approvalsRequest,
+      data: {
+        'action': action,
+        'reason': reason,
+        'risk_level': riskLevel,
+      },
+    );
+    return ApprovalRequestResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalsListResponse> getApprovals({String? status}) async {
+    final response = await _dio.get(
+      AppConfig.approvalsList,
+      queryParameters: {
+        if (status != null) 'status': status,
+      },
+    );
+    return ApprovalsListResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalDecideResponse> decideApproval({
+    required String approvalId,
+    required String decision, // 'approve' or 'reject'
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.approvalsDecide}$approvalId/$decision',
+    );
+    return ApprovalDecideResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalModeResponse> getApprovalMode() async {
+    final response = await _dio.get(AppConfig.approvalMode);
+    return ApprovalModeResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalModeResponse> setApprovalMode(String mode) async {
+    final response = await _dio.put(
+      AppConfig.approvalMode,
+      data: {'mode': mode},
+    );
+    return ApprovalModeResponse.fromJson(response.data);
+  }
+
 // AGI Architecture (Phase 18 Part 1)
   Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
     final response = await _dio.get(
@@ -3465,6 +3515,87 @@ class PublishHistoryDetailResponse with _$PublishHistoryDetailResponse {
 
   factory PublishHistoryDetailResponse.fromJson(Map<String, dynamic> json) =>
       _$PublishHistoryDetailResponseFromJson(json);
+}
+
+// Approvals System Models (Phase 21 Enhanced)
+@freezed
+class ApprovalRequestResponse with _$ApprovalRequestResponse {
+  const factory ApprovalRequestResponse({
+    required String id,
+    required String action,
+    required String reason,
+    required String riskLevel,
+    required String status,
+    required String createdAt,
+  }) = _ApprovalRequestResponse;
+
+  factory ApprovalRequestResponse.fromJson(Map<String, dynamic> json) =>
+      _$ApprovalRequestResponseFromJson(json);
+}
+
+@freezed
+class ApprovalsListResponse with _$ApprovalsListResponse {
+  const factory ApprovalsListResponse({
+    required List<ApprovalItem> approvals,
+  }) = _ApprovalsListResponse;
+
+  factory ApprovalsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ApprovalsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ApprovalItem {
+  final String id;
+  final String action;
+  final String reason;
+  final String riskLevel;
+  final String status;
+  final String taskId;
+  final String createdAt;
+  final String? decidedAt;
+
+  const ApprovalItem({
+    required this.id,
+    required this.action,
+    required this.reason,
+    required this.riskLevel,
+    required this.status,
+    required this.taskId,
+    required this.createdAt,
+    this.decidedAt,
+  });
+
+  factory ApprovalItem.fromJson(Map<String, dynamic> json) =>
+      _$ApprovalItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ApprovalItemToJson(this);
+}
+
+@freezed
+class ApprovalDecideResponse with _$ApprovalDecideResponse {
+  const factory ApprovalDecideResponse({
+    required String id,
+    required String action,
+    required String reason,
+    required String riskLevel,
+    required String status,
+    required String taskId,
+    required String createdAt,
+    required String decidedAt,
+  }) = _ApprovalDecideResponse;
+
+  factory ApprovalDecideResponse.fromJson(Map<String, dynamic> json) =>
+      _$ApprovalDecideResponseFromJson(json);
+}
+
+@freezed
+class ApprovalModeResponse with _$ApprovalModeResponse {
+  const factory ApprovalModeResponse({
+    required String mode,
+  }) = _ApprovalModeResponse;
+
+  factory ApprovalModeResponse.fromJson(Map<String, dynamic> json) =>
+      _$ApprovalModeResponseFromJson(json);
 }
 
 @freezed

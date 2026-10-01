@@ -1826,6 +1826,20 @@ class _AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
+                _DrawerActionTile(
+                  icon: Icons.rule_rounded,
+                  label: 'Approvals Center',
+                  subtitle: 'Pending/approved/rejected, risk levels, ask more info',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _ApprovalsScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
@@ -17337,6 +17351,617 @@ class _FileEntry {
   _FileEntry({required this.path, required this.content});
 }
 
+// ============================================================================
+// APPROVALS SYSTEM SCREEN (Phase 21 Enhanced)
+// ============================================================================
+
+class _ApprovalsScreen extends ConsumerStatefulWidget {
+  const _ApprovalsScreen();
+
+  @override
+  ConsumerState<_ApprovalsScreen> createState() => _ApprovalsScreenState();
+}
+
+class _ApprovalsScreenState extends ConsumerState<_ApprovalsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(approvalsProvider(null));
+        ref.invalidate(approvalsProvider('pending'));
+        ref.invalidate(approvalsProvider('approved'));
+        ref.invalidate(approvalsProvider('rejected'));
+        ref.invalidate(approvalModeProvider);
+        ref.invalidate(pendingApprovalsCountProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final countAsync = ref.watch(pendingApprovalsCountProvider);
+    final modeAsync = ref.watch(approvalModeProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Approvals Center', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            countAsync.when(
+              data: (count) => count > 0
+                  ? Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications_rounded),
+                          onPressed: () {
+                            _tabController.animateTo(0);
+                          },
+                        ),
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.error,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                            child: Text(
+                              count > 99 ? '99+' : count.toString(),
+                              style: MayaTheme.labelSmall.copyWith(color: Colors.white, fontSize: 10),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.notifications_none_rounded),
+                      onPressed: () {},
+                    ),
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+            ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.settings_rounded),
+              onSelected: (value) async {
+                if (value == 'mode') {
+                  final current = await ref.read(approvalModeProvider.future);
+                  _showModeDialog(context, ref, current.mode);
+                } else if (value == 'refresh') {
+                  ref.invalidate(approvalsProvider(null));
+                  ref.invalidate(pendingApprovalsCountProvider);
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'mode',
+                  child: Row(
+                    children: [
+                      Icon(Icons.rule_rounded, size: 20),
+                      SizedBox(width: 8),
+                      Text('Approval Mode'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'refresh',
+                  child: Row(
+                    children: [
+                      Icon(Icons.refresh_rounded, size: 20),
+                      SizedBox(width: 8),
+                      Text('Refresh'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.pending_actions_rounded), text: 'Pending'),
+              Tab(icon: Icon(Icons.check_circle_rounded), text: 'Approved'),
+              Tab(icon: Icon(Icons.cancel_rounded), text: 'Rejected'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ApprovalsListTab(status: 'pending'),
+            _ApprovalsListTab(status: 'approved'),
+            _ApprovalsListTab(status: 'rejected'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showModeDialog(BuildContext context, WidgetRef ref, String currentMode) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Approval Mode', style: MayaTheme.titleLarge),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RadioListTile<String>(
+              title: const Text('Auto (low-risk auto-apply)', style: MayaTheme.bodyMedium),
+              value: 'auto',
+              groupValue: currentMode,
+              activeColor: MayaTheme.neonCyan,
+              onChanged: (v) async {
+                Navigator.pop(context);
+                await _setMode(ref, v!);
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Human (all require approval)', style: MayaTheme.bodyMedium),
+              value: 'human',
+              groupValue: currentMode,
+              activeColor: MayaTheme.neonCyan,
+              onChanged: (v) async {
+                Navigator.pop(context);
+                await _setMode(ref, v!);
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Skip (no approvals)', style: MayaTheme.bodyMedium),
+              value: 'skip',
+              groupValue: currentMode,
+              activeColor: MayaTheme.neonCyan,
+              onChanged: (v) async {
+                Navigator.pop(context);
+                await _setMode(ref, v!);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _setMode(WidgetRef ref, String mode) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      await apiService.setApprovalMode(mode);
+      ref.invalidate(approvalModeProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Approval mode set to $mode'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to set mode: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _ApprovalsListTab extends ConsumerWidget {
+  final String status;
+
+  const _ApprovalsListTab({required this.status});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final approvalsAsync = ref.watch(approvalsProvider(status));
+
+    return approvalsAsync.when(
+      data: (data) => data.approvals.isEmpty
+          ? _emptyState(
+              _emptyTitle(status),
+              _emptySubtitle(status),
+              _emptyIcon(status),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: data.approvals.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (_, index) {
+                final approval = data.approvals[index];
+                return _ApprovalCard(approval: approval);
+              },
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => _errorState(err.toString()),
+    );
+  }
+
+  String _emptyTitle(String status) {
+    switch (status) {
+      case 'pending': return 'No Pending Approvals';
+      case 'approved': return 'No Approved Items';
+      case 'rejected': return 'No Rejected Items';
+      default: return 'No Approvals';
+    }
+  }
+
+  String _emptySubtitle(String status) {
+    switch (status) {
+      case 'pending': return 'All clear! No items awaiting your decision';
+      case 'approved': return 'Approved items will appear here';
+      case 'rejected': return 'Rejected items will appear here';
+      default: return 'Approval history will appear here';
+    }
+  }
+
+  IconData _emptyIcon(String status) {
+    switch (status) {
+      case 'pending': return Icons.pending_actions_rounded;
+      case 'approved': return Icons.check_circle_rounded;
+      case 'rejected': return Icons.cancel_rounded;
+      default: return Icons.rule_rounded;
+    }
+  }
+}
+
+class _ApprovalCard extends ConsumerWidget {
+  final ApprovalItem approval;
+
+  const _ApprovalCard({required this.approval});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    Color statusColor;
+    IconData statusIcon;
+    switch (approval.status) {
+      case 'approved':
+        statusColor = MayaTheme.neonEmerald;
+        statusIcon = Icons.check_circle_rounded;
+        break;
+      case 'rejected':
+        statusColor = MayaTheme.error;
+        statusIcon = Icons.cancel_rounded;
+        break;
+      case 'pending':
+        statusColor = MayaTheme.neonOrange;
+        statusIcon = Icons.pending_rounded;
+        break;
+      default:
+        statusColor = Colors.white38;
+        statusIcon = Icons.help_rounded;
+    }
+
+    Color riskColor;
+    switch (approval.riskLevel.toLowerCase()) {
+      case 'critical':
+        riskColor = MayaTheme.error;
+        break;
+      case 'high':
+        riskColor = MayaTheme.neonOrange;
+        break;
+      case 'medium':
+        riskColor = MayaTheme.neonViolet;
+        break;
+      case 'low':
+        riskColor = MayaTheme.neonCyan;
+        break;
+      default:
+        riskColor = Colors.white54;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: approval.status == 'pending'
+          ? MayaTheme.glassCardGlow(glowColor: MayaTheme.neonOrange)
+          : MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(statusIcon, color: statusColor, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: Text(approval.action, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: riskColor.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: riskColor),
+                          ),
+                          child: Text(
+                            approval.riskLevel.toUpperCase(),
+                            style: MayaTheme.labelSmall.copyWith(color: riskColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text('ID: ${approval.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                    if (approval.reason.isNotEmpty)
+                      Text(approval.reason, style: MayaTheme.bodySmall.copyWith(color: Colors.white38), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: statusColor),
+                    ),
+                    child: Text(
+                      approval.status.toUpperCase(),
+                      style: MayaTheme.labelSmall.copyWith(color: statusColor),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    DateTime.parse(approval.createdAt).toString().substring(0, 19),
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          if (approval.status == 'pending') ...[
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showDetailAndDecide(context, ref, approval.id, true),
+                    icon: const Icon(Icons.check_rounded),
+                    label: const Text('Approve'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonEmerald,
+                      foregroundColor: MayaTheme.slate900,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showDetailAndDecide(context, ref, approval.id, false),
+                    icon: const Icon(Icons.close_rounded),
+                    label: const Text('Reject'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.error,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showAskInfoDialog(context, ref, approval),
+                    icon: const Icon(Icons.help_outline_rounded),
+                    label: const Text('Ask More'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: MayaTheme.neonCyan,
+                      side: BorderSide(color: MayaTheme.neonCyan),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (approval.decidedAt != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              'Decided: ${DateTime.parse(approval.decidedAt!).toString().substring(0, 19)} by ${approval.taskId.isNotEmpty ? approval.taskId : 'system'}',
+              style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showDetailAndDecide(BuildContext context, WidgetRef ref, String approvalId, bool approve) async {
+    // Fetch full approval detail
+    final apiService = ref.read(apiServiceProvider);
+    
+    await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: Text(approve ? 'Approve Approval?' : 'Reject Approval?', style: MayaTheme.titleLarge),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildDetailRow('Action', approval.action),
+                _buildDetailRow('Risk Level', approval.riskLevel.toUpperCase()),
+                _buildDetailRow('Reason', approval.reason.isEmpty ? '—' : approval.reason),
+                if (approval.taskId.isNotEmpty)
+                  _buildDetailRow('Task ID', approval.taskId),
+                _buildDetailRow('Requested', DateTime.parse(approval.createdAt).toString().substring(0, 19)),
+                const Divider(color: MayaTheme.glassWhite10, height: 24),
+                Text(
+                  approve
+                      ? 'This will approve and execute the action. Are you sure?'
+                      : 'This will reject and cancel the action. Are you sure?',
+                  style: MayaTheme.bodyMedium.copyWith(color: approve ? MayaTheme.neonEmerald : MayaTheme.error),
+                ),
+              ],
+            ),
+          ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _executeDecision(ref, approvalId, approve);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.error,
+              foregroundColor: approve ? MayaTheme.slate900 : Colors.white,
+            ),
+            child: Text(approve ? 'Confirm Approve' : 'Confirm Reject'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showAskInfoDialog(BuildContext context, WidgetRef ref, ApprovalItem approval) async {
+    final _questionController = TextEditingController();
+    
+    await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Request More Information', style: MayaTheme.titleLarge),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Ask Maya for more details about this approval request.',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _questionController,
+              style: MayaTheme.bodyMedium,
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: 'Your Question',
+                hintText: 'e.g., "What are the security implications?"',
+                filled: true,
+                fillColor: MayaTheme.slate700,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              // In a real implementation, this would send the question back to Maya
+              // For now, just show confirmation
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Question sent: ${_questionController.text}'),
+                    backgroundColor: MayaTheme.neonCyan,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MayaTheme.neonCyan,
+              foregroundColor: MayaTheme.slate900,
+            ),
+            child: const Text('Send'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _executeDecision(WidgetRef ref, String approvalId, bool approve) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.decideApproval(
+        approvalId: approvalId,
+        decision: approve ? 'approve' : 'reject',
+      );
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(approve ? 'Approved: ${result.action}' : 'Rejected: ${result.action}'),
+            backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+          ),
+        );
+        ref.invalidate(approvalsProvider(null));
+        ref.invalidate(approvalsProvider('pending'));
+        ref.invalidate(approvalsProvider('approved'));
+        ref.invalidate(approvalsProvider('rejected'));
+        ref.invalidate(pendingApprovalsCountProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 100, child: Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54))),
+          Expanded(child: Text(value, style: MayaTheme.bodySmall)),
+        ],
+      ),
+    );
+  }
+}
+
 // AGI Architecture Part 2 Providers
 final synthesizeListProvider = FutureProvider<SynthesizeListResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
@@ -17441,4 +18066,22 @@ final publishHistoryProvider = FutureProvider<PublishHistoryListResponse>((ref) 
 final publishHistoryDetailProvider = FutureProvider.family<PublishHistoryDetailResponse, String>((ref, proposalId) async {
   final apiService = ref.read(apiServiceProvider);
   return apiService.getPublishHistoryDetail(proposalId);
+});
+
+// Approvals System Providers (Phase 21 Enhanced)
+final approvalsProvider = FutureProvider.family<ApprovalsListResponse, String?>((ref, status) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getApprovals(status: status);
+});
+
+final approvalModeProvider = FutureProvider<ApprovalModeResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getApprovalMode();
+});
+
+// In-app notification badge count
+final pendingApprovalsCountProvider = FutureProvider<int>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  final result = await apiService.getApprovals(status: 'pending');
+  return result.approvals.length;
 });

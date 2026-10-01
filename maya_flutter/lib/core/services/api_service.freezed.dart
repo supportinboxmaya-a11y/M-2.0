@@ -14478,6 +14478,837 @@ abstract class _PublishHistoryDetailResponse
       get copyWith => throw _privateConstructorUsedError;
 }
 
+ApprovalRequestResponse _$ApprovalRequestResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ApprovalRequestResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApprovalRequestResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String get reason => throw _privateConstructorUsedError;
+  String get riskLevel => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ApprovalRequestResponseCopyWith<ApprovalRequestResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApprovalRequestResponseCopyWith<$Res> {
+  factory $ApprovalRequestResponseCopyWith(ApprovalRequestResponse value,
+          $Res Function(ApprovalRequestResponse) then) =
+      _$ApprovalRequestResponseCopyWithImpl<$Res, ApprovalRequestResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String action,
+      String reason,
+      String riskLevel,
+      String status,
+      String createdAt});
+}
+
+/// @nodoc
+class _$ApprovalRequestResponseCopyWithImpl<$Res,
+        $Val extends ApprovalRequestResponse>
+    implements $ApprovalRequestResponseCopyWith<$Res> {
+  _$ApprovalRequestResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? action = null,
+    Object? reason = null,
+    Object? riskLevel = null,
+    Object? status = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApprovalRequestResponseImplCopyWith<$Res>
+    implements $ApprovalRequestResponseCopyWith<$Res> {
+  factory _$$ApprovalRequestResponseImplCopyWith(
+          _$ApprovalRequestResponseImpl value,
+          $Res Function(_$ApprovalRequestResponseImpl) then) =
+      __$$ApprovalRequestResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String action,
+      String reason,
+      String riskLevel,
+      String status,
+      String createdAt});
+}
+
+/// @nodoc
+class __$$ApprovalRequestResponseImplCopyWithImpl<$Res>
+    extends _$ApprovalRequestResponseCopyWithImpl<$Res,
+        _$ApprovalRequestResponseImpl>
+    implements _$$ApprovalRequestResponseImplCopyWith<$Res> {
+  __$$ApprovalRequestResponseImplCopyWithImpl(
+      _$ApprovalRequestResponseImpl _value,
+      $Res Function(_$ApprovalRequestResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? action = null,
+    Object? reason = null,
+    Object? riskLevel = null,
+    Object? status = null,
+    Object? createdAt = null,
+  }) {
+    return _then(_$ApprovalRequestResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApprovalRequestResponseImpl implements _ApprovalRequestResponse {
+  const _$ApprovalRequestResponseImpl(
+      {required this.id,
+      required this.action,
+      required this.reason,
+      required this.riskLevel,
+      required this.status,
+      required this.createdAt});
+
+  factory _$ApprovalRequestResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApprovalRequestResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String action;
+  @override
+  final String reason;
+  @override
+  final String riskLevel;
+  @override
+  final String status;
+  @override
+  final String createdAt;
+
+  @override
+  String toString() {
+    return 'ApprovalRequestResponse(id: $id, action: $action, reason: $reason, riskLevel: $riskLevel, status: $status, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApprovalRequestResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
+            (identical(other.riskLevel, riskLevel) ||
+                other.riskLevel == riskLevel) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, action, reason, riskLevel, status, createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApprovalRequestResponseImplCopyWith<_$ApprovalRequestResponseImpl>
+      get copyWith => __$$ApprovalRequestResponseImplCopyWithImpl<
+          _$ApprovalRequestResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApprovalRequestResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApprovalRequestResponse implements ApprovalRequestResponse {
+  const factory _ApprovalRequestResponse(
+      {required final String id,
+      required final String action,
+      required final String reason,
+      required final String riskLevel,
+      required final String status,
+      required final String createdAt}) = _$ApprovalRequestResponseImpl;
+
+  factory _ApprovalRequestResponse.fromJson(Map<String, dynamic> json) =
+      _$ApprovalRequestResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get action;
+  @override
+  String get reason;
+  @override
+  String get riskLevel;
+  @override
+  String get status;
+  @override
+  String get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$ApprovalRequestResponseImplCopyWith<_$ApprovalRequestResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ApprovalsListResponse _$ApprovalsListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ApprovalsListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApprovalsListResponse {
+  List<ApprovalItem> get approvals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ApprovalsListResponseCopyWith<ApprovalsListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApprovalsListResponseCopyWith<$Res> {
+  factory $ApprovalsListResponseCopyWith(ApprovalsListResponse value,
+          $Res Function(ApprovalsListResponse) then) =
+      _$ApprovalsListResponseCopyWithImpl<$Res, ApprovalsListResponse>;
+  @useResult
+  $Res call({List<ApprovalItem> approvals});
+}
+
+/// @nodoc
+class _$ApprovalsListResponseCopyWithImpl<$Res,
+        $Val extends ApprovalsListResponse>
+    implements $ApprovalsListResponseCopyWith<$Res> {
+  _$ApprovalsListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? approvals = null,
+  }) {
+    return _then(_value.copyWith(
+      approvals: null == approvals
+          ? _value.approvals
+          : approvals // ignore: cast_nullable_to_non_nullable
+              as List<ApprovalItem>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApprovalsListResponseImplCopyWith<$Res>
+    implements $ApprovalsListResponseCopyWith<$Res> {
+  factory _$$ApprovalsListResponseImplCopyWith(
+          _$ApprovalsListResponseImpl value,
+          $Res Function(_$ApprovalsListResponseImpl) then) =
+      __$$ApprovalsListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ApprovalItem> approvals});
+}
+
+/// @nodoc
+class __$$ApprovalsListResponseImplCopyWithImpl<$Res>
+    extends _$ApprovalsListResponseCopyWithImpl<$Res,
+        _$ApprovalsListResponseImpl>
+    implements _$$ApprovalsListResponseImplCopyWith<$Res> {
+  __$$ApprovalsListResponseImplCopyWithImpl(_$ApprovalsListResponseImpl _value,
+      $Res Function(_$ApprovalsListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? approvals = null,
+  }) {
+    return _then(_$ApprovalsListResponseImpl(
+      approvals: null == approvals
+          ? _value._approvals
+          : approvals // ignore: cast_nullable_to_non_nullable
+              as List<ApprovalItem>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApprovalsListResponseImpl implements _ApprovalsListResponse {
+  const _$ApprovalsListResponseImpl(
+      {required final List<ApprovalItem> approvals})
+      : _approvals = approvals;
+
+  factory _$ApprovalsListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApprovalsListResponseImplFromJson(json);
+
+  final List<ApprovalItem> _approvals;
+  @override
+  List<ApprovalItem> get approvals {
+    if (_approvals is EqualUnmodifiableListView) return _approvals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_approvals);
+  }
+
+  @override
+  String toString() {
+    return 'ApprovalsListResponse(approvals: $approvals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApprovalsListResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._approvals, _approvals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_approvals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApprovalsListResponseImplCopyWith<_$ApprovalsListResponseImpl>
+      get copyWith => __$$ApprovalsListResponseImplCopyWithImpl<
+          _$ApprovalsListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApprovalsListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApprovalsListResponse implements ApprovalsListResponse {
+  const factory _ApprovalsListResponse(
+          {required final List<ApprovalItem> approvals}) =
+      _$ApprovalsListResponseImpl;
+
+  factory _ApprovalsListResponse.fromJson(Map<String, dynamic> json) =
+      _$ApprovalsListResponseImpl.fromJson;
+
+  @override
+  List<ApprovalItem> get approvals;
+  @override
+  @JsonKey(ignore: true)
+  _$$ApprovalsListResponseImplCopyWith<_$ApprovalsListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ApprovalDecideResponse _$ApprovalDecideResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ApprovalDecideResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApprovalDecideResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String get reason => throw _privateConstructorUsedError;
+  String get riskLevel => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get taskId => throw _privateConstructorUsedError;
+  String get createdAt => throw _privateConstructorUsedError;
+  String get decidedAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ApprovalDecideResponseCopyWith<ApprovalDecideResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApprovalDecideResponseCopyWith<$Res> {
+  factory $ApprovalDecideResponseCopyWith(ApprovalDecideResponse value,
+          $Res Function(ApprovalDecideResponse) then) =
+      _$ApprovalDecideResponseCopyWithImpl<$Res, ApprovalDecideResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String action,
+      String reason,
+      String riskLevel,
+      String status,
+      String taskId,
+      String createdAt,
+      String decidedAt});
+}
+
+/// @nodoc
+class _$ApprovalDecideResponseCopyWithImpl<$Res,
+        $Val extends ApprovalDecideResponse>
+    implements $ApprovalDecideResponseCopyWith<$Res> {
+  _$ApprovalDecideResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? action = null,
+    Object? reason = null,
+    Object? riskLevel = null,
+    Object? status = null,
+    Object? taskId = null,
+    Object? createdAt = null,
+    Object? decidedAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      decidedAt: null == decidedAt
+          ? _value.decidedAt
+          : decidedAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApprovalDecideResponseImplCopyWith<$Res>
+    implements $ApprovalDecideResponseCopyWith<$Res> {
+  factory _$$ApprovalDecideResponseImplCopyWith(
+          _$ApprovalDecideResponseImpl value,
+          $Res Function(_$ApprovalDecideResponseImpl) then) =
+      __$$ApprovalDecideResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String action,
+      String reason,
+      String riskLevel,
+      String status,
+      String taskId,
+      String createdAt,
+      String decidedAt});
+}
+
+/// @nodoc
+class __$$ApprovalDecideResponseImplCopyWithImpl<$Res>
+    extends _$ApprovalDecideResponseCopyWithImpl<$Res,
+        _$ApprovalDecideResponseImpl>
+    implements _$$ApprovalDecideResponseImplCopyWith<$Res> {
+  __$$ApprovalDecideResponseImplCopyWithImpl(
+      _$ApprovalDecideResponseImpl _value,
+      $Res Function(_$ApprovalDecideResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? action = null,
+    Object? reason = null,
+    Object? riskLevel = null,
+    Object? status = null,
+    Object? taskId = null,
+    Object? createdAt = null,
+    Object? decidedAt = null,
+  }) {
+    return _then(_$ApprovalDecideResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
+      riskLevel: null == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskId: null == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      decidedAt: null == decidedAt
+          ? _value.decidedAt
+          : decidedAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApprovalDecideResponseImpl implements _ApprovalDecideResponse {
+  const _$ApprovalDecideResponseImpl(
+      {required this.id,
+      required this.action,
+      required this.reason,
+      required this.riskLevel,
+      required this.status,
+      required this.taskId,
+      required this.createdAt,
+      required this.decidedAt});
+
+  factory _$ApprovalDecideResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApprovalDecideResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String action;
+  @override
+  final String reason;
+  @override
+  final String riskLevel;
+  @override
+  final String status;
+  @override
+  final String taskId;
+  @override
+  final String createdAt;
+  @override
+  final String decidedAt;
+
+  @override
+  String toString() {
+    return 'ApprovalDecideResponse(id: $id, action: $action, reason: $reason, riskLevel: $riskLevel, status: $status, taskId: $taskId, createdAt: $createdAt, decidedAt: $decidedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApprovalDecideResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.reason, reason) || other.reason == reason) &&
+            (identical(other.riskLevel, riskLevel) ||
+                other.riskLevel == riskLevel) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.decidedAt, decidedAt) ||
+                other.decidedAt == decidedAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, action, reason, riskLevel,
+      status, taskId, createdAt, decidedAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApprovalDecideResponseImplCopyWith<_$ApprovalDecideResponseImpl>
+      get copyWith => __$$ApprovalDecideResponseImplCopyWithImpl<
+          _$ApprovalDecideResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApprovalDecideResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApprovalDecideResponse implements ApprovalDecideResponse {
+  const factory _ApprovalDecideResponse(
+      {required final String id,
+      required final String action,
+      required final String reason,
+      required final String riskLevel,
+      required final String status,
+      required final String taskId,
+      required final String createdAt,
+      required final String decidedAt}) = _$ApprovalDecideResponseImpl;
+
+  factory _ApprovalDecideResponse.fromJson(Map<String, dynamic> json) =
+      _$ApprovalDecideResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get action;
+  @override
+  String get reason;
+  @override
+  String get riskLevel;
+  @override
+  String get status;
+  @override
+  String get taskId;
+  @override
+  String get createdAt;
+  @override
+  String get decidedAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$ApprovalDecideResponseImplCopyWith<_$ApprovalDecideResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ApprovalModeResponse _$ApprovalModeResponseFromJson(Map<String, dynamic> json) {
+  return _ApprovalModeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApprovalModeResponse {
+  String get mode => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ApprovalModeResponseCopyWith<ApprovalModeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApprovalModeResponseCopyWith<$Res> {
+  factory $ApprovalModeResponseCopyWith(ApprovalModeResponse value,
+          $Res Function(ApprovalModeResponse) then) =
+      _$ApprovalModeResponseCopyWithImpl<$Res, ApprovalModeResponse>;
+  @useResult
+  $Res call({String mode});
+}
+
+/// @nodoc
+class _$ApprovalModeResponseCopyWithImpl<$Res,
+        $Val extends ApprovalModeResponse>
+    implements $ApprovalModeResponseCopyWith<$Res> {
+  _$ApprovalModeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mode = null,
+  }) {
+    return _then(_value.copyWith(
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApprovalModeResponseImplCopyWith<$Res>
+    implements $ApprovalModeResponseCopyWith<$Res> {
+  factory _$$ApprovalModeResponseImplCopyWith(_$ApprovalModeResponseImpl value,
+          $Res Function(_$ApprovalModeResponseImpl) then) =
+      __$$ApprovalModeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String mode});
+}
+
+/// @nodoc
+class __$$ApprovalModeResponseImplCopyWithImpl<$Res>
+    extends _$ApprovalModeResponseCopyWithImpl<$Res, _$ApprovalModeResponseImpl>
+    implements _$$ApprovalModeResponseImplCopyWith<$Res> {
+  __$$ApprovalModeResponseImplCopyWithImpl(_$ApprovalModeResponseImpl _value,
+      $Res Function(_$ApprovalModeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mode = null,
+  }) {
+    return _then(_$ApprovalModeResponseImpl(
+      mode: null == mode
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApprovalModeResponseImpl implements _ApprovalModeResponse {
+  const _$ApprovalModeResponseImpl({required this.mode});
+
+  factory _$ApprovalModeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApprovalModeResponseImplFromJson(json);
+
+  @override
+  final String mode;
+
+  @override
+  String toString() {
+    return 'ApprovalModeResponse(mode: $mode)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApprovalModeResponseImpl &&
+            (identical(other.mode, mode) || other.mode == mode));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, mode);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApprovalModeResponseImplCopyWith<_$ApprovalModeResponseImpl>
+      get copyWith =>
+          __$$ApprovalModeResponseImplCopyWithImpl<_$ApprovalModeResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApprovalModeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApprovalModeResponse implements ApprovalModeResponse {
+  const factory _ApprovalModeResponse({required final String mode}) =
+      _$ApprovalModeResponseImpl;
+
+  factory _ApprovalModeResponse.fromJson(Map<String, dynamic> json) =
+      _$ApprovalModeResponseImpl.fromJson;
+
+  @override
+  String get mode;
+  @override
+  @JsonKey(ignore: true)
+  _$$ApprovalModeResponseImplCopyWith<_$ApprovalModeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 HealthCheckResult _$HealthCheckResultFromJson(Map<String, dynamic> json) {
   return _HealthCheckResult.fromJson(json);
 }

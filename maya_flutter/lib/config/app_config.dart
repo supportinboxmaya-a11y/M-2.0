@@ -256,6 +256,12 @@ class AppConfig {
   static const String publishHistory = '/api/v1/publish/history';
   static const String publishHistoryDetail = '/api/v1/publish/history/';
 
+  // Approvals System (Phase 21 Enhanced)
+  static const String approvalsRequest = '/api/v1/approvals/request';
+  static const String approvalsList = '/api/v1/approvals';
+  static const String approvalsDecide = '/api/v1/approvals/';
+  static const String approvalMode = '/api/v1/approval/mode';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
