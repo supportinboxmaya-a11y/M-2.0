@@ -296,6 +296,38 @@ class ApiService {
     }
   }
 
+  // Task Execution Streaming (SSE)
+  Stream<TaskStreamEvent> taskStream(String taskId) async* {
+    final response = await _dio.get(
+      '${AppConfig.taskStreamSse}$taskId/stream',
+      options: Options(
+        responseType: ResponseType.stream,
+        headers: {'Accept': 'text/event-stream'},
+      ),
+    );
+
+    final stream = response.data as Stream<List<int>>;
+    final decoder = Utf8Decoder();
+    String buffer = '';
+
+    await for (final chunk in stream) {
+      buffer += decoder.convert(chunk);
+      final lines = buffer.split('\n\n');
+      buffer = lines.removeLast();
+
+      for (final line in lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            final data = jsonDecode(line.substring(6));
+            yield TaskStreamEvent.fromJson(data);
+          } catch (e) {
+            _logger.w('Failed to parse SSE chunk: $e');
+          }
+        }
+      }
+    }
+  }
+
   Future<AgentRunResponse> runAgent(
     String goal, {
     double budgetUsd = 1.0,
@@ -3697,6 +3729,38 @@ class AgentChatResponse with _$AgentChatResponse {
 class ChatStreamChunk with _$ChatStreamChunk {
   const factory ChatStreamChunk({String? delta, bool? done, String? error}) =
       _ChatStreamChunk;
+}
+
+// Task Streaming Events
+@freezed
+class TaskStreamEvent with _$TaskStreamEvent {
+  const factory TaskStreamEvent({
+    required String type,
+    String? taskId,
+    String? sessionId,
+    String? status,
+    int? currentStep,
+    String? goal,
+    String? stepId,
+    String? stepName,
+    String? stepDescription,
+    String? agentName,
+    String? toolName,
+    String? toolStatus,
+    String? toolResult,
+    String? llmToken,
+    String? verificationStatus,
+    String? memoryAction,
+    String? skillName,
+    double? confidence,
+    double? progress,
+    String? message,
+    String? error,
+    double? timestamp,
+  }) = _TaskStreamEvent;
+
+  factory TaskStreamEvent.fromJson(Map<String, dynamic> json) =>
+      _$TaskStreamEventFromJson(json);
 }
 
 @freezed

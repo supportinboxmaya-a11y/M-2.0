@@ -16938,6 +16938,606 @@ abstract class _ChatStreamChunk implements ChatStreamChunk {
       throw _privateConstructorUsedError;
 }
 
+TaskStreamEvent _$TaskStreamEventFromJson(Map<String, dynamic> json) {
+  return _TaskStreamEvent.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TaskStreamEvent {
+  String get type => throw _privateConstructorUsedError;
+  String? get taskId => throw _privateConstructorUsedError;
+  String? get sessionId => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  int? get currentStep => throw _privateConstructorUsedError;
+  String? get goal => throw _privateConstructorUsedError;
+  String? get stepId => throw _privateConstructorUsedError;
+  String? get stepName => throw _privateConstructorUsedError;
+  String? get stepDescription => throw _privateConstructorUsedError;
+  String? get agentName => throw _privateConstructorUsedError;
+  String? get toolName => throw _privateConstructorUsedError;
+  String? get toolStatus => throw _privateConstructorUsedError;
+  String? get toolResult => throw _privateConstructorUsedError;
+  String? get llmToken => throw _privateConstructorUsedError;
+  String? get verificationStatus => throw _privateConstructorUsedError;
+  String? get memoryAction => throw _privateConstructorUsedError;
+  String? get skillName => throw _privateConstructorUsedError;
+  double? get confidence => throw _privateConstructorUsedError;
+  double? get progress => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+  double? get timestamp => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaskStreamEventCopyWith<TaskStreamEvent> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaskStreamEventCopyWith<$Res> {
+  factory $TaskStreamEventCopyWith(
+          TaskStreamEvent value, $Res Function(TaskStreamEvent) then) =
+      _$TaskStreamEventCopyWithImpl<$Res, TaskStreamEvent>;
+  @useResult
+  $Res call(
+      {String type,
+      String? taskId,
+      String? sessionId,
+      String? status,
+      int? currentStep,
+      String? goal,
+      String? stepId,
+      String? stepName,
+      String? stepDescription,
+      String? agentName,
+      String? toolName,
+      String? toolStatus,
+      String? toolResult,
+      String? llmToken,
+      String? verificationStatus,
+      String? memoryAction,
+      String? skillName,
+      double? confidence,
+      double? progress,
+      String? message,
+      String? error,
+      double? timestamp});
+}
+
+/// @nodoc
+class _$TaskStreamEventCopyWithImpl<$Res, $Val extends TaskStreamEvent>
+    implements $TaskStreamEventCopyWith<$Res> {
+  _$TaskStreamEventCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? type = null,
+    Object? taskId = freezed,
+    Object? sessionId = freezed,
+    Object? status = freezed,
+    Object? currentStep = freezed,
+    Object? goal = freezed,
+    Object? stepId = freezed,
+    Object? stepName = freezed,
+    Object? stepDescription = freezed,
+    Object? agentName = freezed,
+    Object? toolName = freezed,
+    Object? toolStatus = freezed,
+    Object? toolResult = freezed,
+    Object? llmToken = freezed,
+    Object? verificationStatus = freezed,
+    Object? memoryAction = freezed,
+    Object? skillName = freezed,
+    Object? confidence = freezed,
+    Object? progress = freezed,
+    Object? message = freezed,
+    Object? error = freezed,
+    Object? timestamp = freezed,
+  }) {
+    return _then(_value.copyWith(
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskId: freezed == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sessionId: freezed == sessionId
+          ? _value.sessionId
+          : sessionId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      currentStep: freezed == currentStep
+          ? _value.currentStep
+          : currentStep // ignore: cast_nullable_to_non_nullable
+              as int?,
+      goal: freezed == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stepId: freezed == stepId
+          ? _value.stepId
+          : stepId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stepName: freezed == stepName
+          ? _value.stepName
+          : stepName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stepDescription: freezed == stepDescription
+          ? _value.stepDescription
+          : stepDescription // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agentName: freezed == agentName
+          ? _value.agentName
+          : agentName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      toolName: freezed == toolName
+          ? _value.toolName
+          : toolName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      toolStatus: freezed == toolStatus
+          ? _value.toolStatus
+          : toolStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      toolResult: freezed == toolResult
+          ? _value.toolResult
+          : toolResult // ignore: cast_nullable_to_non_nullable
+              as String?,
+      llmToken: freezed == llmToken
+          ? _value.llmToken
+          : llmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      verificationStatus: freezed == verificationStatus
+          ? _value.verificationStatus
+          : verificationStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      memoryAction: freezed == memoryAction
+          ? _value.memoryAction
+          : memoryAction // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skillName: freezed == skillName
+          ? _value.skillName
+          : skillName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      confidence: freezed == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double?,
+      progress: freezed == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      timestamp: freezed == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaskStreamEventImplCopyWith<$Res>
+    implements $TaskStreamEventCopyWith<$Res> {
+  factory _$$TaskStreamEventImplCopyWith(_$TaskStreamEventImpl value,
+          $Res Function(_$TaskStreamEventImpl) then) =
+      __$$TaskStreamEventImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String type,
+      String? taskId,
+      String? sessionId,
+      String? status,
+      int? currentStep,
+      String? goal,
+      String? stepId,
+      String? stepName,
+      String? stepDescription,
+      String? agentName,
+      String? toolName,
+      String? toolStatus,
+      String? toolResult,
+      String? llmToken,
+      String? verificationStatus,
+      String? memoryAction,
+      String? skillName,
+      double? confidence,
+      double? progress,
+      String? message,
+      String? error,
+      double? timestamp});
+}
+
+/// @nodoc
+class __$$TaskStreamEventImplCopyWithImpl<$Res>
+    extends _$TaskStreamEventCopyWithImpl<$Res, _$TaskStreamEventImpl>
+    implements _$$TaskStreamEventImplCopyWith<$Res> {
+  __$$TaskStreamEventImplCopyWithImpl(
+      _$TaskStreamEventImpl _value, $Res Function(_$TaskStreamEventImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? type = null,
+    Object? taskId = freezed,
+    Object? sessionId = freezed,
+    Object? status = freezed,
+    Object? currentStep = freezed,
+    Object? goal = freezed,
+    Object? stepId = freezed,
+    Object? stepName = freezed,
+    Object? stepDescription = freezed,
+    Object? agentName = freezed,
+    Object? toolName = freezed,
+    Object? toolStatus = freezed,
+    Object? toolResult = freezed,
+    Object? llmToken = freezed,
+    Object? verificationStatus = freezed,
+    Object? memoryAction = freezed,
+    Object? skillName = freezed,
+    Object? confidence = freezed,
+    Object? progress = freezed,
+    Object? message = freezed,
+    Object? error = freezed,
+    Object? timestamp = freezed,
+  }) {
+    return _then(_$TaskStreamEventImpl(
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+      taskId: freezed == taskId
+          ? _value.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sessionId: freezed == sessionId
+          ? _value.sessionId
+          : sessionId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      currentStep: freezed == currentStep
+          ? _value.currentStep
+          : currentStep // ignore: cast_nullable_to_non_nullable
+              as int?,
+      goal: freezed == goal
+          ? _value.goal
+          : goal // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stepId: freezed == stepId
+          ? _value.stepId
+          : stepId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stepName: freezed == stepName
+          ? _value.stepName
+          : stepName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stepDescription: freezed == stepDescription
+          ? _value.stepDescription
+          : stepDescription // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agentName: freezed == agentName
+          ? _value.agentName
+          : agentName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      toolName: freezed == toolName
+          ? _value.toolName
+          : toolName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      toolStatus: freezed == toolStatus
+          ? _value.toolStatus
+          : toolStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      toolResult: freezed == toolResult
+          ? _value.toolResult
+          : toolResult // ignore: cast_nullable_to_non_nullable
+              as String?,
+      llmToken: freezed == llmToken
+          ? _value.llmToken
+          : llmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      verificationStatus: freezed == verificationStatus
+          ? _value.verificationStatus
+          : verificationStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
+      memoryAction: freezed == memoryAction
+          ? _value.memoryAction
+          : memoryAction // ignore: cast_nullable_to_non_nullable
+              as String?,
+      skillName: freezed == skillName
+          ? _value.skillName
+          : skillName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      confidence: freezed == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double?,
+      progress: freezed == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      timestamp: freezed == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaskStreamEventImpl implements _TaskStreamEvent {
+  const _$TaskStreamEventImpl(
+      {required this.type,
+      this.taskId,
+      this.sessionId,
+      this.status,
+      this.currentStep,
+      this.goal,
+      this.stepId,
+      this.stepName,
+      this.stepDescription,
+      this.agentName,
+      this.toolName,
+      this.toolStatus,
+      this.toolResult,
+      this.llmToken,
+      this.verificationStatus,
+      this.memoryAction,
+      this.skillName,
+      this.confidence,
+      this.progress,
+      this.message,
+      this.error,
+      this.timestamp});
+
+  factory _$TaskStreamEventImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaskStreamEventImplFromJson(json);
+
+  @override
+  final String type;
+  @override
+  final String? taskId;
+  @override
+  final String? sessionId;
+  @override
+  final String? status;
+  @override
+  final int? currentStep;
+  @override
+  final String? goal;
+  @override
+  final String? stepId;
+  @override
+  final String? stepName;
+  @override
+  final String? stepDescription;
+  @override
+  final String? agentName;
+  @override
+  final String? toolName;
+  @override
+  final String? toolStatus;
+  @override
+  final String? toolResult;
+  @override
+  final String? llmToken;
+  @override
+  final String? verificationStatus;
+  @override
+  final String? memoryAction;
+  @override
+  final String? skillName;
+  @override
+  final double? confidence;
+  @override
+  final double? progress;
+  @override
+  final String? message;
+  @override
+  final String? error;
+  @override
+  final double? timestamp;
+
+  @override
+  String toString() {
+    return 'TaskStreamEvent(type: $type, taskId: $taskId, sessionId: $sessionId, status: $status, currentStep: $currentStep, goal: $goal, stepId: $stepId, stepName: $stepName, stepDescription: $stepDescription, agentName: $agentName, toolName: $toolName, toolStatus: $toolStatus, toolResult: $toolResult, llmToken: $llmToken, verificationStatus: $verificationStatus, memoryAction: $memoryAction, skillName: $skillName, confidence: $confidence, progress: $progress, message: $message, error: $error, timestamp: $timestamp)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaskStreamEventImpl &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.sessionId, sessionId) ||
+                other.sessionId == sessionId) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.currentStep, currentStep) ||
+                other.currentStep == currentStep) &&
+            (identical(other.goal, goal) || other.goal == goal) &&
+            (identical(other.stepId, stepId) || other.stepId == stepId) &&
+            (identical(other.stepName, stepName) ||
+                other.stepName == stepName) &&
+            (identical(other.stepDescription, stepDescription) ||
+                other.stepDescription == stepDescription) &&
+            (identical(other.agentName, agentName) ||
+                other.agentName == agentName) &&
+            (identical(other.toolName, toolName) ||
+                other.toolName == toolName) &&
+            (identical(other.toolStatus, toolStatus) ||
+                other.toolStatus == toolStatus) &&
+            (identical(other.toolResult, toolResult) ||
+                other.toolResult == toolResult) &&
+            (identical(other.llmToken, llmToken) ||
+                other.llmToken == llmToken) &&
+            (identical(other.verificationStatus, verificationStatus) ||
+                other.verificationStatus == verificationStatus) &&
+            (identical(other.memoryAction, memoryAction) ||
+                other.memoryAction == memoryAction) &&
+            (identical(other.skillName, skillName) ||
+                other.skillName == skillName) &&
+            (identical(other.confidence, confidence) ||
+                other.confidence == confidence) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        type,
+        taskId,
+        sessionId,
+        status,
+        currentStep,
+        goal,
+        stepId,
+        stepName,
+        stepDescription,
+        agentName,
+        toolName,
+        toolStatus,
+        toolResult,
+        llmToken,
+        verificationStatus,
+        memoryAction,
+        skillName,
+        confidence,
+        progress,
+        message,
+        error,
+        timestamp
+      ]);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaskStreamEventImplCopyWith<_$TaskStreamEventImpl> get copyWith =>
+      __$$TaskStreamEventImplCopyWithImpl<_$TaskStreamEventImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaskStreamEventImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TaskStreamEvent implements TaskStreamEvent {
+  const factory _TaskStreamEvent(
+      {required final String type,
+      final String? taskId,
+      final String? sessionId,
+      final String? status,
+      final int? currentStep,
+      final String? goal,
+      final String? stepId,
+      final String? stepName,
+      final String? stepDescription,
+      final String? agentName,
+      final String? toolName,
+      final String? toolStatus,
+      final String? toolResult,
+      final String? llmToken,
+      final String? verificationStatus,
+      final String? memoryAction,
+      final String? skillName,
+      final double? confidence,
+      final double? progress,
+      final String? message,
+      final String? error,
+      final double? timestamp}) = _$TaskStreamEventImpl;
+
+  factory _TaskStreamEvent.fromJson(Map<String, dynamic> json) =
+      _$TaskStreamEventImpl.fromJson;
+
+  @override
+  String get type;
+  @override
+  String? get taskId;
+  @override
+  String? get sessionId;
+  @override
+  String? get status;
+  @override
+  int? get currentStep;
+  @override
+  String? get goal;
+  @override
+  String? get stepId;
+  @override
+  String? get stepName;
+  @override
+  String? get stepDescription;
+  @override
+  String? get agentName;
+  @override
+  String? get toolName;
+  @override
+  String? get toolStatus;
+  @override
+  String? get toolResult;
+  @override
+  String? get llmToken;
+  @override
+  String? get verificationStatus;
+  @override
+  String? get memoryAction;
+  @override
+  String? get skillName;
+  @override
+  double? get confidence;
+  @override
+  double? get progress;
+  @override
+  String? get message;
+  @override
+  String? get error;
+  @override
+  double? get timestamp;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaskStreamEventImplCopyWith<_$TaskStreamEventImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 AgentRunResponse _$AgentRunResponseFromJson(Map<String, dynamic> json) {
   return _AgentRunResponse.fromJson(json);
 }

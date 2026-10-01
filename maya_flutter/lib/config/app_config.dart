@@ -42,6 +42,7 @@ class AppConfig {
   // WebSocket
   static const String wsEvents = '/api/v1/events';
   static const String wsAgentStream = '/ws/stream/';
+  static const String taskStreamSse = '/api/v1/agent/tasks/';
 
   // Health Probes
   static const String healthLive = '/health/live';

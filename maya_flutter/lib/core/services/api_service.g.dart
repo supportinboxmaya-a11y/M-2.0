@@ -3292,6 +3292,96 @@ Map<String, dynamic> _$$AgentChatResponseImplToJson(
   return val;
 }
 
+_$TaskStreamEventImpl _$$TaskStreamEventImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$TaskStreamEventImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$TaskStreamEventImpl(
+          type: $checkedConvert('type', (v) => v as String),
+          taskId: $checkedConvert('task_id', (v) => v as String?),
+          sessionId: $checkedConvert('session_id', (v) => v as String?),
+          status: $checkedConvert('status', (v) => v as String?),
+          currentStep:
+              $checkedConvert('current_step', (v) => (v as num?)?.toInt()),
+          goal: $checkedConvert('goal', (v) => v as String?),
+          stepId: $checkedConvert('step_id', (v) => v as String?),
+          stepName: $checkedConvert('step_name', (v) => v as String?),
+          stepDescription:
+              $checkedConvert('step_description', (v) => v as String?),
+          agentName: $checkedConvert('agent_name', (v) => v as String?),
+          toolName: $checkedConvert('tool_name', (v) => v as String?),
+          toolStatus: $checkedConvert('tool_status', (v) => v as String?),
+          toolResult: $checkedConvert('tool_result', (v) => v as String?),
+          llmToken: $checkedConvert('llm_token', (v) => v as String?),
+          verificationStatus:
+              $checkedConvert('verification_status', (v) => v as String?),
+          memoryAction: $checkedConvert('memory_action', (v) => v as String?),
+          skillName: $checkedConvert('skill_name', (v) => v as String?),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num?)?.toDouble()),
+          progress: $checkedConvert('progress', (v) => (v as num?)?.toDouble()),
+          message: $checkedConvert('message', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+          timestamp:
+              $checkedConvert('timestamp', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'taskId': 'task_id',
+        'sessionId': 'session_id',
+        'currentStep': 'current_step',
+        'stepId': 'step_id',
+        'stepName': 'step_name',
+        'stepDescription': 'step_description',
+        'agentName': 'agent_name',
+        'toolName': 'tool_name',
+        'toolStatus': 'tool_status',
+        'toolResult': 'tool_result',
+        'llmToken': 'llm_token',
+        'verificationStatus': 'verification_status',
+        'memoryAction': 'memory_action',
+        'skillName': 'skill_name'
+      },
+    );
+
+Map<String, dynamic> _$$TaskStreamEventImplToJson(
+    _$TaskStreamEventImpl instance) {
+  final val = <String, dynamic>{
+    'type': instance.type,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('task_id', instance.taskId);
+  writeNotNull('session_id', instance.sessionId);
+  writeNotNull('status', instance.status);
+  writeNotNull('current_step', instance.currentStep);
+  writeNotNull('goal', instance.goal);
+  writeNotNull('step_id', instance.stepId);
+  writeNotNull('step_name', instance.stepName);
+  writeNotNull('step_description', instance.stepDescription);
+  writeNotNull('agent_name', instance.agentName);
+  writeNotNull('tool_name', instance.toolName);
+  writeNotNull('tool_status', instance.toolStatus);
+  writeNotNull('tool_result', instance.toolResult);
+  writeNotNull('llm_token', instance.llmToken);
+  writeNotNull('verification_status', instance.verificationStatus);
+  writeNotNull('memory_action', instance.memoryAction);
+  writeNotNull('skill_name', instance.skillName);
+  writeNotNull('confidence', instance.confidence);
+  writeNotNull('progress', instance.progress);
+  writeNotNull('message', instance.message);
+  writeNotNull('error', instance.error);
+  writeNotNull('timestamp', instance.timestamp);
+  return val;
+}
+
 _$AgentRunResponseImpl _$$AgentRunResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$AgentRunResponseImpl',

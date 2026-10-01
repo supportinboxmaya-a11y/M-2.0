@@ -1525,9 +1525,18 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
 
   void _streamChatResponse(String message) async {
     final apiService = ref.read(apiServiceProvider);
+    final activityNotifier = ref.read(activityStreamProvider.notifier);
     int messageIndex = state.length - 1;
 
     try {
+      // First, start an agent run to get a task ID for detailed activity streaming
+      final runResult = await apiService.runAgent(message);
+      final taskId = runResult.taskId;
+      
+      // Start the task stream for live activity
+      activityNotifier.startStream(taskId);
+      
+      // Also stream the chat response for the text
       await for (final chunk in apiService.chatStream(message)) {
         if (chunk.error != null) {
           state = [
@@ -1567,6 +1576,186 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
     }
   }
 }
+
+// Activity Stream Events for Live Activity Panel
+class ActivityEvent {
+  final String type;
+  final String message;
+  final String? detail;
+  final DateTime timestamp;
+  final bool isComplete;
+  final bool isError;
+
+  ActivityEvent({
+    required this.type,
+    required this.message,
+    this.detail,
+    required this.timestamp,
+    this.isComplete = false,
+    this.isError = false,
+  });
+
+  factory ActivityEvent.fromTaskStreamEvent(TaskStreamEvent event) {
+    String type = event.type;
+    String message = '';
+    String? detail;
+    bool isComplete = false;
+    bool isError = false;
+
+    switch (type) {
+      case 'planning_started':
+        message = '🧠 Thinking...';
+        break;
+      case 'plan_created':
+        message = '🧠 Plan created';
+        detail = 'Executing plan...';
+        isComplete = true;
+        break;
+      case 'step_started':
+        message = '⚙️ Running workflow';
+        detail = 'Step ${event.currentStep}: ${event.stepName ?? event.stepDescription ?? ''}';
+        break;
+      case 'step_completed':
+        message = '✅ Step completed';
+        detail = event.stepName ?? event.stepDescription;
+        isComplete = true;
+        break;
+      case 'step_failed':
+        message = '❌ Step failed';
+        detail = event.error;
+        isError = true;
+        break;
+      case 'tool_call_started':
+        message = '🔧 Using tool';
+        detail = event.toolName;
+        break;
+      case 'tool_call_completed':
+        message = '🔧 Tool completed';
+        detail = event.toolName;
+        isComplete = true;
+        break;
+      case 'tool_call_failed':
+        message = '🔧 Tool failed';
+        detail = event.toolName;
+        isError = true;
+        break;
+      case 'llm_stream_start':
+        message = '🤖 Generating response...';
+        break;
+      case 'llm_token':
+        message = '🤖 Generating...';
+        detail = event.llmToken;
+        break;
+      case 'llm_stream_end':
+        message = '🤖 Response generated';
+        isComplete = true;
+        break;
+      case 'verification_started':
+        message = '🔍 Verifying...';
+        break;
+      case 'verification_completed':
+        message = '🔍 Verification passed';
+        isComplete = true;
+        break;
+      case 'agent_task_assigned':
+        message = '👤 Agent working';
+        detail = event.agentName;
+        break;
+      case 'agent_task_completed':
+        message = '👤 Agent completed';
+        detail = event.agentName;
+        isComplete = true;
+        break;
+      case 'memory_consolidated':
+        message = '📂 Memory updated';
+        break;
+      case 'skill_acquired':
+        message = '🎓 Skill learned';
+        detail = event.skillName;
+        break;
+      case 'confidence_update':
+        message = '📊 Confidence updated';
+        detail = '${(event.confidence ?? 0 * 100).toStringAsFixed(0)}%';
+        break;
+      case 'replan_triggered':
+        message = '🔄 Replanning...';
+        break;
+      case 'task_completed':
+        message = '✅ Task completed';
+        isComplete = true;
+        break;
+      case 'task_failed':
+        message = '❌ Task failed';
+        detail = event.error;
+        isError = true;
+        break;
+      case 'connected':
+        message = '🔗 Connected to task stream';
+        break;
+      default:
+        message = '⚙️ ${type.replaceAll('_', ' ')}';
+    }
+
+    return ActivityEvent(
+      type: type,
+      message: message,
+      detail: detail,
+      timestamp: DateTime.now(),
+      isComplete: isComplete,
+      isError: isError,
+    );
+  }
+}
+
+// Activity Stream Notifier
+class ActivityStreamNotifier extends StateNotifier<List<ActivityEvent>> {
+  final Ref ref;
+  StreamSubscription? _subscription;
+
+  ActivityStreamNotifier(this.ref) : super([]);
+
+  void startStream(String taskId) {
+    // Clear previous activities
+    state = [];
+
+    final apiService = ref.read(apiServiceProvider);
+    _subscription = apiService.taskStream(taskId).listen(
+      (event) {
+        final activity = ActivityEvent.fromTaskStreamEvent(event);
+        state = [...state, activity];
+      },
+      onError: (error) {
+        state = [...state, ActivityEvent(
+          type: 'error',
+          message: '❌ Stream error',
+          detail: error.toString(),
+          timestamp: DateTime.now(),
+          isError: true,
+        )];
+      },
+      onDone: () {
+        // Stream completed
+      },
+    );
+  }
+
+  void clear() {
+    state = [];
+    _subscription?.cancel();
+    _subscription = null;
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+}
+
+// Provider for Activity Stream
+final activityStreamProvider = StateNotifierProvider<ActivityStreamNotifier, List<ActivityEvent>>((ref) {
+  return ActivityStreamNotifier(ref);
+});
 
 class _HealthProbesWidget extends ConsumerWidget {
   const _HealthProbesWidget();
@@ -2131,22 +2320,36 @@ class _DrawerActionTile extends StatelessWidget {
   }
 }
 
-class _ChatScreen extends ConsumerWidget {
+class _ChatScreen extends ConsumerStatefulWidget {
   const _ChatScreen();
+
+  @override
+  ConsumerState<_ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<_ChatScreen> {
+  final textController = TextEditingController();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void handleSend() {
+    final text = textController.text.trim();
+    if (text.isNotEmpty) {
+      textController.clear();
+      ref.read(chatMessagesProvider.notifier).sendMessage(text);
+    }
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messages = ref.watch(chatMessagesProvider);
-    final textController = TextEditingController();
-    final scaffoldKey = GlobalKey<ScaffoldState>();
-
-    void handleSend() {
-      final text = textController.text.trim();
-      if (text.isNotEmpty) {
-        textController.clear();
-        ref.read(chatMessagesProvider.notifier).sendMessage(text);
-      }
-    }
+    final activities = ref.watch(activityStreamProvider);
+    final hasActivities = activities.isNotEmpty;
 
     return SafeArea(
       child: Scaffold(
@@ -2173,9 +2376,41 @@ class _ChatScreen extends ConsumerWidget {
                         backgroundColor: MayaTheme.glassWhite10),
                   ),
                   const Text('Chat', style: MayaTheme.headlineLarge),
+                  const Spacer(),
+                  if (hasActivities)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: MayaTheme.neonOrange.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: MayaTheme.neonOrange.withValues(alpha: 0.5)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 10,
+                            height: 10,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(MayaTheme.neonOrange),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Live Activity',
+                            style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonOrange),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
+
+            // Live Activity Panel
+            if (hasActivities)
+              _ActivityPanel(activities: activities),
 
             // Messages
             Expanded(
@@ -2239,13 +2474,7 @@ class _ChatScreen extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.send_rounded,
                         color: MayaTheme.neonCyan),
-                    onPressed: () {
-                      final text = textController.text;
-                      if (text.trim().isNotEmpty) {
-                        textController.clear();
-                        ref.read(chatMessagesProvider.notifier).sendMessage(text);
-                      }
-                    },
+                    onPressed: handleSend,
                   ),
                 ],
               ),
@@ -2349,6 +2578,167 @@ class _SidebarItem extends StatelessWidget {
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     );
+  }
+}
+
+// Activity Panel Widget - Shows live task execution events
+class _ActivityPanel extends StatelessWidget {
+  final List<ActivityEvent> activities;
+
+  const _ActivityPanel({required this.activities});
+
+  @override
+  Widget build(BuildContext context) {
+    // Get unique activities (keep latest of each type)
+    final latestActivities = <String, ActivityEvent>{};
+    for (final activity in activities.reversed) {
+      if (!latestActivities.containsKey(activity.type)) {
+        latestActivities[activity.type] = activity;
+      }
+    }
+    final displayActivities = latestActivities.values.toList().reversed.toList();
+
+    return Container(
+      height: 180,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Panel header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: MayaTheme.slate800,
+              border: Border(
+                bottom: BorderSide(color: MayaTheme.neonCyan.withValues(alpha: 0.1)),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.bolt_rounded, size: 16, color: MayaTheme.neonCyan),
+                const SizedBox(width: 8),
+                Text('Live Activity', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan)),
+                const Spacer(),
+                Text(
+                  '${activities.length} events',
+                  style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                ),
+              ],
+            ),
+          ),
+          // Activity list
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              itemCount: displayActivities.length,
+              itemBuilder: (context, index) {
+                final activity = displayActivities[index];
+                return _ActivityTile(activity: activity);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActivityTile extends StatelessWidget {
+  final ActivityEvent activity;
+
+  const _ActivityTile({required this.activity});
+
+  @override
+  Widget build(BuildContext context) {
+    Color statusColor;
+    if (activity.isError) {
+      statusColor = MayaTheme.error;
+    } else if (activity.isComplete) {
+      statusColor = MayaTheme.neonEmerald;
+    } else {
+      statusColor = MayaTheme.neonOrange;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: MayaTheme.slate800,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: Icon(
+                _getActivityIcon(activity.type),
+                size: 14,
+                color: statusColor,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  activity.message,
+                  style: MayaTheme.bodySmall.copyWith(
+                    color: activity.isError ? MayaTheme.error : Colors.white,
+                    fontWeight: activity.isComplete ? FontWeight.w500 : FontWeight.normal,
+                  ),
+                ),
+                if (activity.detail != null && activity.detail!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    activity.detail!,
+                    style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Text(
+            _formatTime(activity.timestamp),
+            style: MayaTheme.labelSmall.copyWith(color: Colors.white38),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getActivityIcon(String type) {
+    if (type.contains('planning') || type.contains('think')) return Icons.psychology_rounded;
+    if (type.contains('step') || type.contains('workflow')) return Icons.settings_rounded;
+    if (type.contains('tool')) return Icons.build_rounded;
+    if (type.contains('llm') || type.contains('generat')) return Icons.smart_toy_rounded;
+    if (type.contains('verif')) return Icons.verified_rounded;
+    if (type.contains('agent')) return Icons.person_rounded;
+    if (type.contains('memory') || type.contains('skill')) return Icons.memory_rounded;
+    if (type.contains('confidence') || type.contains('replan')) return Icons.trending_up_rounded;
+    if (type.contains('task_completed')) return Icons.check_circle_rounded;
+    if (type.contains('task_failed') || type.contains('error')) return Icons.error_rounded;
+    return Icons.bolt_rounded;
+  }
+
+  String _formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
   }
 }
 
