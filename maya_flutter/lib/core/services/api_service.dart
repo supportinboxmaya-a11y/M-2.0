@@ -1910,6 +1910,33 @@ class ApiService {
     return BusinessReportDetailResponse.fromJson(response.data);
   }
 
+  // Guarded Publish (Phase 21)
+  Future<PublishProposeResponse> proposePublish({
+    required String siteName,
+    required Map<String, String> files,
+    String description = '',
+  }) async {
+    final response = await _dio.post(
+      AppConfig.publishPropose,
+      data: {
+        'site_name': siteName,
+        'files': files,
+        'description': description,
+      },
+    );
+    return PublishProposeResponse.fromJson(response.data);
+  }
+
+  Future<PublishHistoryListResponse> getPublishHistory() async {
+    final response = await _dio.get(AppConfig.publishHistory);
+    return PublishHistoryListResponse.fromJson(response.data);
+  }
+
+  Future<PublishHistoryDetailResponse> getPublishHistoryDetail(String proposalId) async {
+    final response = await _dio.get('${AppConfig.publishHistoryDetail}$proposalId');
+    return PublishHistoryDetailResponse.fromJson(response.data);
+  }
+
 // AGI Architecture (Phase 18 Part 1)
   Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
     final response = await _dio.get(
@@ -3361,6 +3388,83 @@ class BusinessReportDetailResponse with _$BusinessReportDetailResponse {
 
   factory BusinessReportDetailResponse.fromJson(Map<String, dynamic> json) =>
       _$BusinessReportDetailResponseFromJson(json);
+}
+
+// Guarded Publish Models (Phase 21)
+@freezed
+class PublishProposeResponse with _$PublishProposeResponse {
+  const factory PublishProposeResponse({
+    required String id,
+    required String siteName,
+    required String filesJson,
+    required String description,
+    required String action,
+    required String approver,
+    required String resultUrl,
+    required String error,
+    required double createdAt,
+    double? decidedAt,
+  }) = _PublishProposeResponse;
+
+  factory PublishProposeResponse.fromJson(Map<String, dynamic> json) =>
+      _$PublishProposeResponseFromJson(json);
+}
+
+@freezed
+class PublishHistoryListResponse with _$PublishHistoryListResponse {
+  const factory PublishHistoryListResponse({
+    required List<PublishHistoryItem> proposals,
+  }) = _PublishHistoryListResponse;
+
+  factory PublishHistoryListResponse.fromJson(Map<String, dynamic> json) =>
+      _$PublishHistoryListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class PublishHistoryItem {
+  final String id;
+  final String siteName;
+  final String description;
+  final String action;
+  final String approver;
+  final String resultUrl;
+  final double createdAt;
+  final double? decidedAt;
+
+  const PublishHistoryItem({
+    required this.id,
+    required this.siteName,
+    required this.description,
+    required this.action,
+    required this.approver,
+    required this.resultUrl,
+    required this.createdAt,
+    this.decidedAt,
+  });
+
+  factory PublishHistoryItem.fromJson(Map<String, dynamic> json) =>
+      _$PublishHistoryItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PublishHistoryItemToJson(this);
+}
+
+@freezed
+class PublishHistoryDetailResponse with _$PublishHistoryDetailResponse {
+  const factory PublishHistoryDetailResponse({
+    required String id,
+    required String siteName,
+    required String filesJson,
+    required String description,
+    required String action,
+    required String approver,
+    required String resultUrl,
+    required String error,
+    required double createdAt,
+    double? decidedAt,
+  }) = _PublishHistoryDetailResponse;
+
+  factory PublishHistoryDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$PublishHistoryDetailResponseFromJson(json);
 }
 
 @freezed

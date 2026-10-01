@@ -251,6 +251,11 @@ class AppConfig {
   static const String browserAction = '/browser/action';
   static const String sandboxExecute = '/sandbox/execute';
 
+  // Guarded Publish (Phase 21)
+  static const String publishPropose = '/api/v1/publish';
+  static const String publishHistory = '/api/v1/publish/history';
+  static const String publishHistoryDetail = '/api/v1/publish/history/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

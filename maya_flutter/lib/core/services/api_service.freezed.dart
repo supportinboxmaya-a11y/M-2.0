@@ -13647,6 +13647,837 @@ abstract class _BusinessReportDetailResponse
       get copyWith => throw _privateConstructorUsedError;
 }
 
+PublishProposeResponse _$PublishProposeResponseFromJson(
+    Map<String, dynamic> json) {
+  return _PublishProposeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PublishProposeResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get siteName => throw _privateConstructorUsedError;
+  String get filesJson => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String get approver => throw _privateConstructorUsedError;
+  String get resultUrl => throw _privateConstructorUsedError;
+  String get error => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double? get decidedAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PublishProposeResponseCopyWith<PublishProposeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PublishProposeResponseCopyWith<$Res> {
+  factory $PublishProposeResponseCopyWith(PublishProposeResponse value,
+          $Res Function(PublishProposeResponse) then) =
+      _$PublishProposeResponseCopyWithImpl<$Res, PublishProposeResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String siteName,
+      String filesJson,
+      String description,
+      String action,
+      String approver,
+      String resultUrl,
+      String error,
+      double createdAt,
+      double? decidedAt});
+}
+
+/// @nodoc
+class _$PublishProposeResponseCopyWithImpl<$Res,
+        $Val extends PublishProposeResponse>
+    implements $PublishProposeResponseCopyWith<$Res> {
+  _$PublishProposeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? siteName = null,
+    Object? filesJson = null,
+    Object? description = null,
+    Object? action = null,
+    Object? approver = null,
+    Object? resultUrl = null,
+    Object? error = null,
+    Object? createdAt = null,
+    Object? decidedAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteName: null == siteName
+          ? _value.siteName
+          : siteName // ignore: cast_nullable_to_non_nullable
+              as String,
+      filesJson: null == filesJson
+          ? _value.filesJson
+          : filesJson // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      approver: null == approver
+          ? _value.approver
+          : approver // ignore: cast_nullable_to_non_nullable
+              as String,
+      resultUrl: null == resultUrl
+          ? _value.resultUrl
+          : resultUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      decidedAt: freezed == decidedAt
+          ? _value.decidedAt
+          : decidedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PublishProposeResponseImplCopyWith<$Res>
+    implements $PublishProposeResponseCopyWith<$Res> {
+  factory _$$PublishProposeResponseImplCopyWith(
+          _$PublishProposeResponseImpl value,
+          $Res Function(_$PublishProposeResponseImpl) then) =
+      __$$PublishProposeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String siteName,
+      String filesJson,
+      String description,
+      String action,
+      String approver,
+      String resultUrl,
+      String error,
+      double createdAt,
+      double? decidedAt});
+}
+
+/// @nodoc
+class __$$PublishProposeResponseImplCopyWithImpl<$Res>
+    extends _$PublishProposeResponseCopyWithImpl<$Res,
+        _$PublishProposeResponseImpl>
+    implements _$$PublishProposeResponseImplCopyWith<$Res> {
+  __$$PublishProposeResponseImplCopyWithImpl(
+      _$PublishProposeResponseImpl _value,
+      $Res Function(_$PublishProposeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? siteName = null,
+    Object? filesJson = null,
+    Object? description = null,
+    Object? action = null,
+    Object? approver = null,
+    Object? resultUrl = null,
+    Object? error = null,
+    Object? createdAt = null,
+    Object? decidedAt = freezed,
+  }) {
+    return _then(_$PublishProposeResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteName: null == siteName
+          ? _value.siteName
+          : siteName // ignore: cast_nullable_to_non_nullable
+              as String,
+      filesJson: null == filesJson
+          ? _value.filesJson
+          : filesJson // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      approver: null == approver
+          ? _value.approver
+          : approver // ignore: cast_nullable_to_non_nullable
+              as String,
+      resultUrl: null == resultUrl
+          ? _value.resultUrl
+          : resultUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      decidedAt: freezed == decidedAt
+          ? _value.decidedAt
+          : decidedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PublishProposeResponseImpl implements _PublishProposeResponse {
+  const _$PublishProposeResponseImpl(
+      {required this.id,
+      required this.siteName,
+      required this.filesJson,
+      required this.description,
+      required this.action,
+      required this.approver,
+      required this.resultUrl,
+      required this.error,
+      required this.createdAt,
+      this.decidedAt});
+
+  factory _$PublishProposeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PublishProposeResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String siteName;
+  @override
+  final String filesJson;
+  @override
+  final String description;
+  @override
+  final String action;
+  @override
+  final String approver;
+  @override
+  final String resultUrl;
+  @override
+  final String error;
+  @override
+  final double createdAt;
+  @override
+  final double? decidedAt;
+
+  @override
+  String toString() {
+    return 'PublishProposeResponse(id: $id, siteName: $siteName, filesJson: $filesJson, description: $description, action: $action, approver: $approver, resultUrl: $resultUrl, error: $error, createdAt: $createdAt, decidedAt: $decidedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PublishProposeResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.siteName, siteName) ||
+                other.siteName == siteName) &&
+            (identical(other.filesJson, filesJson) ||
+                other.filesJson == filesJson) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.approver, approver) ||
+                other.approver == approver) &&
+            (identical(other.resultUrl, resultUrl) ||
+                other.resultUrl == resultUrl) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.decidedAt, decidedAt) ||
+                other.decidedAt == decidedAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, siteName, filesJson,
+      description, action, approver, resultUrl, error, createdAt, decidedAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PublishProposeResponseImplCopyWith<_$PublishProposeResponseImpl>
+      get copyWith => __$$PublishProposeResponseImplCopyWithImpl<
+          _$PublishProposeResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PublishProposeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PublishProposeResponse implements PublishProposeResponse {
+  const factory _PublishProposeResponse(
+      {required final String id,
+      required final String siteName,
+      required final String filesJson,
+      required final String description,
+      required final String action,
+      required final String approver,
+      required final String resultUrl,
+      required final String error,
+      required final double createdAt,
+      final double? decidedAt}) = _$PublishProposeResponseImpl;
+
+  factory _PublishProposeResponse.fromJson(Map<String, dynamic> json) =
+      _$PublishProposeResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get siteName;
+  @override
+  String get filesJson;
+  @override
+  String get description;
+  @override
+  String get action;
+  @override
+  String get approver;
+  @override
+  String get resultUrl;
+  @override
+  String get error;
+  @override
+  double get createdAt;
+  @override
+  double? get decidedAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$PublishProposeResponseImplCopyWith<_$PublishProposeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+PublishHistoryListResponse _$PublishHistoryListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _PublishHistoryListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PublishHistoryListResponse {
+  List<PublishHistoryItem> get proposals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PublishHistoryListResponseCopyWith<PublishHistoryListResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PublishHistoryListResponseCopyWith<$Res> {
+  factory $PublishHistoryListResponseCopyWith(PublishHistoryListResponse value,
+          $Res Function(PublishHistoryListResponse) then) =
+      _$PublishHistoryListResponseCopyWithImpl<$Res,
+          PublishHistoryListResponse>;
+  @useResult
+  $Res call({List<PublishHistoryItem> proposals});
+}
+
+/// @nodoc
+class _$PublishHistoryListResponseCopyWithImpl<$Res,
+        $Val extends PublishHistoryListResponse>
+    implements $PublishHistoryListResponseCopyWith<$Res> {
+  _$PublishHistoryListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proposals = null,
+  }) {
+    return _then(_value.copyWith(
+      proposals: null == proposals
+          ? _value.proposals
+          : proposals // ignore: cast_nullable_to_non_nullable
+              as List<PublishHistoryItem>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PublishHistoryListResponseImplCopyWith<$Res>
+    implements $PublishHistoryListResponseCopyWith<$Res> {
+  factory _$$PublishHistoryListResponseImplCopyWith(
+          _$PublishHistoryListResponseImpl value,
+          $Res Function(_$PublishHistoryListResponseImpl) then) =
+      __$$PublishHistoryListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<PublishHistoryItem> proposals});
+}
+
+/// @nodoc
+class __$$PublishHistoryListResponseImplCopyWithImpl<$Res>
+    extends _$PublishHistoryListResponseCopyWithImpl<$Res,
+        _$PublishHistoryListResponseImpl>
+    implements _$$PublishHistoryListResponseImplCopyWith<$Res> {
+  __$$PublishHistoryListResponseImplCopyWithImpl(
+      _$PublishHistoryListResponseImpl _value,
+      $Res Function(_$PublishHistoryListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proposals = null,
+  }) {
+    return _then(_$PublishHistoryListResponseImpl(
+      proposals: null == proposals
+          ? _value._proposals
+          : proposals // ignore: cast_nullable_to_non_nullable
+              as List<PublishHistoryItem>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PublishHistoryListResponseImpl implements _PublishHistoryListResponse {
+  const _$PublishHistoryListResponseImpl(
+      {required final List<PublishHistoryItem> proposals})
+      : _proposals = proposals;
+
+  factory _$PublishHistoryListResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$PublishHistoryListResponseImplFromJson(json);
+
+  final List<PublishHistoryItem> _proposals;
+  @override
+  List<PublishHistoryItem> get proposals {
+    if (_proposals is EqualUnmodifiableListView) return _proposals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_proposals);
+  }
+
+  @override
+  String toString() {
+    return 'PublishHistoryListResponse(proposals: $proposals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PublishHistoryListResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._proposals, _proposals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_proposals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PublishHistoryListResponseImplCopyWith<_$PublishHistoryListResponseImpl>
+      get copyWith => __$$PublishHistoryListResponseImplCopyWithImpl<
+          _$PublishHistoryListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PublishHistoryListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PublishHistoryListResponse
+    implements PublishHistoryListResponse {
+  const factory _PublishHistoryListResponse(
+          {required final List<PublishHistoryItem> proposals}) =
+      _$PublishHistoryListResponseImpl;
+
+  factory _PublishHistoryListResponse.fromJson(Map<String, dynamic> json) =
+      _$PublishHistoryListResponseImpl.fromJson;
+
+  @override
+  List<PublishHistoryItem> get proposals;
+  @override
+  @JsonKey(ignore: true)
+  _$$PublishHistoryListResponseImplCopyWith<_$PublishHistoryListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+PublishHistoryDetailResponse _$PublishHistoryDetailResponseFromJson(
+    Map<String, dynamic> json) {
+  return _PublishHistoryDetailResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PublishHistoryDetailResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get siteName => throw _privateConstructorUsedError;
+  String get filesJson => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String get approver => throw _privateConstructorUsedError;
+  String get resultUrl => throw _privateConstructorUsedError;
+  String get error => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double? get decidedAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PublishHistoryDetailResponseCopyWith<PublishHistoryDetailResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PublishHistoryDetailResponseCopyWith<$Res> {
+  factory $PublishHistoryDetailResponseCopyWith(
+          PublishHistoryDetailResponse value,
+          $Res Function(PublishHistoryDetailResponse) then) =
+      _$PublishHistoryDetailResponseCopyWithImpl<$Res,
+          PublishHistoryDetailResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String siteName,
+      String filesJson,
+      String description,
+      String action,
+      String approver,
+      String resultUrl,
+      String error,
+      double createdAt,
+      double? decidedAt});
+}
+
+/// @nodoc
+class _$PublishHistoryDetailResponseCopyWithImpl<$Res,
+        $Val extends PublishHistoryDetailResponse>
+    implements $PublishHistoryDetailResponseCopyWith<$Res> {
+  _$PublishHistoryDetailResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? siteName = null,
+    Object? filesJson = null,
+    Object? description = null,
+    Object? action = null,
+    Object? approver = null,
+    Object? resultUrl = null,
+    Object? error = null,
+    Object? createdAt = null,
+    Object? decidedAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteName: null == siteName
+          ? _value.siteName
+          : siteName // ignore: cast_nullable_to_non_nullable
+              as String,
+      filesJson: null == filesJson
+          ? _value.filesJson
+          : filesJson // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      approver: null == approver
+          ? _value.approver
+          : approver // ignore: cast_nullable_to_non_nullable
+              as String,
+      resultUrl: null == resultUrl
+          ? _value.resultUrl
+          : resultUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      decidedAt: freezed == decidedAt
+          ? _value.decidedAt
+          : decidedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PublishHistoryDetailResponseImplCopyWith<$Res>
+    implements $PublishHistoryDetailResponseCopyWith<$Res> {
+  factory _$$PublishHistoryDetailResponseImplCopyWith(
+          _$PublishHistoryDetailResponseImpl value,
+          $Res Function(_$PublishHistoryDetailResponseImpl) then) =
+      __$$PublishHistoryDetailResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String siteName,
+      String filesJson,
+      String description,
+      String action,
+      String approver,
+      String resultUrl,
+      String error,
+      double createdAt,
+      double? decidedAt});
+}
+
+/// @nodoc
+class __$$PublishHistoryDetailResponseImplCopyWithImpl<$Res>
+    extends _$PublishHistoryDetailResponseCopyWithImpl<$Res,
+        _$PublishHistoryDetailResponseImpl>
+    implements _$$PublishHistoryDetailResponseImplCopyWith<$Res> {
+  __$$PublishHistoryDetailResponseImplCopyWithImpl(
+      _$PublishHistoryDetailResponseImpl _value,
+      $Res Function(_$PublishHistoryDetailResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? siteName = null,
+    Object? filesJson = null,
+    Object? description = null,
+    Object? action = null,
+    Object? approver = null,
+    Object? resultUrl = null,
+    Object? error = null,
+    Object? createdAt = null,
+    Object? decidedAt = freezed,
+  }) {
+    return _then(_$PublishHistoryDetailResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteName: null == siteName
+          ? _value.siteName
+          : siteName // ignore: cast_nullable_to_non_nullable
+              as String,
+      filesJson: null == filesJson
+          ? _value.filesJson
+          : filesJson // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      approver: null == approver
+          ? _value.approver
+          : approver // ignore: cast_nullable_to_non_nullable
+              as String,
+      resultUrl: null == resultUrl
+          ? _value.resultUrl
+          : resultUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      decidedAt: freezed == decidedAt
+          ? _value.decidedAt
+          : decidedAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PublishHistoryDetailResponseImpl
+    implements _PublishHistoryDetailResponse {
+  const _$PublishHistoryDetailResponseImpl(
+      {required this.id,
+      required this.siteName,
+      required this.filesJson,
+      required this.description,
+      required this.action,
+      required this.approver,
+      required this.resultUrl,
+      required this.error,
+      required this.createdAt,
+      this.decidedAt});
+
+  factory _$PublishHistoryDetailResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$PublishHistoryDetailResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String siteName;
+  @override
+  final String filesJson;
+  @override
+  final String description;
+  @override
+  final String action;
+  @override
+  final String approver;
+  @override
+  final String resultUrl;
+  @override
+  final String error;
+  @override
+  final double createdAt;
+  @override
+  final double? decidedAt;
+
+  @override
+  String toString() {
+    return 'PublishHistoryDetailResponse(id: $id, siteName: $siteName, filesJson: $filesJson, description: $description, action: $action, approver: $approver, resultUrl: $resultUrl, error: $error, createdAt: $createdAt, decidedAt: $decidedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PublishHistoryDetailResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.siteName, siteName) ||
+                other.siteName == siteName) &&
+            (identical(other.filesJson, filesJson) ||
+                other.filesJson == filesJson) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.approver, approver) ||
+                other.approver == approver) &&
+            (identical(other.resultUrl, resultUrl) ||
+                other.resultUrl == resultUrl) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.decidedAt, decidedAt) ||
+                other.decidedAt == decidedAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, siteName, filesJson,
+      description, action, approver, resultUrl, error, createdAt, decidedAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PublishHistoryDetailResponseImplCopyWith<
+          _$PublishHistoryDetailResponseImpl>
+      get copyWith => __$$PublishHistoryDetailResponseImplCopyWithImpl<
+          _$PublishHistoryDetailResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PublishHistoryDetailResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PublishHistoryDetailResponse
+    implements PublishHistoryDetailResponse {
+  const factory _PublishHistoryDetailResponse(
+      {required final String id,
+      required final String siteName,
+      required final String filesJson,
+      required final String description,
+      required final String action,
+      required final String approver,
+      required final String resultUrl,
+      required final String error,
+      required final double createdAt,
+      final double? decidedAt}) = _$PublishHistoryDetailResponseImpl;
+
+  factory _PublishHistoryDetailResponse.fromJson(Map<String, dynamic> json) =
+      _$PublishHistoryDetailResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get siteName;
+  @override
+  String get filesJson;
+  @override
+  String get description;
+  @override
+  String get action;
+  @override
+  String get approver;
+  @override
+  String get resultUrl;
+  @override
+  String get error;
+  @override
+  double get createdAt;
+  @override
+  double? get decidedAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$PublishHistoryDetailResponseImplCopyWith<
+          _$PublishHistoryDetailResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 HealthCheckResult _$HealthCheckResultFromJson(Map<String, dynamic> json) {
   return _HealthCheckResult.fromJson(json);
 }

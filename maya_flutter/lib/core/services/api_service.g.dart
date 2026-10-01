@@ -623,6 +623,53 @@ Map<String, dynamic> _$BusinessReportSummaryToJson(
       'created_at': instance.createdAt,
     };
 
+PublishHistoryItem _$PublishHistoryItemFromJson(Map json) => $checkedCreate(
+      'PublishHistoryItem',
+      json,
+      ($checkedConvert) {
+        final val = PublishHistoryItem(
+          id: $checkedConvert('id', (v) => v as String),
+          siteName: $checkedConvert('site_name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          approver: $checkedConvert('approver', (v) => v as String),
+          resultUrl: $checkedConvert('result_url', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          decidedAt:
+              $checkedConvert('decided_at', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'siteName': 'site_name',
+        'resultUrl': 'result_url',
+        'createdAt': 'created_at',
+        'decidedAt': 'decided_at'
+      },
+    );
+
+Map<String, dynamic> _$PublishHistoryItemToJson(PublishHistoryItem instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'site_name': instance.siteName,
+    'description': instance.description,
+    'action': instance.action,
+    'approver': instance.approver,
+    'result_url': instance.resultUrl,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('decided_at', instance.decidedAt);
+  return val;
+}
+
 KernelCheckpointsResponse _$KernelCheckpointsResponseFromJson(Map json) =>
     $checkedCreate(
       'KernelCheckpointsResponse',
@@ -2717,6 +2764,139 @@ Map<String, dynamic> _$$BusinessReportDetailResponseImplToJson(
       'combined_summary': instance.combinedSummary,
       'created_at': instance.createdAt,
     };
+
+_$PublishProposeResponseImpl _$$PublishProposeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$PublishProposeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PublishProposeResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          siteName: $checkedConvert('site_name', (v) => v as String),
+          filesJson: $checkedConvert('files_json', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          approver: $checkedConvert('approver', (v) => v as String),
+          resultUrl: $checkedConvert('result_url', (v) => v as String),
+          error: $checkedConvert('error', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          decidedAt:
+              $checkedConvert('decided_at', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'siteName': 'site_name',
+        'filesJson': 'files_json',
+        'resultUrl': 'result_url',
+        'createdAt': 'created_at',
+        'decidedAt': 'decided_at'
+      },
+    );
+
+Map<String, dynamic> _$$PublishProposeResponseImplToJson(
+    _$PublishProposeResponseImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'site_name': instance.siteName,
+    'files_json': instance.filesJson,
+    'description': instance.description,
+    'action': instance.action,
+    'approver': instance.approver,
+    'result_url': instance.resultUrl,
+    'error': instance.error,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('decided_at', instance.decidedAt);
+  return val;
+}
+
+_$PublishHistoryListResponseImpl _$$PublishHistoryListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$PublishHistoryListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PublishHistoryListResponseImpl(
+          proposals: $checkedConvert(
+              'proposals',
+              (v) => (v as List<dynamic>)
+                  .map((e) => PublishHistoryItem.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$PublishHistoryListResponseImplToJson(
+        _$PublishHistoryListResponseImpl instance) =>
+    <String, dynamic>{
+      'proposals': instance.proposals,
+    };
+
+_$PublishHistoryDetailResponseImpl _$$PublishHistoryDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$PublishHistoryDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PublishHistoryDetailResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          siteName: $checkedConvert('site_name', (v) => v as String),
+          filesJson: $checkedConvert('files_json', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          approver: $checkedConvert('approver', (v) => v as String),
+          resultUrl: $checkedConvert('result_url', (v) => v as String),
+          error: $checkedConvert('error', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          decidedAt:
+              $checkedConvert('decided_at', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'siteName': 'site_name',
+        'filesJson': 'files_json',
+        'resultUrl': 'result_url',
+        'createdAt': 'created_at',
+        'decidedAt': 'decided_at'
+      },
+    );
+
+Map<String, dynamic> _$$PublishHistoryDetailResponseImplToJson(
+    _$PublishHistoryDetailResponseImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'site_name': instance.siteName,
+    'files_json': instance.filesJson,
+    'description': instance.description,
+    'action': instance.action,
+    'approver': instance.approver,
+    'result_url': instance.resultUrl,
+    'error': instance.error,
+    'created_at': instance.createdAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('decided_at', instance.decidedAt);
+  return val;
+}
 
 _$HealthCheckResultImpl _$$HealthCheckResultImplFromJson(Map json) =>
     $checkedCreate(
