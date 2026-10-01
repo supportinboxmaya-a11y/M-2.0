@@ -26,6 +26,11 @@ class AppConfig {
   static const String agentRun = '/api/v1/agent/run';
   static const String agentThink = '/api/v1/agent/think';
 
+  // Autonomous / Cognitive / Queue
+  static const String autonomousStatus = '/api/v1/autonomous/status';
+  static const String cognitiveStatus = '/api/v1/cognitive/status';
+  static const String queueStatus = '/api/v1/queue/status';
+
   static const String cameraAnalyze = '/api/v1/vision/analyze';
   static const String cameraOcr = '/api/v1/vision/ocr';
 
@@ -33,7 +38,6 @@ class AppConfig {
   static const String systemStats = '/api/v1/tools/system_stats/run';
 
   // Task Queue
-  static const String queueStatus = '/api/v1/queue/status';
   static const String queueStats = '/api/v1/queue/stats';
   static const String queueTask = '/api/v1/queue/task/';
   static const String queueSubmit = '/api/v1/queue/submit';
@@ -152,7 +156,6 @@ class AppConfig {
   static const String remoteAction = '/api/v1/hosting/remote/';
 
   // Cognitive Loop (Phase 17)
-  static const String cognitiveStatus = '/api/v1/cognitive/status';
   static const String cognitiveCycle = '/api/v1/cognitive/cycle';
   static const String cognitivePause = '/api/v1/cognitive/pause';
   static const String cognitiveResume = '/api/v1/cognitive/resume';

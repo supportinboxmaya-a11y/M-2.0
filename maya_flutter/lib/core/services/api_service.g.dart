@@ -3766,6 +3766,51 @@ Map<String, dynamic> _$$QueueStatsImplToJson(_$QueueStatsImpl instance) =>
       'total': instance.total,
     };
 
+_$AutonomousStatusImpl _$$AutonomousStatusImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AutonomousStatusImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AutonomousStatusImpl(
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          running: $checkedConvert('running', (v) => v as bool),
+          mission: $checkedConvert('mission', (v) => v as String?),
+          currentObjective:
+              $checkedConvert('current_objective', (v) => v as String?),
+          cycleCount:
+              $checkedConvert('cycle_count', (v) => (v as num?)?.toInt()),
+          lastCycleAt:
+              $checkedConvert('last_cycle_at', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'currentObjective': 'current_objective',
+        'cycleCount': 'cycle_count',
+        'lastCycleAt': 'last_cycle_at'
+      },
+    );
+
+Map<String, dynamic> _$$AutonomousStatusImplToJson(
+    _$AutonomousStatusImpl instance) {
+  final val = <String, dynamic>{
+    'enabled': instance.enabled,
+    'running': instance.running,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('mission', instance.mission);
+  writeNotNull('current_objective', instance.currentObjective);
+  writeNotNull('cycle_count', instance.cycleCount);
+  writeNotNull('last_cycle_at', instance.lastCycleAt);
+  return val;
+}
+
 _$QueueTaskStatusImpl _$$QueueTaskStatusImplFromJson(Map json) =>
     $checkedCreate(
       r'_$QueueTaskStatusImpl',

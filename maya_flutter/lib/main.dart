@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'
 import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -13,34 +13,11 @@ import 'core/theme/maya_theme.dart';
 import 'core/widgets/maya_logo.dart';
 import 'core/services/api_service.dart';
 import 'features/voice/voice_service.dart';
+import 'features/voice/voice_commands.dart';
+import 'features/voice/voice_providers.dart';
 import 'features/camera/camera_service.dart';
 import 'features/system/system_service.dart';
 import 'features/system/health_service.dart';
-
-final voiceServiceProvider = Provider((ref) => VoiceService(ref.read(apiServiceProvider)));
-final cameraServiceProvider = Provider((ref) => CameraService(ref.read(apiServiceProvider)));
-final systemServiceProvider = Provider((ref) => SystemService(ref.read(apiServiceProvider)));
-// Health status stream provider - polls every 30 seconds
-final healthStreamProvider = StreamProvider<HealthStatus>((ref) {
-  final service = ref.watch(healthServiceProvider);
-  return service.watchHealth(interval: const Duration(seconds: 30));
-});
-
-// StreamProviders to watch service streams as AsyncValue
-final systemStateStreamProvider = StreamProvider<SystemState>((ref) {
-  final service = ref.watch(systemServiceProvider);
-  return service.stateStream;
-});
-
-final systemConnectivityStreamProvider = StreamProvider<List<ConnectivityResult>>((ref) {
-  final service = ref.watch(systemServiceProvider);
-  return service.connectivityStream;
-});
-
-final voiceStateStreamProvider = StreamProvider<VoiceState>((ref) {
-  final service = ref.watch(voiceServiceProvider);
-  return service.stateStream;
-});
 
 void main() {
   runApp(const ProviderScope(child: MayaApp()));
@@ -681,182 +658,453 @@ class _VoiceScreen extends ConsumerStatefulWidget {
 
 class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
   String _ttsText = 'Hello! I am Maya, your AI assistant.';
+  final _transcriptController = TextEditingController();
+  String _lastTranscript = '';
+  bool _isProcessing = false;
+  VoiceCommand? _lastCommand;
+  VoiceCommandResult? _lastResult;
+
+  @override
+  void dispose() {
+    _transcriptController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final voiceStateAsync = ref.watch(voiceStateStreamProvider);
     final voiceState = voiceStateAsync.value;
     final voiceService = ref.read(voiceServiceProvider);
+    final commandLog = ref.watch(voiceCommandLogProvider);
     final isRecording = voiceState == VoiceState.recording;
     final isSpeaking = voiceState == VoiceState.speaking;
+    final isProcessing = voiceState == VoiceState.processing || _isProcessing;
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            // Header
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Voice Control', style: MayaTheme.headlineLarge),
-                MayaLogoWidget(size: 48, state: MayaLogoState.idle),
-              ],
-            ),
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Voice Assistant', style: MayaTheme.headlineLarge),
+                  Row(
+                    children: [
+                      if (isRecording || isSpeaking || isProcessing)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isRecording ? MayaTheme.error.withValues(alpha: 0.2)
+                                : isSpeaking ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                                : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isRecording ? MayaTheme.error
+                                  : isSpeaking ? MayaTheme.neonEmerald
+                                  : MayaTheme.neonOrange,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 10,
+                                height: 10,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation(
+                                      isRecording ? MayaTheme.error
+                                          : isSpeaking ? MayaTheme.neonEmerald
+                                          : MayaTheme.neonOrange),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                isRecording ? 'LISTENING' : (isSpeaking ? 'SPEAKING' : 'PROCESSING'),
+                                style: MayaTheme.labelSmall.copyWith(
+                                  color: isRecording ? MayaTheme.error
+                                      : isSpeaking ? MayaTheme.neonEmerald
+                                      : MayaTheme.neonOrange,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
 
-            const SizedBox(height: 48),
+                const SizedBox(height: 24),
 
-            // Central Voice Visualizer
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Central Voice Visualizer
-                    Stack(
-                      alignment: Alignment.center,
+                // Central Voice Visualizer
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Pulsing rings
-                        ...List.generate(3, (index) {
-                          return AnimatedContainer(
-                            duration: Duration(milliseconds: 500 + index * 200),
-                            width: 200 + index * 60,
-                            height: 200 + index * 60,
+                        // Central Voice Visualizer
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Pulsing rings
+                            ...List.generate(3, (index) {
+                              return AnimatedContainer(
+                                duration: Duration(milliseconds: 500 + index * 200),
+                                width: 200 + index * 60,
+                                height: 200 + index * 60,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isRecording
+                                        ? MayaTheme.error.withValues(alpha: 0.3 - index * 0.08)
+                                        : isSpeaking
+                                            ? MayaTheme.neonEmerald.withValues(alpha: 0.3 - index * 0.08)
+                                            : isProcessing
+                                                ? MayaTheme.neonOrange.withValues(alpha: 0.3 - index * 0.08)
+                                                : MayaTheme.neonCyan.withValues(alpha: 0.3 - index * 0.08),
+                                    width: 2,
+                                  ),
+                                ),
+                              )
+                                  .animate(
+                                      onPlay: (controller) => controller.repeat())
+                                  .scale(duration: 2000.ms, curve: Curves.easeInOut)
+                                  .then()
+                                  .scale(duration: 2000.ms);
+                            }),
+                            // Central Logo
+                            MayaLogo(
+                              size: 160,
+                              state: isRecording
+                                  ? MayaLogoState.listening
+                                  : (isSpeaking
+                                      ? MayaLogoState.speaking
+                                      : (isProcessing
+                                          ? MayaLogoState.thinking
+                                          : MayaLogoState.idle)),
+                              showPulse: true,
+                              showGlow: true,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 48),
+
+                        // Status Text
+                        Text(
+                          isRecording
+                              ? 'Listening...'
+                              : (isSpeaking
+                                  ? 'Speaking...'
+                                  : (isProcessing
+                                      ? 'Processing command...'
+                                      : 'Tap and hold to speak')),
+                          style: MayaTheme.titleMedium.copyWith(color: Colors.white70),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // Voice Button - Hold to speak
+                        GestureDetector(
+                          onTapDown: (_) => _startListening(),
+                          onTapUp: (_) => _stopListening(),
+                          onTapCancel: () => _stopListening(),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 100,
+                            height: 100,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: MayaTheme.neonCyan
-                                    .withValues(alpha: 0.3 - index * 0.08),
-                                width: 2,
+                              gradient: isRecording
+                                  ? LinearGradient(
+                                      colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
+                                    )
+                                  : isProcessing
+                                      ? LinearGradient(
+                                          colors: [MayaTheme.neonOrange, MayaTheme.neonViolet],
+                                        )
+                                      : const LinearGradient(
+                                          colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
+                                        ),
+                              boxShadow: isRecording
+                                  ? [
+                                      BoxShadow(
+                                        color: MayaTheme.error.withValues(alpha: 0.5),
+                                        blurRadius: 30,
+                                        spreadRadius: 5,
+                                      ),
+                                    ]
+                                  : isProcessing
+                                      ? [
+                                          BoxShadow(
+                                            color: MayaTheme.neonOrange.withValues(alpha: 0.4),
+                                            blurRadius: 30,
+                                            spreadRadius: 5,
+                                          ),
+                                        ]
+                                      : [
+                                          BoxShadow(
+                                            color: MayaTheme.neonCyan.withValues(alpha: 0.4),
+                                            blurRadius: 30,
+                                            spreadRadius: 5,
+                                          ),
+                                        ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                isRecording
+                                    ? Icons.stop_rounded
+                                    : (isProcessing ? Icons.hourglass_empty_rounded : Icons.mic_rounded),
+                                size: 40,
+                                color: MayaTheme.slate900,
                               ),
                             ),
                           )
-                              .animate(
-                                  onPlay: (controller) => controller.repeat())
-                              .scale(duration: 2000.ms, curve: Curves.easeInOut)
-                              .then()
-                              .scale(duration: 2000.ms);
-                        }),
-                        // Central Logo
-                        MayaLogo(
-                          size: 160,
-                          state: isRecording ? MayaLogoState.listening : (isSpeaking ? MayaLogoState.speaking : MayaLogoState.idle),
-                          showPulse: true,
-                          showGlow: true,
+                              .animate(target: isRecording ? 1 : (isProcessing ? 1 : 0))
+                              .scale(duration: const Duration(milliseconds: 200)),
                         ),
-                      ],
-                    ),
 
-                    const SizedBox(height: 48),
+                        const SizedBox(height: 32),
 
-                    // Status Text
-                    Text(
-                      isRecording ? 'Listening...' : (isSpeaking ? 'Speaking...' : 'Tap to speak'),
-                      style: MayaTheme.titleMedium.copyWith(color: Colors.white70),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Voice Button
-                    GestureDetector(
-                      onTapDown: (_) => _toggleListening(),
-                      onTapUp: (_) => _toggleListening(),
-                      onTapCancel: () => _toggleListening(),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: isRecording
-                              ? LinearGradient(
-                                  colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
-                                )
-                              : const LinearGradient(
-                                  colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
-                                ),
-                          boxShadow: isRecording
-                              ? [
-                                  BoxShadow(
-                                    color: MayaTheme.error.withValues(alpha: 0.5),
-                                    blurRadius: 30,
-                                    spreadRadius: 5,
+                        // Transcript Display
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: MayaTheme.glassCard(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    isRecording
+                                        ? Icons.mic_rounded
+                                        : (isProcessing ? Icons.hourglass_empty_rounded : Icons.mic_none_rounded),
+                                    color: isRecording
+                                        ? MayaTheme.error
+                                        : (isProcessing ? MayaTheme.neonOrange : MayaTheme.neonCyan),
+                                    size: 20,
                                   ),
-                                ]
-                              : [
-                                  BoxShadow(
-                                    color: MayaTheme.neonCyan.withValues(alpha: 0.4),
-                                    blurRadius: 30,
-                                    spreadRadius: 5,
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    isRecording
+                                        ? 'Live Transcript'
+                                        : (isProcessing ? 'Processing...' : 'Last Command'),
+                                    style: MayaTheme.labelMedium,
                                   ),
                                 ],
-                        ),
-                        child: Center(
-                          child: Icon(
-                            isRecording ? Icons.stop_rounded : Icons.mic_rounded,
-                            size: 40,
-                            color: MayaTheme.slate900,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                _lastTranscript.isEmpty
+                                    ? (isRecording
+                                        ? 'Speak now...'
+                                        : (isProcessing ? 'Processing...' : 'Tap and hold the button to speak'))
+                                    : _lastTranscript,
+                                style: MayaTheme.bodyMedium.copyWith(
+                                  color: isRecording ? Colors.white : Colors.white54,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              if (_lastCommand != null) ...[
+                                const SizedBox(height: 8),
+                                const Divider(color: MayaTheme.glassWhite10),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Command Type: ${_lastCommand!.type.name}',
+                                  style: MayaTheme.labelSmall.copyWith(color: Colors.white70),
+                                ),
+                                Text(
+                                  'Category: ${_lastCommand!.category.name}',
+                                  style: MayaTheme.labelSmall.copyWith(color: Colors.white70),
+                                ),
+                                Text(
+                                  'Action: ${_lastCommand!.action} | Target: ${_lastCommand!.target}',
+                                  style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                                ),
+                              ],
+                              if (_lastResult != null) ...[
+                                const SizedBox(height: 8),
+                                const Divider(color: MayaTheme.glassWhite10),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      _lastResult!.success ? Icons.check_circle_rounded : Icons.error_rounded,
+                                      color: _lastResult!.success ? MayaTheme.neonEmerald : MayaTheme.error,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        _lastResult!.message,
+                                        style: MayaTheme.bodySmall.copyWith(
+                                          color: _lastResult!.success ? MayaTheme.neonEmerald : MayaTheme.error,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (_lastResult!.ttsResponse != null && _lastResult!.ttsResponse!.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'TTS: ${_lastResult!.ttsResponse}',
+                                    style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
                         ),
-                      )
-                          .animate(target: isRecording ? 1 : 0)
-                          .scale(duration: const Duration(milliseconds: 200)),
-                    ),
 
-                    const SizedBox(height: 32),
+                        const SizedBox(height: 32),
 
-                    // Transcript
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: MayaTheme.glassCard(),
-                      child: Consumer(
-                        builder: (context, ref, _) {
-                          final transcript = ref.watch(voiceServiceProvider).currentTranscript;
-                          return Text(
-                            transcript.isEmpty ? 'Say something...' : transcript,
-                            style: MayaTheme.bodyMedium
-                                .copyWith(color: Colors.white54),
-                            textAlign: TextAlign.center,
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Controls
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton.filled(
-                          icon: const Icon(Icons.stop_rounded),
-                          style: IconButton.styleFrom(
-                            backgroundColor: MayaTheme.error,
-                            padding: const EdgeInsets.all(20),
+                        // Command Log / History
+                        if (commandLog.isNotEmpty)
+                          Container(
+                            height: 200,
+                            decoration: MayaTheme.glassCard(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.history_rounded, color: MayaTheme.neonCyan, size: 20),
+                                      const SizedBox(width: 8),
+                                      Text('Command History', style: MayaTheme.titleMedium),
+                                      const Spacer(),
+                                      TextButton.icon(
+                                        onPressed: () => ref.read(voiceCommandLogProvider.notifier).clear(),
+                                        icon: const Icon(Icons.clear_all_rounded, size: 16),
+                                        label: const Text('Clear'),
+                                        style: TextButton.styleFrom(foregroundColor: MayaTheme.neonOrange),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(color: MayaTheme.glassWhite10, height: 1),
+                                Expanded(
+                                  child: ListView.builder(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    itemCount: commandLog.length,
+                                    itemBuilder: (context, index) {
+                                      final entry = commandLog[index];
+                                      return _VoiceLogTile(entry: entry);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          onPressed: _stopAll,
+
+                        const SizedBox(height: 16),
+
+                        // Voice Button - Hold to speak
+                        GestureDetector(
+                          onTapDown: (_) => _startListening(),
+                          onTapUp: (_) => _stopListening(),
+                          onTapCancel: () => _stopListening(),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: isRecording
+                                  ? LinearGradient(
+                                      colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
+                                    )
+                                  : isProcessing
+                                      ? LinearGradient(
+                                          colors: [MayaTheme.neonOrange, MayaTheme.neonViolet],
+                                        )
+                                      : const LinearGradient(
+                                          colors: [MayaTheme.neonCyan, MayaTheme.neonViolet],
+                                        ),
+                              boxShadow: isRecording
+                                  ? [
+                                      BoxShadow(
+                                        color: MayaTheme.error.withValues(alpha: 0.5),
+                                        blurRadius: 30,
+                                        spreadRadius: 5,
+                                      ),
+                                    ]
+                                  : isProcessing
+                                      ? [
+                                          BoxShadow(
+                                            color: MayaTheme.neonOrange.withValues(alpha: 0.4),
+                                            blurRadius: 30,
+                                            spreadRadius: 5,
+                                          ),
+                                        ]
+                                      : [
+                                          BoxShadow(
+                                            color: MayaTheme.neonCyan.withValues(alpha: 0.4),
+                                            blurRadius: 30,
+                                            spreadRadius: 5,
+                                          ),
+                                        ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                isRecording
+                                    ? Icons.stop_rounded
+                                    : (isProcessing ? Icons.hourglass_empty_rounded : Icons.mic_rounded),
+                                size: 40,
+                                color: MayaTheme.slate900,
+                              ),
+                            ),
+                          )
+                              .animate(target: isRecording ? 1 : (isProcessing ? 1 : 0))
+                              .scale(duration: const Duration(milliseconds: 200)),
                         ),
-                        const SizedBox(width: 24),
-                        IconButton.filled(
-                          icon: Icon(isSpeaking ? Icons.volume_off_rounded : Icons.volume_up_rounded),
-                          style: IconButton.styleFrom(
-                            backgroundColor: isSpeaking ? MayaTheme.error : MayaTheme.neonEmerald,
-                            padding: const EdgeInsets.all(20),
-                          ),
-                          onPressed: _toggleTTS,
-                        ),
-                        const SizedBox(width: 24),
-                        IconButton.filled(
-                          icon: const Icon(Icons.settings_rounded),
-                          style: IconButton.styleFrom(
-                            backgroundColor: MayaTheme.slate700,
-                            padding: const EdgeInsets.all(20),
-                          ),
-                          onPressed: _showVoiceSettings,
+
+                        const SizedBox(height: 24),
+
+                        // Controls
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton.filled(
+                              icon: const Icon(Icons.stop_rounded),
+                              style: IconButton.styleFrom(
+                                backgroundColor: MayaTheme.error,
+                                padding: const EdgeInsets.all(16),
+                              ),
+                              onPressed: _stopAll,
+                              tooltip: 'Stop All',
+                            ),
+                            const SizedBox(width: 16),
+                            IconButton.filled(
+                              icon: Icon(isSpeaking ? Icons.volume_off_rounded : Icons.volume_up_rounded),
+                              style: IconButton.styleFrom(
+                                backgroundColor: isSpeaking ? MayaTheme.error : MayaTheme.neonEmerald,
+                                padding: const EdgeInsets.all(16),
+                              ),
+                              onPressed: _toggleTTS,
+                              tooltip: isSpeaking ? 'Stop Speaking' : 'Test TTS',
+                            ),
+                            const SizedBox(width: 16),
+                            IconButton.filled(
+                              icon: const Icon(Icons.settings_rounded),
+                              style: IconButton.styleFrom(
+                                backgroundColor: MayaTheme.slate700,
+                                padding: const EdgeInsets.all(16),
+                              ),
+                              onPressed: _showVoiceSettings,
+                              tooltip: 'Settings',
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -866,12 +1114,124 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
     );
   }
 
-  void _toggleListening() {
+  void _startListening() {
+    final voiceService = ref.read(voiceServiceProvider);
+    if (!voiceService.isRecording) {
+      setState(() {
+        _lastTranscript = '';
+        _lastCommand = null;
+        _lastResult = null;
+      });
+      voiceService.startRecording(useSpeechToText: true);
+    }
+  }
+
+  void _stopListening() async {
     final voiceService = ref.read(voiceServiceProvider);
     if (voiceService.isRecording) {
-      voiceService.stopRecording();
-    } else {
-      voiceService.startRecording(useSpeechToText: true);
+      final audioFile = await voiceService.stopRecording(useSpeechToText: true);
+      
+      // Get the transcript from voice service
+      final transcript = voiceService.currentTranscript;
+      if (transcript.isNotEmpty) {
+        setState(() {
+          _lastTranscript = transcript;
+        });
+        
+        // Process the command
+        await _processVoiceCommand(transcript);
+      }
+    }
+  }
+
+  Future<void> _processVoiceCommand(String transcript) async {
+    setState(() {
+      _isProcessing = true;
+      _lastTranscript = transcript;
+    });
+
+    try {
+      // Classify the command
+      final command = VoiceCommandClassifier.classify(transcript);
+      setState(() => _lastCommand = command);
+
+      // Execute the command with navigation callback
+      final executor = VoiceCommandExecutor(ref, _handleNavigation);
+      final result = await executor.execute(command);
+      
+      setState(() => _lastResult = result);
+
+      // Handle navigation if needed
+      if (result.shouldNavigate && result.targetScreen != null) {
+        _navigateToScreen(result.targetScreen!);
+      }
+
+      // Speak the response if available
+      if (result.ttsResponse != null && result.ttsResponse!.isNotEmpty) {
+        await ref.read(voiceServiceProvider).speakLocal(result.ttsResponse!);
+      }
+
+      // Log the command
+      final logEntry = VoiceCommandLogEntry(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        timestamp: DateTime.now(),
+        transcript: transcript,
+        command: command,
+        result: result,
+        processingTime: null,
+      );
+      ref.read(voiceCommandLogProvider.notifier).addEntry(logEntry);
+
+    } catch (e) {
+      final errorResult = VoiceCommandResult(
+        success: false,
+        message: 'Error: $e',
+        ttsResponse: 'I encountered an error processing your command.',
+      );
+      setState(() => _lastResult = errorResult);
+      await ref.read(voiceServiceProvider).speakLocal('I encountered an error processing your command.');
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
+  void _handleNavigation(String screenKey) {
+    // Navigation is handled by the executor's onNavigate callback
+    // which calls _navigateToScreen
+  }
+
+  void _navigateToScreen(String screenKey) {
+    Widget? screen;
+    switch (screenKey) {
+      case 'health': screen = const _HealthProbesScreen(); break;
+      case 'queue': screen = const _TaskQueueScreen(); break;
+      case 'memory': screen = const _MemoryScreen(); break;
+      case 'tools': screen = const _ToolsProvidersScreen(); break;
+      case 'agents': screen = const _AgentsScreen(); break;
+      case 'brain': screen = const _BrainEngineScreen(); break;
+      case 'workflow': screen = const _WorkflowEngineScreen(); break;
+      case 'autonomous': screen = const _AutonomousModeScreen(); break;
+      case 'router': screen = const _RouterScreen(); break;
+      case 'enterprise': screen = const _EnterpriseScreen(); break;
+      case 'learning': screen = const _LearningScreen(); break;
+      case 'multimodal': screen = const _MultimodalScreen(); break;
+      case 'phone': screen = const _PhoneControlScreen(); break;
+      case 'instance': screen = const _InstanceScreen(); break;
+      case 'hosting': screen = const _HostingScreen(); break;
+      case 'deploy': screen = const _RemoteVpsScreen(); break;
+      case 'cognition': screen = const _CognitionLoopScreen(); break;
+      case 'agi': screen = const _AGIArchitectureScreen(); break;
+      case 'cognitive_core': screen = const _MayaCognitiveCoreScreen(); break;
+      case 'business': screen = const _BusinessAnalysisScreen(); break;
+      case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
+      case 'approvals': screen = const _ApprovalsScreen(); break;
+      case 'chat': screen = const _ChatScreen(); break;
+      case 'voice': screen = const _VoiceScreen(); break;
+      case 'camera': screen = const _CameraScreen(); break;
+      case 'settings': screen = const _SettingsScreen(); break;
+    }
+    if (screen != null && mounted) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => screen!));
     }
   }
 
@@ -879,6 +1239,9 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
     final voiceService = ref.read(voiceServiceProvider);
     voiceService.stopRecording();
     voiceService.stopSpeaking();
+    setState(() {
+      _isProcessing = false;
+    });
   }
 
   void _toggleTTS() {
@@ -959,6 +1322,107 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
         ),
       ),
     );
+  }
+}
+
+class _VoiceLogTile extends StatelessWidget {
+  final VoiceCommandLogEntry entry;
+
+  const _VoiceLogTile({required this.entry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.all(12),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: entry.result.success
+                      ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                      : MayaTheme.error.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: entry.result.success ? MayaTheme.neonEmerald : MayaTheme.error,
+                  ),
+                ),
+                child: Text(
+                  entry.result.success ? 'SUCCESS' : 'FAILED',
+                  style: MayaTheme.labelSmall.copyWith(
+                    color: entry.result.success ? MayaTheme.neonEmerald : MayaTheme.error,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getTypeColor(entry.command.type).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  entry.command.type.name.toUpperCase(),
+                  style: MayaTheme.labelSmall.copyWith(color: _getTypeColor(entry.command.type)),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                _formatTime(entry.timestamp),
+                style: MayaTheme.labelSmall.copyWith(color: Colors.white38),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '"${entry.transcript}"',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white70),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text(
+                'Action: ${entry.command.action}',
+                style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+              ),
+              const SizedBox(width: 16),
+              if (entry.command.target.isNotEmpty)
+                Text(
+                  'Target: ${entry.command.target}',
+                  style: MayaTheme.labelSmall.copyWith(color: Colors.white54),
+                ),
+            ],
+          ),
+          if (entry.result.ttsResponse != null && entry.result.ttsResponse!.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              'TTS: ${entry.result.ttsResponse}',
+              style: MayaTheme.labelSmall.copyWith(color: Colors.white38),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Color _getTypeColor(VoiceCommandType type) {
+    switch (type) {
+      case VoiceCommandType.appControl:
+        return MayaTheme.neonCyan;
+      case VoiceCommandType.generalTask:
+        return MayaTheme.neonViolet;
+      case VoiceCommandType.unknown:
+        return MayaTheme.neonOrange;
+    }
+  }
+
+  String _formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
   }
 }
 

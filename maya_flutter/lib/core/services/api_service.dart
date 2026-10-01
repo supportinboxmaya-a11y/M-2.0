@@ -201,6 +201,82 @@ class ApiService {
     return UserProfile.fromJson(response.data);
   }
 
+  // Generic HTTP methods
+  Future<dynamic> get(String path, {Map<String, dynamic>? queryParameters}) async {
+    final response = await _dio.get(path, queryParameters: queryParameters);
+    return response.data;
+  }
+
+  Future<dynamic> post(String path, {Map<String, dynamic>? data}) async {
+    final response = await _dio.post(path, data: data);
+    return response.data;
+  }
+
+  Future<dynamic> put(String path, {Map<String, dynamic>? data}) async {
+    final response = await _dio.put(path, data: data);
+    return response.data;
+  }
+
+  Future<dynamic> delete(String path) async {
+    final response = await _dio.delete(path);
+    return response.data;
+  }
+
+  // Voice / Chat
+  Future<AgentChatResponse> agentChat(String message, {String? chatId, String? instanceId}) async {
+    final response = await _dio.post(
+      AppConfig.agentChat,
+      data: {'message': message, 'chat_id': chatId, 'instance_id': instanceId},
+    );
+    return AgentChatResponse.fromJson(response.data);
+  }
+
+  Future<TtsResult> speakText(String text, {String voice = 'en-US-AriaNeural'}) async {
+    final response = await _dio.post(
+      AppConfig.voiceSpeak,
+      data: {'text': text, 'voice': voice},
+    );
+    return TtsResult.fromJson(response.data);
+  }
+
+  Future<QueueStatus> getQueueStatus() async {
+    final response = await _dio.get(AppConfig.queueStatus);
+    return QueueStatus.fromJson(response.data);
+  }
+
+  Future<AutonomousStatus> getAutonomousStatus() async {
+    final response = await _dio.get(AppConfig.autonomousStatus);
+    return AutonomousStatus.fromJson(response.data);
+  }
+
+  Future<CognitiveStatusResponse> getCognitiveStatus() async {
+    final response = await _dio.get(AppConfig.cognitiveStatus);
+    return CognitiveStatusResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalsListResponse> getApprovals({String? status}) async {
+    final response = await _dio.get(
+      AppConfig.approvalsList,
+      queryParameters: status != null ? {'status': status} : null,
+    );
+    return ApprovalsListResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalDecideResponse> decideApproval({
+    required String approvalId,
+    required String decision,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.approvalsDecide}$approvalId/$decision',
+    );
+    return ApprovalDecideResponse.fromJson(response.data);
+  }
+
+  Future<ApprovalModeResponse> getApprovalMode() async {
+    final response = await _dio.get(AppConfig.approvalMode);
+    return ApprovalModeResponse.fromJson(response.data);
+  }
+
   // Voice
   Future<TranscriptionResult> transcribeAudio(File audioFile) async {
     final formData = FormData.fromMap({
@@ -222,17 +298,6 @@ class ApiService {
     final response = await _dio.post(
       AppConfig.voiceSynthesize,
       data: {'text': text, 'voice': voice ?? 'en_US-amy-medium'},
-    );
-    return TtsResult.fromJson(response.data);
-  }
-
-  Future<TtsResult> speakText(
-    String text, {
-    String voice = 'en-US-AriaNeural',
-  }) async {
-    final response = await _dio.post(
-      AppConfig.voiceSpeak,
-      data: {'text': text, 'voice': voice},
     );
     return TtsResult.fromJson(response.data);
   }
@@ -393,11 +458,6 @@ class ApiService {
   }
 
   // Task Queue
-  Future<QueueStatus> getQueueStatus() async {
-    final response = await _dio.get(AppConfig.queueStatus);
-    return QueueStatus.fromJson(response.data);
-  }
-
   Future<QueueStats> getQueueStats() async {
     final response = await _dio.get(AppConfig.queueStats);
     return QueueStats.fromJson(response.data);
@@ -1076,12 +1136,6 @@ class ApiService {
       queryParameters: {'lines': lines},
     );
     return RemoteLogsResponse.fromJson(response.data);
-  }
-
-  // Cognitive Loop (Phase 17)
-  Future<CognitiveStatusResponse> getCognitiveStatus() async {
-    final response = await _dio.get(AppConfig.cognitiveStatus);
-    return CognitiveStatusResponse.fromJson(response.data);
   }
 
   Future<CognitiveCycleResponse> triggerCognitiveCycle() async {
@@ -3922,6 +3976,21 @@ class QueueStats with _$QueueStats {
 
   factory QueueStats.fromJson(Map<String, dynamic> json) =>
       _$QueueStatsFromJson(json);
+}
+
+@freezed
+class AutonomousStatus with _$AutonomousStatus {
+  const factory AutonomousStatus({
+    required bool enabled,
+    required bool running,
+    String? mission,
+    String? currentObjective,
+    int? cycleCount,
+    double? lastCycleAt,
+  }) = _AutonomousStatus;
+
+  factory AutonomousStatus.fromJson(Map<String, dynamic> json) =>
+      _$AutonomousStatusFromJson(json);
 }
 
 @freezed

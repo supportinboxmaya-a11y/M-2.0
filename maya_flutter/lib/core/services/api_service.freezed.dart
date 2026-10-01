@@ -20152,6 +20152,251 @@ abstract class _QueueStats implements QueueStats {
       throw _privateConstructorUsedError;
 }
 
+AutonomousStatus _$AutonomousStatusFromJson(Map<String, dynamic> json) {
+  return _AutonomousStatus.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AutonomousStatus {
+  bool get enabled => throw _privateConstructorUsedError;
+  bool get running => throw _privateConstructorUsedError;
+  String? get mission => throw _privateConstructorUsedError;
+  String? get currentObjective => throw _privateConstructorUsedError;
+  int? get cycleCount => throw _privateConstructorUsedError;
+  double? get lastCycleAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AutonomousStatusCopyWith<AutonomousStatus> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AutonomousStatusCopyWith<$Res> {
+  factory $AutonomousStatusCopyWith(
+          AutonomousStatus value, $Res Function(AutonomousStatus) then) =
+      _$AutonomousStatusCopyWithImpl<$Res, AutonomousStatus>;
+  @useResult
+  $Res call(
+      {bool enabled,
+      bool running,
+      String? mission,
+      String? currentObjective,
+      int? cycleCount,
+      double? lastCycleAt});
+}
+
+/// @nodoc
+class _$AutonomousStatusCopyWithImpl<$Res, $Val extends AutonomousStatus>
+    implements $AutonomousStatusCopyWith<$Res> {
+  _$AutonomousStatusCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? running = null,
+    Object? mission = freezed,
+    Object? currentObjective = freezed,
+    Object? cycleCount = freezed,
+    Object? lastCycleAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as bool,
+      mission: freezed == mission
+          ? _value.mission
+          : mission // ignore: cast_nullable_to_non_nullable
+              as String?,
+      currentObjective: freezed == currentObjective
+          ? _value.currentObjective
+          : currentObjective // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cycleCount: freezed == cycleCount
+          ? _value.cycleCount
+          : cycleCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastCycleAt: freezed == lastCycleAt
+          ? _value.lastCycleAt
+          : lastCycleAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AutonomousStatusImplCopyWith<$Res>
+    implements $AutonomousStatusCopyWith<$Res> {
+  factory _$$AutonomousStatusImplCopyWith(_$AutonomousStatusImpl value,
+          $Res Function(_$AutonomousStatusImpl) then) =
+      __$$AutonomousStatusImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool enabled,
+      bool running,
+      String? mission,
+      String? currentObjective,
+      int? cycleCount,
+      double? lastCycleAt});
+}
+
+/// @nodoc
+class __$$AutonomousStatusImplCopyWithImpl<$Res>
+    extends _$AutonomousStatusCopyWithImpl<$Res, _$AutonomousStatusImpl>
+    implements _$$AutonomousStatusImplCopyWith<$Res> {
+  __$$AutonomousStatusImplCopyWithImpl(_$AutonomousStatusImpl _value,
+      $Res Function(_$AutonomousStatusImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? running = null,
+    Object? mission = freezed,
+    Object? currentObjective = freezed,
+    Object? cycleCount = freezed,
+    Object? lastCycleAt = freezed,
+  }) {
+    return _then(_$AutonomousStatusImpl(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      running: null == running
+          ? _value.running
+          : running // ignore: cast_nullable_to_non_nullable
+              as bool,
+      mission: freezed == mission
+          ? _value.mission
+          : mission // ignore: cast_nullable_to_non_nullable
+              as String?,
+      currentObjective: freezed == currentObjective
+          ? _value.currentObjective
+          : currentObjective // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cycleCount: freezed == cycleCount
+          ? _value.cycleCount
+          : cycleCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastCycleAt: freezed == lastCycleAt
+          ? _value.lastCycleAt
+          : lastCycleAt // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AutonomousStatusImpl implements _AutonomousStatus {
+  const _$AutonomousStatusImpl(
+      {required this.enabled,
+      required this.running,
+      this.mission,
+      this.currentObjective,
+      this.cycleCount,
+      this.lastCycleAt});
+
+  factory _$AutonomousStatusImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AutonomousStatusImplFromJson(json);
+
+  @override
+  final bool enabled;
+  @override
+  final bool running;
+  @override
+  final String? mission;
+  @override
+  final String? currentObjective;
+  @override
+  final int? cycleCount;
+  @override
+  final double? lastCycleAt;
+
+  @override
+  String toString() {
+    return 'AutonomousStatus(enabled: $enabled, running: $running, mission: $mission, currentObjective: $currentObjective, cycleCount: $cycleCount, lastCycleAt: $lastCycleAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AutonomousStatusImpl &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.running, running) || other.running == running) &&
+            (identical(other.mission, mission) || other.mission == mission) &&
+            (identical(other.currentObjective, currentObjective) ||
+                other.currentObjective == currentObjective) &&
+            (identical(other.cycleCount, cycleCount) ||
+                other.cycleCount == cycleCount) &&
+            (identical(other.lastCycleAt, lastCycleAt) ||
+                other.lastCycleAt == lastCycleAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, enabled, running, mission,
+      currentObjective, cycleCount, lastCycleAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AutonomousStatusImplCopyWith<_$AutonomousStatusImpl> get copyWith =>
+      __$$AutonomousStatusImplCopyWithImpl<_$AutonomousStatusImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AutonomousStatusImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AutonomousStatus implements AutonomousStatus {
+  const factory _AutonomousStatus(
+      {required final bool enabled,
+      required final bool running,
+      final String? mission,
+      final String? currentObjective,
+      final int? cycleCount,
+      final double? lastCycleAt}) = _$AutonomousStatusImpl;
+
+  factory _AutonomousStatus.fromJson(Map<String, dynamic> json) =
+      _$AutonomousStatusImpl.fromJson;
+
+  @override
+  bool get enabled;
+  @override
+  bool get running;
+  @override
+  String? get mission;
+  @override
+  String? get currentObjective;
+  @override
+  int? get cycleCount;
+  @override
+  double? get lastCycleAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$AutonomousStatusImplCopyWith<_$AutonomousStatusImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 QueueTaskStatus _$QueueTaskStatusFromJson(Map<String, dynamic> json) {
   return _QueueTaskStatus.fromJson(json);
 }
