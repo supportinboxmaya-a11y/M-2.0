@@ -1223,6 +1223,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'agi': screen = const _AGIArchitectureScreen(); break;
       case 'cognitive_core': screen = const _MayaCognitiveCoreScreen(); break;
       case 'business': screen = const _BusinessAnalysisScreen(); break;
+      case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
       case 'approvals': screen = const _ApprovalsScreen(); break;
       case 'chat': screen = const _ChatScreen(); break;
@@ -2500,6 +2501,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _BusinessAnalysisScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.key_rounded,
+                  label: 'API Key Provisioner',
+                  subtitle: 'Scan free APIs, auto-provision keys, audit log',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _ApiKeyProvisionerScreen(),
                       ),
                     );
                   },
@@ -19804,3 +19819,1190 @@ final pendingApprovalsCountProvider = FutureProvider<int>((ref) async {
   final result = await apiService.getApprovals(status: 'pending');
   return result.approvals.length;
 });
+
+// API Key Provisioner Providers (Phase 33)
+final provisionerAuditProvider = FutureProvider<ProvisionerAuditResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProvisionerAudit();
+});
+
+// Communication Tools Providers (Phase 33)
+final emailToolTestProvider = FutureProvider<EmailToolResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.runEmailTool(action: 'test');
+});
+
+final webhookToolTestProvider = FutureProvider<WebhookToolResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.runWebhookTool(action: 'test', channel: 'slack');
+});
+
+// API Key Provisioner Screen (Phase 33)
+class _ApiKeyProvisionerScreen extends ConsumerStatefulWidget {
+  const _ApiKeyProvisionerScreen();
+
+  @override
+  ConsumerState<_ApiKeyProvisionerScreen> createState() => _ApiKeyProvisionerScreenState();
+}
+
+class _ApiKeyProvisionerScreenState extends ConsumerState<_ApiKeyProvisionerScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('API Key Provisioner', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(provisionerAuditProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.search_rounded), text: 'Scan Free APIs'),
+              Tab(icon: Icon(Icons.key_rounded), text: 'Provision Key'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'Audit Log'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ScanFreeApisTab(),
+            _ProvisionKeyTab(),
+            _ProvisionerAuditTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScanFreeApisTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Scan Free APIs', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Search for new free/cheap LLM APIs and pricing changes. Propose-only scan.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          _ScanFreeApisForm(),
+          const SizedBox(height: 24),
+          const Text('Recent Scan Results', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: const Text(
+              'Run a scan to see results here. Results include search findings, direct provider page checks, and news sources.',
+              style: MayaTheme.bodyMedium,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScanFreeApisForm extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ScanFreeApisForm> createState() => _ScanFreeApisFormState();
+}
+
+class _ScanFreeApisFormState extends ConsumerState<_ScanFreeApisForm> {
+  final _providerFilterController = TextEditingController();
+  bool _isScanning = false;
+  String? _lastResult;
+
+  @override
+  void dispose() {
+    _providerFilterController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _runScan() async {
+    setState(() => _isScanning = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.searchFreeApis(
+        providerFilter: _providerFilterController.text.trim().isEmpty
+            ? null
+            : _providerFilterController.text.trim(),
+      );
+      setState(() {
+        _lastResult = result.report;
+        _isScanning = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Scan complete: ${result.findingsCount} findings'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isScanning = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Scan failed: $e'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _providerFilterController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'Provider Filter (optional)',
+              hintText: 'e.g., groq, gemini, openrouter...',
+              labelStyle: const TextStyle(color: Colors.white54),
+              hintStyle: const TextStyle(color: Colors.white38),
+              prefixIcon: const Icon(Icons.filter_list_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isScanning ? null : _runScan,
+              icon: _isScanning
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.search_rounded),
+              label: Text(_isScanning ? 'Scanning...' : 'Run Scan'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonCyan,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          if (_lastResult != null) ...[
+            const SizedBox(height: 16),
+            const Text('Last Result:', style: MayaTheme.titleSmall),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.slate800,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: SingleChildScrollView(
+                child: SelectableText(
+                  _lastResult!,
+                  style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ProvisionKeyTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Provision API Key', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Automate LLM API key signup for a provider. Requires critical approval before form submission. Pauses for CAPTCHA/OTP with phone notification.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          _ProvisionKeyForm(),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProvisionKeyForm extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ProvisionKeyForm> createState() => _ProvisionKeyFormState();
+}
+
+class _ProvisionKeyFormState extends ConsumerState<_ProvisionKeyForm> {
+  final _providerController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
+  bool _isProvisioning = false;
+  ProvisionerProvisionResponse? _lastResult;
+
+  static const _providers = [
+    'groq',
+    'gemini',
+    'openrouter',
+    'nvidia_nim',
+    'together',
+    'cerebras',
+    'mistral',
+  ];
+
+  @override
+  void dispose() {
+    _providerController.dispose();
+    _emailController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _provisionKey() async {
+    if (_providerController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Provider is required'),
+          backgroundColor: MayaTheme.error,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isProvisioning = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.provisionApiKey(
+        provider: _providerController.text.trim().toLowerCase(),
+        email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
+        name: _nameController.text.trim().isEmpty ? null : _nameController.text.trim(),
+      );
+      setState(() {
+        _lastResult = result;
+        _isProvisioning = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message),
+            backgroundColor: result.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isProvisioning = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Provision failed: $e'),
+            backgroundColor: MayaTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DropdownButtonFormField<String>(
+            value: _providerController.text.isEmpty ? null : _providerController.text,
+            decoration: InputDecoration(
+              labelText: 'Provider',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.key_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+            dropdownColor: MayaTheme.slate800,
+            style: const TextStyle(color: Colors.white),
+            items: _providers
+                .map((p) => DropdownMenuItem(value: p, child: Text(p.toUpperCase())))
+                .toList(),
+            onChanged: (v) => setState(() => _providerController.text = v ?? ''),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _emailController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'Email (optional, defaults to .env PROVISIONER_EMAIL)',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.email_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _nameController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'Name (optional, defaults to .env PROVISIONER_NAME)',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.person_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isProvisioning ? null : _provisionKey,
+              icon: _isProvisioning
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.send_rounded),
+              label: Text(_isProvisioning ? 'Provisioning...' : 'Provision Key'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonViolet,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          if (_lastResult != null) ...[
+            const SizedBox(height: 16),
+            const Text('Result:', style: MayaTheme.titleSmall),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: _lastResult!.ok
+                    ? MayaTheme.neonEmerald.withValues(alpha: 0.1)
+                    : MayaTheme.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: _lastResult!.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        _lastResult!.ok ? Icons.check_circle_rounded : Icons.error_rounded,
+                        color: _lastResult!.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _lastResult!.ok ? 'SUCCESS' : 'FAILED',
+                        style: MayaTheme.labelMedium.copyWith(
+                          color: _lastResult!.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (_lastResult!.apiKey != null) ...[
+                    Text('API Key: ${_lastResult!.apiKey}', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace')),
+                    const SizedBox(height: 4),
+                  ],
+                  if (_lastResult!.envVar != null)
+                    Text('Env Var: ${_lastResult!.envVar}', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace')),
+                  const SizedBox(height: 4),
+                  Text('Validated: ${_lastResult!.validated ? 'Yes' : 'No'}', style: MayaTheme.bodySmall),
+                  const SizedBox(height: 4),
+                  Text('Message: ${_lastResult!.message}', style: MayaTheme.bodySmall),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ProvisionerAuditTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auditAsync = ref.watch(provisionerAuditProvider);
+
+    return auditAsync.when(
+      data: (data) => data.entries.isEmpty
+          ? _emptyState('No Audit Entries', 'Provisioner actions will appear here', Icons.history_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Provisioner Audit Log', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'History of all provisioner actions',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.entries.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final entry = data.entries[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _getActionColor(entry.action).withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    _getActionIcon(entry.action),
+                                    color: _getActionColor(entry.action),
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(entry.action.toUpperCase(), style: MayaTheme.titleMedium),
+                                      Text('Provider: ${entry.provider ?? 'N/A'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                      Text('ID: ${entry.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                    ],
+                                  ),
+                                ),
+                                _StatusChip(status: entry.status),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Time: ${entry.timestamp}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                            if (entry.result != null) ...[
+                              const SizedBox(height: 8),
+                              Text('Result: ${entry.result}', style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                            ],
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading audit', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+
+  Color _getActionColor(String action) {
+    switch (action.toLowerCase()) {
+      case 'scan':
+        return MayaTheme.neonCyan;
+      case 'provision':
+        return MayaTheme.neonViolet;
+      case 'validate':
+        return MayaTheme.neonEmerald;
+      default:
+        return MayaTheme.neonOrange;
+    }
+  }
+
+  IconData _getActionIcon(String action) {
+    switch (action.toLowerCase()) {
+      case 'scan':
+        return Icons.search_rounded;
+      case 'provision':
+        return Icons.key_rounded;
+      case 'validate':
+        return Icons.verified_rounded;
+      default:
+        return Icons.history_rounded;
+    }
+  }
+}
+
+// Communication Tools Screen (Phase 33)
+class _CommunicationToolsScreen extends ConsumerStatefulWidget {
+  const _CommunicationToolsScreen();
+
+  @override
+  ConsumerState<_CommunicationToolsScreen> createState() => _CommunicationToolsScreenState();
+}
+
+class _CommunicationToolsScreenState extends ConsumerState<_CommunicationToolsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Communication Tools', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(emailToolTestProvider);
+                ref.invalidate(webhookToolTestProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.email_rounded), text: 'Email'),
+              Tab(icon: Icon(Icons.webhook_rounded), text: 'Webhook'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _EmailToolTab(),
+            _WebhookToolTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmailToolTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final testAsync = ref.watch(emailToolTestProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Email Tool', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Send emails via SMTP. Configure SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM in .env.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          // Config Status
+          testAsync.when(
+            data: (data) => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCardGlow(
+                glowColor: data.configured == true ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    data.configured == true ? Icons.check_circle_rounded : Icons.warning_rounded,
+                    color: data.configured == true ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data.configured == true ? 'SMTP Configured' : 'SMTP Not Configured',
+                          style: MayaTheme.titleMedium.copyWith(
+                            color: data.configured == true ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                          ),
+                        ),
+                        Text(data.message, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.error),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_rounded, color: MayaTheme.error, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error))),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          _EmailSendForm(),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmailSendForm extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_EmailSendForm> createState() => _EmailSendFormState();
+}
+
+class _EmailSendFormState extends ConsumerState<_EmailSendForm> {
+  final _toController = TextEditingController();
+  final _subjectController = TextEditingController();
+  final _bodyController = TextEditingController();
+  bool _isSending = false;
+
+  @override
+  void dispose() {
+    _toController.dispose();
+    _subjectController.dispose();
+    _bodyController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendEmail() async {
+    if (_toController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Recipient email required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isSending = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.runEmailTool(
+        action: 'send',
+        to: _toController.text.trim(),
+        subject: _subjectController.text.trim().isEmpty ? null : _subjectController.text.trim(),
+        body: _bodyController.text.trim().isEmpty ? null : _bodyController.text.trim(),
+      );
+      setState(() => _isSending = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message),
+            backgroundColor: result.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+        if (result.ok) {
+          _toController.clear();
+          _subjectController.clear();
+          _bodyController.clear();
+        }
+      }
+    } catch (e) {
+      setState(() => _isSending = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Send failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Send Email', style: MayaTheme.titleMedium),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _toController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'To',
+              hintText: 'recipient@example.com',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.person_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _subjectController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'Subject',
+              hintText: 'Email subject',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.subject_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _bodyController,
+            style: const TextStyle(color: Colors.white),
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: 'Body',
+              hintText: 'Email body...',
+              labelStyle: const TextStyle(color: Colors.white54),
+              alignLabelWithHint: true,
+              prefixIcon: const Padding(
+                padding: EdgeInsets.only(bottom: 60),
+                child: Icon(Icons.description_rounded, color: Colors.white54),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isSending ? null : _sendEmail,
+              icon: _isSending
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.send_rounded),
+              label: Text(_isSending ? 'Sending...' : 'Send Email'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonEmerald,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WebhookToolTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final testAsync = ref.watch(webhookToolTestProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Webhook Tool', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Send messages to Slack, Discord, or generic webhooks. Configure WEBHOOK_SLACK_URL, WEBHOOK_DISCORD_URL, WEBHOOK_GENERIC_URL in .env.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          // Config Status
+          testAsync.when(
+            data: (data) => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCardGlow(
+                glowColor: data.configured == true ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    data.configured == true ? Icons.check_circle_rounded : Icons.warning_rounded,
+                    color: data.configured == true ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data.configured == true ? 'Webhook Configured' : 'Webhook Not Configured',
+                          style: MayaTheme.titleMedium.copyWith(
+                            color: data.configured == true ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                          ),
+                        ),
+                        Text(data.message, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.error),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_rounded, color: MayaTheme.error, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error))),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          _WebhookSendForm(),
+        ],
+      ),
+    );
+  }
+}
+
+class _WebhookSendForm extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_WebhookSendForm> createState() => _WebhookSendFormState();
+}
+
+class _WebhookSendFormState extends ConsumerState<_WebhookSendForm> {
+  final _messageController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _channelController = TextEditingController(text: 'slack');
+  bool _isSending = false;
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _titleController.dispose();
+    _channelController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendWebhook() async {
+    if (_messageController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Message required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isSending = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.runWebhookTool(
+        action: 'send',
+        message: _messageController.text.trim(),
+        channel: _channelController.text.trim().isEmpty ? 'slack' : _channelController.text.trim(),
+        title: _titleController.text.trim().isEmpty ? null : _titleController.text.trim(),
+      );
+      setState(() => _isSending = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message),
+            backgroundColor: result.ok ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+        if (result.ok) {
+          _messageController.clear();
+          _titleController.clear();
+        }
+      }
+    } catch (e) {
+      setState(() => _isSending = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Send failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Send Webhook', style: MayaTheme.titleMedium),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            value: _channelController.text,
+            decoration: InputDecoration(
+              labelText: 'Channel',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.webhook_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+            dropdownColor: MayaTheme.slate800,
+            style: const TextStyle(color: Colors.white),
+            items: const [
+              DropdownMenuItem(value: 'slack', child: Text('Slack')),
+              DropdownMenuItem(value: 'discord', child: Text('Discord')),
+              DropdownMenuItem(value: 'generic', child: Text('Generic')),
+            ],
+            onChanged: (v) => setState(() => _channelController.text = v ?? 'slack'),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _titleController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: 'Title (optional)',
+              hintText: 'Bold heading / embed title',
+              labelStyle: const TextStyle(color: Colors.white54),
+              prefixIcon: const Icon(Icons.title_rounded, color: Colors.white54),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _messageController,
+            style: const TextStyle(color: Colors.white),
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: 'Message',
+              hintText: 'Webhook message body...',
+              labelStyle: const TextStyle(color: Colors.white54),
+              alignLabelWithHint: true,
+              prefixIcon: const Padding(
+                padding: EdgeInsets.only(bottom: 60),
+                child: Icon(Icons.message_rounded, color: Colors.white54),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white24),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: MayaTheme.neonCyan),
+              ),
+              filled: true,
+              fillColor: MayaTheme.slate800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isSending ? null : _sendWebhook,
+              icon: _isSending
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.send_rounded),
+              label: Text(_isSending ? 'Sending...' : 'Send Webhook'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonViolet,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Helper for empty state
+Widget _emptyState(String title, String subtitle, IconData icon) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(32),
+    decoration: MayaTheme.glassCard(),
+    child: Center(
+      child: Column(
+        children: [
+          Icon(icon, size: 48, color: Colors.white38),
+          const SizedBox(height: 16),
+          Text(title, style: MayaTheme.bodyMedium),
+          const SizedBox(height: 8),
+          Text(subtitle, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    ),
+  );
+}

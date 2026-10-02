@@ -15773,6 +15773,1172 @@ abstract class _ApprovalModeResponse implements ApprovalModeResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+ProvisionerSearchResponse _$ProvisionerSearchResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProvisionerSearchResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProvisionerSearchResponse {
+  String get report => throw _privateConstructorUsedError;
+  int get findingsCount => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProvisionerSearchResponseCopyWith<ProvisionerSearchResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProvisionerSearchResponseCopyWith<$Res> {
+  factory $ProvisionerSearchResponseCopyWith(ProvisionerSearchResponse value,
+          $Res Function(ProvisionerSearchResponse) then) =
+      _$ProvisionerSearchResponseCopyWithImpl<$Res, ProvisionerSearchResponse>;
+  @useResult
+  $Res call({String report, int findingsCount});
+}
+
+/// @nodoc
+class _$ProvisionerSearchResponseCopyWithImpl<$Res,
+        $Val extends ProvisionerSearchResponse>
+    implements $ProvisionerSearchResponseCopyWith<$Res> {
+  _$ProvisionerSearchResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? report = null,
+    Object? findingsCount = null,
+  }) {
+    return _then(_value.copyWith(
+      report: null == report
+          ? _value.report
+          : report // ignore: cast_nullable_to_non_nullable
+              as String,
+      findingsCount: null == findingsCount
+          ? _value.findingsCount
+          : findingsCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProvisionerSearchResponseImplCopyWith<$Res>
+    implements $ProvisionerSearchResponseCopyWith<$Res> {
+  factory _$$ProvisionerSearchResponseImplCopyWith(
+          _$ProvisionerSearchResponseImpl value,
+          $Res Function(_$ProvisionerSearchResponseImpl) then) =
+      __$$ProvisionerSearchResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String report, int findingsCount});
+}
+
+/// @nodoc
+class __$$ProvisionerSearchResponseImplCopyWithImpl<$Res>
+    extends _$ProvisionerSearchResponseCopyWithImpl<$Res,
+        _$ProvisionerSearchResponseImpl>
+    implements _$$ProvisionerSearchResponseImplCopyWith<$Res> {
+  __$$ProvisionerSearchResponseImplCopyWithImpl(
+      _$ProvisionerSearchResponseImpl _value,
+      $Res Function(_$ProvisionerSearchResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? report = null,
+    Object? findingsCount = null,
+  }) {
+    return _then(_$ProvisionerSearchResponseImpl(
+      report: null == report
+          ? _value.report
+          : report // ignore: cast_nullable_to_non_nullable
+              as String,
+      findingsCount: null == findingsCount
+          ? _value.findingsCount
+          : findingsCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProvisionerSearchResponseImpl implements _ProvisionerSearchResponse {
+  const _$ProvisionerSearchResponseImpl(
+      {required this.report, required this.findingsCount});
+
+  factory _$ProvisionerSearchResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProvisionerSearchResponseImplFromJson(json);
+
+  @override
+  final String report;
+  @override
+  final int findingsCount;
+
+  @override
+  String toString() {
+    return 'ProvisionerSearchResponse(report: $report, findingsCount: $findingsCount)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProvisionerSearchResponseImpl &&
+            (identical(other.report, report) || other.report == report) &&
+            (identical(other.findingsCount, findingsCount) ||
+                other.findingsCount == findingsCount));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, report, findingsCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProvisionerSearchResponseImplCopyWith<_$ProvisionerSearchResponseImpl>
+      get copyWith => __$$ProvisionerSearchResponseImplCopyWithImpl<
+          _$ProvisionerSearchResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProvisionerSearchResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProvisionerSearchResponse implements ProvisionerSearchResponse {
+  const factory _ProvisionerSearchResponse(
+      {required final String report,
+      required final int findingsCount}) = _$ProvisionerSearchResponseImpl;
+
+  factory _ProvisionerSearchResponse.fromJson(Map<String, dynamic> json) =
+      _$ProvisionerSearchResponseImpl.fromJson;
+
+  @override
+  String get report;
+  @override
+  int get findingsCount;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProvisionerSearchResponseImplCopyWith<_$ProvisionerSearchResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProvisionerProvisionResponse _$ProvisionerProvisionResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProvisionerProvisionResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProvisionerProvisionResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get provider => throw _privateConstructorUsedError;
+  String? get apiKey => throw _privateConstructorUsedError;
+  String? get envVar => throw _privateConstructorUsedError;
+  bool get validated => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProvisionerProvisionResponseCopyWith<ProvisionerProvisionResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProvisionerProvisionResponseCopyWith<$Res> {
+  factory $ProvisionerProvisionResponseCopyWith(
+          ProvisionerProvisionResponse value,
+          $Res Function(ProvisionerProvisionResponse) then) =
+      _$ProvisionerProvisionResponseCopyWithImpl<$Res,
+          ProvisionerProvisionResponse>;
+  @useResult
+  $Res call(
+      {bool ok,
+      String provider,
+      String? apiKey,
+      String? envVar,
+      bool validated,
+      String message});
+}
+
+/// @nodoc
+class _$ProvisionerProvisionResponseCopyWithImpl<$Res,
+        $Val extends ProvisionerProvisionResponse>
+    implements $ProvisionerProvisionResponseCopyWith<$Res> {
+  _$ProvisionerProvisionResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? provider = null,
+    Object? apiKey = freezed,
+    Object? envVar = freezed,
+    Object? validated = null,
+    Object? message = null,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      provider: null == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as String,
+      apiKey: freezed == apiKey
+          ? _value.apiKey
+          : apiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      envVar: freezed == envVar
+          ? _value.envVar
+          : envVar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      validated: null == validated
+          ? _value.validated
+          : validated // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProvisionerProvisionResponseImplCopyWith<$Res>
+    implements $ProvisionerProvisionResponseCopyWith<$Res> {
+  factory _$$ProvisionerProvisionResponseImplCopyWith(
+          _$ProvisionerProvisionResponseImpl value,
+          $Res Function(_$ProvisionerProvisionResponseImpl) then) =
+      __$$ProvisionerProvisionResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool ok,
+      String provider,
+      String? apiKey,
+      String? envVar,
+      bool validated,
+      String message});
+}
+
+/// @nodoc
+class __$$ProvisionerProvisionResponseImplCopyWithImpl<$Res>
+    extends _$ProvisionerProvisionResponseCopyWithImpl<$Res,
+        _$ProvisionerProvisionResponseImpl>
+    implements _$$ProvisionerProvisionResponseImplCopyWith<$Res> {
+  __$$ProvisionerProvisionResponseImplCopyWithImpl(
+      _$ProvisionerProvisionResponseImpl _value,
+      $Res Function(_$ProvisionerProvisionResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? provider = null,
+    Object? apiKey = freezed,
+    Object? envVar = freezed,
+    Object? validated = null,
+    Object? message = null,
+  }) {
+    return _then(_$ProvisionerProvisionResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      provider: null == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as String,
+      apiKey: freezed == apiKey
+          ? _value.apiKey
+          : apiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      envVar: freezed == envVar
+          ? _value.envVar
+          : envVar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      validated: null == validated
+          ? _value.validated
+          : validated // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProvisionerProvisionResponseImpl
+    implements _ProvisionerProvisionResponse {
+  const _$ProvisionerProvisionResponseImpl(
+      {required this.ok,
+      required this.provider,
+      this.apiKey,
+      this.envVar,
+      required this.validated,
+      required this.message});
+
+  factory _$ProvisionerProvisionResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$ProvisionerProvisionResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String provider;
+  @override
+  final String? apiKey;
+  @override
+  final String? envVar;
+  @override
+  final bool validated;
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'ProvisionerProvisionResponse(ok: $ok, provider: $provider, apiKey: $apiKey, envVar: $envVar, validated: $validated, message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProvisionerProvisionResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.provider, provider) ||
+                other.provider == provider) &&
+            (identical(other.apiKey, apiKey) || other.apiKey == apiKey) &&
+            (identical(other.envVar, envVar) || other.envVar == envVar) &&
+            (identical(other.validated, validated) ||
+                other.validated == validated) &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, ok, provider, apiKey, envVar, validated, message);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProvisionerProvisionResponseImplCopyWith<
+          _$ProvisionerProvisionResponseImpl>
+      get copyWith => __$$ProvisionerProvisionResponseImplCopyWithImpl<
+          _$ProvisionerProvisionResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProvisionerProvisionResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProvisionerProvisionResponse
+    implements ProvisionerProvisionResponse {
+  const factory _ProvisionerProvisionResponse(
+      {required final bool ok,
+      required final String provider,
+      final String? apiKey,
+      final String? envVar,
+      required final bool validated,
+      required final String message}) = _$ProvisionerProvisionResponseImpl;
+
+  factory _ProvisionerProvisionResponse.fromJson(Map<String, dynamic> json) =
+      _$ProvisionerProvisionResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get provider;
+  @override
+  String? get apiKey;
+  @override
+  String? get envVar;
+  @override
+  bool get validated;
+  @override
+  String get message;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProvisionerProvisionResponseImplCopyWith<
+          _$ProvisionerProvisionResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProvisionerAuditResponse _$ProvisionerAuditResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ProvisionerAuditResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProvisionerAuditResponse {
+  List<ProvisionerAuditEntry> get entries => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProvisionerAuditResponseCopyWith<ProvisionerAuditResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProvisionerAuditResponseCopyWith<$Res> {
+  factory $ProvisionerAuditResponseCopyWith(ProvisionerAuditResponse value,
+          $Res Function(ProvisionerAuditResponse) then) =
+      _$ProvisionerAuditResponseCopyWithImpl<$Res, ProvisionerAuditResponse>;
+  @useResult
+  $Res call({List<ProvisionerAuditEntry> entries});
+}
+
+/// @nodoc
+class _$ProvisionerAuditResponseCopyWithImpl<$Res,
+        $Val extends ProvisionerAuditResponse>
+    implements $ProvisionerAuditResponseCopyWith<$Res> {
+  _$ProvisionerAuditResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entries = null,
+  }) {
+    return _then(_value.copyWith(
+      entries: null == entries
+          ? _value.entries
+          : entries // ignore: cast_nullable_to_non_nullable
+              as List<ProvisionerAuditEntry>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProvisionerAuditResponseImplCopyWith<$Res>
+    implements $ProvisionerAuditResponseCopyWith<$Res> {
+  factory _$$ProvisionerAuditResponseImplCopyWith(
+          _$ProvisionerAuditResponseImpl value,
+          $Res Function(_$ProvisionerAuditResponseImpl) then) =
+      __$$ProvisionerAuditResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ProvisionerAuditEntry> entries});
+}
+
+/// @nodoc
+class __$$ProvisionerAuditResponseImplCopyWithImpl<$Res>
+    extends _$ProvisionerAuditResponseCopyWithImpl<$Res,
+        _$ProvisionerAuditResponseImpl>
+    implements _$$ProvisionerAuditResponseImplCopyWith<$Res> {
+  __$$ProvisionerAuditResponseImplCopyWithImpl(
+      _$ProvisionerAuditResponseImpl _value,
+      $Res Function(_$ProvisionerAuditResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entries = null,
+  }) {
+    return _then(_$ProvisionerAuditResponseImpl(
+      entries: null == entries
+          ? _value._entries
+          : entries // ignore: cast_nullable_to_non_nullable
+              as List<ProvisionerAuditEntry>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProvisionerAuditResponseImpl implements _ProvisionerAuditResponse {
+  const _$ProvisionerAuditResponseImpl(
+      {required final List<ProvisionerAuditEntry> entries})
+      : _entries = entries;
+
+  factory _$ProvisionerAuditResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProvisionerAuditResponseImplFromJson(json);
+
+  final List<ProvisionerAuditEntry> _entries;
+  @override
+  List<ProvisionerAuditEntry> get entries {
+    if (_entries is EqualUnmodifiableListView) return _entries;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_entries);
+  }
+
+  @override
+  String toString() {
+    return 'ProvisionerAuditResponse(entries: $entries)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProvisionerAuditResponseImpl &&
+            const DeepCollectionEquality().equals(other._entries, _entries));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_entries));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProvisionerAuditResponseImplCopyWith<_$ProvisionerAuditResponseImpl>
+      get copyWith => __$$ProvisionerAuditResponseImplCopyWithImpl<
+          _$ProvisionerAuditResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProvisionerAuditResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProvisionerAuditResponse implements ProvisionerAuditResponse {
+  const factory _ProvisionerAuditResponse(
+          {required final List<ProvisionerAuditEntry> entries}) =
+      _$ProvisionerAuditResponseImpl;
+
+  factory _ProvisionerAuditResponse.fromJson(Map<String, dynamic> json) =
+      _$ProvisionerAuditResponseImpl.fromJson;
+
+  @override
+  List<ProvisionerAuditEntry> get entries;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProvisionerAuditResponseImplCopyWith<_$ProvisionerAuditResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ProvisionerAuditEntry _$ProvisionerAuditEntryFromJson(
+    Map<String, dynamic> json) {
+  return _ProvisionerAuditEntry.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProvisionerAuditEntry {
+  String get id => throw _privateConstructorUsedError;
+  String get action => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  String get timestamp => throw _privateConstructorUsedError;
+  String? get provider => throw _privateConstructorUsedError;
+  String? get result => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProvisionerAuditEntryCopyWith<ProvisionerAuditEntry> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProvisionerAuditEntryCopyWith<$Res> {
+  factory $ProvisionerAuditEntryCopyWith(ProvisionerAuditEntry value,
+          $Res Function(ProvisionerAuditEntry) then) =
+      _$ProvisionerAuditEntryCopyWithImpl<$Res, ProvisionerAuditEntry>;
+  @useResult
+  $Res call(
+      {String id,
+      String action,
+      String status,
+      String timestamp,
+      String? provider,
+      String? result});
+}
+
+/// @nodoc
+class _$ProvisionerAuditEntryCopyWithImpl<$Res,
+        $Val extends ProvisionerAuditEntry>
+    implements $ProvisionerAuditEntryCopyWith<$Res> {
+  _$ProvisionerAuditEntryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? action = null,
+    Object? status = null,
+    Object? timestamp = null,
+    Object? provider = freezed,
+    Object? result = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as String,
+      provider: freezed == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as String?,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ProvisionerAuditEntryImplCopyWith<$Res>
+    implements $ProvisionerAuditEntryCopyWith<$Res> {
+  factory _$$ProvisionerAuditEntryImplCopyWith(
+          _$ProvisionerAuditEntryImpl value,
+          $Res Function(_$ProvisionerAuditEntryImpl) then) =
+      __$$ProvisionerAuditEntryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String action,
+      String status,
+      String timestamp,
+      String? provider,
+      String? result});
+}
+
+/// @nodoc
+class __$$ProvisionerAuditEntryImplCopyWithImpl<$Res>
+    extends _$ProvisionerAuditEntryCopyWithImpl<$Res,
+        _$ProvisionerAuditEntryImpl>
+    implements _$$ProvisionerAuditEntryImplCopyWith<$Res> {
+  __$$ProvisionerAuditEntryImplCopyWithImpl(_$ProvisionerAuditEntryImpl _value,
+      $Res Function(_$ProvisionerAuditEntryImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? action = null,
+    Object? status = null,
+    Object? timestamp = null,
+    Object? provider = freezed,
+    Object? result = freezed,
+  }) {
+    return _then(_$ProvisionerAuditEntryImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as String,
+      provider: freezed == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as String?,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ProvisionerAuditEntryImpl implements _ProvisionerAuditEntry {
+  const _$ProvisionerAuditEntryImpl(
+      {required this.id,
+      required this.action,
+      required this.status,
+      required this.timestamp,
+      this.provider,
+      this.result});
+
+  factory _$ProvisionerAuditEntryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProvisionerAuditEntryImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String action;
+  @override
+  final String status;
+  @override
+  final String timestamp;
+  @override
+  final String? provider;
+  @override
+  final String? result;
+
+  @override
+  String toString() {
+    return 'ProvisionerAuditEntry(id: $id, action: $action, status: $status, timestamp: $timestamp, provider: $provider, result: $result)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProvisionerAuditEntryImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.provider, provider) ||
+                other.provider == provider) &&
+            (identical(other.result, result) || other.result == result));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, action, status, timestamp, provider, result);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProvisionerAuditEntryImplCopyWith<_$ProvisionerAuditEntryImpl>
+      get copyWith => __$$ProvisionerAuditEntryImplCopyWithImpl<
+          _$ProvisionerAuditEntryImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProvisionerAuditEntryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ProvisionerAuditEntry implements ProvisionerAuditEntry {
+  const factory _ProvisionerAuditEntry(
+      {required final String id,
+      required final String action,
+      required final String status,
+      required final String timestamp,
+      final String? provider,
+      final String? result}) = _$ProvisionerAuditEntryImpl;
+
+  factory _ProvisionerAuditEntry.fromJson(Map<String, dynamic> json) =
+      _$ProvisionerAuditEntryImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get action;
+  @override
+  String get status;
+  @override
+  String get timestamp;
+  @override
+  String? get provider;
+  @override
+  String? get result;
+  @override
+  @JsonKey(ignore: true)
+  _$$ProvisionerAuditEntryImplCopyWith<_$ProvisionerAuditEntryImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+EmailToolResponse _$EmailToolResponseFromJson(Map<String, dynamic> json) {
+  return _EmailToolResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EmailToolResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
+  bool? get configured => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EmailToolResponseCopyWith<EmailToolResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EmailToolResponseCopyWith<$Res> {
+  factory $EmailToolResponseCopyWith(
+          EmailToolResponse value, $Res Function(EmailToolResponse) then) =
+      _$EmailToolResponseCopyWithImpl<$Res, EmailToolResponse>;
+  @useResult
+  $Res call({bool ok, String message, bool? configured});
+}
+
+/// @nodoc
+class _$EmailToolResponseCopyWithImpl<$Res, $Val extends EmailToolResponse>
+    implements $EmailToolResponseCopyWith<$Res> {
+  _$EmailToolResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? message = null,
+    Object? configured = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: freezed == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EmailToolResponseImplCopyWith<$Res>
+    implements $EmailToolResponseCopyWith<$Res> {
+  factory _$$EmailToolResponseImplCopyWith(_$EmailToolResponseImpl value,
+          $Res Function(_$EmailToolResponseImpl) then) =
+      __$$EmailToolResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool ok, String message, bool? configured});
+}
+
+/// @nodoc
+class __$$EmailToolResponseImplCopyWithImpl<$Res>
+    extends _$EmailToolResponseCopyWithImpl<$Res, _$EmailToolResponseImpl>
+    implements _$$EmailToolResponseImplCopyWith<$Res> {
+  __$$EmailToolResponseImplCopyWithImpl(_$EmailToolResponseImpl _value,
+      $Res Function(_$EmailToolResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? message = null,
+    Object? configured = freezed,
+  }) {
+    return _then(_$EmailToolResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: freezed == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EmailToolResponseImpl implements _EmailToolResponse {
+  const _$EmailToolResponseImpl(
+      {required this.ok, required this.message, this.configured});
+
+  factory _$EmailToolResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EmailToolResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String message;
+  @override
+  final bool? configured;
+
+  @override
+  String toString() {
+    return 'EmailToolResponse(ok: $ok, message: $message, configured: $configured)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EmailToolResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.configured, configured) ||
+                other.configured == configured));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ok, message, configured);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EmailToolResponseImplCopyWith<_$EmailToolResponseImpl> get copyWith =>
+      __$$EmailToolResponseImplCopyWithImpl<_$EmailToolResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EmailToolResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EmailToolResponse implements EmailToolResponse {
+  const factory _EmailToolResponse(
+      {required final bool ok,
+      required final String message,
+      final bool? configured}) = _$EmailToolResponseImpl;
+
+  factory _EmailToolResponse.fromJson(Map<String, dynamic> json) =
+      _$EmailToolResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get message;
+  @override
+  bool? get configured;
+  @override
+  @JsonKey(ignore: true)
+  _$$EmailToolResponseImplCopyWith<_$EmailToolResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+WebhookToolResponse _$WebhookToolResponseFromJson(Map<String, dynamic> json) {
+  return _WebhookToolResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WebhookToolResponse {
+  bool get ok => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
+  bool? get configured => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WebhookToolResponseCopyWith<WebhookToolResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WebhookToolResponseCopyWith<$Res> {
+  factory $WebhookToolResponseCopyWith(
+          WebhookToolResponse value, $Res Function(WebhookToolResponse) then) =
+      _$WebhookToolResponseCopyWithImpl<$Res, WebhookToolResponse>;
+  @useResult
+  $Res call({bool ok, String message, bool? configured});
+}
+
+/// @nodoc
+class _$WebhookToolResponseCopyWithImpl<$Res, $Val extends WebhookToolResponse>
+    implements $WebhookToolResponseCopyWith<$Res> {
+  _$WebhookToolResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? message = null,
+    Object? configured = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: freezed == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WebhookToolResponseImplCopyWith<$Res>
+    implements $WebhookToolResponseCopyWith<$Res> {
+  factory _$$WebhookToolResponseImplCopyWith(_$WebhookToolResponseImpl value,
+          $Res Function(_$WebhookToolResponseImpl) then) =
+      __$$WebhookToolResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool ok, String message, bool? configured});
+}
+
+/// @nodoc
+class __$$WebhookToolResponseImplCopyWithImpl<$Res>
+    extends _$WebhookToolResponseCopyWithImpl<$Res, _$WebhookToolResponseImpl>
+    implements _$$WebhookToolResponseImplCopyWith<$Res> {
+  __$$WebhookToolResponseImplCopyWithImpl(_$WebhookToolResponseImpl _value,
+      $Res Function(_$WebhookToolResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ok = null,
+    Object? message = null,
+    Object? configured = freezed,
+  }) {
+    return _then(_$WebhookToolResponseImpl(
+      ok: null == ok
+          ? _value.ok
+          : ok // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      configured: freezed == configured
+          ? _value.configured
+          : configured // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$WebhookToolResponseImpl implements _WebhookToolResponse {
+  const _$WebhookToolResponseImpl(
+      {required this.ok, required this.message, this.configured});
+
+  factory _$WebhookToolResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WebhookToolResponseImplFromJson(json);
+
+  @override
+  final bool ok;
+  @override
+  final String message;
+  @override
+  final bool? configured;
+
+  @override
+  String toString() {
+    return 'WebhookToolResponse(ok: $ok, message: $message, configured: $configured)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WebhookToolResponseImpl &&
+            (identical(other.ok, ok) || other.ok == ok) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.configured, configured) ||
+                other.configured == configured));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ok, message, configured);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WebhookToolResponseImplCopyWith<_$WebhookToolResponseImpl> get copyWith =>
+      __$$WebhookToolResponseImplCopyWithImpl<_$WebhookToolResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WebhookToolResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WebhookToolResponse implements WebhookToolResponse {
+  const factory _WebhookToolResponse(
+      {required final bool ok,
+      required final String message,
+      final bool? configured}) = _$WebhookToolResponseImpl;
+
+  factory _WebhookToolResponse.fromJson(Map<String, dynamic> json) =
+      _$WebhookToolResponseImpl.fromJson;
+
+  @override
+  bool get ok;
+  @override
+  String get message;
+  @override
+  bool? get configured;
+  @override
+  @JsonKey(ignore: true)
+  _$$WebhookToolResponseImplCopyWith<_$WebhookToolResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 HealthCheckResult _$HealthCheckResultFromJson(Map<String, dynamic> json) {
   return _HealthCheckResult.fromJson(json);
 }

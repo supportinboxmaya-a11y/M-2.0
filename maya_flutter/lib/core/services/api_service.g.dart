@@ -3099,6 +3099,191 @@ Map<String, dynamic> _$$ApprovalModeResponseImplToJson(
       'mode': instance.mode,
     };
 
+_$ProvisionerSearchResponseImpl _$$ProvisionerSearchResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProvisionerSearchResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProvisionerSearchResponseImpl(
+          report: $checkedConvert('report', (v) => v as String),
+          findingsCount:
+              $checkedConvert('findings_count', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'findingsCount': 'findings_count'},
+    );
+
+Map<String, dynamic> _$$ProvisionerSearchResponseImplToJson(
+        _$ProvisionerSearchResponseImpl instance) =>
+    <String, dynamic>{
+      'report': instance.report,
+      'findings_count': instance.findingsCount,
+    };
+
+_$ProvisionerProvisionResponseImpl _$$ProvisionerProvisionResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProvisionerProvisionResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProvisionerProvisionResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          provider: $checkedConvert('provider', (v) => v as String),
+          apiKey: $checkedConvert('api_key', (v) => v as String?),
+          envVar: $checkedConvert('env_var', (v) => v as String?),
+          validated: $checkedConvert('validated', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'apiKey': 'api_key', 'envVar': 'env_var'},
+    );
+
+Map<String, dynamic> _$$ProvisionerProvisionResponseImplToJson(
+    _$ProvisionerProvisionResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'provider': instance.provider,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('api_key', instance.apiKey);
+  writeNotNull('env_var', instance.envVar);
+  val['validated'] = instance.validated;
+  val['message'] = instance.message;
+  return val;
+}
+
+_$ProvisionerAuditResponseImpl _$$ProvisionerAuditResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProvisionerAuditResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProvisionerAuditResponseImpl(
+          entries: $checkedConvert(
+              'entries',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ProvisionerAuditEntry.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProvisionerAuditResponseImplToJson(
+        _$ProvisionerAuditResponseImpl instance) =>
+    <String, dynamic>{
+      'entries': instance.entries,
+    };
+
+_$ProvisionerAuditEntryImpl _$$ProvisionerAuditEntryImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProvisionerAuditEntryImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProvisionerAuditEntryImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          timestamp: $checkedConvert('timestamp', (v) => v as String),
+          provider: $checkedConvert('provider', (v) => v as String?),
+          result: $checkedConvert('result', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProvisionerAuditEntryImplToJson(
+    _$ProvisionerAuditEntryImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'action': instance.action,
+    'status': instance.status,
+    'timestamp': instance.timestamp,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('provider', instance.provider);
+  writeNotNull('result', instance.result);
+  return val;
+}
+
+_$EmailToolResponseImpl _$$EmailToolResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$EmailToolResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$EmailToolResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String),
+          configured: $checkedConvert('configured', (v) => v as bool?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$EmailToolResponseImplToJson(
+    _$EmailToolResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'message': instance.message,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('configured', instance.configured);
+  return val;
+}
+
+_$WebhookToolResponseImpl _$$WebhookToolResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WebhookToolResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WebhookToolResponseImpl(
+          ok: $checkedConvert('ok', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String),
+          configured: $checkedConvert('configured', (v) => v as bool?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$WebhookToolResponseImplToJson(
+    _$WebhookToolResponseImpl instance) {
+  final val = <String, dynamic>{
+    'ok': instance.ok,
+    'message': instance.message,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('configured', instance.configured);
+  return val;
+}
+
 _$HealthCheckResultImpl _$$HealthCheckResultImplFromJson(Map json) =>
     $checkedCreate(
       r'_$HealthCheckResultImpl',

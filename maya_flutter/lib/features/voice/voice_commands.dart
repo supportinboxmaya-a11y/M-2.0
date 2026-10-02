@@ -108,6 +108,17 @@ class AppScreenMapping {
     'registry': 'app_registry',
     'app monitoring': 'app_registry',
     'monitoring': 'app_registry',
+    'provisioner': 'provisioner',
+    'api key provisioner': 'provisioner',
+    'key provisioner': 'provisioner',
+    'provision api key': 'provisioner',
+    'communication': 'communication',
+    'communication tools': 'communication',
+    'email tool': 'communication',
+    'webhook tool': 'communication',
+    'webhook': 'communication',
+    'slack': 'communication',
+    'discord': 'communication',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -138,6 +149,8 @@ class AppScreenMapping {
     'camera': 'Vision AI',
     'settings': 'Settings',
     'app_registry': 'App Registry & Monitoring',
+    'provisioner': 'API Key Provisioner',
+    'communication': 'Communication Tools',
   };
 
   static String? resolveScreenRoute(String command) {

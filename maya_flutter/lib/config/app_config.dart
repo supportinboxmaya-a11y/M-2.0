@@ -278,6 +278,15 @@ class AppConfig {
   static const String approvalsDecide = '/api/v1/approvals/';
   static const String approvalMode = '/api/v1/approval/mode';
 
+  // API Key Provisioner (Phase 33)
+  static const String provisionerSearchFree = '/api/v1/provisioner/search-free-apis';
+  static const String provisionerProvision = '/api/v1/provisioner/provision-key';
+  static const String provisionerAudit = '/api/v1/provisioner/audit';
+
+  // Communication Tools (Phase 33)
+  static const String emailToolRun = '/api/v1/communication/email';
+  static const String webhookToolRun = '/api/v1/communication/webhook';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';

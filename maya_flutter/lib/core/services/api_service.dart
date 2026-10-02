@@ -2076,6 +2076,80 @@ class ApiService {
     );
     return ApprovalModeResponse.fromJson(response.data);
   }
+
+  // API Key Provisioner (Phase 33)
+  Future<ProvisionerSearchResponse> searchFreeApis({String? providerFilter}) async {
+    final response = await _dio.post(
+      AppConfig.provisionerSearchFree,
+      data: {
+        if (providerFilter != null) 'provider_filter': providerFilter,
+      },
+    );
+    return ProvisionerSearchResponse.fromJson(response.data);
+  }
+
+  Future<ProvisionerProvisionResponse> provisionApiKey({
+    required String provider,
+    String? email,
+    String? name,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.provisionerProvision,
+      data: {
+        'provider': provider,
+        if (email != null) 'email': email,
+        if (name != null) 'name': name,
+      },
+    );
+    return ProvisionerProvisionResponse.fromJson(response.data);
+  }
+
+  Future<ProvisionerAuditResponse> getProvisionerAudit({int limit = 50}) async {
+    final response = await _dio.get(
+      AppConfig.provisionerAudit,
+      queryParameters: {'limit': limit},
+    );
+    return ProvisionerAuditResponse.fromJson(response.data);
+  }
+
+  // Communication Tools (Phase 33)
+  Future<EmailToolResponse> runEmailTool({
+    required String action,
+    String? to,
+    String? subject,
+    String? body,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.emailToolRun,
+      data: {
+        'action': action,
+        if (to != null) 'to': to,
+        if (subject != null) 'subject': subject,
+        if (body != null) 'body': body,
+      },
+    );
+    return EmailToolResponse.fromJson(response.data);
+  }
+
+  Future<WebhookToolResponse> runWebhookTool({
+    required String action,
+    String? message,
+    String? channel,
+    String? title,
+    Map<String, dynamic>? rawPayload,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.webhookToolRun,
+      data: {
+        'action': action,
+        if (message != null) 'message': message,
+        if (channel != null) 'channel': channel,
+        if (title != null) 'title': title,
+        if (rawPayload != null) 'raw_payload': rawPayload,
+      },
+    );
+    return WebhookToolResponse.fromJson(response.data);
+  }
 }
 
 // AGI Architecture Models (Phase 18 Part 1)
@@ -3572,6 +3646,83 @@ class ApprovalModeResponse with _$ApprovalModeResponse {
 
   factory ApprovalModeResponse.fromJson(Map<String, dynamic> json) =>
       _$ApprovalModeResponseFromJson(json);
+}
+
+// API Key Provisioner Models (Phase 33)
+@freezed
+class ProvisionerSearchResponse with _$ProvisionerSearchResponse {
+  const factory ProvisionerSearchResponse({
+    required String report,
+    required int findingsCount,
+  }) = _ProvisionerSearchResponse;
+
+  factory ProvisionerSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProvisionerSearchResponseFromJson(json);
+}
+
+@freezed
+class ProvisionerProvisionResponse with _$ProvisionerProvisionResponse {
+  const factory ProvisionerProvisionResponse({
+    required bool ok,
+    required String provider,
+    String? apiKey,
+    String? envVar,
+    required bool validated,
+    required String message,
+  }) = _ProvisionerProvisionResponse;
+
+  factory ProvisionerProvisionResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProvisionerProvisionResponseFromJson(json);
+}
+
+@freezed
+class ProvisionerAuditResponse with _$ProvisionerAuditResponse {
+  const factory ProvisionerAuditResponse({
+    required List<ProvisionerAuditEntry> entries,
+  }) = _ProvisionerAuditResponse;
+
+  factory ProvisionerAuditResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProvisionerAuditResponseFromJson(json);
+}
+
+@freezed
+class ProvisionerAuditEntry with _$ProvisionerAuditEntry {
+  const factory ProvisionerAuditEntry({
+    required String id,
+    required String action,
+    required String status,
+    required String timestamp,
+    String? provider,
+    String? result,
+  }) = _ProvisionerAuditEntry;
+
+  factory ProvisionerAuditEntry.fromJson(Map<String, dynamic> json) =>
+      _$ProvisionerAuditEntryFromJson(json);
+}
+
+// Communication Tools Models (Phase 33)
+@freezed
+class EmailToolResponse with _$EmailToolResponse {
+  const factory EmailToolResponse({
+    required bool ok,
+    required String message,
+    bool? configured,
+  }) = _EmailToolResponse;
+
+  factory EmailToolResponse.fromJson(Map<String, dynamic> json) =>
+      _$EmailToolResponseFromJson(json);
+}
+
+@freezed
+class WebhookToolResponse with _$WebhookToolResponse {
+  const factory WebhookToolResponse({
+    required bool ok,
+    required String message,
+    bool? configured,
+  }) = _WebhookToolResponse;
+
+  factory WebhookToolResponse.fromJson(Map<String, dynamic> json) =>
+      _$WebhookToolResponseFromJson(json);
 }
 
 @freezed
