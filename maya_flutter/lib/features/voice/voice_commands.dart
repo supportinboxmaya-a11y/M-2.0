@@ -119,6 +119,11 @@ class AppScreenMapping {
     'webhook': 'communication',
     'slack': 'communication',
     'discord': 'communication',
+    'unified loop': 'unified_loop',
+    'unified cognitive loop': 'unified_loop',
+    'cognitive loop': 'unified_loop',
+    'loop status': 'unified_loop',
+    'loop control': 'unified_loop',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -151,6 +156,7 @@ class AppScreenMapping {
     'app_registry': 'App Registry & Monitoring',
     'provisioner': 'API Key Provisioner',
     'communication': 'Communication Tools',
+    'unified_loop': 'Unified Cognitive Loop',
   };
 
   static String? resolveScreenRoute(String command) {

@@ -1765,6 +1765,43 @@ class ApiService {
     return CoreShutdownResponse.fromJson(response.data);
   }
 
+  // Unified Cognitive Loop (Phase 34)
+  Future<UnifiedLoopStatusResponse> getUnifiedLoopStatus() async {
+    final response = await _dio.get(AppConfig.unifiedLoopStatus);
+    return UnifiedLoopStatusResponse.fromJson(response.data);
+  }
+
+  Future<UnifiedLoopHistoryResponse> getUnifiedLoopHistory({int limit = 50}) async {
+    final response = await _dio.get(
+      AppConfig.unifiedLoopHistory,
+      queryParameters: {'limit': limit},
+    );
+    return UnifiedLoopHistoryResponse.fromJson(response.data);
+  }
+
+  Future<UnifiedLoopControlResponse> startUnifiedLoop({double interval = 30.0}) async {
+    final response = await _dio.post(
+      AppConfig.coreLoopStart,
+      queryParameters: {'interval': interval},
+    );
+    return UnifiedLoopControlResponse.fromJson(response.data);
+  }
+
+  Future<UnifiedLoopControlResponse> pauseUnifiedLoop() async {
+    final response = await _dio.post(AppConfig.coreLoopPause);
+    return UnifiedLoopControlResponse.fromJson(response.data);
+  }
+
+  Future<UnifiedLoopControlResponse> resumeUnifiedLoop() async {
+    final response = await _dio.post(AppConfig.coreLoopResume);
+    return UnifiedLoopControlResponse.fromJson(response.data);
+  }
+
+  Future<UnifiedLoopControlResponse> stopUnifiedLoop() async {
+    final response = await _dio.post(AppConfig.coreLoopStop);
+    return UnifiedLoopControlResponse.fromJson(response.data);
+  }
+
   // Hippocampus / Episodic Memory
   Future<EpisodicListResponse> getEpisodicMemory({
     int limit = 50,
@@ -3050,6 +3087,71 @@ class CoreShutdownResponse with _$CoreShutdownResponse {
 
   factory CoreShutdownResponse.fromJson(Map<String, dynamic> json) =>
       _$CoreShutdownResponseFromJson(json);
+}
+
+// Unified Cognitive Loop Models (Phase 34)
+@freezed
+class UnifiedLoopStatusResponse with _$UnifiedLoopStatusResponse {
+  const factory UnifiedLoopStatusResponse({
+    required String loopState,
+    required String currentPhase,
+    required int cyclesCompleted,
+    required int missionsCompleted,
+    required int skillsAcquired,
+    required int errorCount,
+    String? lastError,
+    String? activeGoalId,
+    String? activePlanId,
+    String? currentStepId,
+    String? activeModelId,
+    List<String>? availableModels,
+    Map<String, dynamic>? resourceUsage,
+    required double uptime,
+    String? instanceId,
+    String? name,
+    String? version,
+  }) = _UnifiedLoopStatusResponse;
+
+  factory UnifiedLoopStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$UnifiedLoopStatusResponseFromJson(json);
+}
+
+@freezed
+class UnifiedLoopHistoryResponse with _$UnifiedLoopHistoryResponse {
+  const factory UnifiedLoopHistoryResponse({
+    required List<UnifiedLoopHistoryEntry> entries,
+  }) = _UnifiedLoopHistoryResponse;
+
+  factory UnifiedLoopHistoryResponse.fromJson(Map<String, dynamic> json) =>
+      _$UnifiedLoopHistoryResponseFromJson(json);
+}
+
+@freezed
+class UnifiedLoopHistoryEntry with _$UnifiedLoopHistoryEntry {
+  const factory UnifiedLoopHistoryEntry({
+    required String id,
+    required int cycleId,
+    required String phase,
+    required double timestamp,
+    required String details,
+    required bool success,
+    required int durationMs,
+  }) = _UnifiedLoopHistoryEntry;
+
+  factory UnifiedLoopHistoryEntry.fromJson(Map<String, dynamic> json) =>
+      _$UnifiedLoopHistoryEntryFromJson(json);
+}
+
+@freezed
+class UnifiedLoopControlResponse with _$UnifiedLoopControlResponse {
+  const factory UnifiedLoopControlResponse({
+    required bool success,
+    String? message,
+    double? interval,
+  }) = _UnifiedLoopControlResponse;
+
+  factory UnifiedLoopControlResponse.fromJson(Map<String, dynamic> json) =>
+      _$UnifiedLoopControlResponseFromJson(json);
 }
 
 // Hippocampus / Episodic Memory Models

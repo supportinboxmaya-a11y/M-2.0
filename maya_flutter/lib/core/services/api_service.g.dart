@@ -2239,6 +2239,180 @@ Map<String, dynamic> _$$CoreShutdownResponseImplToJson(
       'message': instance.message,
     };
 
+_$UnifiedLoopStatusResponseImpl _$$UnifiedLoopStatusResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$UnifiedLoopStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$UnifiedLoopStatusResponseImpl(
+          loopState: $checkedConvert('loop_state', (v) => v as String),
+          currentPhase: $checkedConvert('current_phase', (v) => v as String),
+          cyclesCompleted:
+              $checkedConvert('cycles_completed', (v) => (v as num).toInt()),
+          missionsCompleted:
+              $checkedConvert('missions_completed', (v) => (v as num).toInt()),
+          skillsAcquired:
+              $checkedConvert('skills_acquired', (v) => (v as num).toInt()),
+          errorCount: $checkedConvert('error_count', (v) => (v as num).toInt()),
+          lastError: $checkedConvert('last_error', (v) => v as String?),
+          activeGoalId: $checkedConvert('active_goal_id', (v) => v as String?),
+          activePlanId: $checkedConvert('active_plan_id', (v) => v as String?),
+          currentStepId:
+              $checkedConvert('current_step_id', (v) => v as String?),
+          activeModelId:
+              $checkedConvert('active_model_id', (v) => v as String?),
+          availableModels: $checkedConvert('available_models',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+          resourceUsage: $checkedConvert(
+              'resource_usage',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+          uptime: $checkedConvert('uptime', (v) => (v as num).toDouble()),
+          instanceId: $checkedConvert('instance_id', (v) => v as String?),
+          name: $checkedConvert('name', (v) => v as String?),
+          version: $checkedConvert('version', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'loopState': 'loop_state',
+        'currentPhase': 'current_phase',
+        'cyclesCompleted': 'cycles_completed',
+        'missionsCompleted': 'missions_completed',
+        'skillsAcquired': 'skills_acquired',
+        'errorCount': 'error_count',
+        'lastError': 'last_error',
+        'activeGoalId': 'active_goal_id',
+        'activePlanId': 'active_plan_id',
+        'currentStepId': 'current_step_id',
+        'activeModelId': 'active_model_id',
+        'availableModels': 'available_models',
+        'resourceUsage': 'resource_usage',
+        'instanceId': 'instance_id'
+      },
+    );
+
+Map<String, dynamic> _$$UnifiedLoopStatusResponseImplToJson(
+    _$UnifiedLoopStatusResponseImpl instance) {
+  final val = <String, dynamic>{
+    'loop_state': instance.loopState,
+    'current_phase': instance.currentPhase,
+    'cycles_completed': instance.cyclesCompleted,
+    'missions_completed': instance.missionsCompleted,
+    'skills_acquired': instance.skillsAcquired,
+    'error_count': instance.errorCount,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('last_error', instance.lastError);
+  writeNotNull('active_goal_id', instance.activeGoalId);
+  writeNotNull('active_plan_id', instance.activePlanId);
+  writeNotNull('current_step_id', instance.currentStepId);
+  writeNotNull('active_model_id', instance.activeModelId);
+  writeNotNull('available_models', instance.availableModels);
+  writeNotNull('resource_usage', instance.resourceUsage);
+  val['uptime'] = instance.uptime;
+  writeNotNull('instance_id', instance.instanceId);
+  writeNotNull('name', instance.name);
+  writeNotNull('version', instance.version);
+  return val;
+}
+
+_$UnifiedLoopHistoryResponseImpl _$$UnifiedLoopHistoryResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$UnifiedLoopHistoryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$UnifiedLoopHistoryResponseImpl(
+          entries: $checkedConvert(
+              'entries',
+              (v) => (v as List<dynamic>)
+                  .map((e) => UnifiedLoopHistoryEntry.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$UnifiedLoopHistoryResponseImplToJson(
+        _$UnifiedLoopHistoryResponseImpl instance) =>
+    <String, dynamic>{
+      'entries': instance.entries,
+    };
+
+_$UnifiedLoopHistoryEntryImpl _$$UnifiedLoopHistoryEntryImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$UnifiedLoopHistoryEntryImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$UnifiedLoopHistoryEntryImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          cycleId: $checkedConvert('cycle_id', (v) => (v as num).toInt()),
+          phase: $checkedConvert('phase', (v) => v as String),
+          timestamp: $checkedConvert('timestamp', (v) => (v as num).toDouble()),
+          details: $checkedConvert('details', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+          durationMs: $checkedConvert('duration_ms', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'cycleId': 'cycle_id', 'durationMs': 'duration_ms'},
+    );
+
+Map<String, dynamic> _$$UnifiedLoopHistoryEntryImplToJson(
+        _$UnifiedLoopHistoryEntryImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'cycle_id': instance.cycleId,
+      'phase': instance.phase,
+      'timestamp': instance.timestamp,
+      'details': instance.details,
+      'success': instance.success,
+      'duration_ms': instance.durationMs,
+    };
+
+_$UnifiedLoopControlResponseImpl _$$UnifiedLoopControlResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$UnifiedLoopControlResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$UnifiedLoopControlResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+          interval: $checkedConvert('interval', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$UnifiedLoopControlResponseImplToJson(
+    _$UnifiedLoopControlResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  writeNotNull('interval', instance.interval);
+  return val;
+}
+
 _$EpisodicListResponseImpl _$$EpisodicListResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$EpisodicListResponseImpl',

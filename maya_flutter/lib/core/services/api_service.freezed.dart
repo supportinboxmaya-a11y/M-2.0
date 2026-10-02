@@ -10039,6 +10039,1129 @@ abstract class _CoreShutdownResponse implements CoreShutdownResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+UnifiedLoopStatusResponse _$UnifiedLoopStatusResponseFromJson(
+    Map<String, dynamic> json) {
+  return _UnifiedLoopStatusResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UnifiedLoopStatusResponse {
+  String get loopState => throw _privateConstructorUsedError;
+  String get currentPhase => throw _privateConstructorUsedError;
+  int get cyclesCompleted => throw _privateConstructorUsedError;
+  int get missionsCompleted => throw _privateConstructorUsedError;
+  int get skillsAcquired => throw _privateConstructorUsedError;
+  int get errorCount => throw _privateConstructorUsedError;
+  String? get lastError => throw _privateConstructorUsedError;
+  String? get activeGoalId => throw _privateConstructorUsedError;
+  String? get activePlanId => throw _privateConstructorUsedError;
+  String? get currentStepId => throw _privateConstructorUsedError;
+  String? get activeModelId => throw _privateConstructorUsedError;
+  List<String>? get availableModels => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get resourceUsage => throw _privateConstructorUsedError;
+  double get uptime => throw _privateConstructorUsedError;
+  String? get instanceId => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  String? get version => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UnifiedLoopStatusResponseCopyWith<UnifiedLoopStatusResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UnifiedLoopStatusResponseCopyWith<$Res> {
+  factory $UnifiedLoopStatusResponseCopyWith(UnifiedLoopStatusResponse value,
+          $Res Function(UnifiedLoopStatusResponse) then) =
+      _$UnifiedLoopStatusResponseCopyWithImpl<$Res, UnifiedLoopStatusResponse>;
+  @useResult
+  $Res call(
+      {String loopState,
+      String currentPhase,
+      int cyclesCompleted,
+      int missionsCompleted,
+      int skillsAcquired,
+      int errorCount,
+      String? lastError,
+      String? activeGoalId,
+      String? activePlanId,
+      String? currentStepId,
+      String? activeModelId,
+      List<String>? availableModels,
+      Map<String, dynamic>? resourceUsage,
+      double uptime,
+      String? instanceId,
+      String? name,
+      String? version});
+}
+
+/// @nodoc
+class _$UnifiedLoopStatusResponseCopyWithImpl<$Res,
+        $Val extends UnifiedLoopStatusResponse>
+    implements $UnifiedLoopStatusResponseCopyWith<$Res> {
+  _$UnifiedLoopStatusResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? loopState = null,
+    Object? currentPhase = null,
+    Object? cyclesCompleted = null,
+    Object? missionsCompleted = null,
+    Object? skillsAcquired = null,
+    Object? errorCount = null,
+    Object? lastError = freezed,
+    Object? activeGoalId = freezed,
+    Object? activePlanId = freezed,
+    Object? currentStepId = freezed,
+    Object? activeModelId = freezed,
+    Object? availableModels = freezed,
+    Object? resourceUsage = freezed,
+    Object? uptime = null,
+    Object? instanceId = freezed,
+    Object? name = freezed,
+    Object? version = freezed,
+  }) {
+    return _then(_value.copyWith(
+      loopState: null == loopState
+          ? _value.loopState
+          : loopState // ignore: cast_nullable_to_non_nullable
+              as String,
+      currentPhase: null == currentPhase
+          ? _value.currentPhase
+          : currentPhase // ignore: cast_nullable_to_non_nullable
+              as String,
+      cyclesCompleted: null == cyclesCompleted
+          ? _value.cyclesCompleted
+          : cyclesCompleted // ignore: cast_nullable_to_non_nullable
+              as int,
+      missionsCompleted: null == missionsCompleted
+          ? _value.missionsCompleted
+          : missionsCompleted // ignore: cast_nullable_to_non_nullable
+              as int,
+      skillsAcquired: null == skillsAcquired
+          ? _value.skillsAcquired
+          : skillsAcquired // ignore: cast_nullable_to_non_nullable
+              as int,
+      errorCount: null == errorCount
+          ? _value.errorCount
+          : errorCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastError: freezed == lastError
+          ? _value.lastError
+          : lastError // ignore: cast_nullable_to_non_nullable
+              as String?,
+      activeGoalId: freezed == activeGoalId
+          ? _value.activeGoalId
+          : activeGoalId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      activePlanId: freezed == activePlanId
+          ? _value.activePlanId
+          : activePlanId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      currentStepId: freezed == currentStepId
+          ? _value.currentStepId
+          : currentStepId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      activeModelId: freezed == activeModelId
+          ? _value.activeModelId
+          : activeModelId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      availableModels: freezed == availableModels
+          ? _value.availableModels
+          : availableModels // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      resourceUsage: freezed == resourceUsage
+          ? _value.resourceUsage
+          : resourceUsage // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      uptime: null == uptime
+          ? _value.uptime
+          : uptime // ignore: cast_nullable_to_non_nullable
+              as double,
+      instanceId: freezed == instanceId
+          ? _value.instanceId
+          : instanceId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UnifiedLoopStatusResponseImplCopyWith<$Res>
+    implements $UnifiedLoopStatusResponseCopyWith<$Res> {
+  factory _$$UnifiedLoopStatusResponseImplCopyWith(
+          _$UnifiedLoopStatusResponseImpl value,
+          $Res Function(_$UnifiedLoopStatusResponseImpl) then) =
+      __$$UnifiedLoopStatusResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String loopState,
+      String currentPhase,
+      int cyclesCompleted,
+      int missionsCompleted,
+      int skillsAcquired,
+      int errorCount,
+      String? lastError,
+      String? activeGoalId,
+      String? activePlanId,
+      String? currentStepId,
+      String? activeModelId,
+      List<String>? availableModels,
+      Map<String, dynamic>? resourceUsage,
+      double uptime,
+      String? instanceId,
+      String? name,
+      String? version});
+}
+
+/// @nodoc
+class __$$UnifiedLoopStatusResponseImplCopyWithImpl<$Res>
+    extends _$UnifiedLoopStatusResponseCopyWithImpl<$Res,
+        _$UnifiedLoopStatusResponseImpl>
+    implements _$$UnifiedLoopStatusResponseImplCopyWith<$Res> {
+  __$$UnifiedLoopStatusResponseImplCopyWithImpl(
+      _$UnifiedLoopStatusResponseImpl _value,
+      $Res Function(_$UnifiedLoopStatusResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? loopState = null,
+    Object? currentPhase = null,
+    Object? cyclesCompleted = null,
+    Object? missionsCompleted = null,
+    Object? skillsAcquired = null,
+    Object? errorCount = null,
+    Object? lastError = freezed,
+    Object? activeGoalId = freezed,
+    Object? activePlanId = freezed,
+    Object? currentStepId = freezed,
+    Object? activeModelId = freezed,
+    Object? availableModels = freezed,
+    Object? resourceUsage = freezed,
+    Object? uptime = null,
+    Object? instanceId = freezed,
+    Object? name = freezed,
+    Object? version = freezed,
+  }) {
+    return _then(_$UnifiedLoopStatusResponseImpl(
+      loopState: null == loopState
+          ? _value.loopState
+          : loopState // ignore: cast_nullable_to_non_nullable
+              as String,
+      currentPhase: null == currentPhase
+          ? _value.currentPhase
+          : currentPhase // ignore: cast_nullable_to_non_nullable
+              as String,
+      cyclesCompleted: null == cyclesCompleted
+          ? _value.cyclesCompleted
+          : cyclesCompleted // ignore: cast_nullable_to_non_nullable
+              as int,
+      missionsCompleted: null == missionsCompleted
+          ? _value.missionsCompleted
+          : missionsCompleted // ignore: cast_nullable_to_non_nullable
+              as int,
+      skillsAcquired: null == skillsAcquired
+          ? _value.skillsAcquired
+          : skillsAcquired // ignore: cast_nullable_to_non_nullable
+              as int,
+      errorCount: null == errorCount
+          ? _value.errorCount
+          : errorCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastError: freezed == lastError
+          ? _value.lastError
+          : lastError // ignore: cast_nullable_to_non_nullable
+              as String?,
+      activeGoalId: freezed == activeGoalId
+          ? _value.activeGoalId
+          : activeGoalId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      activePlanId: freezed == activePlanId
+          ? _value.activePlanId
+          : activePlanId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      currentStepId: freezed == currentStepId
+          ? _value.currentStepId
+          : currentStepId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      activeModelId: freezed == activeModelId
+          ? _value.activeModelId
+          : activeModelId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      availableModels: freezed == availableModels
+          ? _value._availableModels
+          : availableModels // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      resourceUsage: freezed == resourceUsage
+          ? _value._resourceUsage
+          : resourceUsage // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      uptime: null == uptime
+          ? _value.uptime
+          : uptime // ignore: cast_nullable_to_non_nullable
+              as double,
+      instanceId: freezed == instanceId
+          ? _value.instanceId
+          : instanceId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UnifiedLoopStatusResponseImpl implements _UnifiedLoopStatusResponse {
+  const _$UnifiedLoopStatusResponseImpl(
+      {required this.loopState,
+      required this.currentPhase,
+      required this.cyclesCompleted,
+      required this.missionsCompleted,
+      required this.skillsAcquired,
+      required this.errorCount,
+      this.lastError,
+      this.activeGoalId,
+      this.activePlanId,
+      this.currentStepId,
+      this.activeModelId,
+      final List<String>? availableModels,
+      final Map<String, dynamic>? resourceUsage,
+      required this.uptime,
+      this.instanceId,
+      this.name,
+      this.version})
+      : _availableModels = availableModels,
+        _resourceUsage = resourceUsage;
+
+  factory _$UnifiedLoopStatusResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UnifiedLoopStatusResponseImplFromJson(json);
+
+  @override
+  final String loopState;
+  @override
+  final String currentPhase;
+  @override
+  final int cyclesCompleted;
+  @override
+  final int missionsCompleted;
+  @override
+  final int skillsAcquired;
+  @override
+  final int errorCount;
+  @override
+  final String? lastError;
+  @override
+  final String? activeGoalId;
+  @override
+  final String? activePlanId;
+  @override
+  final String? currentStepId;
+  @override
+  final String? activeModelId;
+  final List<String>? _availableModels;
+  @override
+  List<String>? get availableModels {
+    final value = _availableModels;
+    if (value == null) return null;
+    if (_availableModels is EqualUnmodifiableListView) return _availableModels;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final Map<String, dynamic>? _resourceUsage;
+  @override
+  Map<String, dynamic>? get resourceUsage {
+    final value = _resourceUsage;
+    if (value == null) return null;
+    if (_resourceUsage is EqualUnmodifiableMapView) return _resourceUsage;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  final double uptime;
+  @override
+  final String? instanceId;
+  @override
+  final String? name;
+  @override
+  final String? version;
+
+  @override
+  String toString() {
+    return 'UnifiedLoopStatusResponse(loopState: $loopState, currentPhase: $currentPhase, cyclesCompleted: $cyclesCompleted, missionsCompleted: $missionsCompleted, skillsAcquired: $skillsAcquired, errorCount: $errorCount, lastError: $lastError, activeGoalId: $activeGoalId, activePlanId: $activePlanId, currentStepId: $currentStepId, activeModelId: $activeModelId, availableModels: $availableModels, resourceUsage: $resourceUsage, uptime: $uptime, instanceId: $instanceId, name: $name, version: $version)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UnifiedLoopStatusResponseImpl &&
+            (identical(other.loopState, loopState) ||
+                other.loopState == loopState) &&
+            (identical(other.currentPhase, currentPhase) ||
+                other.currentPhase == currentPhase) &&
+            (identical(other.cyclesCompleted, cyclesCompleted) ||
+                other.cyclesCompleted == cyclesCompleted) &&
+            (identical(other.missionsCompleted, missionsCompleted) ||
+                other.missionsCompleted == missionsCompleted) &&
+            (identical(other.skillsAcquired, skillsAcquired) ||
+                other.skillsAcquired == skillsAcquired) &&
+            (identical(other.errorCount, errorCount) ||
+                other.errorCount == errorCount) &&
+            (identical(other.lastError, lastError) ||
+                other.lastError == lastError) &&
+            (identical(other.activeGoalId, activeGoalId) ||
+                other.activeGoalId == activeGoalId) &&
+            (identical(other.activePlanId, activePlanId) ||
+                other.activePlanId == activePlanId) &&
+            (identical(other.currentStepId, currentStepId) ||
+                other.currentStepId == currentStepId) &&
+            (identical(other.activeModelId, activeModelId) ||
+                other.activeModelId == activeModelId) &&
+            const DeepCollectionEquality()
+                .equals(other._availableModels, _availableModels) &&
+            const DeepCollectionEquality()
+                .equals(other._resourceUsage, _resourceUsage) &&
+            (identical(other.uptime, uptime) || other.uptime == uptime) &&
+            (identical(other.instanceId, instanceId) ||
+                other.instanceId == instanceId) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.version, version) || other.version == version));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      loopState,
+      currentPhase,
+      cyclesCompleted,
+      missionsCompleted,
+      skillsAcquired,
+      errorCount,
+      lastError,
+      activeGoalId,
+      activePlanId,
+      currentStepId,
+      activeModelId,
+      const DeepCollectionEquality().hash(_availableModels),
+      const DeepCollectionEquality().hash(_resourceUsage),
+      uptime,
+      instanceId,
+      name,
+      version);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UnifiedLoopStatusResponseImplCopyWith<_$UnifiedLoopStatusResponseImpl>
+      get copyWith => __$$UnifiedLoopStatusResponseImplCopyWithImpl<
+          _$UnifiedLoopStatusResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UnifiedLoopStatusResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UnifiedLoopStatusResponse implements UnifiedLoopStatusResponse {
+  const factory _UnifiedLoopStatusResponse(
+      {required final String loopState,
+      required final String currentPhase,
+      required final int cyclesCompleted,
+      required final int missionsCompleted,
+      required final int skillsAcquired,
+      required final int errorCount,
+      final String? lastError,
+      final String? activeGoalId,
+      final String? activePlanId,
+      final String? currentStepId,
+      final String? activeModelId,
+      final List<String>? availableModels,
+      final Map<String, dynamic>? resourceUsage,
+      required final double uptime,
+      final String? instanceId,
+      final String? name,
+      final String? version}) = _$UnifiedLoopStatusResponseImpl;
+
+  factory _UnifiedLoopStatusResponse.fromJson(Map<String, dynamic> json) =
+      _$UnifiedLoopStatusResponseImpl.fromJson;
+
+  @override
+  String get loopState;
+  @override
+  String get currentPhase;
+  @override
+  int get cyclesCompleted;
+  @override
+  int get missionsCompleted;
+  @override
+  int get skillsAcquired;
+  @override
+  int get errorCount;
+  @override
+  String? get lastError;
+  @override
+  String? get activeGoalId;
+  @override
+  String? get activePlanId;
+  @override
+  String? get currentStepId;
+  @override
+  String? get activeModelId;
+  @override
+  List<String>? get availableModels;
+  @override
+  Map<String, dynamic>? get resourceUsage;
+  @override
+  double get uptime;
+  @override
+  String? get instanceId;
+  @override
+  String? get name;
+  @override
+  String? get version;
+  @override
+  @JsonKey(ignore: true)
+  _$$UnifiedLoopStatusResponseImplCopyWith<_$UnifiedLoopStatusResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+UnifiedLoopHistoryResponse _$UnifiedLoopHistoryResponseFromJson(
+    Map<String, dynamic> json) {
+  return _UnifiedLoopHistoryResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UnifiedLoopHistoryResponse {
+  List<UnifiedLoopHistoryEntry> get entries =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UnifiedLoopHistoryResponseCopyWith<UnifiedLoopHistoryResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UnifiedLoopHistoryResponseCopyWith<$Res> {
+  factory $UnifiedLoopHistoryResponseCopyWith(UnifiedLoopHistoryResponse value,
+          $Res Function(UnifiedLoopHistoryResponse) then) =
+      _$UnifiedLoopHistoryResponseCopyWithImpl<$Res,
+          UnifiedLoopHistoryResponse>;
+  @useResult
+  $Res call({List<UnifiedLoopHistoryEntry> entries});
+}
+
+/// @nodoc
+class _$UnifiedLoopHistoryResponseCopyWithImpl<$Res,
+        $Val extends UnifiedLoopHistoryResponse>
+    implements $UnifiedLoopHistoryResponseCopyWith<$Res> {
+  _$UnifiedLoopHistoryResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entries = null,
+  }) {
+    return _then(_value.copyWith(
+      entries: null == entries
+          ? _value.entries
+          : entries // ignore: cast_nullable_to_non_nullable
+              as List<UnifiedLoopHistoryEntry>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UnifiedLoopHistoryResponseImplCopyWith<$Res>
+    implements $UnifiedLoopHistoryResponseCopyWith<$Res> {
+  factory _$$UnifiedLoopHistoryResponseImplCopyWith(
+          _$UnifiedLoopHistoryResponseImpl value,
+          $Res Function(_$UnifiedLoopHistoryResponseImpl) then) =
+      __$$UnifiedLoopHistoryResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<UnifiedLoopHistoryEntry> entries});
+}
+
+/// @nodoc
+class __$$UnifiedLoopHistoryResponseImplCopyWithImpl<$Res>
+    extends _$UnifiedLoopHistoryResponseCopyWithImpl<$Res,
+        _$UnifiedLoopHistoryResponseImpl>
+    implements _$$UnifiedLoopHistoryResponseImplCopyWith<$Res> {
+  __$$UnifiedLoopHistoryResponseImplCopyWithImpl(
+      _$UnifiedLoopHistoryResponseImpl _value,
+      $Res Function(_$UnifiedLoopHistoryResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entries = null,
+  }) {
+    return _then(_$UnifiedLoopHistoryResponseImpl(
+      entries: null == entries
+          ? _value._entries
+          : entries // ignore: cast_nullable_to_non_nullable
+              as List<UnifiedLoopHistoryEntry>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UnifiedLoopHistoryResponseImpl implements _UnifiedLoopHistoryResponse {
+  const _$UnifiedLoopHistoryResponseImpl(
+      {required final List<UnifiedLoopHistoryEntry> entries})
+      : _entries = entries;
+
+  factory _$UnifiedLoopHistoryResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$UnifiedLoopHistoryResponseImplFromJson(json);
+
+  final List<UnifiedLoopHistoryEntry> _entries;
+  @override
+  List<UnifiedLoopHistoryEntry> get entries {
+    if (_entries is EqualUnmodifiableListView) return _entries;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_entries);
+  }
+
+  @override
+  String toString() {
+    return 'UnifiedLoopHistoryResponse(entries: $entries)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UnifiedLoopHistoryResponseImpl &&
+            const DeepCollectionEquality().equals(other._entries, _entries));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_entries));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UnifiedLoopHistoryResponseImplCopyWith<_$UnifiedLoopHistoryResponseImpl>
+      get copyWith => __$$UnifiedLoopHistoryResponseImplCopyWithImpl<
+          _$UnifiedLoopHistoryResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UnifiedLoopHistoryResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UnifiedLoopHistoryResponse
+    implements UnifiedLoopHistoryResponse {
+  const factory _UnifiedLoopHistoryResponse(
+          {required final List<UnifiedLoopHistoryEntry> entries}) =
+      _$UnifiedLoopHistoryResponseImpl;
+
+  factory _UnifiedLoopHistoryResponse.fromJson(Map<String, dynamic> json) =
+      _$UnifiedLoopHistoryResponseImpl.fromJson;
+
+  @override
+  List<UnifiedLoopHistoryEntry> get entries;
+  @override
+  @JsonKey(ignore: true)
+  _$$UnifiedLoopHistoryResponseImplCopyWith<_$UnifiedLoopHistoryResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+UnifiedLoopHistoryEntry _$UnifiedLoopHistoryEntryFromJson(
+    Map<String, dynamic> json) {
+  return _UnifiedLoopHistoryEntry.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UnifiedLoopHistoryEntry {
+  String get id => throw _privateConstructorUsedError;
+  int get cycleId => throw _privateConstructorUsedError;
+  String get phase => throw _privateConstructorUsedError;
+  double get timestamp => throw _privateConstructorUsedError;
+  String get details => throw _privateConstructorUsedError;
+  bool get success => throw _privateConstructorUsedError;
+  int get durationMs => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UnifiedLoopHistoryEntryCopyWith<UnifiedLoopHistoryEntry> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UnifiedLoopHistoryEntryCopyWith<$Res> {
+  factory $UnifiedLoopHistoryEntryCopyWith(UnifiedLoopHistoryEntry value,
+          $Res Function(UnifiedLoopHistoryEntry) then) =
+      _$UnifiedLoopHistoryEntryCopyWithImpl<$Res, UnifiedLoopHistoryEntry>;
+  @useResult
+  $Res call(
+      {String id,
+      int cycleId,
+      String phase,
+      double timestamp,
+      String details,
+      bool success,
+      int durationMs});
+}
+
+/// @nodoc
+class _$UnifiedLoopHistoryEntryCopyWithImpl<$Res,
+        $Val extends UnifiedLoopHistoryEntry>
+    implements $UnifiedLoopHistoryEntryCopyWith<$Res> {
+  _$UnifiedLoopHistoryEntryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? cycleId = null,
+    Object? phase = null,
+    Object? timestamp = null,
+    Object? details = null,
+    Object? success = null,
+    Object? durationMs = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      cycleId: null == cycleId
+          ? _value.cycleId
+          : cycleId // ignore: cast_nullable_to_non_nullable
+              as int,
+      phase: null == phase
+          ? _value.phase
+          : phase // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as double,
+      details: null == details
+          ? _value.details
+          : details // ignore: cast_nullable_to_non_nullable
+              as String,
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      durationMs: null == durationMs
+          ? _value.durationMs
+          : durationMs // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UnifiedLoopHistoryEntryImplCopyWith<$Res>
+    implements $UnifiedLoopHistoryEntryCopyWith<$Res> {
+  factory _$$UnifiedLoopHistoryEntryImplCopyWith(
+          _$UnifiedLoopHistoryEntryImpl value,
+          $Res Function(_$UnifiedLoopHistoryEntryImpl) then) =
+      __$$UnifiedLoopHistoryEntryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      int cycleId,
+      String phase,
+      double timestamp,
+      String details,
+      bool success,
+      int durationMs});
+}
+
+/// @nodoc
+class __$$UnifiedLoopHistoryEntryImplCopyWithImpl<$Res>
+    extends _$UnifiedLoopHistoryEntryCopyWithImpl<$Res,
+        _$UnifiedLoopHistoryEntryImpl>
+    implements _$$UnifiedLoopHistoryEntryImplCopyWith<$Res> {
+  __$$UnifiedLoopHistoryEntryImplCopyWithImpl(
+      _$UnifiedLoopHistoryEntryImpl _value,
+      $Res Function(_$UnifiedLoopHistoryEntryImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? cycleId = null,
+    Object? phase = null,
+    Object? timestamp = null,
+    Object? details = null,
+    Object? success = null,
+    Object? durationMs = null,
+  }) {
+    return _then(_$UnifiedLoopHistoryEntryImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      cycleId: null == cycleId
+          ? _value.cycleId
+          : cycleId // ignore: cast_nullable_to_non_nullable
+              as int,
+      phase: null == phase
+          ? _value.phase
+          : phase // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as double,
+      details: null == details
+          ? _value.details
+          : details // ignore: cast_nullable_to_non_nullable
+              as String,
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      durationMs: null == durationMs
+          ? _value.durationMs
+          : durationMs // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UnifiedLoopHistoryEntryImpl implements _UnifiedLoopHistoryEntry {
+  const _$UnifiedLoopHistoryEntryImpl(
+      {required this.id,
+      required this.cycleId,
+      required this.phase,
+      required this.timestamp,
+      required this.details,
+      required this.success,
+      required this.durationMs});
+
+  factory _$UnifiedLoopHistoryEntryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UnifiedLoopHistoryEntryImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final int cycleId;
+  @override
+  final String phase;
+  @override
+  final double timestamp;
+  @override
+  final String details;
+  @override
+  final bool success;
+  @override
+  final int durationMs;
+
+  @override
+  String toString() {
+    return 'UnifiedLoopHistoryEntry(id: $id, cycleId: $cycleId, phase: $phase, timestamp: $timestamp, details: $details, success: $success, durationMs: $durationMs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UnifiedLoopHistoryEntryImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.cycleId, cycleId) || other.cycleId == cycleId) &&
+            (identical(other.phase, phase) || other.phase == phase) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.details, details) || other.details == details) &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.durationMs, durationMs) ||
+                other.durationMs == durationMs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, cycleId, phase, timestamp, details, success, durationMs);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UnifiedLoopHistoryEntryImplCopyWith<_$UnifiedLoopHistoryEntryImpl>
+      get copyWith => __$$UnifiedLoopHistoryEntryImplCopyWithImpl<
+          _$UnifiedLoopHistoryEntryImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UnifiedLoopHistoryEntryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UnifiedLoopHistoryEntry implements UnifiedLoopHistoryEntry {
+  const factory _UnifiedLoopHistoryEntry(
+      {required final String id,
+      required final int cycleId,
+      required final String phase,
+      required final double timestamp,
+      required final String details,
+      required final bool success,
+      required final int durationMs}) = _$UnifiedLoopHistoryEntryImpl;
+
+  factory _UnifiedLoopHistoryEntry.fromJson(Map<String, dynamic> json) =
+      _$UnifiedLoopHistoryEntryImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  int get cycleId;
+  @override
+  String get phase;
+  @override
+  double get timestamp;
+  @override
+  String get details;
+  @override
+  bool get success;
+  @override
+  int get durationMs;
+  @override
+  @JsonKey(ignore: true)
+  _$$UnifiedLoopHistoryEntryImplCopyWith<_$UnifiedLoopHistoryEntryImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+UnifiedLoopControlResponse _$UnifiedLoopControlResponseFromJson(
+    Map<String, dynamic> json) {
+  return _UnifiedLoopControlResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UnifiedLoopControlResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+  double? get interval => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UnifiedLoopControlResponseCopyWith<UnifiedLoopControlResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UnifiedLoopControlResponseCopyWith<$Res> {
+  factory $UnifiedLoopControlResponseCopyWith(UnifiedLoopControlResponse value,
+          $Res Function(UnifiedLoopControlResponse) then) =
+      _$UnifiedLoopControlResponseCopyWithImpl<$Res,
+          UnifiedLoopControlResponse>;
+  @useResult
+  $Res call({bool success, String? message, double? interval});
+}
+
+/// @nodoc
+class _$UnifiedLoopControlResponseCopyWithImpl<$Res,
+        $Val extends UnifiedLoopControlResponse>
+    implements $UnifiedLoopControlResponseCopyWith<$Res> {
+  _$UnifiedLoopControlResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? message = freezed,
+    Object? interval = freezed,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      interval: freezed == interval
+          ? _value.interval
+          : interval // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UnifiedLoopControlResponseImplCopyWith<$Res>
+    implements $UnifiedLoopControlResponseCopyWith<$Res> {
+  factory _$$UnifiedLoopControlResponseImplCopyWith(
+          _$UnifiedLoopControlResponseImpl value,
+          $Res Function(_$UnifiedLoopControlResponseImpl) then) =
+      __$$UnifiedLoopControlResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, String? message, double? interval});
+}
+
+/// @nodoc
+class __$$UnifiedLoopControlResponseImplCopyWithImpl<$Res>
+    extends _$UnifiedLoopControlResponseCopyWithImpl<$Res,
+        _$UnifiedLoopControlResponseImpl>
+    implements _$$UnifiedLoopControlResponseImplCopyWith<$Res> {
+  __$$UnifiedLoopControlResponseImplCopyWithImpl(
+      _$UnifiedLoopControlResponseImpl _value,
+      $Res Function(_$UnifiedLoopControlResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? message = freezed,
+    Object? interval = freezed,
+  }) {
+    return _then(_$UnifiedLoopControlResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      interval: freezed == interval
+          ? _value.interval
+          : interval // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UnifiedLoopControlResponseImpl implements _UnifiedLoopControlResponse {
+  const _$UnifiedLoopControlResponseImpl(
+      {required this.success, this.message, this.interval});
+
+  factory _$UnifiedLoopControlResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$UnifiedLoopControlResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String? message;
+  @override
+  final double? interval;
+
+  @override
+  String toString() {
+    return 'UnifiedLoopControlResponse(success: $success, message: $message, interval: $interval)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UnifiedLoopControlResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.interval, interval) ||
+                other.interval == interval));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, message, interval);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UnifiedLoopControlResponseImplCopyWith<_$UnifiedLoopControlResponseImpl>
+      get copyWith => __$$UnifiedLoopControlResponseImplCopyWithImpl<
+          _$UnifiedLoopControlResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UnifiedLoopControlResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UnifiedLoopControlResponse
+    implements UnifiedLoopControlResponse {
+  const factory _UnifiedLoopControlResponse(
+      {required final bool success,
+      final String? message,
+      final double? interval}) = _$UnifiedLoopControlResponseImpl;
+
+  factory _UnifiedLoopControlResponse.fromJson(Map<String, dynamic> json) =
+      _$UnifiedLoopControlResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String? get message;
+  @override
+  double? get interval;
+  @override
+  @JsonKey(ignore: true)
+  _$$UnifiedLoopControlResponseImplCopyWith<_$UnifiedLoopControlResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 EpisodicListResponse _$EpisodicListResponseFromJson(Map<String, dynamic> json) {
   return _EpisodicListResponse.fromJson(json);
 }

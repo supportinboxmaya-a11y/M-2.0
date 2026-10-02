@@ -1222,6 +1222,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'cognition': screen = const _CognitionLoopScreen(); break;
       case 'agi': screen = const _AGIArchitectureScreen(); break;
       case 'cognitive_core': screen = const _MayaCognitiveCoreScreen(); break;
+      case 'unified_loop': screen = const _UnifiedCognitiveLoopScreen(); break;
       case 'business': screen = const _BusinessAnalysisScreen(); break;
       case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
@@ -2487,6 +2488,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _MayaCognitiveCoreScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.sync_rounded,
+                  label: 'Unified Cognitive Loop',
+                  subtitle: 'Live loop status, phases, cycle history, start/pause/stop',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _UnifiedCognitiveLoopScreen(),
                       ),
                     );
                   },
@@ -19770,6 +19785,17 @@ final coreAuditProvider = FutureProvider<CoreAuditResponse>((ref) async {
   return apiService.getCoreAudit();
 });
 
+// Unified Cognitive Loop Providers (Phase 34)
+final unifiedLoopStatusProvider = FutureProvider<UnifiedLoopStatusResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getUnifiedLoopStatus();
+});
+
+final unifiedLoopHistoryProvider = FutureProvider<UnifiedLoopHistoryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getUnifiedLoopHistory();
+});
+
 // Business Analysis Providers (Phase 20)
 final businessMissionsProvider = FutureProvider<MissionListResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
@@ -21005,4 +21031,853 @@ Widget _emptyState(String title, String subtitle, IconData icon) {
       ),
     ),
   );
+}
+// Unified Cognitive Loop Screen (Phase 34)
+class _UnifiedCognitiveLoopScreen extends ConsumerStatefulWidget {
+  const _UnifiedCognitiveLoopScreen();
+
+  @override
+  ConsumerState<_UnifiedCognitiveLoopScreen> createState() => _UnifiedCognitiveLoopScreenState();
+}
+
+class _UnifiedCognitiveLoopScreenState extends ConsumerState<_UnifiedCognitiveLoopScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (mounted) {
+        ref.invalidate(unifiedLoopStatusProvider);
+        ref.invalidate(unifiedLoopHistoryProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Unified Cognitive Loop', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(unifiedLoopStatusProvider);
+                ref.invalidate(unifiedLoopHistoryProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.sync_rounded), text: 'Loop Status'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'Cycle History'),
+              Tab(icon: Icon(Icons.tune_rounded), text: 'Controls'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _UnifiedLoopStatusTab(),
+            _UnifiedLoopHistoryTab(),
+            _UnifiedLoopControlsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _UnifiedLoopStatusTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(unifiedLoopStatusProvider);
+
+    return statusAsync.when(
+      data: (status) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Loop State & Current Phase
+            Row(
+              children: [
+                Expanded(
+                  child: _LoopStateCard(
+                    label: 'Loop State',
+                    value: status.loopState.toUpperCase(),
+                    color: _getLoopStateColor(status.loopState),
+                    icon: _getLoopStateIcon(status.loopState),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _LoopStateCard(
+                    label: 'Current Phase',
+                    value: status.currentPhase.toUpperCase(),
+                    color: _getPhaseColor(status.currentPhase),
+                    icon: _getPhaseIcon(status.currentPhase),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Stats Row
+            Row(
+              children: [
+                Expanded(child: _LoopStatCard(label: 'Cycles Completed', value: status.cyclesCompleted.toString(), color: MayaTheme.neonCyan, icon: Icons.sync_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LoopStatCard(label: 'Missions Completed', value: status.missionsCompleted.toString(), color: MayaTheme.neonEmerald, icon: Icons.flag_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LoopStatCard(label: 'Skills Acquired', value: status.skillsAcquired.toString(), color: MayaTheme.neonViolet, icon: Icons.psychology_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LoopStatCard(label: 'Errors', value: status.errorCount.toString(), color: status.errorCount > 0 ? MayaTheme.error : MayaTheme.neonEmerald, icon: Icons.error_rounded)),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // Active Items
+            if (status.activeGoalId != null || status.activePlanId != null || status.activeStepId != null) ...[
+              const Text('Active Context', style: MayaTheme.titleMedium),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (status.activeGoalId != null)
+                      _ActiveContextRow(label: 'Active Goal', value: status.activeGoalId!, icon: Icons.flag_rounded, color: MayaTheme.neonOrange),
+                    if (status.activePlanId != null)
+                      _ActiveContextRow(label: 'Active Plan', value: status.activePlanId!, icon: Icons.map_rounded, color: MayaTheme.neonCyan),
+                    if (status.activeStepId != null)
+                      _ActiveContextRow(label: 'Current Step', value: status.activeStepId!, icon: Icons.directions_run_rounded, color: MayaTheme.neonEmerald),
+                    if (status.activeModelId != null)
+                      _ActiveContextRow(label: 'Active Model', value: status.activeModelId!, icon: Icons.model_training_rounded, color: MayaTheme.neonViolet),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+            // Resource Usage
+            if (status.resourceUsage != null && status.resourceUsage!.isNotEmpty) ...[
+              const Text('Resource Usage', style: MayaTheme.titleMedium),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: status.resourceUsage!.entries.map((e) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(e.key, style: MayaTheme.bodyMedium),
+                        Text(e.value.toStringAsFixed(2), style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  )).toList(),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+            // Instance Info
+            const Text('Instance Info', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _InfoRow(label: 'Instance ID', value: status.instanceId ?? 'Unknown'),
+                  _InfoRow(label: 'Name', value: status.name ?? 'Maya'),
+                  _InfoRow(label: 'Version', value: status.version ?? '2.0.0'),
+                  _InfoRow(label: 'Uptime', value: _formatUptime(status.uptime)),
+                  _InfoRow(label: 'Available Models', value: (status.availableModels?.length ?? 0).toString()),
+                  if (status.lastError != null) ...[
+                    const SizedBox(height: 8),
+                    _InfoRow(label: 'Last Error', value: status.lastError!, color: MayaTheme.error),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading loop status', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+
+  Color _getLoopStateColor(String state) {
+    switch (state.toLowerCase()) {
+      case 'running': return MayaTheme.neonEmerald;
+      case 'paused': return MayaTheme.neonOrange;
+      case 'stopped': return Colors.white38;
+      case 'error': return MayaTheme.error;
+      case 'waiting_approval': return MayaTheme.neonViolet;
+      case 'waiting_model': return MayaTheme.neonCyan;
+      default: return Colors.white38;
+    }
+  }
+
+  IconData _getLoopStateIcon(String state) {
+    switch (state.toLowerCase()) {
+      case 'running': return Icons.play_circle_rounded;
+      case 'paused': return Icons.pause_circle_rounded;
+      case 'stopped': return Icons.stop_circle_rounded;
+      case 'error': return Icons.error_rounded;
+      case 'waiting_approval': return Icons.rule_rounded;
+      case 'waiting_model': return Icons.model_training_rounded;
+      default: return Icons.help_rounded;
+    }
+  }
+
+  Color _getPhaseColor(String phase) {
+    switch (phase.toLowerCase()) {
+      case 'observe':
+      case 'observe_result':
+        return MayaTheme.neonCyan;
+      case 'understand':
+        return MayaTheme.neonViolet;
+      case 'remember':
+        return MayaTheme.neonEmerald;
+      case 'reason_plan':
+      case 'replan':
+        return MayaTheme.neonOrange;
+      case 'decide':
+        return MayaTheme.neonViolet;
+      case 'act':
+        return MayaTheme.neonEmerald;
+      case 'verify':
+        return MayaTheme.neonCyan;
+      case 'learn':
+      case 'update':
+        return MayaTheme.neonOrange;
+      case 'idle':
+        return Colors.white38;
+      default:
+        return Colors.white54;
+    }
+  }
+
+  IconData _getPhaseIcon(String phase) {
+    switch (phase.toLowerCase()) {
+      case 'observe':
+      case 'observe_result':
+        return Icons.visibility_rounded;
+      case 'understand':
+        return Icons.lightbulb_rounded;
+      case 'remember':
+        return Icons.memory_rounded;
+      case 'reason_plan':
+      case 'replan':
+        return Icons.psychology_rounded;
+      case 'decide':
+        return Icons.gavel_rounded;
+      case 'act':
+        return Icons.play_arrow_rounded;
+      case 'verify':
+        return Icons.verified_rounded;
+      case 'learn':
+      case 'update':
+        return Icons.school_rounded;
+      case 'idle':
+        return Icons.pause_rounded;
+      default:
+        return Icons.help_rounded;
+    }
+  }
+
+  String _formatUptime(double seconds) {
+    if (seconds < 60) return '\${seconds.toInt()}s';
+    if (seconds < 3600) return '\${(seconds / 60).toInt()}m \${(seconds % 60).toInt()}s';
+    if (seconds < 86400) return '\${(seconds / 3600).toInt()}h \${((seconds % 3600) / 60).toInt()}m';
+    return '\${(seconds / 86400).toInt()}d \${((seconds % 86400) / 3600).toInt()}h';
+  }
+}
+
+class _LoopStateCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _LoopStateCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 32),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineSmall.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _LoopStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _LoopStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActiveContextRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _ActiveContextRow({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+                Text(value, style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace'), maxLines: 1, overflow: TextOverflow.ellipsis),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? color;
+
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(label, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+          ),
+          Expanded(
+            child: Text(value, style: MayaTheme.bodyMedium.copyWith(color: color ?? Colors.white), maxLines: 2, overflow: TextOverflow.ellipsis),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UnifiedLoopHistoryTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(unifiedLoopHistoryProvider);
+
+    return historyAsync.when(
+      data: (data) => data.entries.isEmpty
+          ? _emptyState('No Cycle History', 'Start the cognitive loop to see cycle history', Icons.history_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Cycle History', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Recent cognitive loop cycles with phases and results',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.entries.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final entry = data.entries[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: entry.success ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.error.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    entry.success ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                                    color: entry.success ? MayaTheme.neonEmerald : MayaTheme.error,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Cycle #\${entry.cycleId} • \${entry.phase.toUpperCase()}', style: MayaTheme.titleMedium),
+                                      Text('Duration: \${entry.durationMs}ms', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  _formatTimestamp(entry.timestamp),
+                                  style: MayaTheme.bodySmall.copyWith(color: Colors.white38),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(entry.details, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading history', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+
+  String _formatTimestamp(double timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt());
+    return '\${date.hour.toString().padLeft(2, '\''0'\'')}:${date.minute.toString().padLeft(2, '\''0'\'')}:${date.second.toString().padLeft(2, '\''0'\'')}';
+  }
+}
+
+class _UnifiedLoopControlsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(unifiedLoopStatusProvider);
+
+    return statusAsync.when(
+      data: (status) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Loop Controls', style: MayaTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Start, pause, resume, or stop the unified cognitive loop',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 24),
+            // Interval Setting
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Loop Interval', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text(
+                    'How often the loop runs (seconds)',
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  _IntervalSlider(),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Control Buttons
+            const Text('Actions', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            _LoopControlButtons(currentState: status.loopState),
+            const SizedBox(height: 24),
+            // Current State Display
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCardGlow(
+                glowColor: _getLoopStateColor(status.loopState),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _getLoopStateIcon(status.loopState),
+                    color: _getLoopStateColor(status.loopState),
+                    size: 32,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Current State: \${status.loopState.toUpperCase()}',
+                          style: MayaTheme.titleMedium.copyWith(color: _getLoopStateColor(status.loopState)),
+                        ),
+                        Text('Phase: \${status.currentPhase.toUpperCase()}', style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Quick Stats
+            const Text('Quick Stats', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _LoopStatCard(label: 'Cycles', value: status.cyclesCompleted.toString(), color: MayaTheme.neonCyan, icon: Icons.sync_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LoopStatCard(label: 'Missions', value: status.missionsCompleted.toString(), color: MayaTheme.neonEmerald, icon: Icons.flag_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LoopStatCard(label: 'Skills', value: status.skillsAcquired.toString(), color: MayaTheme.neonViolet, icon: Icons.psychology_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LoopStatCard(label: 'Errors', value: status.errorCount.toString(), color: status.errorCount > 0 ? MayaTheme.error : MayaTheme.neonEmerald, icon: Icons.error_rounded)),
+              ],
+            ),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading status', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+
+  Color _getLoopStateColor(String state) {
+    switch (state.toLowerCase()) {
+      case 'running': return MayaTheme.neonEmerald;
+      case 'paused': return MayaTheme.neonOrange;
+      case 'stopped': return Colors.white38;
+      case 'error': return MayaTheme.error;
+      case 'waiting_approval': return MayaTheme.neonViolet;
+      case 'waiting_model': return MayaTheme.neonCyan;
+      default: return Colors.white38;
+    }
+  }
+
+  IconData _getLoopStateIcon(String state) {
+    switch (state.toLowerCase()) {
+      case 'running': return Icons.play_circle_rounded;
+      case 'paused': return Icons.pause_circle_rounded;
+      case 'stopped': return Icons.stop_circle_rounded;
+      case 'error': return Icons.error_rounded;
+      case 'waiting_approval': return Icons.rule_rounded;
+      case 'waiting_model': return Icons.model_training_rounded;
+      default: return Icons.help_rounded;
+    }
+  }
+}
+
+class _IntervalSlider extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_IntervalSlider> createState() => _IntervalSliderState();
+}
+
+class _IntervalSliderState extends ConsumerState<_IntervalSlider> {
+  double _interval = 30.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Slider(
+          value: _interval,
+          min: 5,
+          max: 300,
+          divisions: 59,
+          label: '\${_interval.toInt()}s',
+          activeColor: MayaTheme.neonCyan,
+          inactiveColor: Colors.white24,
+          onChanged: (v) => setState(() => _interval = v),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('\${_interval.toInt()}s', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan)),
+            ElevatedButton.icon(
+              onPressed: () async {
+                final apiService = ref.read(apiServiceProvider);
+                try {
+                  await apiService.startUnifiedLoop(interval: _interval);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Loop started (\${_interval.toInt()}s interval)'), backgroundColor: MayaTheme.neonEmerald),
+                    );
+                    ref.invalidate(unifiedLoopStatusProvider);
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to start: \$e'), backgroundColor: MayaTheme.error),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.play_arrow_rounded),
+              label: const Text('Start Loop'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonEmerald,
+                foregroundColor: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LoopControlButtons extends ConsumerWidget {
+  final String currentState;
+
+  const _LoopControlButtons({required this.currentState});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRunning = currentState == 'running';
+    final isPaused = currentState == 'paused';
+    final isStopped = currentState == 'stopped';
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: isRunning || isPaused ? null : () async {
+                  final apiService = ref.read(apiServiceProvider);
+                  try {
+                    await apiService.startUnifiedLoop();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: const Text('Loop started'), backgroundColor: MayaTheme.neonEmerald),
+                      );
+                      ref.invalidate(unifiedLoopStatusProvider);
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to start: \$e'), backgroundColor: MayaTheme.error),
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.play_arrow_rounded),
+                label: const Text('Start'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonEmerald,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: isRunning ? () async {
+                  final apiService = ref.read(apiServiceProvider);
+                  try {
+                    await apiService.pauseUnifiedLoop();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: const Text('Loop paused'), backgroundColor: MayaTheme.neonOrange),
+                      );
+                      ref.invalidate(unifiedLoopStatusProvider);
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to pause: \$e'), backgroundColor: MayaTheme.error),
+                      );
+                    }
+                  }
+                } : null,
+                icon: const Icon(Icons.pause_rounded),
+                label: const Text('Pause'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonOrange,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: isPaused ? () async {
+                  final apiService = ref.read(apiServiceProvider);
+                  try {
+                    await apiService.resumeUnifiedLoop();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: const Text('Loop resumed'), backgroundColor: MayaTheme.neonEmerald),
+                      );
+                      ref.invalidate(unifiedLoopStatusProvider);
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to resume: \$e'), backgroundColor: MayaTheme.error),
+                      );
+                    }
+                  }
+                } : null,
+                icon: const Icon(Icons.play_circle_rounded),
+                label: const Text('Resume'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonEmerald,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: isRunning || isPaused ? () async {
+                  final apiService = ref.read(apiServiceProvider);
+                  try {
+                    await apiService.stopUnifiedLoop();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: const Text('Loop stopped'), backgroundColor: MayaTheme.error),
+                      );
+                      ref.invalidate(unifiedLoopStatusProvider);
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to stop: \$e'), backgroundColor: MayaTheme.error),
+                      );
+                    }
+                  }
+                } : null,
+                icon: const Icon(Icons.stop_rounded),
+                label: const Text('Stop'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.error,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }

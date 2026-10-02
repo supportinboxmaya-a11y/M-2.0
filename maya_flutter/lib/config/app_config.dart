@@ -231,6 +231,7 @@ class AppConfig {
   static const String coreLoopPause = '/api/v1/maya/core/loop/pause';
   static const String coreLoopResume = '/api/v1/maya/core/loop/resume';
   static const String coreLoopStop = '/api/v1/maya/core/loop/stop';
+  static const String coreLoopStatus = '/api/v1/maya/core/loop/status';
   static const String coreRunMission = '/api/v1/maya/core/mission';
   static const String coreExecuteGoal = '/api/v1/maya/core/goal/execute';
   static const String coreIdentity = '/api/v1/maya/core/identity';
@@ -242,6 +243,10 @@ class AppConfig {
   static const String coreCheckpoints = '/api/v1/maya/core/checkpoints';
   static const String coreAudit = '/api/v1/maya/core/audit';
   static const String coreShutdown = '/api/v1/maya/core/shutdown';
+
+  // Unified Cognitive Loop (Phase 34)
+  static const String unifiedLoopStatus = '/api/v1/maya/core/loop/status';
+  static const String unifiedLoopHistory = '/api/v1/maya/core/loop/history';
 
   // Hippocampus / Episodic Memory
   static const String episodicList = '/api/v1/cognitive/memory/episodic';
