@@ -17384,6 +17384,1152 @@ abstract class _SelfTraitResponse implements SelfTraitResponse {
       throw _privateConstructorUsedError;
 }
 
+SelfImproveStatusResponse _$SelfImproveStatusResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SelfImproveStatusResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfImproveStatusResponse {
+  bool get enabled => throw _privateConstructorUsedError;
+  int get totalProposals => throw _privateConstructorUsedError;
+  int get pendingProposals => throw _privateConstructorUsedError;
+  int get approvedProposals => throw _privateConstructorUsedError;
+  int get executedProposals => throw _privateConstructorUsedError;
+  int get rejectedProposals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfImproveStatusResponseCopyWith<SelfImproveStatusResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfImproveStatusResponseCopyWith<$Res> {
+  factory $SelfImproveStatusResponseCopyWith(SelfImproveStatusResponse value,
+          $Res Function(SelfImproveStatusResponse) then) =
+      _$SelfImproveStatusResponseCopyWithImpl<$Res, SelfImproveStatusResponse>;
+  @useResult
+  $Res call(
+      {bool enabled,
+      int totalProposals,
+      int pendingProposals,
+      int approvedProposals,
+      int executedProposals,
+      int rejectedProposals});
+}
+
+/// @nodoc
+class _$SelfImproveStatusResponseCopyWithImpl<$Res,
+        $Val extends SelfImproveStatusResponse>
+    implements $SelfImproveStatusResponseCopyWith<$Res> {
+  _$SelfImproveStatusResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? totalProposals = null,
+    Object? pendingProposals = null,
+    Object? approvedProposals = null,
+    Object? executedProposals = null,
+    Object? rejectedProposals = null,
+  }) {
+    return _then(_value.copyWith(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      totalProposals: null == totalProposals
+          ? _value.totalProposals
+          : totalProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      pendingProposals: null == pendingProposals
+          ? _value.pendingProposals
+          : pendingProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      approvedProposals: null == approvedProposals
+          ? _value.approvedProposals
+          : approvedProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      executedProposals: null == executedProposals
+          ? _value.executedProposals
+          : executedProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      rejectedProposals: null == rejectedProposals
+          ? _value.rejectedProposals
+          : rejectedProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfImproveStatusResponseImplCopyWith<$Res>
+    implements $SelfImproveStatusResponseCopyWith<$Res> {
+  factory _$$SelfImproveStatusResponseImplCopyWith(
+          _$SelfImproveStatusResponseImpl value,
+          $Res Function(_$SelfImproveStatusResponseImpl) then) =
+      __$$SelfImproveStatusResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool enabled,
+      int totalProposals,
+      int pendingProposals,
+      int approvedProposals,
+      int executedProposals,
+      int rejectedProposals});
+}
+
+/// @nodoc
+class __$$SelfImproveStatusResponseImplCopyWithImpl<$Res>
+    extends _$SelfImproveStatusResponseCopyWithImpl<$Res,
+        _$SelfImproveStatusResponseImpl>
+    implements _$$SelfImproveStatusResponseImplCopyWith<$Res> {
+  __$$SelfImproveStatusResponseImplCopyWithImpl(
+      _$SelfImproveStatusResponseImpl _value,
+      $Res Function(_$SelfImproveStatusResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? totalProposals = null,
+    Object? pendingProposals = null,
+    Object? approvedProposals = null,
+    Object? executedProposals = null,
+    Object? rejectedProposals = null,
+  }) {
+    return _then(_$SelfImproveStatusResponseImpl(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      totalProposals: null == totalProposals
+          ? _value.totalProposals
+          : totalProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      pendingProposals: null == pendingProposals
+          ? _value.pendingProposals
+          : pendingProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      approvedProposals: null == approvedProposals
+          ? _value.approvedProposals
+          : approvedProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      executedProposals: null == executedProposals
+          ? _value.executedProposals
+          : executedProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+      rejectedProposals: null == rejectedProposals
+          ? _value.rejectedProposals
+          : rejectedProposals // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfImproveStatusResponseImpl implements _SelfImproveStatusResponse {
+  const _$SelfImproveStatusResponseImpl(
+      {required this.enabled,
+      required this.totalProposals,
+      required this.pendingProposals,
+      required this.approvedProposals,
+      required this.executedProposals,
+      required this.rejectedProposals});
+
+  factory _$SelfImproveStatusResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfImproveStatusResponseImplFromJson(json);
+
+  @override
+  final bool enabled;
+  @override
+  final int totalProposals;
+  @override
+  final int pendingProposals;
+  @override
+  final int approvedProposals;
+  @override
+  final int executedProposals;
+  @override
+  final int rejectedProposals;
+
+  @override
+  String toString() {
+    return 'SelfImproveStatusResponse(enabled: $enabled, totalProposals: $totalProposals, pendingProposals: $pendingProposals, approvedProposals: $approvedProposals, executedProposals: $executedProposals, rejectedProposals: $rejectedProposals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfImproveStatusResponseImpl &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.totalProposals, totalProposals) ||
+                other.totalProposals == totalProposals) &&
+            (identical(other.pendingProposals, pendingProposals) ||
+                other.pendingProposals == pendingProposals) &&
+            (identical(other.approvedProposals, approvedProposals) ||
+                other.approvedProposals == approvedProposals) &&
+            (identical(other.executedProposals, executedProposals) ||
+                other.executedProposals == executedProposals) &&
+            (identical(other.rejectedProposals, rejectedProposals) ||
+                other.rejectedProposals == rejectedProposals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      enabled,
+      totalProposals,
+      pendingProposals,
+      approvedProposals,
+      executedProposals,
+      rejectedProposals);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfImproveStatusResponseImplCopyWith<_$SelfImproveStatusResponseImpl>
+      get copyWith => __$$SelfImproveStatusResponseImplCopyWithImpl<
+          _$SelfImproveStatusResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfImproveStatusResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfImproveStatusResponse implements SelfImproveStatusResponse {
+  const factory _SelfImproveStatusResponse(
+      {required final bool enabled,
+      required final int totalProposals,
+      required final int pendingProposals,
+      required final int approvedProposals,
+      required final int executedProposals,
+      required final int rejectedProposals}) = _$SelfImproveStatusResponseImpl;
+
+  factory _SelfImproveStatusResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfImproveStatusResponseImpl.fromJson;
+
+  @override
+  bool get enabled;
+  @override
+  int get totalProposals;
+  @override
+  int get pendingProposals;
+  @override
+  int get approvedProposals;
+  @override
+  int get executedProposals;
+  @override
+  int get rejectedProposals;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfImproveStatusResponseImplCopyWith<_$SelfImproveStatusResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SelfImproveGapsResponse _$SelfImproveGapsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SelfImproveGapsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfImproveGapsResponse {
+  List<SelfImproveGap> get gaps => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfImproveGapsResponseCopyWith<SelfImproveGapsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfImproveGapsResponseCopyWith<$Res> {
+  factory $SelfImproveGapsResponseCopyWith(SelfImproveGapsResponse value,
+          $Res Function(SelfImproveGapsResponse) then) =
+      _$SelfImproveGapsResponseCopyWithImpl<$Res, SelfImproveGapsResponse>;
+  @useResult
+  $Res call({List<SelfImproveGap> gaps});
+}
+
+/// @nodoc
+class _$SelfImproveGapsResponseCopyWithImpl<$Res,
+        $Val extends SelfImproveGapsResponse>
+    implements $SelfImproveGapsResponseCopyWith<$Res> {
+  _$SelfImproveGapsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? gaps = null,
+  }) {
+    return _then(_value.copyWith(
+      gaps: null == gaps
+          ? _value.gaps
+          : gaps // ignore: cast_nullable_to_non_nullable
+              as List<SelfImproveGap>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfImproveGapsResponseImplCopyWith<$Res>
+    implements $SelfImproveGapsResponseCopyWith<$Res> {
+  factory _$$SelfImproveGapsResponseImplCopyWith(
+          _$SelfImproveGapsResponseImpl value,
+          $Res Function(_$SelfImproveGapsResponseImpl) then) =
+      __$$SelfImproveGapsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<SelfImproveGap> gaps});
+}
+
+/// @nodoc
+class __$$SelfImproveGapsResponseImplCopyWithImpl<$Res>
+    extends _$SelfImproveGapsResponseCopyWithImpl<$Res,
+        _$SelfImproveGapsResponseImpl>
+    implements _$$SelfImproveGapsResponseImplCopyWith<$Res> {
+  __$$SelfImproveGapsResponseImplCopyWithImpl(
+      _$SelfImproveGapsResponseImpl _value,
+      $Res Function(_$SelfImproveGapsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? gaps = null,
+  }) {
+    return _then(_$SelfImproveGapsResponseImpl(
+      gaps: null == gaps
+          ? _value._gaps
+          : gaps // ignore: cast_nullable_to_non_nullable
+              as List<SelfImproveGap>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfImproveGapsResponseImpl implements _SelfImproveGapsResponse {
+  const _$SelfImproveGapsResponseImpl(
+      {required final List<SelfImproveGap> gaps})
+      : _gaps = gaps;
+
+  factory _$SelfImproveGapsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfImproveGapsResponseImplFromJson(json);
+
+  final List<SelfImproveGap> _gaps;
+  @override
+  List<SelfImproveGap> get gaps {
+    if (_gaps is EqualUnmodifiableListView) return _gaps;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_gaps);
+  }
+
+  @override
+  String toString() {
+    return 'SelfImproveGapsResponse(gaps: $gaps)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfImproveGapsResponseImpl &&
+            const DeepCollectionEquality().equals(other._gaps, _gaps));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_gaps));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfImproveGapsResponseImplCopyWith<_$SelfImproveGapsResponseImpl>
+      get copyWith => __$$SelfImproveGapsResponseImplCopyWithImpl<
+          _$SelfImproveGapsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfImproveGapsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfImproveGapsResponse implements SelfImproveGapsResponse {
+  const factory _SelfImproveGapsResponse(
+          {required final List<SelfImproveGap> gaps}) =
+      _$SelfImproveGapsResponseImpl;
+
+  factory _SelfImproveGapsResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfImproveGapsResponseImpl.fromJson;
+
+  @override
+  List<SelfImproveGap> get gaps;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfImproveGapsResponseImplCopyWith<_$SelfImproveGapsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SelfImproveProposeResponse _$SelfImproveProposeResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SelfImproveProposeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfImproveProposeResponse {
+  String get proposalId => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError; // "skill" or "tool"
+  String get description => throw _privateConstructorUsedError;
+  String? get codeDraft => throw _privateConstructorUsedError;
+  String? get estimatedImpact => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfImproveProposeResponseCopyWith<SelfImproveProposeResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfImproveProposeResponseCopyWith<$Res> {
+  factory $SelfImproveProposeResponseCopyWith(SelfImproveProposeResponse value,
+          $Res Function(SelfImproveProposeResponse) then) =
+      _$SelfImproveProposeResponseCopyWithImpl<$Res,
+          SelfImproveProposeResponse>;
+  @useResult
+  $Res call(
+      {String proposalId,
+      String type,
+      String description,
+      String? codeDraft,
+      String? estimatedImpact});
+}
+
+/// @nodoc
+class _$SelfImproveProposeResponseCopyWithImpl<$Res,
+        $Val extends SelfImproveProposeResponse>
+    implements $SelfImproveProposeResponseCopyWith<$Res> {
+  _$SelfImproveProposeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proposalId = null,
+    Object? type = null,
+    Object? description = null,
+    Object? codeDraft = freezed,
+    Object? estimatedImpact = freezed,
+  }) {
+    return _then(_value.copyWith(
+      proposalId: null == proposalId
+          ? _value.proposalId
+          : proposalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      codeDraft: freezed == codeDraft
+          ? _value.codeDraft
+          : codeDraft // ignore: cast_nullable_to_non_nullable
+              as String?,
+      estimatedImpact: freezed == estimatedImpact
+          ? _value.estimatedImpact
+          : estimatedImpact // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfImproveProposeResponseImplCopyWith<$Res>
+    implements $SelfImproveProposeResponseCopyWith<$Res> {
+  factory _$$SelfImproveProposeResponseImplCopyWith(
+          _$SelfImproveProposeResponseImpl value,
+          $Res Function(_$SelfImproveProposeResponseImpl) then) =
+      __$$SelfImproveProposeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String proposalId,
+      String type,
+      String description,
+      String? codeDraft,
+      String? estimatedImpact});
+}
+
+/// @nodoc
+class __$$SelfImproveProposeResponseImplCopyWithImpl<$Res>
+    extends _$SelfImproveProposeResponseCopyWithImpl<$Res,
+        _$SelfImproveProposeResponseImpl>
+    implements _$$SelfImproveProposeResponseImplCopyWith<$Res> {
+  __$$SelfImproveProposeResponseImplCopyWithImpl(
+      _$SelfImproveProposeResponseImpl _value,
+      $Res Function(_$SelfImproveProposeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proposalId = null,
+    Object? type = null,
+    Object? description = null,
+    Object? codeDraft = freezed,
+    Object? estimatedImpact = freezed,
+  }) {
+    return _then(_$SelfImproveProposeResponseImpl(
+      proposalId: null == proposalId
+          ? _value.proposalId
+          : proposalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      codeDraft: freezed == codeDraft
+          ? _value.codeDraft
+          : codeDraft // ignore: cast_nullable_to_non_nullable
+              as String?,
+      estimatedImpact: freezed == estimatedImpact
+          ? _value.estimatedImpact
+          : estimatedImpact // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfImproveProposeResponseImpl implements _SelfImproveProposeResponse {
+  const _$SelfImproveProposeResponseImpl(
+      {required this.proposalId,
+      required this.type,
+      required this.description,
+      this.codeDraft,
+      this.estimatedImpact});
+
+  factory _$SelfImproveProposeResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SelfImproveProposeResponseImplFromJson(json);
+
+  @override
+  final String proposalId;
+  @override
+  final String type;
+// "skill" or "tool"
+  @override
+  final String description;
+  @override
+  final String? codeDraft;
+  @override
+  final String? estimatedImpact;
+
+  @override
+  String toString() {
+    return 'SelfImproveProposeResponse(proposalId: $proposalId, type: $type, description: $description, codeDraft: $codeDraft, estimatedImpact: $estimatedImpact)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfImproveProposeResponseImpl &&
+            (identical(other.proposalId, proposalId) ||
+                other.proposalId == proposalId) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.codeDraft, codeDraft) ||
+                other.codeDraft == codeDraft) &&
+            (identical(other.estimatedImpact, estimatedImpact) ||
+                other.estimatedImpact == estimatedImpact));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, proposalId, type, description, codeDraft, estimatedImpact);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfImproveProposeResponseImplCopyWith<_$SelfImproveProposeResponseImpl>
+      get copyWith => __$$SelfImproveProposeResponseImplCopyWithImpl<
+          _$SelfImproveProposeResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfImproveProposeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfImproveProposeResponse
+    implements SelfImproveProposeResponse {
+  const factory _SelfImproveProposeResponse(
+      {required final String proposalId,
+      required final String type,
+      required final String description,
+      final String? codeDraft,
+      final String? estimatedImpact}) = _$SelfImproveProposeResponseImpl;
+
+  factory _SelfImproveProposeResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfImproveProposeResponseImpl.fromJson;
+
+  @override
+  String get proposalId;
+  @override
+  String get type;
+  @override // "skill" or "tool"
+  String get description;
+  @override
+  String? get codeDraft;
+  @override
+  String? get estimatedImpact;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfImproveProposeResponseImplCopyWith<_$SelfImproveProposeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SelfImproveProposalsResponse _$SelfImproveProposalsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SelfImproveProposalsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfImproveProposalsResponse {
+  List<SelfImproveProposal> get proposals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfImproveProposalsResponseCopyWith<SelfImproveProposalsResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfImproveProposalsResponseCopyWith<$Res> {
+  factory $SelfImproveProposalsResponseCopyWith(
+          SelfImproveProposalsResponse value,
+          $Res Function(SelfImproveProposalsResponse) then) =
+      _$SelfImproveProposalsResponseCopyWithImpl<$Res,
+          SelfImproveProposalsResponse>;
+  @useResult
+  $Res call({List<SelfImproveProposal> proposals});
+}
+
+/// @nodoc
+class _$SelfImproveProposalsResponseCopyWithImpl<$Res,
+        $Val extends SelfImproveProposalsResponse>
+    implements $SelfImproveProposalsResponseCopyWith<$Res> {
+  _$SelfImproveProposalsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proposals = null,
+  }) {
+    return _then(_value.copyWith(
+      proposals: null == proposals
+          ? _value.proposals
+          : proposals // ignore: cast_nullable_to_non_nullable
+              as List<SelfImproveProposal>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfImproveProposalsResponseImplCopyWith<$Res>
+    implements $SelfImproveProposalsResponseCopyWith<$Res> {
+  factory _$$SelfImproveProposalsResponseImplCopyWith(
+          _$SelfImproveProposalsResponseImpl value,
+          $Res Function(_$SelfImproveProposalsResponseImpl) then) =
+      __$$SelfImproveProposalsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<SelfImproveProposal> proposals});
+}
+
+/// @nodoc
+class __$$SelfImproveProposalsResponseImplCopyWithImpl<$Res>
+    extends _$SelfImproveProposalsResponseCopyWithImpl<$Res,
+        _$SelfImproveProposalsResponseImpl>
+    implements _$$SelfImproveProposalsResponseImplCopyWith<$Res> {
+  __$$SelfImproveProposalsResponseImplCopyWithImpl(
+      _$SelfImproveProposalsResponseImpl _value,
+      $Res Function(_$SelfImproveProposalsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proposals = null,
+  }) {
+    return _then(_$SelfImproveProposalsResponseImpl(
+      proposals: null == proposals
+          ? _value._proposals
+          : proposals // ignore: cast_nullable_to_non_nullable
+              as List<SelfImproveProposal>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfImproveProposalsResponseImpl
+    implements _SelfImproveProposalsResponse {
+  const _$SelfImproveProposalsResponseImpl(
+      {required final List<SelfImproveProposal> proposals})
+      : _proposals = proposals;
+
+  factory _$SelfImproveProposalsResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SelfImproveProposalsResponseImplFromJson(json);
+
+  final List<SelfImproveProposal> _proposals;
+  @override
+  List<SelfImproveProposal> get proposals {
+    if (_proposals is EqualUnmodifiableListView) return _proposals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_proposals);
+  }
+
+  @override
+  String toString() {
+    return 'SelfImproveProposalsResponse(proposals: $proposals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfImproveProposalsResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._proposals, _proposals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_proposals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfImproveProposalsResponseImplCopyWith<
+          _$SelfImproveProposalsResponseImpl>
+      get copyWith => __$$SelfImproveProposalsResponseImplCopyWithImpl<
+          _$SelfImproveProposalsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfImproveProposalsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfImproveProposalsResponse
+    implements SelfImproveProposalsResponse {
+  const factory _SelfImproveProposalsResponse(
+          {required final List<SelfImproveProposal> proposals}) =
+      _$SelfImproveProposalsResponseImpl;
+
+  factory _SelfImproveProposalsResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfImproveProposalsResponseImpl.fromJson;
+
+  @override
+  List<SelfImproveProposal> get proposals;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfImproveProposalsResponseImplCopyWith<
+          _$SelfImproveProposalsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SelfImproveDecideResponse _$SelfImproveDecideResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SelfImproveDecideResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfImproveDecideResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfImproveDecideResponseCopyWith<SelfImproveDecideResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfImproveDecideResponseCopyWith<$Res> {
+  factory $SelfImproveDecideResponseCopyWith(SelfImproveDecideResponse value,
+          $Res Function(SelfImproveDecideResponse) then) =
+      _$SelfImproveDecideResponseCopyWithImpl<$Res, SelfImproveDecideResponse>;
+  @useResult
+  $Res call({bool success, String? message});
+}
+
+/// @nodoc
+class _$SelfImproveDecideResponseCopyWithImpl<$Res,
+        $Val extends SelfImproveDecideResponse>
+    implements $SelfImproveDecideResponseCopyWith<$Res> {
+  _$SelfImproveDecideResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? message = freezed,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfImproveDecideResponseImplCopyWith<$Res>
+    implements $SelfImproveDecideResponseCopyWith<$Res> {
+  factory _$$SelfImproveDecideResponseImplCopyWith(
+          _$SelfImproveDecideResponseImpl value,
+          $Res Function(_$SelfImproveDecideResponseImpl) then) =
+      __$$SelfImproveDecideResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, String? message});
+}
+
+/// @nodoc
+class __$$SelfImproveDecideResponseImplCopyWithImpl<$Res>
+    extends _$SelfImproveDecideResponseCopyWithImpl<$Res,
+        _$SelfImproveDecideResponseImpl>
+    implements _$$SelfImproveDecideResponseImplCopyWith<$Res> {
+  __$$SelfImproveDecideResponseImplCopyWithImpl(
+      _$SelfImproveDecideResponseImpl _value,
+      $Res Function(_$SelfImproveDecideResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? message = freezed,
+  }) {
+    return _then(_$SelfImproveDecideResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfImproveDecideResponseImpl implements _SelfImproveDecideResponse {
+  const _$SelfImproveDecideResponseImpl({required this.success, this.message});
+
+  factory _$SelfImproveDecideResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfImproveDecideResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String? message;
+
+  @override
+  String toString() {
+    return 'SelfImproveDecideResponse(success: $success, message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfImproveDecideResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, message);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfImproveDecideResponseImplCopyWith<_$SelfImproveDecideResponseImpl>
+      get copyWith => __$$SelfImproveDecideResponseImplCopyWithImpl<
+          _$SelfImproveDecideResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfImproveDecideResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfImproveDecideResponse implements SelfImproveDecideResponse {
+  const factory _SelfImproveDecideResponse(
+      {required final bool success,
+      final String? message}) = _$SelfImproveDecideResponseImpl;
+
+  factory _SelfImproveDecideResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfImproveDecideResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String? get message;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfImproveDecideResponseImplCopyWith<_$SelfImproveDecideResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SelfImproveExecuteResponse _$SelfImproveExecuteResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SelfImproveExecuteResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfImproveExecuteResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+  String? get result => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfImproveExecuteResponseCopyWith<SelfImproveExecuteResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfImproveExecuteResponseCopyWith<$Res> {
+  factory $SelfImproveExecuteResponseCopyWith(SelfImproveExecuteResponse value,
+          $Res Function(SelfImproveExecuteResponse) then) =
+      _$SelfImproveExecuteResponseCopyWithImpl<$Res,
+          SelfImproveExecuteResponse>;
+  @useResult
+  $Res call({bool success, String? message, String? result});
+}
+
+/// @nodoc
+class _$SelfImproveExecuteResponseCopyWithImpl<$Res,
+        $Val extends SelfImproveExecuteResponse>
+    implements $SelfImproveExecuteResponseCopyWith<$Res> {
+  _$SelfImproveExecuteResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? message = freezed,
+    Object? result = freezed,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfImproveExecuteResponseImplCopyWith<$Res>
+    implements $SelfImproveExecuteResponseCopyWith<$Res> {
+  factory _$$SelfImproveExecuteResponseImplCopyWith(
+          _$SelfImproveExecuteResponseImpl value,
+          $Res Function(_$SelfImproveExecuteResponseImpl) then) =
+      __$$SelfImproveExecuteResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, String? message, String? result});
+}
+
+/// @nodoc
+class __$$SelfImproveExecuteResponseImplCopyWithImpl<$Res>
+    extends _$SelfImproveExecuteResponseCopyWithImpl<$Res,
+        _$SelfImproveExecuteResponseImpl>
+    implements _$$SelfImproveExecuteResponseImplCopyWith<$Res> {
+  __$$SelfImproveExecuteResponseImplCopyWithImpl(
+      _$SelfImproveExecuteResponseImpl _value,
+      $Res Function(_$SelfImproveExecuteResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? message = freezed,
+    Object? result = freezed,
+  }) {
+    return _then(_$SelfImproveExecuteResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfImproveExecuteResponseImpl implements _SelfImproveExecuteResponse {
+  const _$SelfImproveExecuteResponseImpl(
+      {required this.success, this.message, this.result});
+
+  factory _$SelfImproveExecuteResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SelfImproveExecuteResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String? message;
+  @override
+  final String? result;
+
+  @override
+  String toString() {
+    return 'SelfImproveExecuteResponse(success: $success, message: $message, result: $result)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfImproveExecuteResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.result, result) || other.result == result));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, message, result);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfImproveExecuteResponseImplCopyWith<_$SelfImproveExecuteResponseImpl>
+      get copyWith => __$$SelfImproveExecuteResponseImplCopyWithImpl<
+          _$SelfImproveExecuteResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfImproveExecuteResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfImproveExecuteResponse
+    implements SelfImproveExecuteResponse {
+  const factory _SelfImproveExecuteResponse(
+      {required final bool success,
+      final String? message,
+      final String? result}) = _$SelfImproveExecuteResponseImpl;
+
+  factory _SelfImproveExecuteResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfImproveExecuteResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String? get message;
+  @override
+  String? get result;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfImproveExecuteResponseImplCopyWith<_$SelfImproveExecuteResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 WorkingMemoryAddResponse _$WorkingMemoryAddResponseFromJson(
     Map<String, dynamic> json) {
   return _WorkingMemoryAddResponse.fromJson(json);

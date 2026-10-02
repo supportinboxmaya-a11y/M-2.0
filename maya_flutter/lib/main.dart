@@ -1227,6 +1227,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'knowledge_engine': screen = const _KnowledgeEngineScreen(); break;
       case 'semantic_index': screen = const _SemanticIndexScreen(); break;
       case 'auto_resume': screen = const _AutoResumeScreen(); break;
+      case 'self_improve': screen = const _SelfImproveScreen(); break;
       case 'skill_generalization': screen = const _SkillGeneralizationScreen(); break;
       case 'mcp_client': screen = const _McpClientScreen(); break;
       case 'self_model': screen = const _SelfModelScreen(); break;
@@ -2565,6 +2566,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _AutoResumeScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.auto_fix_high_rounded,
+                  label: 'Self-Improvement',
+                  subtitle: 'Gap analysis, skill/tool proposals, approval gates',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _SelfImproveScreen(),
                       ),
                     );
                   },
@@ -19971,6 +19986,22 @@ final selfAssessProvider = FutureProvider.family<SelfAssessResponse, String>((re
   return apiService.assessSelf(goal: goal);
 });
 
+// Self-Improvement Providers (Phase 42)
+final selfImproveStatusProvider = FutureProvider<SelfImproveStatusResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSelfImproveStatus();
+});
+
+final selfImproveGapsProvider = FutureProvider<SelfImproveGapsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSelfImproveGaps();
+});
+
+final selfImproveProposalsProvider = FutureProvider.family<SelfImproveProposalsResponse, String?>((ref, status) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.listSelfImproveProposals(status: status);
+});
+
 // Business Analysis Providers (Phase 20)
 final businessMissionsProvider = FutureProvider<MissionListResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
@@ -27490,6 +27521,825 @@ class _ConfigItem extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(description, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+        ],
+      ),
+    );
+  }
+}
+
+// Self-Improvement Screen (Phase 42)
+class _SelfImproveScreen extends ConsumerStatefulWidget {
+  const _SelfImproveScreen();
+
+  @override
+  ConsumerState<_SelfImproveScreen> createState() => _SelfImproveScreenState();
+}
+
+class _SelfImproveScreenState extends ConsumerState<_SelfImproveScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (mounted) {
+        ref.invalidate(selfImproveStatusProvider);
+        ref.invalidate(selfImproveGapsProvider);
+        ref.invalidate(selfImproveProposalsProvider(null));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Self-Improvement', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(selfImproveStatusProvider);
+                ref.invalidate(selfImproveGapsProvider);
+                ref.invalidate(selfImproveProposalsProvider(null));
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Status'),
+              Tab(icon: Icon(Icons.psychology_rounded), text: 'Gaps'),
+              Tab(icon: Icon(Icons.lightbulb_rounded), text: 'Proposals'),
+              Tab(icon: Icon(Icons.settings_rounded), text: 'Config'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _SelfImproveStatusTab(),
+            _SelfImproveGapsTab(),
+            _SelfImproveProposalsTab(),
+            _SelfImproveConfigTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SelfImproveStatusTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(selfImproveStatusProvider);
+
+    return statusAsync.when(
+      data: (status) => !status.enabled
+          ? _emptyState(
+              'Self-Improvement Disabled',
+              'Enable SELF_IMPROVE_ENABLED=true in .env to activate',
+              Icons.auto_fix_high_rounded,
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Self-Improvement Status', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Maya\'s autonomous self-improvement engine. Analyzes performance gaps and proposes improvements.',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 24),
+                  // Stats
+                  Row(
+                    children: [
+                      Expanded(child: _ImproveStatCard(label: 'Total Proposals', value: status.totalProposals.toString(), color: MayaTheme.neonCyan, icon: Icons.lightbulb_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _ImproveStatCard(label: 'Pending', value: status.pendingProposals.toString(), color: MayaTheme.neonOrange, icon: Icons.pending_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _ImproveStatCard(label: 'Approved', value: status.approvedProposals.toString(), color: MayaTheme.neonEmerald, icon: Icons.check_circle_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _ImproveStatCard(label: 'Executed', value: status.executedProposals.toString(), color: MayaTheme.neonViolet, icon: Icons.play_circle_rounded)),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // Rejected count
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: MayaTheme.glassCard(),
+                    child: Row(
+                      children: [
+                        Icon(Icons.cancel_rounded, color: MayaTheme.error, size: 28),
+                        const SizedBox(width: 12),
+                        Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Rejected', style: MayaTheme.bodyMedium),
+                            Text(status.rejectedProposals.toString(), style: MayaTheme.headlineMedium.copyWith(color: MayaTheme.error)),
+                          ],
+                        )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading status', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ImproveStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _ImproveStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _SelfImproveGapsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gapsAsync = ref.watch(selfImproveGapsProvider);
+
+    return gapsAsync.when(
+      data: (data) => data.gaps.isEmpty
+          ? _emptyState(
+              'No Gaps Found',
+              'Maya has no significant performance gaps or self-improvement is disabled',
+              Icons.psychology_rounded,
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Performance Gaps', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Task types where Maya struggles. Priority = attempts × failure-rate, +1 if no skill covers the type.',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.gaps.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final gap = data.gaps[index];
+                      return _GapCard(gap: gap);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading gaps', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _GapCard extends StatelessWidget {
+  final SelfImproveGap gap;
+
+  const _GapCard({required this.gap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MayaTheme.error.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.warning_rounded, color: MayaTheme.error, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(gap.taskType, style: MayaTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text('${gap.attempts} attempts • ${(gap.successRate * 100).toStringAsFixed(1)}% success', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: MayaTheme.error.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: MayaTheme.error),
+                ),
+                child: Text(
+                  'PRIORITY: ${gap.priority.toStringAsFixed(1)}',
+                  style: MayaTheme.labelMedium.copyWith(color: MayaTheme.error),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _GapDetailChip(label: 'Skills Covering', value: gap.skillsCovering.toString(), color: gap.skillsCovering > 0 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+              _GapDetailChip(label: 'Suggestion', value: gap.suggestion, color: MayaTheme.neonViolet),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GapDetailChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _GapDetailChip({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color),
+      ),
+      child: Text('$label: $value', style: MayaTheme.labelSmall.copyWith(color: color)),
+    );
+  }
+}
+
+class _SelfImproveProposalsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final proposalsAsync = ref.watch(selfImproveProposalsProvider(null));
+
+    return proposalsAsync.when(
+      data: (data) => data.proposals.isEmpty
+          ? _emptyState(
+              'No Proposals',
+              'Generate proposals from the Gaps tab or wait for automatic gap analysis',
+              Icons.lightbulb_rounded,
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Improvement Proposals', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Review and approve/reject proposals. Execution only happens after approval.',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.proposals.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final proposal = data.proposals[index];
+                      return _ProposalCard(proposal: proposal);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading proposals', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ProposalCard extends ConsumerWidget {
+  final SelfImproveProposal proposal;
+
+  const _ProposalCard({required this.proposal});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isApproved = proposal.status == 'approved';
+    final isRejected = proposal.status == 'rejected';
+    final isExecuted = proposal.status == 'executed';
+    final isPending = proposal.status == 'pending';
+
+    Color statusColor;
+    if (isApproved) statusColor = MayaTheme.neonEmerald;
+    else if (isRejected) statusColor = MayaTheme.error;
+    else if (isExecuted) statusColor = MayaTheme.neonViolet;
+    else statusColor = MayaTheme.neonOrange;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  proposal.type == 'skill' ? Icons.psychology_rounded : Icons.build_rounded,
+                  color: statusColor,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(proposal.type.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: statusColor)),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: statusColor),
+                          ),
+                          child: Text(proposal.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: statusColor)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(proposal.description, style: MayaTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text('ID: ${proposal.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38, fontFamily: 'monospace')),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (proposal.gap != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.slate800,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Gap:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Text(proposal.gap!, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                ],
+              ),
+            ),
+          ],
+          if (proposal.goalHint != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.slate800,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Goal Hint:', style: MayaTheme.labelMedium),
+                  const SizedBox(height: 4),
+                  Text(proposal.goalHint!, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+                ],
+              ),
+            ),
+          ],
+          if (proposal.codeDraft != null && proposal.codeDraft!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Text('Code Draft:', style: MayaTheme.labelMedium),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.slate800,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: SelectableText(
+                proposal.codeDraft!,
+                style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'),
+              ),
+            ),
+          ],
+          if (proposal.estimatedImpact != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.neonViolet.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: MayaTheme.neonViolet),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.trending_up_rounded, color: MayaTheme.neonViolet, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(proposal.estimatedImpact!, style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonViolet))),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          // Actions
+          if (isPending) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final apiService = ref.read(apiServiceProvider);
+                      try {
+                        final result = await apiService.decideSelfImproveProposal(
+                          proposalId: proposal.id,
+                          approved: true,
+                        );
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(result.message ?? 'Approved'), backgroundColor: MayaTheme.neonEmerald),
+                          );
+                          ref.invalidate(selfImproveProposalsProvider(null));
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.check_circle_rounded),
+                    label: const Text('Approve'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonEmerald,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final apiService = ref.read(apiServiceProvider);
+                      try {
+                        final result = await apiService.decideSelfImproveProposal(
+                          proposalId: proposal.id,
+                          approved: false,
+                        );
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(result.message ?? 'Rejected'), backgroundColor: MayaTheme.error),
+                          );
+                          ref.invalidate(selfImproveProposalsProvider(null));
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.cancel_rounded),
+                    label: const Text('Reject'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.error,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else if (isApproved) ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final apiService = ref.read(apiServiceProvider);
+                  try {
+                    final result = await apiService.executeSelfImproveProposal(
+                      proposalId: proposal.id,
+                    );
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(result.message ?? 'Executed'), backgroundColor: MayaTheme.neonEmerald),
+                      );
+                      ref.invalidate(selfImproveProposalsProvider(null));
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.play_arrow_rounded),
+                label: const Text('Execute'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonViolet,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: statusColor),
+              ),
+              child: Row(
+                children: [
+                  Icon(statusColor == MayaTheme.error ? Icons.cancel_rounded : Icons.check_circle_rounded, color: statusColor),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(
+                    isExecuted ? 'Proposal executed successfully' : 'Proposal was rejected',
+                    style: MayaTheme.bodyMedium.copyWith(color: statusColor),
+                  )),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SelfImproveConfigTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Self-Improvement Configuration', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Configure the self-improvement engine. Requires SELF_IMPROVE_ENABLED=true in .env.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Environment Variables', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                _ImproveConfigItem(
+                  name: 'SELF_IMPROVE_ENABLED',
+                  description: 'Master switch for the self-improvement engine. When true, engine runs on each cycle and analyzes gaps.',
+                  defaultValue: 'false',
+                  currentValue: const String.fromEnvironment('SELF_IMPROVE_ENABLED', defaultValue: 'false'),
+                ),
+                const SizedBox(height: 16),
+                _ImproveConfigItem(
+                  name: 'MAYA_UNIFIED_LOOP',
+                  description: 'Must be true for self-improvement to work through the unified cognitive loop.',
+                  defaultValue: 'false',
+                  currentValue: const String.fromEnvironment('MAYA_UNIFIED_LOOP', defaultValue: 'false'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('How It Works', style: MayaTheme.titleMedium),
+                const SizedBox(height: 12),
+                _HowItWorksStep(
+                  step: '1',
+                  title: 'Gap Analysis',
+                  description: 'Engine ranks task types from SelfModel.weaknesses() by priority = attempts × failure-rate. +1 if no skill covers the type.',
+                ),
+                const SizedBox(height: 12),
+                _HowItWorksStep(
+                  step: '2',
+                  title: 'Propose',
+                  description: 'Top gap gets a proposal (skill distillation or tool creation). Tool proposals get LLM code draft at propose time. Nothing executes yet.',
+                ),
+                const SizedBox(height: 12),
+                _HowItWorksStep(
+                  step: '3',
+                  title: 'Approve/Reject',
+                  description: 'Owner reviews proposals via /decide endpoint. Only approved proposals can execute.',
+                ),
+                const SizedBox(height: 12),
+                _HowItWorksStep(
+                  step: '4',
+                  title: 'Execute',
+                  description: 'Skill → distills buffered episodes into Skill. Tool → ToolCreator AST scan + high-risk approval gate.',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImproveConfigItem extends StatelessWidget {
+  final String name;
+  final String description;
+  final String defaultValue;
+  final String currentValue;
+
+  const _ImproveConfigItem({
+    required this.name,
+    required this.description,
+    required this.defaultValue,
+    required this.currentValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isEnabled = currentValue == 'true';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(name, style: MayaTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: MayaTheme.neonCyan)),
+              const SizedBox(width: 8),
+              Text('Default: $defaultValue', style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isEnabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  isEnabled ? 'ENABLED' : 'DISABLED',
+                  style: MayaTheme.labelSmall.copyWith(color: isEnabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(description, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+        ],
+      ),
+    );
+  }
+}
+
+class _HowItWorksStep extends StatelessWidget {
+  final String step;
+  final String title;
+  final String description;
+
+  const _HowItWorksStep({
+    required this.step,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: MayaTheme.neonCyan),
+            ),
+            child: Center(child: Text(step, style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.bold))),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: MayaTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text(description, style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+              ],
+            ),
+          ),
         ],
       ),
     );

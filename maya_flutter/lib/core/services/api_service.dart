@@ -2115,6 +2115,59 @@ class ApiService {
     return SelfTraitResponse.fromJson(response.data);
   }
 
+  // Self-Improvement (Phase 42)
+  Future<SelfImproveStatusResponse> getSelfImproveStatus() async {
+    final response = await _dio.get(AppConfig.selfImproveStatus);
+    return SelfImproveStatusResponse.fromJson(response.data);
+  }
+
+  Future<SelfImproveGapsResponse> getSelfImproveGaps() async {
+    final response = await _dio.get(AppConfig.selfImproveGaps);
+    return SelfImproveGapsResponse.fromJson(response.data);
+  }
+
+  Future<SelfImproveProposeResponse> proposeSelfImprovement({
+    String? gap,
+    String? goalHint,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.selfImprovePropose,
+      data: {
+        if (gap != null) 'gap': gap,
+        if (goalHint != null) 'goal_hint': goalHint,
+      },
+    );
+    return SelfImproveProposeResponse.fromJson(response.data);
+  }
+
+  Future<SelfImproveProposalsResponse> listSelfImproveProposals({String? status}) async {
+    final response = await _dio.get(
+      AppConfig.selfImproveProposals,
+      queryParameters: {
+        if (status != null) 'status': status,
+      },
+    );
+    return SelfImproveProposalsResponse.fromJson(response.data);
+  }
+
+  Future<SelfImproveDecideResponse> decideSelfImproveProposal({
+    required String proposalId,
+    required bool approved,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.selfImproveDecide}$proposalId/decide',
+      data: {'approved': approved},
+    );
+    return SelfImproveDecideResponse.fromJson(response.data);
+  }
+
+  Future<SelfImproveExecuteResponse> executeSelfImproveProposal({
+    required String proposalId,
+  }) async {
+    final response = await _dio.post('${AppConfig.selfImproveExecute}$proposalId/execute');
+    return SelfImproveExecuteResponse.fromJson(response.data);
+  }
+
   // Working Memory
   Future<WorkingMemoryAddResponse> addWorkingMemory({
     required String content,
@@ -3855,6 +3908,137 @@ class SelfTraitResponse with _$SelfTraitResponse {
 
   factory SelfTraitResponse.fromJson(Map<String, dynamic> json) =>
       _$SelfTraitResponseFromJson(json);
+}
+
+// Self-Improvement Models (Phase 42)
+@freezed
+class SelfImproveStatusResponse with _$SelfImproveStatusResponse {
+  const factory SelfImproveStatusResponse({
+    required bool enabled,
+    required int totalProposals,
+    required int pendingProposals,
+    required int approvedProposals,
+    required int executedProposals,
+    required int rejectedProposals,
+  }) = _SelfImproveStatusResponse;
+
+  factory SelfImproveStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveStatusResponseFromJson(json);
+}
+
+@freezed
+class SelfImproveGapsResponse with _$SelfImproveGapsResponse {
+  const factory SelfImproveGapsResponse({
+    required List<SelfImproveGap> gaps,
+  }) = _SelfImproveGapsResponse;
+
+  factory SelfImproveGapsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveGapsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class SelfImproveGap {
+  final String taskType;
+  final int attempts;
+  final double successRate;
+  final int skillsCovering;
+  final double priority;
+  final String suggestion;
+
+  const SelfImproveGap({
+    required this.taskType,
+    required this.attempts,
+    required this.successRate,
+    required this.skillsCovering,
+    required this.priority,
+    required this.suggestion,
+  });
+
+  factory SelfImproveGap.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveGapFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SelfImproveGapToJson(this);
+}
+
+@freezed
+class SelfImproveProposeResponse with _$SelfImproveProposeResponse {
+  const factory SelfImproveProposeResponse({
+    required String proposalId,
+    required String type, // "skill" or "tool"
+    required String description,
+    String? codeDraft,
+    String? estimatedImpact,
+  }) = _SelfImproveProposeResponse;
+
+  factory SelfImproveProposeResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveProposeResponseFromJson(json);
+}
+
+@freezed
+class SelfImproveProposalsResponse with _$SelfImproveProposalsResponse {
+  const factory SelfImproveProposalsResponse({
+    required List<SelfImproveProposal> proposals,
+  }) = _SelfImproveProposalsResponse;
+
+  factory SelfImproveProposalsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveProposalsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class SelfImproveProposal {
+  final String id;
+  final String type;
+  final String description;
+  final String status; // "pending", "approved", "rejected", "executed"
+  final String? gap;
+  final String? goalHint;
+  final String? codeDraft;
+  final String? estimatedImpact;
+  final String createdAt;
+  final String? decidedAt;
+  final String? executedAt;
+
+  const SelfImproveProposal({
+    required this.id,
+    required this.type,
+    required this.description,
+    required this.status,
+    this.gap,
+    this.goalHint,
+    this.codeDraft,
+    this.estimatedImpact,
+    required this.createdAt,
+    this.decidedAt,
+    this.executedAt,
+  });
+
+  factory SelfImproveProposal.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveProposalFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SelfImproveProposalToJson(this);
+}
+
+@freezed
+class SelfImproveDecideResponse with _$SelfImproveDecideResponse {
+  const factory SelfImproveDecideResponse({
+    required bool success,
+    String? message,
+  }) = _SelfImproveDecideResponse;
+
+  factory SelfImproveDecideResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveDecideResponseFromJson(json);
+}
+
+@freezed
+class SelfImproveExecuteResponse with _$SelfImproveExecuteResponse {
+  const factory SelfImproveExecuteResponse({
+    required bool success,
+    String? message,
+    String? result,
+  }) = _SelfImproveExecuteResponse;
+
+  factory SelfImproveExecuteResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfImproveExecuteResponseFromJson(json);
 }
 
 @JsonSerializable()

@@ -297,6 +297,14 @@ class AppConfig {
   static const String workingMemoryV2Retrieve = '/working-memory/retrieve';
   static const String workingMemoryV2Decay = '/working-memory/decay';
 
+  // Self-Improvement (Phase 42)
+  static const String selfImproveStatus = '/api/v1/cognitive/self-improve/status';
+  static const String selfImproveGaps = '/api/v1/cognitive/self-improve/gaps';
+  static const String selfImprovePropose = '/api/v1/cognitive/self-improve/propose';
+  static const String selfImproveProposals = '/api/v1/cognitive/self-improve/proposals';
+  static const String selfImproveDecide = '/api/v1/cognitive/self-improve/proposals/';
+  static const String selfImproveExecute = '/api/v1/cognitive/self-improve/proposals/';
+
   // Browser & Sandbox
   static const String browserAction = '/browser/action';
   static const String sandboxExecute = '/sandbox/execute';

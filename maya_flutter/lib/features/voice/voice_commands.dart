@@ -172,6 +172,10 @@ class AppScreenMapping {
     'auto-resume': 'auto_resume',
     'resume incomplete': 'auto_resume',
     'resume incomplete goals': 'auto_resume',
+    'self improve': 'self_improve',
+    'self-improve': 'self_improve',
+    'self improvement': 'self_improve',
+    'improve myself': 'self_improve',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -212,6 +216,7 @@ class AppScreenMapping {
     'self_model': 'Self Model',
     'semantic_index': 'Semantic Index',
     'auto_resume': 'Auto-Resume',
+    'self_improve': 'Self-Improvement',
   };
 
   static String? resolveScreenRoute(String command) {

@@ -510,6 +510,93 @@ Map<String, dynamic> _$VectorSearchResultToJson(VectorSearchResult instance) {
   return val;
 }
 
+SelfImproveGap _$SelfImproveGapFromJson(Map json) => $checkedCreate(
+      'SelfImproveGap',
+      json,
+      ($checkedConvert) {
+        final val = SelfImproveGap(
+          taskType: $checkedConvert('task_type', (v) => v as String),
+          attempts: $checkedConvert('attempts', (v) => (v as num).toInt()),
+          successRate:
+              $checkedConvert('success_rate', (v) => (v as num).toDouble()),
+          skillsCovering:
+              $checkedConvert('skills_covering', (v) => (v as num).toInt()),
+          priority: $checkedConvert('priority', (v) => (v as num).toDouble()),
+          suggestion: $checkedConvert('suggestion', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'taskType': 'task_type',
+        'successRate': 'success_rate',
+        'skillsCovering': 'skills_covering'
+      },
+    );
+
+Map<String, dynamic> _$SelfImproveGapToJson(SelfImproveGap instance) =>
+    <String, dynamic>{
+      'task_type': instance.taskType,
+      'attempts': instance.attempts,
+      'success_rate': instance.successRate,
+      'skills_covering': instance.skillsCovering,
+      'priority': instance.priority,
+      'suggestion': instance.suggestion,
+    };
+
+SelfImproveProposal _$SelfImproveProposalFromJson(Map json) => $checkedCreate(
+      'SelfImproveProposal',
+      json,
+      ($checkedConvert) {
+        final val = SelfImproveProposal(
+          id: $checkedConvert('id', (v) => v as String),
+          type: $checkedConvert('type', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          gap: $checkedConvert('gap', (v) => v as String?),
+          goalHint: $checkedConvert('goal_hint', (v) => v as String?),
+          codeDraft: $checkedConvert('code_draft', (v) => v as String?),
+          estimatedImpact:
+              $checkedConvert('estimated_impact', (v) => v as String?),
+          createdAt: $checkedConvert('created_at', (v) => v as String),
+          decidedAt: $checkedConvert('decided_at', (v) => v as String?),
+          executedAt: $checkedConvert('executed_at', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'goalHint': 'goal_hint',
+        'codeDraft': 'code_draft',
+        'estimatedImpact': 'estimated_impact',
+        'createdAt': 'created_at',
+        'decidedAt': 'decided_at',
+        'executedAt': 'executed_at'
+      },
+    );
+
+Map<String, dynamic> _$SelfImproveProposalToJson(SelfImproveProposal instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'type': instance.type,
+    'description': instance.description,
+    'status': instance.status,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('gap', instance.gap);
+  writeNotNull('goal_hint', instance.goalHint);
+  writeNotNull('code_draft', instance.codeDraft);
+  writeNotNull('estimated_impact', instance.estimatedImpact);
+  val['created_at'] = instance.createdAt;
+  writeNotNull('decided_at', instance.decidedAt);
+  writeNotNull('executed_at', instance.executedAt);
+  return val;
+}
+
 Belief _$BeliefFromJson(Map json) => $checkedCreate(
       'Belief',
       json,
@@ -3483,6 +3570,199 @@ Map<String, dynamic> _$$SelfTraitResponseImplToJson(
     <String, dynamic>{
       'recorded': instance.recorded,
     };
+
+_$SelfImproveStatusResponseImpl _$$SelfImproveStatusResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$SelfImproveStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfImproveStatusResponseImpl(
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          totalProposals:
+              $checkedConvert('total_proposals', (v) => (v as num).toInt()),
+          pendingProposals:
+              $checkedConvert('pending_proposals', (v) => (v as num).toInt()),
+          approvedProposals:
+              $checkedConvert('approved_proposals', (v) => (v as num).toInt()),
+          executedProposals:
+              $checkedConvert('executed_proposals', (v) => (v as num).toInt()),
+          rejectedProposals:
+              $checkedConvert('rejected_proposals', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalProposals': 'total_proposals',
+        'pendingProposals': 'pending_proposals',
+        'approvedProposals': 'approved_proposals',
+        'executedProposals': 'executed_proposals',
+        'rejectedProposals': 'rejected_proposals'
+      },
+    );
+
+Map<String, dynamic> _$$SelfImproveStatusResponseImplToJson(
+        _$SelfImproveStatusResponseImpl instance) =>
+    <String, dynamic>{
+      'enabled': instance.enabled,
+      'total_proposals': instance.totalProposals,
+      'pending_proposals': instance.pendingProposals,
+      'approved_proposals': instance.approvedProposals,
+      'executed_proposals': instance.executedProposals,
+      'rejected_proposals': instance.rejectedProposals,
+    };
+
+_$SelfImproveGapsResponseImpl _$$SelfImproveGapsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$SelfImproveGapsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfImproveGapsResponseImpl(
+          gaps: $checkedConvert(
+              'gaps',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SelfImproveGap.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SelfImproveGapsResponseImplToJson(
+        _$SelfImproveGapsResponseImpl instance) =>
+    <String, dynamic>{
+      'gaps': instance.gaps,
+    };
+
+_$SelfImproveProposeResponseImpl _$$SelfImproveProposeResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$SelfImproveProposeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfImproveProposeResponseImpl(
+          proposalId: $checkedConvert('proposal_id', (v) => v as String),
+          type: $checkedConvert('type', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          codeDraft: $checkedConvert('code_draft', (v) => v as String?),
+          estimatedImpact:
+              $checkedConvert('estimated_impact', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'proposalId': 'proposal_id',
+        'codeDraft': 'code_draft',
+        'estimatedImpact': 'estimated_impact'
+      },
+    );
+
+Map<String, dynamic> _$$SelfImproveProposeResponseImplToJson(
+    _$SelfImproveProposeResponseImpl instance) {
+  final val = <String, dynamic>{
+    'proposal_id': instance.proposalId,
+    'type': instance.type,
+    'description': instance.description,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('code_draft', instance.codeDraft);
+  writeNotNull('estimated_impact', instance.estimatedImpact);
+  return val;
+}
+
+_$SelfImproveProposalsResponseImpl _$$SelfImproveProposalsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$SelfImproveProposalsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfImproveProposalsResponseImpl(
+          proposals: $checkedConvert(
+              'proposals',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SelfImproveProposal.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SelfImproveProposalsResponseImplToJson(
+        _$SelfImproveProposalsResponseImpl instance) =>
+    <String, dynamic>{
+      'proposals': instance.proposals,
+    };
+
+_$SelfImproveDecideResponseImpl _$$SelfImproveDecideResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$SelfImproveDecideResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfImproveDecideResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SelfImproveDecideResponseImplToJson(
+    _$SelfImproveDecideResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$SelfImproveExecuteResponseImpl _$$SelfImproveExecuteResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$SelfImproveExecuteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfImproveExecuteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+          result: $checkedConvert('result', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SelfImproveExecuteResponseImplToJson(
+    _$SelfImproveExecuteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  writeNotNull('result', instance.result);
+  return val;
+}
 
 _$WorkingMemoryAddResponseImpl _$$WorkingMemoryAddResponseImplFromJson(
         Map json) =>
