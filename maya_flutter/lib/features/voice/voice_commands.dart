@@ -145,6 +145,13 @@ class AppScreenMapping {
     'beliefs': 'knowledge_engine',
     'my beliefs': 'knowledge_engine',
     'knowledge stats': 'knowledge_engine',
+    'skill generalization': 'skill_generalization',
+    'skill': 'skill_generalization',
+    'skills': 'skill_generalization',
+    'skill search': 'skill_generalization',
+    'search skill': 'skill_generalization',
+    'compose skill': 'skill_generalization',
+    'skill compose': 'skill_generalization',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -180,6 +187,7 @@ class AppScreenMapping {
     'unified_loop': 'Unified Cognitive Loop',
     'persistent_goals': 'Persistent Goal Pursuit',
     'knowledge_engine': 'Knowledge Engine',
+    'skill_generalization': 'Skill Generalization',
   };
 
   static String? resolveScreenRoute(String command) {
