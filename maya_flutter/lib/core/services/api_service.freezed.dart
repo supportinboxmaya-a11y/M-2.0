@@ -11162,6 +11162,1919 @@ abstract class _UnifiedLoopControlResponse
       get copyWith => throw _privateConstructorUsedError;
 }
 
+GoalsListResponse _$GoalsListResponseFromJson(Map<String, dynamic> json) {
+  return _GoalsListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalsListResponse {
+  List<GoalSummary> get goals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalsListResponseCopyWith<GoalsListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalsListResponseCopyWith<$Res> {
+  factory $GoalsListResponseCopyWith(
+          GoalsListResponse value, $Res Function(GoalsListResponse) then) =
+      _$GoalsListResponseCopyWithImpl<$Res, GoalsListResponse>;
+  @useResult
+  $Res call({List<GoalSummary> goals});
+}
+
+/// @nodoc
+class _$GoalsListResponseCopyWithImpl<$Res, $Val extends GoalsListResponse>
+    implements $GoalsListResponseCopyWith<$Res> {
+  _$GoalsListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goals = null,
+  }) {
+    return _then(_value.copyWith(
+      goals: null == goals
+          ? _value.goals
+          : goals // ignore: cast_nullable_to_non_nullable
+              as List<GoalSummary>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalsListResponseImplCopyWith<$Res>
+    implements $GoalsListResponseCopyWith<$Res> {
+  factory _$$GoalsListResponseImplCopyWith(_$GoalsListResponseImpl value,
+          $Res Function(_$GoalsListResponseImpl) then) =
+      __$$GoalsListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<GoalSummary> goals});
+}
+
+/// @nodoc
+class __$$GoalsListResponseImplCopyWithImpl<$Res>
+    extends _$GoalsListResponseCopyWithImpl<$Res, _$GoalsListResponseImpl>
+    implements _$$GoalsListResponseImplCopyWith<$Res> {
+  __$$GoalsListResponseImplCopyWithImpl(_$GoalsListResponseImpl _value,
+      $Res Function(_$GoalsListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goals = null,
+  }) {
+    return _then(_$GoalsListResponseImpl(
+      goals: null == goals
+          ? _value._goals
+          : goals // ignore: cast_nullable_to_non_nullable
+              as List<GoalSummary>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalsListResponseImpl implements _GoalsListResponse {
+  const _$GoalsListResponseImpl({required final List<GoalSummary> goals})
+      : _goals = goals;
+
+  factory _$GoalsListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalsListResponseImplFromJson(json);
+
+  final List<GoalSummary> _goals;
+  @override
+  List<GoalSummary> get goals {
+    if (_goals is EqualUnmodifiableListView) return _goals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_goals);
+  }
+
+  @override
+  String toString() {
+    return 'GoalsListResponse(goals: $goals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalsListResponseImpl &&
+            const DeepCollectionEquality().equals(other._goals, _goals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_goals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalsListResponseImplCopyWith<_$GoalsListResponseImpl> get copyWith =>
+      __$$GoalsListResponseImplCopyWithImpl<_$GoalsListResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalsListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalsListResponse implements GoalsListResponse {
+  const factory _GoalsListResponse({required final List<GoalSummary> goals}) =
+      _$GoalsListResponseImpl;
+
+  factory _GoalsListResponse.fromJson(Map<String, dynamic> json) =
+      _$GoalsListResponseImpl.fromJson;
+
+  @override
+  List<GoalSummary> get goals;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalsListResponseImplCopyWith<_$GoalsListResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GoalSummary _$GoalSummaryFromJson(Map<String, dynamic> json) {
+  return _GoalSummary.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalSummary {
+  String get id => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get priority => throw _privateConstructorUsedError;
+  double get progress => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double get updatedAt => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalSummaryCopyWith<GoalSummary> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalSummaryCopyWith<$Res> {
+  factory $GoalSummaryCopyWith(
+          GoalSummary value, $Res Function(GoalSummary) then) =
+      _$GoalSummaryCopyWithImpl<$Res, GoalSummary>;
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class _$GoalSummaryCopyWithImpl<$Res, $Val extends GoalSummary>
+    implements $GoalSummaryCopyWith<$Res> {
+  _$GoalSummaryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalSummaryImplCopyWith<$Res>
+    implements $GoalSummaryCopyWith<$Res> {
+  factory _$$GoalSummaryImplCopyWith(
+          _$GoalSummaryImpl value, $Res Function(_$GoalSummaryImpl) then) =
+      __$$GoalSummaryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class __$$GoalSummaryImplCopyWithImpl<$Res>
+    extends _$GoalSummaryCopyWithImpl<$Res, _$GoalSummaryImpl>
+    implements _$$GoalSummaryImplCopyWith<$Res> {
+  __$$GoalSummaryImplCopyWithImpl(
+      _$GoalSummaryImpl _value, $Res Function(_$GoalSummaryImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_$GoalSummaryImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalSummaryImpl implements _GoalSummary {
+  const _$GoalSummaryImpl(
+      {required this.id,
+      required this.description,
+      required this.status,
+      required this.priority,
+      required this.progress,
+      required this.createdAt,
+      required this.updatedAt,
+      final Map<String, dynamic>? metadata})
+      : _metadata = metadata;
+
+  factory _$GoalSummaryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalSummaryImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String description;
+  @override
+  final String status;
+  @override
+  final double priority;
+  @override
+  final double progress;
+  @override
+  final double createdAt;
+  @override
+  final double updatedAt;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'GoalSummary(id: $id, description: $description, status: $status, priority: $priority, progress: $progress, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalSummaryImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      description,
+      status,
+      priority,
+      progress,
+      createdAt,
+      updatedAt,
+      const DeepCollectionEquality().hash(_metadata));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalSummaryImplCopyWith<_$GoalSummaryImpl> get copyWith =>
+      __$$GoalSummaryImplCopyWithImpl<_$GoalSummaryImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalSummaryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalSummary implements GoalSummary {
+  const factory _GoalSummary(
+      {required final String id,
+      required final String description,
+      required final String status,
+      required final double priority,
+      required final double progress,
+      required final double createdAt,
+      required final double updatedAt,
+      final Map<String, dynamic>? metadata}) = _$GoalSummaryImpl;
+
+  factory _GoalSummary.fromJson(Map<String, dynamic> json) =
+      _$GoalSummaryImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get description;
+  @override
+  String get status;
+  @override
+  double get priority;
+  @override
+  double get progress;
+  @override
+  double get createdAt;
+  @override
+  double get updatedAt;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalSummaryImplCopyWith<_$GoalSummaryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GoalDetailResponse _$GoalDetailResponseFromJson(Map<String, dynamic> json) {
+  return _GoalDetailResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalDetailResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get priority => throw _privateConstructorUsedError;
+  double get progress => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double get updatedAt => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+  String? get parentId => throw _privateConstructorUsedError;
+  String? get successCriteria => throw _privateConstructorUsedError;
+  List<String>? get constraints => throw _privateConstructorUsedError;
+  List<String>? get requiredCapabilities => throw _privateConstructorUsedError;
+  List<GoalSummary>? get subgoals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalDetailResponseCopyWith<GoalDetailResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalDetailResponseCopyWith<$Res> {
+  factory $GoalDetailResponseCopyWith(
+          GoalDetailResponse value, $Res Function(GoalDetailResponse) then) =
+      _$GoalDetailResponseCopyWithImpl<$Res, GoalDetailResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata,
+      String? parentId,
+      String? successCriteria,
+      List<String>? constraints,
+      List<String>? requiredCapabilities,
+      List<GoalSummary>? subgoals});
+}
+
+/// @nodoc
+class _$GoalDetailResponseCopyWithImpl<$Res, $Val extends GoalDetailResponse>
+    implements $GoalDetailResponseCopyWith<$Res> {
+  _$GoalDetailResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+    Object? parentId = freezed,
+    Object? successCriteria = freezed,
+    Object? constraints = freezed,
+    Object? requiredCapabilities = freezed,
+    Object? subgoals = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      parentId: freezed == parentId
+          ? _value.parentId
+          : parentId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      successCriteria: freezed == successCriteria
+          ? _value.successCriteria
+          : successCriteria // ignore: cast_nullable_to_non_nullable
+              as String?,
+      constraints: freezed == constraints
+          ? _value.constraints
+          : constraints // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      requiredCapabilities: freezed == requiredCapabilities
+          ? _value.requiredCapabilities
+          : requiredCapabilities // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      subgoals: freezed == subgoals
+          ? _value.subgoals
+          : subgoals // ignore: cast_nullable_to_non_nullable
+              as List<GoalSummary>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalDetailResponseImplCopyWith<$Res>
+    implements $GoalDetailResponseCopyWith<$Res> {
+  factory _$$GoalDetailResponseImplCopyWith(_$GoalDetailResponseImpl value,
+          $Res Function(_$GoalDetailResponseImpl) then) =
+      __$$GoalDetailResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata,
+      String? parentId,
+      String? successCriteria,
+      List<String>? constraints,
+      List<String>? requiredCapabilities,
+      List<GoalSummary>? subgoals});
+}
+
+/// @nodoc
+class __$$GoalDetailResponseImplCopyWithImpl<$Res>
+    extends _$GoalDetailResponseCopyWithImpl<$Res, _$GoalDetailResponseImpl>
+    implements _$$GoalDetailResponseImplCopyWith<$Res> {
+  __$$GoalDetailResponseImplCopyWithImpl(_$GoalDetailResponseImpl _value,
+      $Res Function(_$GoalDetailResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+    Object? parentId = freezed,
+    Object? successCriteria = freezed,
+    Object? constraints = freezed,
+    Object? requiredCapabilities = freezed,
+    Object? subgoals = freezed,
+  }) {
+    return _then(_$GoalDetailResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      parentId: freezed == parentId
+          ? _value.parentId
+          : parentId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      successCriteria: freezed == successCriteria
+          ? _value.successCriteria
+          : successCriteria // ignore: cast_nullable_to_non_nullable
+              as String?,
+      constraints: freezed == constraints
+          ? _value._constraints
+          : constraints // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      requiredCapabilities: freezed == requiredCapabilities
+          ? _value._requiredCapabilities
+          : requiredCapabilities // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      subgoals: freezed == subgoals
+          ? _value._subgoals
+          : subgoals // ignore: cast_nullable_to_non_nullable
+              as List<GoalSummary>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalDetailResponseImpl implements _GoalDetailResponse {
+  const _$GoalDetailResponseImpl(
+      {required this.id,
+      required this.description,
+      required this.status,
+      required this.priority,
+      required this.progress,
+      required this.createdAt,
+      required this.updatedAt,
+      final Map<String, dynamic>? metadata,
+      this.parentId,
+      this.successCriteria,
+      final List<String>? constraints,
+      final List<String>? requiredCapabilities,
+      final List<GoalSummary>? subgoals})
+      : _metadata = metadata,
+        _constraints = constraints,
+        _requiredCapabilities = requiredCapabilities,
+        _subgoals = subgoals;
+
+  factory _$GoalDetailResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalDetailResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String description;
+  @override
+  final String status;
+  @override
+  final double priority;
+  @override
+  final double progress;
+  @override
+  final double createdAt;
+  @override
+  final double updatedAt;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  final String? parentId;
+  @override
+  final String? successCriteria;
+  final List<String>? _constraints;
+  @override
+  List<String>? get constraints {
+    final value = _constraints;
+    if (value == null) return null;
+    if (_constraints is EqualUnmodifiableListView) return _constraints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<String>? _requiredCapabilities;
+  @override
+  List<String>? get requiredCapabilities {
+    final value = _requiredCapabilities;
+    if (value == null) return null;
+    if (_requiredCapabilities is EqualUnmodifiableListView)
+      return _requiredCapabilities;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<GoalSummary>? _subgoals;
+  @override
+  List<GoalSummary>? get subgoals {
+    final value = _subgoals;
+    if (value == null) return null;
+    if (_subgoals is EqualUnmodifiableListView) return _subgoals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'GoalDetailResponse(id: $id, description: $description, status: $status, priority: $priority, progress: $progress, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata, parentId: $parentId, successCriteria: $successCriteria, constraints: $constraints, requiredCapabilities: $requiredCapabilities, subgoals: $subgoals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalDetailResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata) &&
+            (identical(other.parentId, parentId) ||
+                other.parentId == parentId) &&
+            (identical(other.successCriteria, successCriteria) ||
+                other.successCriteria == successCriteria) &&
+            const DeepCollectionEquality()
+                .equals(other._constraints, _constraints) &&
+            const DeepCollectionEquality()
+                .equals(other._requiredCapabilities, _requiredCapabilities) &&
+            const DeepCollectionEquality().equals(other._subgoals, _subgoals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      description,
+      status,
+      priority,
+      progress,
+      createdAt,
+      updatedAt,
+      const DeepCollectionEquality().hash(_metadata),
+      parentId,
+      successCriteria,
+      const DeepCollectionEquality().hash(_constraints),
+      const DeepCollectionEquality().hash(_requiredCapabilities),
+      const DeepCollectionEquality().hash(_subgoals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalDetailResponseImplCopyWith<_$GoalDetailResponseImpl> get copyWith =>
+      __$$GoalDetailResponseImplCopyWithImpl<_$GoalDetailResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalDetailResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalDetailResponse implements GoalDetailResponse {
+  const factory _GoalDetailResponse(
+      {required final String id,
+      required final String description,
+      required final String status,
+      required final double priority,
+      required final double progress,
+      required final double createdAt,
+      required final double updatedAt,
+      final Map<String, dynamic>? metadata,
+      final String? parentId,
+      final String? successCriteria,
+      final List<String>? constraints,
+      final List<String>? requiredCapabilities,
+      final List<GoalSummary>? subgoals}) = _$GoalDetailResponseImpl;
+
+  factory _GoalDetailResponse.fromJson(Map<String, dynamic> json) =
+      _$GoalDetailResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get description;
+  @override
+  String get status;
+  @override
+  double get priority;
+  @override
+  double get progress;
+  @override
+  double get createdAt;
+  @override
+  double get updatedAt;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  String? get parentId;
+  @override
+  String? get successCriteria;
+  @override
+  List<String>? get constraints;
+  @override
+  List<String>? get requiredCapabilities;
+  @override
+  List<GoalSummary>? get subgoals;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalDetailResponseImplCopyWith<_$GoalDetailResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GoalResumeResponse _$GoalResumeResponseFromJson(Map<String, dynamic> json) {
+  return _GoalResumeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalResumeResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String? get goalId => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+  String? get action => throw _privateConstructorUsedError;
+  String? get detail => throw _privateConstructorUsedError;
+  bool? get resumed => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalResumeResponseCopyWith<GoalResumeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalResumeResponseCopyWith<$Res> {
+  factory $GoalResumeResponseCopyWith(
+          GoalResumeResponse value, $Res Function(GoalResumeResponse) then) =
+      _$GoalResumeResponseCopyWithImpl<$Res, GoalResumeResponse>;
+  @useResult
+  $Res call(
+      {bool success,
+      String? goalId,
+      String? error,
+      String? action,
+      String? detail,
+      bool? resumed,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class _$GoalResumeResponseCopyWithImpl<$Res, $Val extends GoalResumeResponse>
+    implements $GoalResumeResponseCopyWith<$Res> {
+  _$GoalResumeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? goalId = freezed,
+    Object? error = freezed,
+    Object? action = freezed,
+    Object? detail = freezed,
+    Object? resumed = freezed,
+    Object? metadata = freezed,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      goalId: freezed == goalId
+          ? _value.goalId
+          : goalId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+      detail: freezed == detail
+          ? _value.detail
+          : detail // ignore: cast_nullable_to_non_nullable
+              as String?,
+      resumed: freezed == resumed
+          ? _value.resumed
+          : resumed // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalResumeResponseImplCopyWith<$Res>
+    implements $GoalResumeResponseCopyWith<$Res> {
+  factory _$$GoalResumeResponseImplCopyWith(_$GoalResumeResponseImpl value,
+          $Res Function(_$GoalResumeResponseImpl) then) =
+      __$$GoalResumeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool success,
+      String? goalId,
+      String? error,
+      String? action,
+      String? detail,
+      bool? resumed,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class __$$GoalResumeResponseImplCopyWithImpl<$Res>
+    extends _$GoalResumeResponseCopyWithImpl<$Res, _$GoalResumeResponseImpl>
+    implements _$$GoalResumeResponseImplCopyWith<$Res> {
+  __$$GoalResumeResponseImplCopyWithImpl(_$GoalResumeResponseImpl _value,
+      $Res Function(_$GoalResumeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? goalId = freezed,
+    Object? error = freezed,
+    Object? action = freezed,
+    Object? detail = freezed,
+    Object? resumed = freezed,
+    Object? metadata = freezed,
+  }) {
+    return _then(_$GoalResumeResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      goalId: freezed == goalId
+          ? _value.goalId
+          : goalId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+      detail: freezed == detail
+          ? _value.detail
+          : detail // ignore: cast_nullable_to_non_nullable
+              as String?,
+      resumed: freezed == resumed
+          ? _value.resumed
+          : resumed // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalResumeResponseImpl implements _GoalResumeResponse {
+  const _$GoalResumeResponseImpl(
+      {required this.success,
+      this.goalId,
+      this.error,
+      this.action,
+      this.detail,
+      this.resumed,
+      final Map<String, dynamic>? metadata})
+      : _metadata = metadata;
+
+  factory _$GoalResumeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalResumeResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String? goalId;
+  @override
+  final String? error;
+  @override
+  final String? action;
+  @override
+  final String? detail;
+  @override
+  final bool? resumed;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'GoalResumeResponse(success: $success, goalId: $goalId, error: $error, action: $action, detail: $detail, resumed: $resumed, metadata: $metadata)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalResumeResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.goalId, goalId) || other.goalId == goalId) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.detail, detail) || other.detail == detail) &&
+            (identical(other.resumed, resumed) || other.resumed == resumed) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, goalId, error, action,
+      detail, resumed, const DeepCollectionEquality().hash(_metadata));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalResumeResponseImplCopyWith<_$GoalResumeResponseImpl> get copyWith =>
+      __$$GoalResumeResponseImplCopyWithImpl<_$GoalResumeResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalResumeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalResumeResponse implements GoalResumeResponse {
+  const factory _GoalResumeResponse(
+      {required final bool success,
+      final String? goalId,
+      final String? error,
+      final String? action,
+      final String? detail,
+      final bool? resumed,
+      final Map<String, dynamic>? metadata}) = _$GoalResumeResponseImpl;
+
+  factory _GoalResumeResponse.fromJson(Map<String, dynamic> json) =
+      _$GoalResumeResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String? get goalId;
+  @override
+  String? get error;
+  @override
+  String? get action;
+  @override
+  String? get detail;
+  @override
+  bool? get resumed;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalResumeResponseImplCopyWith<_$GoalResumeResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GoalCreateResponse _$GoalCreateResponseFromJson(Map<String, dynamic> json) {
+  return _GoalCreateResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalCreateResponse {
+  String get goalId => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get priority => throw _privateConstructorUsedError;
+  double get progress => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double get updatedAt => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalCreateResponseCopyWith<GoalCreateResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalCreateResponseCopyWith<$Res> {
+  factory $GoalCreateResponseCopyWith(
+          GoalCreateResponse value, $Res Function(GoalCreateResponse) then) =
+      _$GoalCreateResponseCopyWithImpl<$Res, GoalCreateResponse>;
+  @useResult
+  $Res call(
+      {String goalId,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class _$GoalCreateResponseCopyWithImpl<$Res, $Val extends GoalCreateResponse>
+    implements $GoalCreateResponseCopyWith<$Res> {
+  _$GoalCreateResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goalId = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_value.copyWith(
+      goalId: null == goalId
+          ? _value.goalId
+          : goalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalCreateResponseImplCopyWith<$Res>
+    implements $GoalCreateResponseCopyWith<$Res> {
+  factory _$$GoalCreateResponseImplCopyWith(_$GoalCreateResponseImpl value,
+          $Res Function(_$GoalCreateResponseImpl) then) =
+      __$$GoalCreateResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String goalId,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class __$$GoalCreateResponseImplCopyWithImpl<$Res>
+    extends _$GoalCreateResponseCopyWithImpl<$Res, _$GoalCreateResponseImpl>
+    implements _$$GoalCreateResponseImplCopyWith<$Res> {
+  __$$GoalCreateResponseImplCopyWithImpl(_$GoalCreateResponseImpl _value,
+      $Res Function(_$GoalCreateResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goalId = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_$GoalCreateResponseImpl(
+      goalId: null == goalId
+          ? _value.goalId
+          : goalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalCreateResponseImpl implements _GoalCreateResponse {
+  const _$GoalCreateResponseImpl(
+      {required this.goalId,
+      required this.description,
+      required this.status,
+      required this.priority,
+      required this.progress,
+      required this.createdAt,
+      required this.updatedAt,
+      final Map<String, dynamic>? metadata})
+      : _metadata = metadata;
+
+  factory _$GoalCreateResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalCreateResponseImplFromJson(json);
+
+  @override
+  final String goalId;
+  @override
+  final String description;
+  @override
+  final String status;
+  @override
+  final double priority;
+  @override
+  final double progress;
+  @override
+  final double createdAt;
+  @override
+  final double updatedAt;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'GoalCreateResponse(goalId: $goalId, description: $description, status: $status, priority: $priority, progress: $progress, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalCreateResponseImpl &&
+            (identical(other.goalId, goalId) || other.goalId == goalId) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      goalId,
+      description,
+      status,
+      priority,
+      progress,
+      createdAt,
+      updatedAt,
+      const DeepCollectionEquality().hash(_metadata));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalCreateResponseImplCopyWith<_$GoalCreateResponseImpl> get copyWith =>
+      __$$GoalCreateResponseImplCopyWithImpl<_$GoalCreateResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalCreateResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalCreateResponse implements GoalCreateResponse {
+  const factory _GoalCreateResponse(
+      {required final String goalId,
+      required final String description,
+      required final String status,
+      required final double priority,
+      required final double progress,
+      required final double createdAt,
+      required final double updatedAt,
+      final Map<String, dynamic>? metadata}) = _$GoalCreateResponseImpl;
+
+  factory _GoalCreateResponse.fromJson(Map<String, dynamic> json) =
+      _$GoalCreateResponseImpl.fromJson;
+
+  @override
+  String get goalId;
+  @override
+  String get description;
+  @override
+  String get status;
+  @override
+  double get priority;
+  @override
+  double get progress;
+  @override
+  double get createdAt;
+  @override
+  double get updatedAt;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalCreateResponseImplCopyWith<_$GoalCreateResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GoalUpdateResponse _$GoalUpdateResponseFromJson(Map<String, dynamic> json) {
+  return _GoalUpdateResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalUpdateResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError;
+  double get priority => throw _privateConstructorUsedError;
+  double get progress => throw _privateConstructorUsedError;
+  double get createdAt => throw _privateConstructorUsedError;
+  double get updatedAt => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get metadata => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalUpdateResponseCopyWith<GoalUpdateResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalUpdateResponseCopyWith<$Res> {
+  factory $GoalUpdateResponseCopyWith(
+          GoalUpdateResponse value, $Res Function(GoalUpdateResponse) then) =
+      _$GoalUpdateResponseCopyWithImpl<$Res, GoalUpdateResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class _$GoalUpdateResponseCopyWithImpl<$Res, $Val extends GoalUpdateResponse>
+    implements $GoalUpdateResponseCopyWith<$Res> {
+  _$GoalUpdateResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalUpdateResponseImplCopyWith<$Res>
+    implements $GoalUpdateResponseCopyWith<$Res> {
+  factory _$$GoalUpdateResponseImplCopyWith(_$GoalUpdateResponseImpl value,
+          $Res Function(_$GoalUpdateResponseImpl) then) =
+      __$$GoalUpdateResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String description,
+      String status,
+      double priority,
+      double progress,
+      double createdAt,
+      double updatedAt,
+      Map<String, dynamic>? metadata});
+}
+
+/// @nodoc
+class __$$GoalUpdateResponseImplCopyWithImpl<$Res>
+    extends _$GoalUpdateResponseCopyWithImpl<$Res, _$GoalUpdateResponseImpl>
+    implements _$$GoalUpdateResponseImplCopyWith<$Res> {
+  __$$GoalUpdateResponseImplCopyWithImpl(_$GoalUpdateResponseImpl _value,
+      $Res Function(_$GoalUpdateResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? description = null,
+    Object? status = null,
+    Object? priority = null,
+    Object? progress = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? metadata = freezed,
+  }) {
+    return _then(_$GoalUpdateResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _value.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as double,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as double,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalUpdateResponseImpl implements _GoalUpdateResponse {
+  const _$GoalUpdateResponseImpl(
+      {required this.id,
+      required this.description,
+      required this.status,
+      required this.priority,
+      required this.progress,
+      required this.createdAt,
+      required this.updatedAt,
+      final Map<String, dynamic>? metadata})
+      : _metadata = metadata;
+
+  factory _$GoalUpdateResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalUpdateResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String description;
+  @override
+  final String status;
+  @override
+  final double priority;
+  @override
+  final double progress;
+  @override
+  final double createdAt;
+  @override
+  final double updatedAt;
+  final Map<String, dynamic>? _metadata;
+  @override
+  Map<String, dynamic>? get metadata {
+    final value = _metadata;
+    if (value == null) return null;
+    if (_metadata is EqualUnmodifiableMapView) return _metadata;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'GoalUpdateResponse(id: $id, description: $description, status: $status, priority: $priority, progress: $progress, createdAt: $createdAt, updatedAt: $updatedAt, metadata: $metadata)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalUpdateResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other._metadata, _metadata));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      description,
+      status,
+      priority,
+      progress,
+      createdAt,
+      updatedAt,
+      const DeepCollectionEquality().hash(_metadata));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalUpdateResponseImplCopyWith<_$GoalUpdateResponseImpl> get copyWith =>
+      __$$GoalUpdateResponseImplCopyWithImpl<_$GoalUpdateResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalUpdateResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalUpdateResponse implements GoalUpdateResponse {
+  const factory _GoalUpdateResponse(
+      {required final String id,
+      required final String description,
+      required final String status,
+      required final double priority,
+      required final double progress,
+      required final double createdAt,
+      required final double updatedAt,
+      final Map<String, dynamic>? metadata}) = _$GoalUpdateResponseImpl;
+
+  factory _GoalUpdateResponse.fromJson(Map<String, dynamic> json) =
+      _$GoalUpdateResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get description;
+  @override
+  String get status;
+  @override
+  double get priority;
+  @override
+  double get progress;
+  @override
+  double get createdAt;
+  @override
+  double get updatedAt;
+  @override
+  Map<String, dynamic>? get metadata;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalUpdateResponseImplCopyWith<_$GoalUpdateResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GoalDecomposeResponse _$GoalDecomposeResponseFromJson(
+    Map<String, dynamic> json) {
+  return _GoalDecomposeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GoalDecomposeResponse {
+  List<GoalSummary> get subgoals => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GoalDecomposeResponseCopyWith<GoalDecomposeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GoalDecomposeResponseCopyWith<$Res> {
+  factory $GoalDecomposeResponseCopyWith(GoalDecomposeResponse value,
+          $Res Function(GoalDecomposeResponse) then) =
+      _$GoalDecomposeResponseCopyWithImpl<$Res, GoalDecomposeResponse>;
+  @useResult
+  $Res call({List<GoalSummary> subgoals});
+}
+
+/// @nodoc
+class _$GoalDecomposeResponseCopyWithImpl<$Res,
+        $Val extends GoalDecomposeResponse>
+    implements $GoalDecomposeResponseCopyWith<$Res> {
+  _$GoalDecomposeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? subgoals = null,
+  }) {
+    return _then(_value.copyWith(
+      subgoals: null == subgoals
+          ? _value.subgoals
+          : subgoals // ignore: cast_nullable_to_non_nullable
+              as List<GoalSummary>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GoalDecomposeResponseImplCopyWith<$Res>
+    implements $GoalDecomposeResponseCopyWith<$Res> {
+  factory _$$GoalDecomposeResponseImplCopyWith(
+          _$GoalDecomposeResponseImpl value,
+          $Res Function(_$GoalDecomposeResponseImpl) then) =
+      __$$GoalDecomposeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<GoalSummary> subgoals});
+}
+
+/// @nodoc
+class __$$GoalDecomposeResponseImplCopyWithImpl<$Res>
+    extends _$GoalDecomposeResponseCopyWithImpl<$Res,
+        _$GoalDecomposeResponseImpl>
+    implements _$$GoalDecomposeResponseImplCopyWith<$Res> {
+  __$$GoalDecomposeResponseImplCopyWithImpl(_$GoalDecomposeResponseImpl _value,
+      $Res Function(_$GoalDecomposeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? subgoals = null,
+  }) {
+    return _then(_$GoalDecomposeResponseImpl(
+      subgoals: null == subgoals
+          ? _value._subgoals
+          : subgoals // ignore: cast_nullable_to_non_nullable
+              as List<GoalSummary>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GoalDecomposeResponseImpl implements _GoalDecomposeResponse {
+  const _$GoalDecomposeResponseImpl({required final List<GoalSummary> subgoals})
+      : _subgoals = subgoals;
+
+  factory _$GoalDecomposeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GoalDecomposeResponseImplFromJson(json);
+
+  final List<GoalSummary> _subgoals;
+  @override
+  List<GoalSummary> get subgoals {
+    if (_subgoals is EqualUnmodifiableListView) return _subgoals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_subgoals);
+  }
+
+  @override
+  String toString() {
+    return 'GoalDecomposeResponse(subgoals: $subgoals)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoalDecomposeResponseImpl &&
+            const DeepCollectionEquality().equals(other._subgoals, _subgoals));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_subgoals));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoalDecomposeResponseImplCopyWith<_$GoalDecomposeResponseImpl>
+      get copyWith => __$$GoalDecomposeResponseImplCopyWithImpl<
+          _$GoalDecomposeResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GoalDecomposeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GoalDecomposeResponse implements GoalDecomposeResponse {
+  const factory _GoalDecomposeResponse(
+          {required final List<GoalSummary> subgoals}) =
+      _$GoalDecomposeResponseImpl;
+
+  factory _GoalDecomposeResponse.fromJson(Map<String, dynamic> json) =
+      _$GoalDecomposeResponseImpl.fromJson;
+
+  @override
+  List<GoalSummary> get subgoals;
+  @override
+  @JsonKey(ignore: true)
+  _$$GoalDecomposeResponseImplCopyWith<_$GoalDecomposeResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 EpisodicListResponse _$EpisodicListResponseFromJson(Map<String, dynamic> json) {
   return _EpisodicListResponse.fromJson(json);
 }

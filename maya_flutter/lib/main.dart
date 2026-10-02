@@ -1223,6 +1223,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'agi': screen = const _AGIArchitectureScreen(); break;
       case 'cognitive_core': screen = const _MayaCognitiveCoreScreen(); break;
       case 'unified_loop': screen = const _UnifiedCognitiveLoopScreen(); break;
+      case 'persistent_goals': screen = const _PersistentGoalsScreen(); break;
       case 'business': screen = const _BusinessAnalysisScreen(); break;
       case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
@@ -2502,6 +2503,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _UnifiedCognitiveLoopScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.flag_rounded,
+                  label: 'Persistent Goals',
+                  subtitle: 'Active goals, progress tracking, pause/resume/cancel',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _PersistentGoalsScreen(),
                       ),
                     );
                   },
@@ -19796,6 +19811,22 @@ final unifiedLoopHistoryProvider = FutureProvider<UnifiedLoopHistoryResponse>((r
   return apiService.getUnifiedLoopHistory();
 });
 
+// Persistent Goal Pursuit Providers (Phase 35)
+final incompleteGoalsProvider = FutureProvider<GoalsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getIncompleteGoals();
+});
+
+final goalsListProvider = FutureProvider.family<GoalsListResponse, String?>((ref, status) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGoals(status: status);
+});
+
+final goalDetailProvider = FutureProvider.family<GoalDetailResponse, String>((ref, goalId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGoalDetail(goalId);
+});
+
 // Business Analysis Providers (Phase 20)
 final businessMissionsProvider = FutureProvider<MissionListResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
@@ -21878,6 +21909,1114 @@ class _LoopControlButtons extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+// Persistent Goal Pursuit Screen (Phase 35)
+class _PersistentGoalsScreen extends ConsumerStatefulWidget {
+  const _PersistentGoalsScreen();
+
+  @override
+  ConsumerState<_PersistentGoalsScreen> createState() => _PersistentGoalsScreenState();
+}
+
+class _PersistentGoalsScreenState extends ConsumerState<_PersistentGoalsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(incompleteGoalsProvider);
+        ref.invalidate(goalsListProvider(null));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Persistent Goal Pursuit', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(incompleteGoalsProvider);
+                ref.invalidate(goalsListProvider(null));
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_rounded),
+              onPressed: () => _showCreateGoalDialog(context),
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icons.flag_rounded, text: 'Incomplete'),
+              Tab(icon: Icons.list_alt_rounded, text: 'All Goals'),
+              Tab(icon: Icons.add_task_rounded, text: 'Create Goal'),
+              Tab(icon: Icons.analytics_rounded, text: 'Stats'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _IncompleteGoalsTab(),
+            _AllGoalsTab(),
+            _CreateGoalTab(),
+            _GoalsStatsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCreateGoalDialog(BuildContext context) {
+    _tabController.animateTo(2);
+  }
+}
+
+class _IncompleteGoalsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final incompleteAsync = ref.watch(incompleteGoalsProvider);
+
+    return incompleteAsync.when(
+      data: (data) => data.goals.isEmpty
+          ? _emptyState('No Incomplete Goals', 'All goals are completed or abandoned', Icons.flag_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Incomplete Goals', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Goals that survived a restart but were never finished. Prioritized by priority.',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.goals.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final goal = data.goals[index];
+                      return _GoalCard(
+                        goal: goal,
+                        onTap: () => _showGoalDetail(context, ref, goal.id),
+                        onResume: () => _resumeGoal(context, ref, goal.id),
+                        onPause: () => _pauseGoal(context, ref, goal.id),
+                        onCancel: () => _cancelGoal(context, ref, goal.id),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading incomplete goals', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+
+  void _showGoalDetail(BuildContext context, WidgetRef ref, String goalId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _GoalDetailSheet(goalId: goalId),
+    );
+  }
+
+  Future<void> _resumeGoal(BuildContext context, WidgetRef ref, String goalId) async {
+    final apiService = ref.read(apiServiceProvider);
+    try {
+      final result = await apiService.resumeGoal(goalId: goalId, execute: false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.success ? 'Goal resumed (propose-only)' : 'Failed: ${result.error}'),
+            backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+        ref.invalidate(incompleteGoalsProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Resume failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Future<void> _pauseGoal(BuildContext context, WidgetRef ref, String goalId) async {
+    final apiService = ref.read(apiServiceProvider);
+    try {
+      await apiService.updateGoal(goalId: goalId, updates: {'status': 'suspended'});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Goal paused'), backgroundColor: MayaTheme.neonOrange),
+        );
+        ref.invalidate(incompleteGoalsProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Pause failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Future<void> _cancelGoal(BuildContext context, WidgetRef ref, String goalId) async {
+    final apiService = ref.read(apiServiceProvider);
+    try {
+      await apiService.updateGoal(goalId: goalId, updates: {'status': 'abandoned'});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Goal cancelled'), backgroundColor: MayaTheme.error),
+        );
+        ref.invalidate(incompleteGoalsProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Cancel failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _AllGoalsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final goalsAsync = ref.watch(goalsListProvider(null));
+
+    return goalsAsync.when(
+      data: (data) => data.goals.isEmpty
+          ? _emptyState('No Goals', 'Create your first persistent goal', Icons.flag_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('All Goals', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'All goals tracked by the cognitive kernel',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.goals.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final goal = data.goals[index];
+                      return _GoalCard(
+                        goal: goal,
+                        onTap: () => _showGoalDetail(context, ref, goal.id),
+                        onResume: () => _resumeGoal(context, ref, goal.id),
+                        onPause: () => _pauseGoal(context, ref, goal.id),
+                        onCancel: () => _cancelGoal(context, ref, goal.id),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading goals', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+
+  void _showGoalDetail(BuildContext context, WidgetRef ref, String goalId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _GoalDetailSheet(goalId: goalId),
+    );
+  }
+
+  Future<void> _resumeGoal(BuildContext context, WidgetRef ref, String goalId) async {
+    final apiService = ref.read(apiServiceProvider);
+    try {
+      final result = await apiService.resumeGoal(goalId: goalId, execute: false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.success ? 'Goal resumed (propose-only)' : 'Failed: ${result.error}'),
+            backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+        ref.invalidate(goalsListProvider(null));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Resume failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Future<void> _pauseGoal(BuildContext context, WidgetRef ref, String goalId) async {
+    final apiService = ref.read(apiServiceProvider);
+    try {
+      await apiService.updateGoal(goalId: goalId, updates: {'status': 'suspended'});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Goal paused'), backgroundColor: MayaTheme.neonOrange),
+        );
+        ref.invalidate(goalsListProvider(null));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Pause failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Future<void> _cancelGoal(BuildContext context, WidgetRef ref, String goalId) async {
+    final apiService = ref.read(apiServiceProvider);
+    try {
+      await apiService.updateGoal(goalId: goalId, updates: {'status': 'abandoned'});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Goal cancelled'), backgroundColor: MayaTheme.error),
+        );
+        ref.invalidate(goalsListProvider(null));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Cancel failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _CreateGoalTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_CreateGoalTab> createState() => _CreateGoalTabState();
+}
+
+class _CreateGoalTabState extends ConsumerState<_CreateGoalTab> {
+  final _descriptionController = TextEditingController();
+  final _successCriteriaController = TextEditingController();
+  final _constraintsController = TextEditingController();
+  final _capabilitiesController = TextEditingController();
+  double _priority = 50.0;
+  bool _isCreating = false;
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    _successCriteriaController.dispose();
+    _constraintsController.dispose();
+    _capabilitiesController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _createGoal() async {
+    if (_descriptionController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Description is required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isCreating = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.createGoal(
+        description: _descriptionController.text.trim(),
+        priority: _priority,
+        successCriteria: _successCriteriaController.text.trim().isEmpty ? null : _successCriteriaController.text.trim(),
+        constraints: _constraintsController.text.trim().isEmpty ? null : _constraintsController.text.trim().split(',').map((e) => e.trim()).toList(),
+        requiredCapabilities: _capabilitiesController.text.trim().isEmpty ? null : _capabilitiesController.text.trim().split(',').map((e) => e.trim()).toList(),
+      );
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Goal created: ${result.goalId}'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+        _descriptionController.clear();
+        _successCriteriaController.clear();
+        _constraintsController.clear();
+        _capabilitiesController.clear();
+        ref.invalidate(incompleteGoalsProvider);
+        ref.invalidate(goalsListProvider(null));
+      }
+    } catch (e) {
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Create New Goal', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Describe your goal. Maya will break it down into sub-tasks and track progress persistently.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _descriptionController,
+                  style: const TextStyle(color: Colors.white),
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: 'Goal Description *',
+                    hintText: 'e.g., Build a todo app with Flutter and Firebase',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    alignLabelWithHint: true,
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 60),
+                      child: Icon(Icons.description_rounded, color: Colors.white54),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('Priority: ${_priority.toInt()}', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan)),
+                Slider(
+                  value: _priority,
+                  min: 0,
+                  max: 100,
+                  divisions: 20,
+                  activeColor: MayaTheme.neonCyan,
+                  inactiveColor: Colors.white24,
+                  onChanged: (v) => setState(() => _priority = v),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _successCriteriaController,
+                  style: const TextStyle(color: Colors.white),
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: 'Success Criteria (optional)',
+                    hintText: 'How to know when the goal is complete',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.check_circle_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _constraintsController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Constraints (comma-separated, optional)',
+                    hintText: 'e.g., budget < \$100, no external APIs, deadline 2 weeks',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.gavel_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _capabilitiesController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Required Capabilities (comma-separated, optional)',
+                    hintText: 'e.g., web_search, code_generation, file_io',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.psychology_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isCreating ? null : _createGoal,
+                    icon: _isCreating
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
+                        : const Icon(Icons.flag_rounded),
+                    label: Text(_isCreating ? 'Creating...' : 'Create Goal'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GoalsStatsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final incompleteAsync = ref.watch(incompleteGoalsProvider);
+    final allAsync = ref.watch(goalsListProvider(null));
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Goals Statistics', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Overview of all tracked goals',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          // Incomplete Goals Stats
+          incompleteAsync.when(
+            data: (incomplete) => allAsync.when(
+              data: (all) => Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: _GoalsStatCard(label: 'Total Goals', value: all.goals.length.toString(), color: MayaTheme.neonCyan, icon: Icons.flag_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _GoalsStatCard(label: 'Incomplete', value: incomplete.goals.length.toString(), color: MayaTheme.neonOrange, icon: Icons.hourglass_top_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _GoalsStatCard(label: 'Completed', value: all.goals.where((g) => g.status == 'completed').length.toString(), color: MayaTheme.neonEmerald, icon: Icons.check_circle_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _GoalsStatCard(label: 'Abandoned', value: all.goals.where((g) => g.status == 'abandoned').length.toString(), color: MayaTheme.error, icon: Icons.cancel_rounded)),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // Status Breakdown
+                  const Text('By Status', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  ..._getStatusCounts(all.goals).entries.map((e) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: MayaTheme.glassCard(),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(e.key.toUpperCase(), style: MayaTheme.bodyMedium)),
+                        Text(e.value.toString(), style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  )),
+                  const SizedBox(height: 24),
+                  // Priority Distribution
+                  const Text('Priority Distribution', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  ..._getPriorityRanges(all.goals).entries.map((e) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: MayaTheme.glassCard(),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(e.key, style: MayaTheme.bodyMedium)),
+                        Text(e.value.toString(), style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonViolet, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  )),
+                ],
+              ),
+              loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+              error: (err, _) => Center(child: Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error))),
+            ),
+          const SizedBox(height: 24),
+          // Progress Overview
+          allAsync.when(
+            data: (all) => all.goals.isNotEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Progress Overview', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: all.goals.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (_, index) {
+                          final goal = all.goals[index];
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: MayaTheme.glassCard(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(goal.description, style: MayaTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(goal.status).withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: _getStatusColor(goal.status)),
+                                      ),
+                                      child: Text(goal.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(goal.status))),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                LinearProgressIndicator(
+                                  value: goal.progress,
+                                  backgroundColor: Colors.white12,
+                                  valueColor: AlwaysStoppedAnimation(_getProgressColor(goal.progress)),
+                                  minHeight: 6,
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                                const SizedBox(height: 4),
+                                Text('${(goal.progress * 100).toStringAsFixed(0)}% • Priority: ${goal.priority.toInt()}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+            loading: () => const SizedBox.shrink(),
+            error: (err, _) => const SizedBox.shrink(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Map<String, int> _getStatusCounts(List<GoalSummary> goals) {
+    final counts = <String, int>{};
+    for (final g in goals) {
+      counts[g.status] = (counts[g.status] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  Map<String, int> _getPriorityRanges(List<GoalSummary> goals) {
+    final ranges = <String, int>{
+      'High (80-100)': 0,
+      'Medium (50-79)': 0,
+      'Low (0-49)': 0,
+    };
+    for (final g in goals) {
+      if (g.priority >= 80) ranges['High (80-100)'] = ranges['High (80-100)']! + 1;
+      else if (g.priority >= 50) ranges['Medium (50-79)'] = ranges['Medium (50-79)']! + 1;
+      else ranges['Low (0-49)'] = ranges['Low (0-49)']! + 1;
+    }
+    return ranges;
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active': return MayaTheme.neonEmerald;
+      case 'suspended': return MayaTheme.neonOrange;
+      case 'blocked': return MayaTheme.error;
+      case 'completed': return MayaTheme.neonCyan;
+      case 'abandoned': return Colors.white38;
+      default: return Colors.white54;
+    }
+  }
+
+  Color _getProgressColor(double progress) {
+    if (progress >= 1.0) return MayaTheme.neonEmerald;
+    if (progress >= 0.5) return MayaTheme.neonCyan;
+    if (progress >= 0.25) return MayaTheme.neonOrange;
+    return MayaTheme.error;
+  }
+}
+
+class _GoalCard extends StatelessWidget {
+  final GoalSummary goal;
+  final VoidCallback onTap;
+  final VoidCallback onResume;
+  final VoidCallback onPause;
+  final VoidCallback onCancel;
+
+  const _GoalCard({
+    required this.goal,
+    required this.onTap,
+    required this.onResume,
+    required this.onPause,
+    required this.onCancel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(goal.status).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.flag_rounded, color: _getStatusColor(goal.status), size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: Text(goal.description, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(goal.status).withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: _getStatusColor(goal.status)),
+                            ),
+                            child: Text(goal.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(goal.status))),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text('Priority: ${goal.priority.toInt()} • Progress: ${(goal.progress * 100).toStringAsFixed(0)}%', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: Colors.white38),
+              ],
+            ),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(
+              value: goal.progress,
+              backgroundColor: Colors.white12,
+              valueColor: AlwaysStoppedAnimation(_getProgressColor(goal.progress)),
+              minHeight: 4,
+              borderRadius: BorderRadius.circular(2),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (goal.status == 'active' || goal.status == 'suspended' || goal.status == 'blocked') ...[
+                  TextButton.icon(
+                    onPressed: onResume,
+                    icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                    label: const Text('Resume'),
+                    style: TextButton.styleFrom(foregroundColor: MayaTheme.neonEmerald),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: onPause,
+                    icon: const Icon(Icons.pause_rounded, size: 18),
+                    label: const Text('Pause'),
+                    style: TextButton.styleFrom(foregroundColor: MayaTheme.neonOrange),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: onCancel,
+                    icon: const Icon(Icons.cancel_rounded, size: 18),
+                    label: const Text('Cancel'),
+                    style: TextButton.styleFrom(foregroundColor: MayaTheme.error),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active': return MayaTheme.neonEmerald;
+      case 'suspended': return MayaTheme.neonOrange;
+      case 'blocked': return MayaTheme.error;
+      case 'completed': return MayaTheme.neonCyan;
+      case 'abandoned': return Colors.white38;
+      default: return Colors.white54;
+    }
+  }
+
+  Color _getProgressColor(double progress) {
+    if (progress >= 1.0) return MayaTheme.neonEmerald;
+    if (progress >= 0.5) return MayaTheme.neonCyan;
+    if (progress >= 0.25) return MayaTheme.neonOrange;
+    return MayaTheme.error;
+  }
+}
+
+class _GoalsStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _GoalsStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _GoalDetailSheet extends ConsumerWidget {
+  final String goalId;
+
+  const _GoalDetailSheet({required this.goalId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detailAsync = ref.watch(goalDetailProvider(goalId));
+
+    return detailAsync.when(
+      data: (detail) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: const BoxDecoration(
+          color: MayaTheme.slate900,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(detail.status).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.flag_rounded, color: _getStatusColor(detail.status), size: 28),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(detail.description, style: MayaTheme.titleLarge),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: _getStatusColor(detail.status).withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: _getStatusColor(detail.status)),
+                                ),
+                                child: Text(detail.status.toUpperCase(), style: MayaTheme.labelMedium.copyWith(color: _getStatusColor(detail.status))),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    // Progress
+                    const Text('Progress', style: MayaTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    LinearProgressIndicator(
+                      value: detail.progress,
+                      backgroundColor: Colors.white12,
+                      valueColor: AlwaysStoppedAnimation(_getProgressColor(detail.progress)),
+                      minHeight: 10,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('${(detail.progress * 100).toStringAsFixed(1)}% complete', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan)),
+                    const SizedBox(height: 24),
+                    // Details
+                    _DetailRow(label: 'Goal ID', value: detail.id),
+                    _DetailRow(label: 'Priority', value: detail.priority.toStringAsFixed(0)),
+                    if (detail.parentId != null) _DetailRow(label: 'Parent Goal', value: detail.parentId!),
+                    if (detail.successCriteria != null) ...[
+                      const SizedBox(height: 16),
+                      const Text('Success Criteria', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: MayaTheme.glassCard(),
+                        child: Text(detail.successCriteria!, style: MayaTheme.bodyMedium),
+                      ),
+                    ],
+                    if (detail.constraints != null && detail.constraints!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      const Text('Constraints', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: detail.constraints!.map((c) => Chip(
+                          label: Text(c, style: MayaTheme.bodySmall),
+                          backgroundColor: MayaTheme.slate800,
+                          side: BorderSide(color: Colors.white12),
+                        )).toList(),
+                      ),
+                    ],
+                    if (detail.requiredCapabilities != null && detail.requiredCapabilities!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      const Text('Required Capabilities', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: detail.requiredCapabilities!.map((c) => Chip(
+                          label: Text(c, style: MayaTheme.bodySmall),
+                          backgroundColor: MayaTheme.slate800,
+                          side: BorderSide(color: Colors.white12),
+                        )).toList(),
+                      ),
+                    ],
+                    if (detail.subgoals != null && detail.subgoals!.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      const Text('Sub-goals', style: MayaTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: detail.subgoals!.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (_, index) {
+                          final sg = detail.subgoals![index];
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: MayaTheme.glassCard(),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _getStatusColor(sg.status).withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(Icons.flag_rounded, color: _getStatusColor(sg.status), size: 20),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(sg.description, style: MayaTheme.bodyMedium),
+                                      Text('Progress: ${(sg.progress * 100).toStringAsFixed(0)}%', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 100),
+          ],
+        ),
+      ),
+      loading: () => Container(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      ),
+      error: (err, _) => Container(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+          const SizedBox(height: 16),
+          Text('Error loading goal detail', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          const SizedBox(height: 8),
+          Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+        ])),
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active': return MayaTheme.neonEmerald;
+      case 'suspended': return MayaTheme.neonOrange;
+      case 'blocked': return MayaTheme.error;
+      case 'completed': return MayaTheme.neonCyan;
+      case 'abandoned': return Colors.white38;
+      default: return Colors.white54;
+    }
+  }
+
+  Color _getProgressColor(double progress) {
+    if (progress >= 1.0) return MayaTheme.neonEmerald;
+    if (progress >= 0.5) return MayaTheme.neonCyan;
+    if (progress >= 0.25) return MayaTheme.neonOrange;
+    return MayaTheme.error;
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DetailRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(label, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+          ),
+          Expanded(child: Text(value, style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace'))),
+        ],
+      ),
     );
   }
 }

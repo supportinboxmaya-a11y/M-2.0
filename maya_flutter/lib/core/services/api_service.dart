@@ -1325,12 +1325,12 @@ class ApiService {
     return KernelRestoreResponse.fromJson(response.data);
   }
 
-  Future<KernelIncompleteGoalsResponse> getIncompleteGoals() async {
+  Future<KernelIncompleteGoalsResponse> kernelGetIncompleteGoals() async {
     final response = await _dio.get(AppConfig.kernelIncompleteGoals);
     return KernelIncompleteGoalsResponse.fromJson(response.data);
   }
 
-  Future<KernelResumeGoalResponse> resumeGoal(String goalId, {bool execute = false}) async {
+  Future<KernelResumeGoalResponse> kernelResumeGoal(String goalId, {bool execute = false}) async {
     final response = await _dio.post(
       '${AppConfig.kernelResumeGoal}$goalId/resume',
       data: {'execute': execute},
@@ -1338,7 +1338,7 @@ class ApiService {
     return KernelResumeGoalResponse.fromJson(response.data);
   }
 
-  Future<KernelResumeIncompleteResponse> resumeIncomplete({bool planProposals = true, int maxGoals = 3}) async {
+  Future<KernelResumeIncompleteResponse> kernelResumeIncomplete({bool planProposals = true, int maxGoals = 3}) async {
     final response = await _dio.post(
       AppConfig.kernelResumeIncomplete,
       data: {'plan_proposals': planProposals, 'max_goals': maxGoals},
@@ -1800,6 +1800,82 @@ class ApiService {
   Future<UnifiedLoopControlResponse> stopUnifiedLoop() async {
     final response = await _dio.post(AppConfig.coreLoopStop);
     return UnifiedLoopControlResponse.fromJson(response.data);
+  }
+
+  // Persistent Goal Pursuit (Phase 35)
+  Future<GoalsListResponse> getIncompleteGoals() async {
+    final response = await _dio.get(AppConfig.goalsIncomplete);
+    return GoalsListResponse.fromJson(response.data);
+  }
+
+  Future<GoalsListResponse> getGoals({String? status}) async {
+    final response = await _dio.get(
+      AppConfig.goalsList,
+      queryParameters: {
+        if (status != null) 'status': status,
+      },
+    );
+    return GoalsListResponse.fromJson(response.data);
+  }
+
+  Future<GoalDetailResponse> getGoalDetail(String goalId) async {
+    final response = await _dio.get('${AppConfig.goalDetail}$goalId');
+    return GoalDetailResponse.fromJson(response.data);
+  }
+
+  Future<GoalResumeResponse> resumeGoal({
+    required String goalId,
+    bool execute = false,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.goalResume}$goalId/resume',
+      data: {'execute': execute},
+    );
+    return GoalResumeResponse.fromJson(response.data);
+  }
+
+  Future<GoalCreateResponse> createGoal({
+    required String description,
+    String? parentId,
+    double priority = 50.0,
+    String? successCriteria,
+    List<String>? constraints,
+    List<String>? requiredCapabilities,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.goalCreate,
+      data: {
+        'description': description,
+        if (parentId != null) 'parent_id': parentId,
+        'priority': priority,
+        if (successCriteria != null) 'success_criteria': successCriteria,
+        if (constraints != null) 'constraints': constraints,
+        if (requiredCapabilities != null) 'required_capabilities': requiredCapabilities,
+      },
+    );
+    return GoalCreateResponse.fromJson(response.data);
+  }
+
+  Future<GoalUpdateResponse> updateGoal({
+    required String goalId,
+    Map<String, dynamic>? updates,
+  }) async {
+    final response = await _dio.patch(
+      '${AppConfig.goalUpdate}$goalId',
+      data: updates ?? {},
+    );
+    return GoalUpdateResponse.fromJson(response.data);
+  }
+
+  Future<GoalDecomposeResponse> decomposeGoal({
+    required String goalId,
+    int numSubgoals = 5,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.goalDecompose}$goalId/decompose',
+      data: {'num_subgoals': numSubgoals},
+    );
+    return GoalDecomposeResponse.fromJson(response.data);
   }
 
   // Hippocampus / Episodic Memory
@@ -3152,6 +3228,116 @@ class UnifiedLoopControlResponse with _$UnifiedLoopControlResponse {
 
   factory UnifiedLoopControlResponse.fromJson(Map<String, dynamic> json) =>
       _$UnifiedLoopControlResponseFromJson(json);
+}
+
+// Persistent Goal Pursuit Models (Phase 35)
+@freezed
+class GoalsListResponse with _$GoalsListResponse {
+  const factory GoalsListResponse({
+    required List<GoalSummary> goals,
+  }) = _GoalsListResponse;
+
+  factory GoalsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$GoalsListResponseFromJson(json);
+}
+
+@freezed
+class GoalSummary with _$GoalSummary {
+  const factory GoalSummary({
+    required String id,
+    required String description,
+    required String status,
+    required double priority,
+    required double progress,
+    required double createdAt,
+    required double updatedAt,
+    Map<String, dynamic>? metadata,
+  }) = _GoalSummary;
+
+  factory GoalSummary.fromJson(Map<String, dynamic> json) =>
+      _$GoalSummaryFromJson(json);
+}
+
+@freezed
+class GoalDetailResponse with _$GoalDetailResponse {
+  const factory GoalDetailResponse({
+    required String id,
+    required String description,
+    required String status,
+    required double priority,
+    required double progress,
+    required double createdAt,
+    required double updatedAt,
+    Map<String, dynamic>? metadata,
+    String? parentId,
+    String? successCriteria,
+    List<String>? constraints,
+    List<String>? requiredCapabilities,
+    List<GoalSummary>? subgoals,
+  }) = _GoalDetailResponse;
+
+  factory GoalDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$GoalDetailResponseFromJson(json);
+}
+
+@freezed
+class GoalResumeResponse with _$GoalResumeResponse {
+  const factory GoalResumeResponse({
+    required bool success,
+    String? goalId,
+    String? error,
+    String? action,
+    String? detail,
+    bool? resumed,
+    Map<String, dynamic>? metadata,
+  }) = _GoalResumeResponse;
+
+  factory GoalResumeResponse.fromJson(Map<String, dynamic> json) =>
+      _$GoalResumeResponseFromJson(json);
+}
+
+@freezed
+class GoalCreateResponse with _$GoalCreateResponse {
+  const factory GoalCreateResponse({
+    required String goalId,
+    required String description,
+    required String status,
+    required double priority,
+    required double progress,
+    required double createdAt,
+    required double updatedAt,
+    Map<String, dynamic>? metadata,
+  }) = _GoalCreateResponse;
+
+  factory GoalCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$GoalCreateResponseFromJson(json);
+}
+
+@freezed
+class GoalUpdateResponse with _$GoalUpdateResponse {
+  const factory GoalUpdateResponse({
+    required String id,
+    required String description,
+    required String status,
+    required double priority,
+    required double progress,
+    required double createdAt,
+    required double updatedAt,
+    Map<String, dynamic>? metadata,
+  }) = _GoalUpdateResponse;
+
+  factory GoalUpdateResponse.fromJson(Map<String, dynamic> json) =>
+      _$GoalUpdateResponseFromJson(json);
+}
+
+@freezed
+class GoalDecomposeResponse with _$GoalDecomposeResponse {
+  const factory GoalDecomposeResponse({
+    required List<GoalSummary> subgoals,
+  }) = _GoalDecomposeResponse;
+
+  factory GoalDecomposeResponse.fromJson(Map<String, dynamic> json) =>
+      _$GoalDecomposeResponseFromJson(json);
 }
 
 // Hippocampus / Episodic Memory Models

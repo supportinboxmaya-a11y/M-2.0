@@ -248,6 +248,15 @@ class AppConfig {
   static const String unifiedLoopStatus = '/api/v1/maya/core/loop/status';
   static const String unifiedLoopHistory = '/api/v1/maya/core/loop/history';
 
+  // Persistent Goal Pursuit (Phase 35)
+  static const String goalsIncomplete = '/api/v1/cognitive/kernel/goals/incomplete';
+  static const String goalsList = '/api/v1/cognitive/goals';
+  static const String goalDetail = '/api/v1/cognitive/goals/';
+  static const String goalResume = '/api/v1/cognitive/kernel/goals/';
+  static const String goalCreate = '/api/v1/cognitive/goals';
+  static const String goalUpdate = '/api/v1/cognitive/goals/';
+  static const String goalDecompose = '/api/v1/cognitive/goals/';
+
   // Hippocampus / Episodic Memory
   static const String episodicList = '/api/v1/cognitive/memory/episodic';
   static const String episodicSearch = '/api/v1/cognitive/memory/episodic/search';

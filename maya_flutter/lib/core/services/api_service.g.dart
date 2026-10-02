@@ -2413,6 +2413,314 @@ Map<String, dynamic> _$$UnifiedLoopControlResponseImplToJson(
   return val;
 }
 
+_$GoalsListResponseImpl _$$GoalsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GoalsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalsListResponseImpl(
+          goals: $checkedConvert(
+              'goals',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      GoalSummary.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GoalsListResponseImplToJson(
+        _$GoalsListResponseImpl instance) =>
+    <String, dynamic>{
+      'goals': instance.goals,
+    };
+
+_$GoalSummaryImpl _$$GoalSummaryImplFromJson(Map json) => $checkedCreate(
+      r'_$GoalSummaryImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalSummaryImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          priority: $checkedConvert('priority', (v) => (v as num).toDouble()),
+          progress: $checkedConvert('progress', (v) => (v as num).toDouble()),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => (v as num).toDouble()),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at', 'updatedAt': 'updated_at'},
+    );
+
+Map<String, dynamic> _$$GoalSummaryImplToJson(_$GoalSummaryImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'description': instance.description,
+    'status': instance.status,
+    'priority': instance.priority,
+    'progress': instance.progress,
+    'created_at': instance.createdAt,
+    'updated_at': instance.updatedAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
+_$GoalDetailResponseImpl _$$GoalDetailResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GoalDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalDetailResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          priority: $checkedConvert('priority', (v) => (v as num).toDouble()),
+          progress: $checkedConvert('progress', (v) => (v as num).toDouble()),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => (v as num).toDouble()),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+          parentId: $checkedConvert('parent_id', (v) => v as String?),
+          successCriteria:
+              $checkedConvert('success_criteria', (v) => v as String?),
+          constraints: $checkedConvert('constraints',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+          requiredCapabilities: $checkedConvert('required_capabilities',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+          subgoals: $checkedConvert(
+              'subgoals',
+              (v) => (v as List<dynamic>?)
+                  ?.map((e) =>
+                      GoalSummary.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at',
+        'parentId': 'parent_id',
+        'successCriteria': 'success_criteria',
+        'requiredCapabilities': 'required_capabilities'
+      },
+    );
+
+Map<String, dynamic> _$$GoalDetailResponseImplToJson(
+    _$GoalDetailResponseImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'description': instance.description,
+    'status': instance.status,
+    'priority': instance.priority,
+    'progress': instance.progress,
+    'created_at': instance.createdAt,
+    'updated_at': instance.updatedAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  writeNotNull('parent_id', instance.parentId);
+  writeNotNull('success_criteria', instance.successCriteria);
+  writeNotNull('constraints', instance.constraints);
+  writeNotNull('required_capabilities', instance.requiredCapabilities);
+  writeNotNull('subgoals', instance.subgoals);
+  return val;
+}
+
+_$GoalResumeResponseImpl _$$GoalResumeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GoalResumeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalResumeResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          goalId: $checkedConvert('goal_id', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+          action: $checkedConvert('action', (v) => v as String?),
+          detail: $checkedConvert('detail', (v) => v as String?),
+          resumed: $checkedConvert('resumed', (v) => v as bool?),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'goalId': 'goal_id'},
+    );
+
+Map<String, dynamic> _$$GoalResumeResponseImplToJson(
+    _$GoalResumeResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('goal_id', instance.goalId);
+  writeNotNull('error', instance.error);
+  writeNotNull('action', instance.action);
+  writeNotNull('detail', instance.detail);
+  writeNotNull('resumed', instance.resumed);
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
+_$GoalCreateResponseImpl _$$GoalCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GoalCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalCreateResponseImpl(
+          goalId: $checkedConvert('goal_id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          priority: $checkedConvert('priority', (v) => (v as num).toDouble()),
+          progress: $checkedConvert('progress', (v) => (v as num).toDouble()),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => (v as num).toDouble()),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'goalId': 'goal_id',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$$GoalCreateResponseImplToJson(
+    _$GoalCreateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'goal_id': instance.goalId,
+    'description': instance.description,
+    'status': instance.status,
+    'priority': instance.priority,
+    'progress': instance.progress,
+    'created_at': instance.createdAt,
+    'updated_at': instance.updatedAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
+_$GoalUpdateResponseImpl _$$GoalUpdateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GoalUpdateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalUpdateResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          priority: $checkedConvert('priority', (v) => (v as num).toDouble()),
+          progress: $checkedConvert('progress', (v) => (v as num).toDouble()),
+          createdAt:
+              $checkedConvert('created_at', (v) => (v as num).toDouble()),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => (v as num).toDouble()),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at', 'updatedAt': 'updated_at'},
+    );
+
+Map<String, dynamic> _$$GoalUpdateResponseImplToJson(
+    _$GoalUpdateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'description': instance.description,
+    'status': instance.status,
+    'priority': instance.priority,
+    'progress': instance.progress,
+    'created_at': instance.createdAt,
+    'updated_at': instance.updatedAt,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
+_$GoalDecomposeResponseImpl _$$GoalDecomposeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GoalDecomposeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GoalDecomposeResponseImpl(
+          subgoals: $checkedConvert(
+              'subgoals',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      GoalSummary.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GoalDecomposeResponseImplToJson(
+        _$GoalDecomposeResponseImpl instance) =>
+    <String, dynamic>{
+      'subgoals': instance.subgoals,
+    };
+
 _$EpisodicListResponseImpl _$$EpisodicListResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$EpisodicListResponseImpl',

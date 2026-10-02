@@ -124,6 +124,18 @@ class AppScreenMapping {
     'cognitive loop': 'unified_loop',
     'loop status': 'unified_loop',
     'loop control': 'unified_loop',
+    'persistent goals': 'persistent_goals',
+    'persistent goal': 'persistent_goals',
+    'goals list': 'persistent_goals',
+    'my goals': 'persistent_goals',
+    'goal status': 'persistent_goals',
+    'incomplete goals': 'persistent_goals',
+    'create goal': 'persistent_goals',
+    'new goal': 'persistent_goals',
+    'resume goal': 'persistent_goals',
+    'pause goal': 'persistent_goals',
+    'cancel goal': 'persistent_goals',
+    'goal progress': 'persistent_goals',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -157,6 +169,7 @@ class AppScreenMapping {
     'provisioner': 'API Key Provisioner',
     'communication': 'Communication Tools',
     'unified_loop': 'Unified Cognitive Loop',
+    'persistent_goals': 'Persistent Goal Pursuit',
   };
 
   static String? resolveScreenRoute(String command) {
