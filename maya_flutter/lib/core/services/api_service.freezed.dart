@@ -18375,6 +18375,326 @@ abstract class _AgentThinkResponse implements AgentThinkResponse {
       throw _privateConstructorUsedError;
 }
 
+LearnCompleteResponse _$LearnCompleteResponseFromJson(
+    Map<String, dynamic> json) {
+  return _LearnCompleteResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$LearnCompleteResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String get result => throw _privateConstructorUsedError;
+  bool get learned => throw _privateConstructorUsedError;
+  String? get skillHints => throw _privateConstructorUsedError;
+  String? get researchFindings => throw _privateConstructorUsedError;
+  bool? get sandboxVerified => throw _privateConstructorUsedError;
+  String? get testCode => throw _privateConstructorUsedError;
+  String? get riskLevel => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LearnCompleteResponseCopyWith<LearnCompleteResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LearnCompleteResponseCopyWith<$Res> {
+  factory $LearnCompleteResponseCopyWith(LearnCompleteResponse value,
+          $Res Function(LearnCompleteResponse) then) =
+      _$LearnCompleteResponseCopyWithImpl<$Res, LearnCompleteResponse>;
+  @useResult
+  $Res call(
+      {bool success,
+      String result,
+      bool learned,
+      String? skillHints,
+      String? researchFindings,
+      bool? sandboxVerified,
+      String? testCode,
+      String? riskLevel,
+      String? error});
+}
+
+/// @nodoc
+class _$LearnCompleteResponseCopyWithImpl<$Res,
+        $Val extends LearnCompleteResponse>
+    implements $LearnCompleteResponseCopyWith<$Res> {
+  _$LearnCompleteResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? result = null,
+    Object? learned = null,
+    Object? skillHints = freezed,
+    Object? researchFindings = freezed,
+    Object? sandboxVerified = freezed,
+    Object? testCode = freezed,
+    Object? riskLevel = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      result: null == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String,
+      learned: null == learned
+          ? _value.learned
+          : learned // ignore: cast_nullable_to_non_nullable
+              as bool,
+      skillHints: freezed == skillHints
+          ? _value.skillHints
+          : skillHints // ignore: cast_nullable_to_non_nullable
+              as String?,
+      researchFindings: freezed == researchFindings
+          ? _value.researchFindings
+          : researchFindings // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sandboxVerified: freezed == sandboxVerified
+          ? _value.sandboxVerified
+          : sandboxVerified // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      testCode: freezed == testCode
+          ? _value.testCode
+          : testCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      riskLevel: freezed == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LearnCompleteResponseImplCopyWith<$Res>
+    implements $LearnCompleteResponseCopyWith<$Res> {
+  factory _$$LearnCompleteResponseImplCopyWith(
+          _$LearnCompleteResponseImpl value,
+          $Res Function(_$LearnCompleteResponseImpl) then) =
+      __$$LearnCompleteResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool success,
+      String result,
+      bool learned,
+      String? skillHints,
+      String? researchFindings,
+      bool? sandboxVerified,
+      String? testCode,
+      String? riskLevel,
+      String? error});
+}
+
+/// @nodoc
+class __$$LearnCompleteResponseImplCopyWithImpl<$Res>
+    extends _$LearnCompleteResponseCopyWithImpl<$Res,
+        _$LearnCompleteResponseImpl>
+    implements _$$LearnCompleteResponseImplCopyWith<$Res> {
+  __$$LearnCompleteResponseImplCopyWithImpl(_$LearnCompleteResponseImpl _value,
+      $Res Function(_$LearnCompleteResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? result = null,
+    Object? learned = null,
+    Object? skillHints = freezed,
+    Object? researchFindings = freezed,
+    Object? sandboxVerified = freezed,
+    Object? testCode = freezed,
+    Object? riskLevel = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$LearnCompleteResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      result: null == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String,
+      learned: null == learned
+          ? _value.learned
+          : learned // ignore: cast_nullable_to_non_nullable
+              as bool,
+      skillHints: freezed == skillHints
+          ? _value.skillHints
+          : skillHints // ignore: cast_nullable_to_non_nullable
+              as String?,
+      researchFindings: freezed == researchFindings
+          ? _value.researchFindings
+          : researchFindings // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sandboxVerified: freezed == sandboxVerified
+          ? _value.sandboxVerified
+          : sandboxVerified // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      testCode: freezed == testCode
+          ? _value.testCode
+          : testCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      riskLevel: freezed == riskLevel
+          ? _value.riskLevel
+          : riskLevel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LearnCompleteResponseImpl implements _LearnCompleteResponse {
+  const _$LearnCompleteResponseImpl(
+      {required this.success,
+      required this.result,
+      required this.learned,
+      this.skillHints,
+      this.researchFindings,
+      this.sandboxVerified,
+      this.testCode,
+      this.riskLevel,
+      this.error});
+
+  factory _$LearnCompleteResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LearnCompleteResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String result;
+  @override
+  final bool learned;
+  @override
+  final String? skillHints;
+  @override
+  final String? researchFindings;
+  @override
+  final bool? sandboxVerified;
+  @override
+  final String? testCode;
+  @override
+  final String? riskLevel;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'LearnCompleteResponse(success: $success, result: $result, learned: $learned, skillHints: $skillHints, researchFindings: $researchFindings, sandboxVerified: $sandboxVerified, testCode: $testCode, riskLevel: $riskLevel, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LearnCompleteResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.result, result) || other.result == result) &&
+            (identical(other.learned, learned) || other.learned == learned) &&
+            (identical(other.skillHints, skillHints) ||
+                other.skillHints == skillHints) &&
+            (identical(other.researchFindings, researchFindings) ||
+                other.researchFindings == researchFindings) &&
+            (identical(other.sandboxVerified, sandboxVerified) ||
+                other.sandboxVerified == sandboxVerified) &&
+            (identical(other.testCode, testCode) ||
+                other.testCode == testCode) &&
+            (identical(other.riskLevel, riskLevel) ||
+                other.riskLevel == riskLevel) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      success,
+      result,
+      learned,
+      skillHints,
+      researchFindings,
+      sandboxVerified,
+      testCode,
+      riskLevel,
+      error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LearnCompleteResponseImplCopyWith<_$LearnCompleteResponseImpl>
+      get copyWith => __$$LearnCompleteResponseImplCopyWithImpl<
+          _$LearnCompleteResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LearnCompleteResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _LearnCompleteResponse implements LearnCompleteResponse {
+  const factory _LearnCompleteResponse(
+      {required final bool success,
+      required final String result,
+      required final bool learned,
+      final String? skillHints,
+      final String? researchFindings,
+      final bool? sandboxVerified,
+      final String? testCode,
+      final String? riskLevel,
+      final String? error}) = _$LearnCompleteResponseImpl;
+
+  factory _LearnCompleteResponse.fromJson(Map<String, dynamic> json) =
+      _$LearnCompleteResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String get result;
+  @override
+  bool get learned;
+  @override
+  String? get skillHints;
+  @override
+  String? get researchFindings;
+  @override
+  bool? get sandboxVerified;
+  @override
+  String? get testCode;
+  @override
+  String? get riskLevel;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$LearnCompleteResponseImplCopyWith<_$LearnCompleteResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 VisionAnalysisResult _$VisionAnalysisResultFromJson(Map<String, dynamic> json) {
   return _VisionAnalysisResult.fromJson(json);
 }

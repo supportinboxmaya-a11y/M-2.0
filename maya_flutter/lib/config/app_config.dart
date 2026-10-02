@@ -25,6 +25,7 @@ class AppConfig {
   static const String agentChatStream = '/api/v1/agent/chat/stream';
   static const String agentRun = '/api/v1/agent/run';
   static const String agentThink = '/api/v1/agent/think';
+  static const String agentLearnComplete = '/api/v1/agent/learn-complete';
 
   // Autonomous / Cognitive / Queue
   static const String autonomousStatus = '/api/v1/autonomous/status';

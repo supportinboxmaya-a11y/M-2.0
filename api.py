@@ -424,7 +424,31 @@ async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
         supabase_store.add_chat_message(user["uid"], req.chat_id, "assistant", response)
         supabase_store.add_budget_usage(user["uid"], CHAT_MESSAGE_FLAT_COST_USD)
 
-    return {"reply": response, "timestamp": datetime.utcnow().isoformat()}
+    return {"result": result, "depth": req.depth}
+
+@app.post("/api/v1/agent/learn-complete")
+async def agent_learn_complete(req: AgentRunRequest, user=Depends(get_current_user)):
+    """
+    Learn & Complete: Handle unknown tasks by researching, testing, and completing.
+    
+    Body:
+      - goal: The task to complete
+      - max_retries: Max retries (default 3)
+      - task_id: Optional task ID
+      - scope: Optional memory scope
+    """
+    if not maya_instance:
+        raise HTTPException(status_code=503, detail="Maya not initialized")
+    check_budget(user)
+    
+    result = await asyncio.get_event_loop().run_in_executor(
+        None, lambda: maya_instance.learn_and_complete(
+            goal=req.goal,
+            max_retries=req.max_retries or 3,
+            task_id=req.instance_id,
+        )
+    )
+    return result
 
 @app.post("/api/v1/agent/think")
 async def agent_think(req: ThinkRequest, user: dict = Depends(get_current_user)):

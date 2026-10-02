@@ -3495,6 +3495,58 @@ Map<String, dynamic> _$$AgentThinkResponseImplToJson(
   return val;
 }
 
+_$LearnCompleteResponseImpl _$$LearnCompleteResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LearnCompleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LearnCompleteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          result: $checkedConvert('result', (v) => v as String),
+          learned: $checkedConvert('learned', (v) => v as bool),
+          skillHints: $checkedConvert('skill_hints', (v) => v as String?),
+          researchFindings:
+              $checkedConvert('research_findings', (v) => v as String?),
+          sandboxVerified:
+              $checkedConvert('sandbox_verified', (v) => v as bool?),
+          testCode: $checkedConvert('test_code', (v) => v as String?),
+          riskLevel: $checkedConvert('risk_level', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'skillHints': 'skill_hints',
+        'researchFindings': 'research_findings',
+        'sandboxVerified': 'sandbox_verified',
+        'testCode': 'test_code',
+        'riskLevel': 'risk_level'
+      },
+    );
+
+Map<String, dynamic> _$$LearnCompleteResponseImplToJson(
+    _$LearnCompleteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+    'result': instance.result,
+    'learned': instance.learned,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('skill_hints', instance.skillHints);
+  writeNotNull('research_findings', instance.researchFindings);
+  writeNotNull('sandbox_verified', instance.sandboxVerified);
+  writeNotNull('test_code', instance.testCode);
+  writeNotNull('risk_level', instance.riskLevel);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
 _$VisionAnalysisResultImpl _$$VisionAnalysisResultImplFromJson(Map json) =>
     $checkedCreate(
       r'_$VisionAnalysisResultImpl',

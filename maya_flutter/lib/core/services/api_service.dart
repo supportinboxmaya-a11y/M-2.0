@@ -415,6 +415,25 @@ class ApiService {
     return AgentThinkResponse.fromJson(response.data);
   }
 
+  // Learn & Complete (Phase 37/39)
+  Future<LearnCompleteResponse> learnAndComplete({
+    required String goal,
+    int maxRetries = 3,
+    String? taskId,
+    String? scope,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.agentLearnComplete,
+      data: {
+        'goal': goal,
+        'max_retries': maxRetries,
+        if (taskId != null) 'instance_id': taskId,
+        if (scope != null) 'scope': scope,
+      },
+    );
+    return LearnCompleteResponse.fromJson(response.data);
+  }
+
   // Vision/Camera
   Future<VisionAnalysisResult> analyzeImage(
     File imageFile, {
@@ -1249,12 +1268,11 @@ class ApiService {
           lastCheck: DateTime.now(),
           error: e.toString(),
         );
-      }
+}
     }
   }
-}
 
-  // AGI Architecture (Phase 18 Part 1)
+// AGI Architecture (Phase 18 Part 1)
   Future<KernelStatusResponse> getKernelStatus({bool summary = false}) async {
     final response = await _dio.get(
       AppConfig.kernelStatus,
@@ -2051,31 +2069,6 @@ class ApiService {
     return ApprovalRequestResponse.fromJson(response.data);
   }
 
-  Future<ApprovalsListResponse> getApprovals({String? status}) async {
-    final response = await _dio.get(
-      AppConfig.approvalsList,
-      queryParameters: {
-        if (status != null) 'status': status,
-      },
-    );
-    return ApprovalsListResponse.fromJson(response.data);
-  }
-
-  Future<ApprovalDecideResponse> decideApproval({
-    required String approvalId,
-    required String decision, // 'approve' or 'reject'
-  }) async {
-    final response = await _dio.post(
-      '${AppConfig.approvalsDecide}$approvalId/$decision',
-    );
-    return ApprovalDecideResponse.fromJson(response.data);
-  }
-
-  Future<ApprovalModeResponse> getApprovalMode() async {
-    final response = await _dio.get(AppConfig.approvalMode);
-    return ApprovalModeResponse.fromJson(response.data);
-  }
-
   Future<ApprovalModeResponse> setApprovalMode(String mode) async {
     final response = await _dio.put(
       AppConfig.approvalMode,
@@ -2083,6 +2076,7 @@ class ApiService {
     );
     return ApprovalModeResponse.fromJson(response.data);
   }
+}
 
 // AGI Architecture Models (Phase 18 Part 1)
 @freezed
@@ -3736,6 +3730,24 @@ class AgentThinkResponse with _$AgentThinkResponse {
 
   factory AgentThinkResponse.fromJson(Map<String, dynamic> json) =>
       _$AgentThinkResponseFromJson(json);
+}
+
+@freezed
+class LearnCompleteResponse with _$LearnCompleteResponse {
+  const factory LearnCompleteResponse({
+    required bool success,
+    required String result,
+    required bool learned,
+    String? skillHints,
+    String? researchFindings,
+    bool? sandboxVerified,
+    String? testCode,
+    String? riskLevel,
+    String? error,
+  }) = _LearnCompleteResponse;
+
+  factory LearnCompleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$LearnCompleteResponseFromJson(json);
 }
 
 @freezed

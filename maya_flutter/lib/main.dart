@@ -2157,6 +2157,44 @@ class ActivityEvent {
       case 'connected':
         message = '🔗 Connected to task stream';
         break;
+      case 'learning_started':
+        message = '📚 Learn & Complete: Starting...';
+        break;
+      case 'skill_found':
+        message = '🎓 Found relevant skill';
+        detail = event.detail;
+        isComplete = true;
+        break;
+      case 'researching':
+        message = '🔍 Researching best approach...';
+        break;
+      case 'research_done':
+        message = '🔍 Research complete';
+        detail = event.detail;
+        isComplete = true;
+        break;
+      case 'sandbox_test':
+        message = '🧪 Testing in sandbox...';
+        break;
+      case 'sandbox_test_done':
+        message = event.isError ? '🧪 Sandbox test failed' : '🧪 Sandbox test passed';
+        detail = event.detail;
+        isComplete = true;
+        isError = event.isError;
+        break;
+      case 'learning_executing':
+        message = '⚡ Executing with learned approach...';
+        break;
+      case 'skill_acquired':
+        message = '🎓 Skill acquired & saved';
+        detail = event.skillName;
+        isComplete = true;
+        break;
+      case 'learn_failed':
+        message = '❌ Could not complete after attempts';
+        detail = event.detail;
+        isError = true;
+        break;
       default:
         message = '⚙️ ${type.replaceAll('_', ' ')}';
     }
