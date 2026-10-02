@@ -152,6 +152,11 @@ class AppScreenMapping {
     'search skill': 'skill_generalization',
     'compose skill': 'skill_generalization',
     'skill compose': 'skill_generalization',
+    'mcp': 'mcp_client',
+    'mcp servers': 'mcp_client',
+    'mcp server': 'mcp_client',
+    'model context protocol': 'mcp_client',
+    'connect mcp': 'mcp_client',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -188,6 +193,7 @@ class AppScreenMapping {
     'persistent_goals': 'Persistent Goal Pursuit',
     'knowledge_engine': 'Knowledge Engine',
     'skill_generalization': 'Skill Generalization',
+    'mcp_client': 'MCP Servers',
   };
 
   static String? resolveScreenRoute(String command) {

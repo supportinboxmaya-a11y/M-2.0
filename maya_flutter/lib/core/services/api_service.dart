@@ -2008,6 +2008,49 @@ class ApiService {
     return BeliefsQueryResponse.fromJson(response.data);
   }
 
+  // MCP Client (Phase 38)
+  Future<McpStatusResponse> getMcpStatus() async {
+    final response = await _dio.get(AppConfig.mcpStatus);
+    return McpStatusResponse.fromJson(response.data);
+  }
+
+  Future<McpConnectResponse> connectMcpServer({
+    required String name,
+    List<String>? command,
+    String? url,
+    List<String>? toolsAllow,
+    List<String>? toolsDeny,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.mcpConnect,
+      data: {
+        'name': name,
+        if (command != null) 'command': command,
+        if (url != null) 'url': url,
+        if (toolsAllow != null) 'tools_allow': toolsAllow,
+        if (toolsDeny != null) 'tools_deny': toolsDeny,
+      },
+    );
+    return McpConnectResponse.fromJson(response.data);
+  }
+
+  Future<McpDisconnectResponse> disconnectMcpServer() async {
+    final response = await _dio.post(AppConfig.mcpDisconnect);
+    return McpDisconnectResponse.fromJson(response.data);
+  }
+
+  Future<McpCallResponse> callMcpTool({
+    required String server,
+    required String tool,
+    Map<String, dynamic>? arguments,
+  }) async {
+    final response = await _dio.post(
+      '${AppConfig.mcpCall}$server/$tool',
+      data: arguments ?? {},
+    );
+    return McpCallResponse.fromJson(response.data);
+  }
+
   // Working Memory
   Future<WorkingMemoryAddResponse> addWorkingMemory({
     required String content,
@@ -3565,6 +3608,64 @@ class BeliefsQueryResponse with _$BeliefsQueryResponse {
 
   factory BeliefsQueryResponse.fromJson(Map<String, dynamic> json) =>
       _$BeliefsQueryResponseFromJson(json);
+}
+
+// MCP Client Models (Phase 38)
+@freezed
+class McpStatusResponse with _$McpStatusResponse {
+  const factory McpStatusResponse({
+    required bool enabled,
+    required List<McpServerStatus> servers,
+  }) = _McpStatusResponse;
+
+  factory McpStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$McpStatusResponseFromJson(json);
+}
+
+@freezed
+class McpServerStatus with _$McpServerStatus {
+  const factory McpServerStatus({
+    required String name,
+    required String status, // "connected", "disconnected", "error"
+    required int toolCount,
+    required List<String> tools,
+    String? error,
+  }) = _McpServerStatus;
+
+  factory McpServerStatus.fromJson(Map<String, dynamic> json) =>
+      _$McpServerStatusFromJson(json);
+}
+
+@freezed
+class McpConnectResponse with _$McpConnectResponse {
+  const factory McpConnectResponse({
+    required String server,
+    required int toolsRegistered,
+  }) = _McpConnectResponse;
+
+  factory McpConnectResponse.fromJson(Map<String, dynamic> json) =>
+      _$McpConnectResponseFromJson(json);
+}
+
+@freezed
+class McpDisconnectResponse with _$McpDisconnectResponse {
+  const factory McpDisconnectResponse({
+    required bool disconnected,
+    required int toolsRemoved,
+  }) = _McpDisconnectResponse;
+
+  factory McpDisconnectResponse.fromJson(Map<String, dynamic> json) =>
+      _$McpDisconnectResponseFromJson(json);
+}
+
+@freezed
+class McpCallResponse with _$McpCallResponse {
+  const factory McpCallResponse({
+    required dynamic result,
+  }) = _McpCallResponse;
+
+  factory McpCallResponse.fromJson(Map<String, dynamic> json) =>
+      _$McpCallResponseFromJson(json);
 }
 
 @JsonSerializable()

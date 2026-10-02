@@ -273,6 +273,12 @@ class AppConfig {
   static const String beliefsAdd = '/api/v1/cognitive/beliefs';
   static const String beliefsQuery = '/api/v1/cognitive/beliefs';
 
+  // MCP Client (Phase 38)
+  static const String mcpStatus = '/api/v1/mcp/status';
+  static const String mcpConnect = '/api/v1/mcp/connect';
+  static const String mcpDisconnect = '/api/v1/mcp/disconnect';
+  static const String mcpCall = '/api/v1/mcp/call/';
+
   // Working Memory
   static const String workingMemoryAdd = '/api/v1/cognitive/memory/working/add';
   static const String workingMemorySearch = '/api/v1/cognitive/memory/working/search';

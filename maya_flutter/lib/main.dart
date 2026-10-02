@@ -1226,6 +1226,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'persistent_goals': screen = const _PersistentGoalsScreen(); break;
       case 'knowledge_engine': screen = const _KnowledgeEngineScreen(); break;
       case 'skill_generalization': screen = const _SkillGeneralizationScreen(); break;
+      case 'mcp_client': screen = const _McpClientScreen(); break;
       case 'business': screen = const _BusinessAnalysisScreen(); break;
       case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
@@ -2639,7 +2640,15 @@ class _AppDrawer extends ConsumerWidget {
                   icon: Icons.extension_rounded,
                   label: 'MCP Servers',
                   subtitle: 'Model Context Protocol',
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _McpClientScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -19879,6 +19888,12 @@ final beliefsQueryProvider = FutureProvider.family<BeliefsQueryResponse, ({Strin
   return apiService.queryBeliefs(domain: params.domain, minConfidence: params.minConfidence);
 });
 
+// MCP Client Providers (Phase 38)
+final mcpStatusProvider = FutureProvider<McpStatusResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMcpStatus();
+});
+
 // Business Analysis Providers (Phase 20)
 final businessMissionsProvider = FutureProvider<MissionListResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
@@ -24682,6 +24697,772 @@ class _SkillInfoChip extends StatelessWidget {
         border: Border.all(color: color),
       ),
       child: Text('$label: $value', style: MayaTheme.labelSmall.copyWith(color: color)),
+    );
+  }
+}
+
+// MCP Client Screen (Phase 38)
+class _McpClientScreen extends ConsumerStatefulWidget {
+  const _McpClientScreen();
+
+  @override
+  ConsumerState<_McpClientScreen> createState() => _McpClientScreenState();
+}
+
+class _McpClientScreenState extends ConsumerState<_McpClientScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (mounted) {
+        ref.invalidate(mcpStatusProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('MCP Servers', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(mcpStatusProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.extension_rounded), text: 'Servers'),
+              Tab(icon: Icon(Icons.add_circle_rounded), text: 'Connect'),
+              Tab(icon: Icon(Icons.terminal_rounded), text: 'Call Tool'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _McpServersTab(),
+            _McpConnectTab(),
+            _McpCallTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _McpServersTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(mcpStatusProvider);
+
+    return statusAsync.when(
+      data: (status) => status.servers.isEmpty
+          ? _emptyState(
+              'No MCP Servers',
+              'Connect an MCP server to extend Maya\'s capabilities',
+              Icons.extension_rounded,
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        status.enabled ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                        color: status.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        status.enabled ? 'MCP Enabled' : 'MCP Disabled (enable MCP_ENABLED in .env)',
+                        style: MayaTheme.bodyMedium.copyWith(
+                          color: status.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  const Text('Connected Servers', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 12),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: status.servers.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final server = status.servers[index];
+                      return _McpServerCard(server: server);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading MCP status', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _McpServerCard extends StatelessWidget {
+  final McpServerStatus server;
+
+  const _McpServerCard({required this.server});
+
+  @override
+  Widget build(BuildContext context) {
+    final isConnected = server.status == 'connected';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isConnected
+                      ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                      : MayaTheme.error.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isConnected ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+                  color: isConnected ? MayaTheme.neonEmerald : MayaTheme.error,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(server.name, style: MayaTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isConnected
+                                ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                                : MayaTheme.error.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isConnected ? MayaTheme.neonEmerald : MayaTheme.error,
+                            ),
+                          ),
+                          child: Text(
+                            server.status.toUpperCase(),
+                            style: MayaTheme.labelSmall.copyWith(
+                              color: isConnected ? MayaTheme.neonEmerald : MayaTheme.error,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('${server.toolCount} tools', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                onPressed: () => _showDisconnectDialog(context, server.name),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (server.tools.isNotEmpty) ...[
+            const Text('Available Tools:', style: MayaTheme.labelMedium),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: server.tools.map((tool) => Chip(
+                label: Text(tool, style: MayaTheme.bodySmall),
+                backgroundColor: MayaTheme.slate800,
+                side: BorderSide(color: Colors.white12),
+              )).toList(),
+            ),
+          ] else ...[
+            const Text('No tools available', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+          ],
+          if (server.error != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: MayaTheme.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: MayaTheme.error),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_rounded, color: MayaTheme.error, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(server.error!, style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error))),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showDisconnectDialog(BuildContext context, String serverName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Disconnect Server', style: MayaTheme.titleMedium),
+        content: Text('Disconnect "$serverName"? This will remove its tools from Maya.', style: MayaTheme.bodyMedium),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final apiService = context.read(apiServiceProvider);
+              try {
+                await apiService.disconnectMcpServer();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: const Text('All MCP servers disconnected'), backgroundColor: MayaTheme.neonEmerald),
+                  );
+                  context.read(mcpStatusProvider).invalidate();
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+                  );
+                }
+              }
+            },
+            child: Text('Disconnect All', style: TextStyle(color: MayaTheme.error)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _McpConnectTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_McpConnectTab> createState() => _McpConnectTabState();
+}
+
+class _McpConnectTabState extends ConsumerState<_McpConnectTab> {
+  final _nameController = TextEditingController();
+  final _commandController = TextEditingController();
+  final _urlController = TextEditingController();
+  final _toolsAllowController = TextEditingController();
+  final _toolsDenyController = TextEditingController();
+  bool _isConnecting = false;
+  McpConnectResponse? _lastResult;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _commandController.dispose();
+    _urlController.dispose();
+    _toolsAllowController.dispose();
+    _toolsDenyController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _connectServer() async {
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Server name is required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+    if (_commandController.text.trim().isEmpty && _urlController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Either command or URL is required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isConnecting = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.connectMcpServer(
+        name: _nameController.text.trim(),
+        command: _commandController.text.trim().isEmpty ? null : _commandController.text.trim().split(' '),
+        url: _urlController.text.trim().isEmpty ? null : _urlController.text.trim(),
+        toolsAllow: _toolsAllowController.text.trim().isEmpty ? null : _toolsAllowController.text.trim().split(',').map((e) => e.trim()).toList(),
+        toolsDeny: _toolsDenyController.text.trim().isEmpty ? null : _toolsDenyController.text.trim().split(',').map((e) => e.trim()).toList(),
+      );
+      setState(() {
+        _lastResult = result;
+        _isConnecting = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Server connected: ${result.toolsRegistered} tools registered'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+        _nameController.clear();
+        _commandController.clear();
+        _urlController.clear();
+        _toolsAllowController.clear();
+        _toolsDenyController.clear();
+        ref.invalidate(mcpStatusProvider);
+      }
+    } catch (e) {
+      setState(() => _isConnecting = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connect failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Connect MCP Server', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Connect a Model Context Protocol server. Provide either a command (stdio) or URL (Streamable HTTP).',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Server Name *',
+                    hintText: 'e.g., filesystem, github, database',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Connection Type', style: MayaTheme.titleSmall),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Show command input
+                        },
+                        icon: const Icon(Icons.terminal_rounded),
+                        label: const Text('STDIO (Command)'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(color: Colors.white24),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Show URL input
+                        },
+                        icon: const Icon(Icons.link_rounded),
+                        label: const Text('HTTP (URL)'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(color: Colors.white24),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _commandController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Command (space-separated)',
+                    hintText: 'e.g., npx -y @modelcontextprotocol/server-filesystem /tmp',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.code_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _urlController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'URL (Streamable HTTP)',
+                    hintText: 'e.g., http://localhost:8080/mcp',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.link_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _toolsAllowController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Tools Allow (comma-separated, optional)',
+                    hintText: 'e.g., read_file,write_file,list_dir',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.check_circle_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _toolsDenyController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Tools Deny (comma-separated, optional)',
+                    hintText: 'e.g., delete_file,exec',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.cancel_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isConnecting ? null : _connectServer,
+                    icon: _isConnecting
+                        ? const SizedBox(
+                            width: 20, height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)),
+                          )
+                        : const Icon(Icons.extension_rounded),
+                    label: Text(_isConnecting ? 'Connecting...' : 'Connect Server'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonViolet,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                if (_lastResult != null) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.neonEmerald.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: MayaTheme.neonEmerald),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          const Icon(Icons.check_circle_rounded, color: MayaTheme.neonEmerald, size: 20),
+                          const SizedBox(width: 8),
+                          Text('Server Connected', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonEmerald)),
+                        ]),
+                        const SizedBox(height: 8),
+                        Text('Server: ${_lastResult!.server}', style: MayaTheme.bodySmall),
+                        Text('Tools Registered: ${_lastResult!.toolsRegistered}', style: MayaTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _McpCallTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_McpCallTab> createState() => _McpCallTabState();
+}
+
+class _McpCallTabState extends ConsumerState<_McpCallTab> {
+  final _serverController = TextEditingController();
+  final _toolController = TextEditingController();
+  final _argumentsController = TextEditingController(text: '{}');
+  McpCallResponse? _lastResult;
+  bool _isCalling = false;
+
+  @override
+  void dispose() {
+    _serverController.dispose();
+    _toolController.dispose();
+    _argumentsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _callTool() async {
+    if (_serverController.text.trim().isEmpty || _toolController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Server and tool name required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isCalling = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.callMcpTool(
+        server: _serverController.text.trim(),
+        tool: _toolController.text.trim(),
+        arguments: _argumentsController.text.trim().isEmpty ? {} : jsonDecode(_argumentsController.text.trim()),
+      );
+      setState(() {
+        _lastResult = result;
+        _isCalling = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Tool called successfully'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      setState(() => _isCalling = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Call failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Call MCP Tool', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Directly call a tool on a connected MCP server (normally Maya\'s planner does this automatically).',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _serverController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Server Name *',
+                    hintText: 'e.g., filesystem',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.extension_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _toolController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Tool Name *',
+                    hintText: 'e.g., read_file, list_dir',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.build_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _argumentsController,
+                  style: const TextStyle(color: Colors.white, fontFamily: 'monospace'),
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    labelText: 'Arguments (JSON)',
+                    hintText: '{"path": "/tmp/test.txt"}',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    alignLabelWithHint: true,
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 60),
+                      child: Icon(Icons.code_rounded, color: Colors.white54),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isCalling ? null : _callTool,
+                    icon: _isCalling
+                        ? const SizedBox(
+                            width: 20, height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)),
+                          )
+                        : const Icon(Icons.play_arrow_rounded),
+                    label: Text(_isCalling ? 'Calling...' : 'Call Tool'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                if (_lastResult != null) ...[
+                  const SizedBox(height: 16),
+                  const Text('Result:', style: MayaTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: MayaTheme.slate800,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white12),
+                    ),
+                    child: SingleChildScrollView(
+                      child: SelectableText(
+                        _lastResult!.result.toString(),
+                        style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

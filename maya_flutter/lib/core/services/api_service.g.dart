@@ -3033,6 +3033,138 @@ Map<String, dynamic> _$$BeliefsQueryResponseImplToJson(
       'beliefs': instance.beliefs,
     };
 
+_$McpStatusResponseImpl _$$McpStatusResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$McpStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$McpStatusResponseImpl(
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          servers: $checkedConvert(
+              'servers',
+              (v) => (v as List<dynamic>)
+                  .map((e) => McpServerStatus.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$McpStatusResponseImplToJson(
+        _$McpStatusResponseImpl instance) =>
+    <String, dynamic>{
+      'enabled': instance.enabled,
+      'servers': instance.servers,
+    };
+
+_$McpServerStatusImpl _$$McpServerStatusImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$McpServerStatusImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$McpServerStatusImpl(
+          name: $checkedConvert('name', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          toolCount: $checkedConvert('tool_count', (v) => (v as num).toInt()),
+          tools: $checkedConvert('tools',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'toolCount': 'tool_count'},
+    );
+
+Map<String, dynamic> _$$McpServerStatusImplToJson(
+    _$McpServerStatusImpl instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+    'status': instance.status,
+    'tool_count': instance.toolCount,
+    'tools': instance.tools,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$McpConnectResponseImpl _$$McpConnectResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$McpConnectResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$McpConnectResponseImpl(
+          server: $checkedConvert('server', (v) => v as String),
+          toolsRegistered:
+              $checkedConvert('tools_registered', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'toolsRegistered': 'tools_registered'},
+    );
+
+Map<String, dynamic> _$$McpConnectResponseImplToJson(
+        _$McpConnectResponseImpl instance) =>
+    <String, dynamic>{
+      'server': instance.server,
+      'tools_registered': instance.toolsRegistered,
+    };
+
+_$McpDisconnectResponseImpl _$$McpDisconnectResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$McpDisconnectResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$McpDisconnectResponseImpl(
+          disconnected: $checkedConvert('disconnected', (v) => v as bool),
+          toolsRemoved:
+              $checkedConvert('tools_removed', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'toolsRemoved': 'tools_removed'},
+    );
+
+Map<String, dynamic> _$$McpDisconnectResponseImplToJson(
+        _$McpDisconnectResponseImpl instance) =>
+    <String, dynamic>{
+      'disconnected': instance.disconnected,
+      'tools_removed': instance.toolsRemoved,
+    };
+
+_$McpCallResponseImpl _$$McpCallResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$McpCallResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$McpCallResponseImpl(
+          result: $checkedConvert('result', (v) => v),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$McpCallResponseImplToJson(
+    _$McpCallResponseImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  return val;
+}
+
 _$WorkingMemoryAddResponseImpl _$$WorkingMemoryAddResponseImplFromJson(
         Map json) =>
     $checkedCreate(

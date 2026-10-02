@@ -14878,6 +14878,859 @@ abstract class _BeliefsQueryResponse implements BeliefsQueryResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+McpStatusResponse _$McpStatusResponseFromJson(Map<String, dynamic> json) {
+  return _McpStatusResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$McpStatusResponse {
+  bool get enabled => throw _privateConstructorUsedError;
+  List<McpServerStatus> get servers => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $McpStatusResponseCopyWith<McpStatusResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $McpStatusResponseCopyWith<$Res> {
+  factory $McpStatusResponseCopyWith(
+          McpStatusResponse value, $Res Function(McpStatusResponse) then) =
+      _$McpStatusResponseCopyWithImpl<$Res, McpStatusResponse>;
+  @useResult
+  $Res call({bool enabled, List<McpServerStatus> servers});
+}
+
+/// @nodoc
+class _$McpStatusResponseCopyWithImpl<$Res, $Val extends McpStatusResponse>
+    implements $McpStatusResponseCopyWith<$Res> {
+  _$McpStatusResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? servers = null,
+  }) {
+    return _then(_value.copyWith(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      servers: null == servers
+          ? _value.servers
+          : servers // ignore: cast_nullable_to_non_nullable
+              as List<McpServerStatus>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$McpStatusResponseImplCopyWith<$Res>
+    implements $McpStatusResponseCopyWith<$Res> {
+  factory _$$McpStatusResponseImplCopyWith(_$McpStatusResponseImpl value,
+          $Res Function(_$McpStatusResponseImpl) then) =
+      __$$McpStatusResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool enabled, List<McpServerStatus> servers});
+}
+
+/// @nodoc
+class __$$McpStatusResponseImplCopyWithImpl<$Res>
+    extends _$McpStatusResponseCopyWithImpl<$Res, _$McpStatusResponseImpl>
+    implements _$$McpStatusResponseImplCopyWith<$Res> {
+  __$$McpStatusResponseImplCopyWithImpl(_$McpStatusResponseImpl _value,
+      $Res Function(_$McpStatusResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? enabled = null,
+    Object? servers = null,
+  }) {
+    return _then(_$McpStatusResponseImpl(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      servers: null == servers
+          ? _value._servers
+          : servers // ignore: cast_nullable_to_non_nullable
+              as List<McpServerStatus>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$McpStatusResponseImpl implements _McpStatusResponse {
+  const _$McpStatusResponseImpl(
+      {required this.enabled, required final List<McpServerStatus> servers})
+      : _servers = servers;
+
+  factory _$McpStatusResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$McpStatusResponseImplFromJson(json);
+
+  @override
+  final bool enabled;
+  final List<McpServerStatus> _servers;
+  @override
+  List<McpServerStatus> get servers {
+    if (_servers is EqualUnmodifiableListView) return _servers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_servers);
+  }
+
+  @override
+  String toString() {
+    return 'McpStatusResponse(enabled: $enabled, servers: $servers)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$McpStatusResponseImpl &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            const DeepCollectionEquality().equals(other._servers, _servers));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, enabled, const DeepCollectionEquality().hash(_servers));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$McpStatusResponseImplCopyWith<_$McpStatusResponseImpl> get copyWith =>
+      __$$McpStatusResponseImplCopyWithImpl<_$McpStatusResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$McpStatusResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _McpStatusResponse implements McpStatusResponse {
+  const factory _McpStatusResponse(
+      {required final bool enabled,
+      required final List<McpServerStatus> servers}) = _$McpStatusResponseImpl;
+
+  factory _McpStatusResponse.fromJson(Map<String, dynamic> json) =
+      _$McpStatusResponseImpl.fromJson;
+
+  @override
+  bool get enabled;
+  @override
+  List<McpServerStatus> get servers;
+  @override
+  @JsonKey(ignore: true)
+  _$$McpStatusResponseImplCopyWith<_$McpStatusResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+McpServerStatus _$McpServerStatusFromJson(Map<String, dynamic> json) {
+  return _McpServerStatus.fromJson(json);
+}
+
+/// @nodoc
+mixin _$McpServerStatus {
+  String get name => throw _privateConstructorUsedError;
+  String get status =>
+      throw _privateConstructorUsedError; // "connected", "disconnected", "error"
+  int get toolCount => throw _privateConstructorUsedError;
+  List<String> get tools => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $McpServerStatusCopyWith<McpServerStatus> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $McpServerStatusCopyWith<$Res> {
+  factory $McpServerStatusCopyWith(
+          McpServerStatus value, $Res Function(McpServerStatus) then) =
+      _$McpServerStatusCopyWithImpl<$Res, McpServerStatus>;
+  @useResult
+  $Res call(
+      {String name,
+      String status,
+      int toolCount,
+      List<String> tools,
+      String? error});
+}
+
+/// @nodoc
+class _$McpServerStatusCopyWithImpl<$Res, $Val extends McpServerStatus>
+    implements $McpServerStatusCopyWith<$Res> {
+  _$McpServerStatusCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? status = null,
+    Object? toolCount = null,
+    Object? tools = null,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      toolCount: null == toolCount
+          ? _value.toolCount
+          : toolCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      tools: null == tools
+          ? _value.tools
+          : tools // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$McpServerStatusImplCopyWith<$Res>
+    implements $McpServerStatusCopyWith<$Res> {
+  factory _$$McpServerStatusImplCopyWith(_$McpServerStatusImpl value,
+          $Res Function(_$McpServerStatusImpl) then) =
+      __$$McpServerStatusImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String name,
+      String status,
+      int toolCount,
+      List<String> tools,
+      String? error});
+}
+
+/// @nodoc
+class __$$McpServerStatusImplCopyWithImpl<$Res>
+    extends _$McpServerStatusCopyWithImpl<$Res, _$McpServerStatusImpl>
+    implements _$$McpServerStatusImplCopyWith<$Res> {
+  __$$McpServerStatusImplCopyWithImpl(
+      _$McpServerStatusImpl _value, $Res Function(_$McpServerStatusImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? status = null,
+    Object? toolCount = null,
+    Object? tools = null,
+    Object? error = freezed,
+  }) {
+    return _then(_$McpServerStatusImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      toolCount: null == toolCount
+          ? _value.toolCount
+          : toolCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      tools: null == tools
+          ? _value._tools
+          : tools // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$McpServerStatusImpl implements _McpServerStatus {
+  const _$McpServerStatusImpl(
+      {required this.name,
+      required this.status,
+      required this.toolCount,
+      required final List<String> tools,
+      this.error})
+      : _tools = tools;
+
+  factory _$McpServerStatusImpl.fromJson(Map<String, dynamic> json) =>
+      _$$McpServerStatusImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String status;
+// "connected", "disconnected", "error"
+  @override
+  final int toolCount;
+  final List<String> _tools;
+  @override
+  List<String> get tools {
+    if (_tools is EqualUnmodifiableListView) return _tools;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tools);
+  }
+
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'McpServerStatus(name: $name, status: $status, toolCount: $toolCount, tools: $tools, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$McpServerStatusImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.toolCount, toolCount) ||
+                other.toolCount == toolCount) &&
+            const DeepCollectionEquality().equals(other._tools, _tools) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, status, toolCount,
+      const DeepCollectionEquality().hash(_tools), error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$McpServerStatusImplCopyWith<_$McpServerStatusImpl> get copyWith =>
+      __$$McpServerStatusImplCopyWithImpl<_$McpServerStatusImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$McpServerStatusImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _McpServerStatus implements McpServerStatus {
+  const factory _McpServerStatus(
+      {required final String name,
+      required final String status,
+      required final int toolCount,
+      required final List<String> tools,
+      final String? error}) = _$McpServerStatusImpl;
+
+  factory _McpServerStatus.fromJson(Map<String, dynamic> json) =
+      _$McpServerStatusImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get status;
+  @override // "connected", "disconnected", "error"
+  int get toolCount;
+  @override
+  List<String> get tools;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$McpServerStatusImplCopyWith<_$McpServerStatusImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+McpConnectResponse _$McpConnectResponseFromJson(Map<String, dynamic> json) {
+  return _McpConnectResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$McpConnectResponse {
+  String get server => throw _privateConstructorUsedError;
+  int get toolsRegistered => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $McpConnectResponseCopyWith<McpConnectResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $McpConnectResponseCopyWith<$Res> {
+  factory $McpConnectResponseCopyWith(
+          McpConnectResponse value, $Res Function(McpConnectResponse) then) =
+      _$McpConnectResponseCopyWithImpl<$Res, McpConnectResponse>;
+  @useResult
+  $Res call({String server, int toolsRegistered});
+}
+
+/// @nodoc
+class _$McpConnectResponseCopyWithImpl<$Res, $Val extends McpConnectResponse>
+    implements $McpConnectResponseCopyWith<$Res> {
+  _$McpConnectResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? server = null,
+    Object? toolsRegistered = null,
+  }) {
+    return _then(_value.copyWith(
+      server: null == server
+          ? _value.server
+          : server // ignore: cast_nullable_to_non_nullable
+              as String,
+      toolsRegistered: null == toolsRegistered
+          ? _value.toolsRegistered
+          : toolsRegistered // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$McpConnectResponseImplCopyWith<$Res>
+    implements $McpConnectResponseCopyWith<$Res> {
+  factory _$$McpConnectResponseImplCopyWith(_$McpConnectResponseImpl value,
+          $Res Function(_$McpConnectResponseImpl) then) =
+      __$$McpConnectResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String server, int toolsRegistered});
+}
+
+/// @nodoc
+class __$$McpConnectResponseImplCopyWithImpl<$Res>
+    extends _$McpConnectResponseCopyWithImpl<$Res, _$McpConnectResponseImpl>
+    implements _$$McpConnectResponseImplCopyWith<$Res> {
+  __$$McpConnectResponseImplCopyWithImpl(_$McpConnectResponseImpl _value,
+      $Res Function(_$McpConnectResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? server = null,
+    Object? toolsRegistered = null,
+  }) {
+    return _then(_$McpConnectResponseImpl(
+      server: null == server
+          ? _value.server
+          : server // ignore: cast_nullable_to_non_nullable
+              as String,
+      toolsRegistered: null == toolsRegistered
+          ? _value.toolsRegistered
+          : toolsRegistered // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$McpConnectResponseImpl implements _McpConnectResponse {
+  const _$McpConnectResponseImpl(
+      {required this.server, required this.toolsRegistered});
+
+  factory _$McpConnectResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$McpConnectResponseImplFromJson(json);
+
+  @override
+  final String server;
+  @override
+  final int toolsRegistered;
+
+  @override
+  String toString() {
+    return 'McpConnectResponse(server: $server, toolsRegistered: $toolsRegistered)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$McpConnectResponseImpl &&
+            (identical(other.server, server) || other.server == server) &&
+            (identical(other.toolsRegistered, toolsRegistered) ||
+                other.toolsRegistered == toolsRegistered));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, server, toolsRegistered);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$McpConnectResponseImplCopyWith<_$McpConnectResponseImpl> get copyWith =>
+      __$$McpConnectResponseImplCopyWithImpl<_$McpConnectResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$McpConnectResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _McpConnectResponse implements McpConnectResponse {
+  const factory _McpConnectResponse(
+      {required final String server,
+      required final int toolsRegistered}) = _$McpConnectResponseImpl;
+
+  factory _McpConnectResponse.fromJson(Map<String, dynamic> json) =
+      _$McpConnectResponseImpl.fromJson;
+
+  @override
+  String get server;
+  @override
+  int get toolsRegistered;
+  @override
+  @JsonKey(ignore: true)
+  _$$McpConnectResponseImplCopyWith<_$McpConnectResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+McpDisconnectResponse _$McpDisconnectResponseFromJson(
+    Map<String, dynamic> json) {
+  return _McpDisconnectResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$McpDisconnectResponse {
+  bool get disconnected => throw _privateConstructorUsedError;
+  int get toolsRemoved => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $McpDisconnectResponseCopyWith<McpDisconnectResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $McpDisconnectResponseCopyWith<$Res> {
+  factory $McpDisconnectResponseCopyWith(McpDisconnectResponse value,
+          $Res Function(McpDisconnectResponse) then) =
+      _$McpDisconnectResponseCopyWithImpl<$Res, McpDisconnectResponse>;
+  @useResult
+  $Res call({bool disconnected, int toolsRemoved});
+}
+
+/// @nodoc
+class _$McpDisconnectResponseCopyWithImpl<$Res,
+        $Val extends McpDisconnectResponse>
+    implements $McpDisconnectResponseCopyWith<$Res> {
+  _$McpDisconnectResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? disconnected = null,
+    Object? toolsRemoved = null,
+  }) {
+    return _then(_value.copyWith(
+      disconnected: null == disconnected
+          ? _value.disconnected
+          : disconnected // ignore: cast_nullable_to_non_nullable
+              as bool,
+      toolsRemoved: null == toolsRemoved
+          ? _value.toolsRemoved
+          : toolsRemoved // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$McpDisconnectResponseImplCopyWith<$Res>
+    implements $McpDisconnectResponseCopyWith<$Res> {
+  factory _$$McpDisconnectResponseImplCopyWith(
+          _$McpDisconnectResponseImpl value,
+          $Res Function(_$McpDisconnectResponseImpl) then) =
+      __$$McpDisconnectResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool disconnected, int toolsRemoved});
+}
+
+/// @nodoc
+class __$$McpDisconnectResponseImplCopyWithImpl<$Res>
+    extends _$McpDisconnectResponseCopyWithImpl<$Res,
+        _$McpDisconnectResponseImpl>
+    implements _$$McpDisconnectResponseImplCopyWith<$Res> {
+  __$$McpDisconnectResponseImplCopyWithImpl(_$McpDisconnectResponseImpl _value,
+      $Res Function(_$McpDisconnectResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? disconnected = null,
+    Object? toolsRemoved = null,
+  }) {
+    return _then(_$McpDisconnectResponseImpl(
+      disconnected: null == disconnected
+          ? _value.disconnected
+          : disconnected // ignore: cast_nullable_to_non_nullable
+              as bool,
+      toolsRemoved: null == toolsRemoved
+          ? _value.toolsRemoved
+          : toolsRemoved // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$McpDisconnectResponseImpl implements _McpDisconnectResponse {
+  const _$McpDisconnectResponseImpl(
+      {required this.disconnected, required this.toolsRemoved});
+
+  factory _$McpDisconnectResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$McpDisconnectResponseImplFromJson(json);
+
+  @override
+  final bool disconnected;
+  @override
+  final int toolsRemoved;
+
+  @override
+  String toString() {
+    return 'McpDisconnectResponse(disconnected: $disconnected, toolsRemoved: $toolsRemoved)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$McpDisconnectResponseImpl &&
+            (identical(other.disconnected, disconnected) ||
+                other.disconnected == disconnected) &&
+            (identical(other.toolsRemoved, toolsRemoved) ||
+                other.toolsRemoved == toolsRemoved));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, disconnected, toolsRemoved);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$McpDisconnectResponseImplCopyWith<_$McpDisconnectResponseImpl>
+      get copyWith => __$$McpDisconnectResponseImplCopyWithImpl<
+          _$McpDisconnectResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$McpDisconnectResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _McpDisconnectResponse implements McpDisconnectResponse {
+  const factory _McpDisconnectResponse(
+      {required final bool disconnected,
+      required final int toolsRemoved}) = _$McpDisconnectResponseImpl;
+
+  factory _McpDisconnectResponse.fromJson(Map<String, dynamic> json) =
+      _$McpDisconnectResponseImpl.fromJson;
+
+  @override
+  bool get disconnected;
+  @override
+  int get toolsRemoved;
+  @override
+  @JsonKey(ignore: true)
+  _$$McpDisconnectResponseImplCopyWith<_$McpDisconnectResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+McpCallResponse _$McpCallResponseFromJson(Map<String, dynamic> json) {
+  return _McpCallResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$McpCallResponse {
+  dynamic get result => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $McpCallResponseCopyWith<McpCallResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $McpCallResponseCopyWith<$Res> {
+  factory $McpCallResponseCopyWith(
+          McpCallResponse value, $Res Function(McpCallResponse) then) =
+      _$McpCallResponseCopyWithImpl<$Res, McpCallResponse>;
+  @useResult
+  $Res call({dynamic result});
+}
+
+/// @nodoc
+class _$McpCallResponseCopyWithImpl<$Res, $Val extends McpCallResponse>
+    implements $McpCallResponseCopyWith<$Res> {
+  _$McpCallResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? result = freezed,
+  }) {
+    return _then(_value.copyWith(
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$McpCallResponseImplCopyWith<$Res>
+    implements $McpCallResponseCopyWith<$Res> {
+  factory _$$McpCallResponseImplCopyWith(_$McpCallResponseImpl value,
+          $Res Function(_$McpCallResponseImpl) then) =
+      __$$McpCallResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({dynamic result});
+}
+
+/// @nodoc
+class __$$McpCallResponseImplCopyWithImpl<$Res>
+    extends _$McpCallResponseCopyWithImpl<$Res, _$McpCallResponseImpl>
+    implements _$$McpCallResponseImplCopyWith<$Res> {
+  __$$McpCallResponseImplCopyWithImpl(
+      _$McpCallResponseImpl _value, $Res Function(_$McpCallResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? result = freezed,
+  }) {
+    return _then(_$McpCallResponseImpl(
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$McpCallResponseImpl implements _McpCallResponse {
+  const _$McpCallResponseImpl({required this.result});
+
+  factory _$McpCallResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$McpCallResponseImplFromJson(json);
+
+  @override
+  final dynamic result;
+
+  @override
+  String toString() {
+    return 'McpCallResponse(result: $result)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$McpCallResponseImpl &&
+            const DeepCollectionEquality().equals(other.result, result));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(result));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$McpCallResponseImplCopyWith<_$McpCallResponseImpl> get copyWith =>
+      __$$McpCallResponseImplCopyWithImpl<_$McpCallResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$McpCallResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _McpCallResponse implements McpCallResponse {
+  const factory _McpCallResponse({required final dynamic result}) =
+      _$McpCallResponseImpl;
+
+  factory _McpCallResponse.fromJson(Map<String, dynamic> json) =
+      _$McpCallResponseImpl.fromJson;
+
+  @override
+  dynamic get result;
+  @override
+  @JsonKey(ignore: true)
+  _$$McpCallResponseImplCopyWith<_$McpCallResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 WorkingMemoryAddResponse _$WorkingMemoryAddResponseFromJson(
     Map<String, dynamic> json) {
   return _WorkingMemoryAddResponse.fromJson(json);
