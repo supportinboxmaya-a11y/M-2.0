@@ -21,6 +21,11 @@ class AppConfig {
   static const String voiceSpeak = '/api/v1/voice/speak';
   static const String voiceGateway = '/api/v1/voice/gateway';
 
+  static const String chatExport = '/api/v1/chat/export';
+  static const String chatShare = '/api/v1/chat/share';
+  static const String chatShared = '/api/v1/chat/shared/';
+  static const String chatExportBatch = '/api/v1/chat/export/batch';
+
   static const String agentChat = '/api/v1/agent/chat';
   static const String agentChatStream = '/api/v1/agent/chat/stream';
   static const String agentRun = '/api/v1/agent/run';

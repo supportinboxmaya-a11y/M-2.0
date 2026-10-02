@@ -789,10 +789,17 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
 
 # ═══════════════════════════════════════════════
 # VOICE ROUTES (Local faster-whisper STT)
-# ═══════════════════════════════════════════════
+# ════════════════════════════════════════════════
 from infrastructure.voice_routes import router as voice_router
 
 app.include_router(voice_router)
+
+# ═══════════════════════════════════════════════
+# CHAT EXPORT ROUTES
+# ═══════════════════════════════════════════════
+from infrastructure.backend_chat_export import router as chat_export_router
+
+app.include_router(chat_export_router)
 
 # ═══════════════════════════════════════════════
 # MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)

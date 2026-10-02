@@ -44553,6 +44553,971 @@ abstract class _TaskStreamEvent implements TaskStreamEvent {
       throw _privateConstructorUsedError;
 }
 
+AgentThinkResponse _$AgentThinkResponseFromJson(Map<String, dynamic> json) {
+  return _AgentThinkResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentThinkResponse {
+  String get analysis => throw _privateConstructorUsedError;
+  String? get plan => throw _privateConstructorUsedError;
+  List<String>? get steps => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentThinkResponseCopyWith<AgentThinkResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentThinkResponseCopyWith<$Res> {
+  factory $AgentThinkResponseCopyWith(
+          AgentThinkResponse value, $Res Function(AgentThinkResponse) then) =
+      _$AgentThinkResponseCopyWithImpl<$Res, AgentThinkResponse>;
+  @useResult
+  $Res call({String analysis, String? plan, List<String>? steps});
+}
+
+/// @nodoc
+class _$AgentThinkResponseCopyWithImpl<$Res, $Val extends AgentThinkResponse>
+    implements $AgentThinkResponseCopyWith<$Res> {
+  _$AgentThinkResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? analysis = null,
+    Object? plan = freezed,
+    Object? steps = freezed,
+  }) {
+    return _then(_value.copyWith(
+      analysis: null == analysis
+          ? _value.analysis
+          : analysis // ignore: cast_nullable_to_non_nullable
+              as String,
+      plan: freezed == plan
+          ? _value.plan
+          : plan // ignore: cast_nullable_to_non_nullable
+              as String?,
+      steps: freezed == steps
+          ? _value.steps
+          : steps // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentThinkResponseImplCopyWith<$Res>
+    implements $AgentThinkResponseCopyWith<$Res> {
+  factory _$$AgentThinkResponseImplCopyWith(_$AgentThinkResponseImpl value,
+          $Res Function(_$AgentThinkResponseImpl) then) =
+      __$$AgentThinkResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String analysis, String? plan, List<String>? steps});
+}
+
+/// @nodoc
+class __$$AgentThinkResponseImplCopyWithImpl<$Res>
+    extends _$AgentThinkResponseCopyWithImpl<$Res, _$AgentThinkResponseImpl>
+    implements _$$AgentThinkResponseImplCopyWith<$Res> {
+  __$$AgentThinkResponseImplCopyWithImpl(_$AgentThinkResponseImpl _value,
+      $Res Function(_$AgentThinkResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? analysis = null,
+    Object? plan = freezed,
+    Object? steps = freezed,
+  }) {
+    return _then(_$AgentThinkResponseImpl(
+      analysis: null == analysis
+          ? _value.analysis
+          : analysis // ignore: cast_nullable_to_non_nullable
+              as String,
+      plan: freezed == plan
+          ? _value.plan
+          : plan // ignore: cast_nullable_to_non_nullable
+              as String?,
+      steps: freezed == steps
+          ? _value._steps
+          : steps // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentThinkResponseImpl implements _AgentThinkResponse {
+  const _$AgentThinkResponseImpl(
+      {required this.analysis, this.plan, final List<String>? steps})
+      : _steps = steps;
+
+  factory _$AgentThinkResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentThinkResponseImplFromJson(json);
+
+  @override
+  final String analysis;
+  @override
+  final String? plan;
+  final List<String>? _steps;
+  @override
+  List<String>? get steps {
+    final value = _steps;
+    if (value == null) return null;
+    if (_steps is EqualUnmodifiableListView) return _steps;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'AgentThinkResponse(analysis: $analysis, plan: $plan, steps: $steps)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentThinkResponseImpl &&
+            (identical(other.analysis, analysis) ||
+                other.analysis == analysis) &&
+            (identical(other.plan, plan) || other.plan == plan) &&
+            const DeepCollectionEquality().equals(other._steps, _steps));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, analysis, plan, const DeepCollectionEquality().hash(_steps));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentThinkResponseImplCopyWith<_$AgentThinkResponseImpl> get copyWith =>
+      __$$AgentThinkResponseImplCopyWithImpl<_$AgentThinkResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentThinkResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentThinkResponse implements AgentThinkResponse {
+  const factory _AgentThinkResponse(
+      {required final String analysis,
+      final String? plan,
+      final List<String>? steps}) = _$AgentThinkResponseImpl;
+
+  factory _AgentThinkResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentThinkResponseImpl.fromJson;
+
+  @override
+  String get analysis;
+  @override
+  String? get plan;
+  @override
+  List<String>? get steps;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentThinkResponseImplCopyWith<_$AgentThinkResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ChatExportResponse _$ChatExportResponseFromJson(Map<String, dynamic> json) {
+  return _ChatExportResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChatExportResponse {
+  String get content => throw _privateConstructorUsedError;
+  String get format => throw _privateConstructorUsedError;
+  String get fileName => throw _privateConstructorUsedError;
+  int? get sizeBytes => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ChatExportResponseCopyWith<ChatExportResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChatExportResponseCopyWith<$Res> {
+  factory $ChatExportResponseCopyWith(
+          ChatExportResponse value, $Res Function(ChatExportResponse) then) =
+      _$ChatExportResponseCopyWithImpl<$Res, ChatExportResponse>;
+  @useResult
+  $Res call({String content, String format, String fileName, int? sizeBytes});
+}
+
+/// @nodoc
+class _$ChatExportResponseCopyWithImpl<$Res, $Val extends ChatExportResponse>
+    implements $ChatExportResponseCopyWith<$Res> {
+  _$ChatExportResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? content = null,
+    Object? format = null,
+    Object? fileName = null,
+    Object? sizeBytes = freezed,
+  }) {
+    return _then(_value.copyWith(
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      format: null == format
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+      sizeBytes: freezed == sizeBytes
+          ? _value.sizeBytes
+          : sizeBytes // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChatExportResponseImplCopyWith<$Res>
+    implements $ChatExportResponseCopyWith<$Res> {
+  factory _$$ChatExportResponseImplCopyWith(_$ChatExportResponseImpl value,
+          $Res Function(_$ChatExportResponseImpl) then) =
+      __$$ChatExportResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String content, String format, String fileName, int? sizeBytes});
+}
+
+/// @nodoc
+class __$$ChatExportResponseImplCopyWithImpl<$Res>
+    extends _$ChatExportResponseCopyWithImpl<$Res, _$ChatExportResponseImpl>
+    implements _$$ChatExportResponseImplCopyWith<$Res> {
+  __$$ChatExportResponseImplCopyWithImpl(_$ChatExportResponseImpl _value,
+      $Res Function(_$ChatExportResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? content = null,
+    Object? format = null,
+    Object? fileName = null,
+    Object? sizeBytes = freezed,
+  }) {
+    return _then(_$ChatExportResponseImpl(
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      format: null == format
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+      sizeBytes: freezed == sizeBytes
+          ? _value.sizeBytes
+          : sizeBytes // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChatExportResponseImpl implements _ChatExportResponse {
+  const _$ChatExportResponseImpl(
+      {required this.content,
+      required this.format,
+      required this.fileName,
+      this.sizeBytes});
+
+  factory _$ChatExportResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChatExportResponseImplFromJson(json);
+
+  @override
+  final String content;
+  @override
+  final String format;
+  @override
+  final String fileName;
+  @override
+  final int? sizeBytes;
+
+  @override
+  String toString() {
+    return 'ChatExportResponse(content: $content, format: $format, fileName: $fileName, sizeBytes: $sizeBytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChatExportResponseImpl &&
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.format, format) || other.format == format) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName) &&
+            (identical(other.sizeBytes, sizeBytes) ||
+                other.sizeBytes == sizeBytes));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, content, format, fileName, sizeBytes);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChatExportResponseImplCopyWith<_$ChatExportResponseImpl> get copyWith =>
+      __$$ChatExportResponseImplCopyWithImpl<_$ChatExportResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChatExportResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChatExportResponse implements ChatExportResponse {
+  const factory _ChatExportResponse(
+      {required final String content,
+      required final String format,
+      required final String fileName,
+      final int? sizeBytes}) = _$ChatExportResponseImpl;
+
+  factory _ChatExportResponse.fromJson(Map<String, dynamic> json) =
+      _$ChatExportResponseImpl.fromJson;
+
+  @override
+  String get content;
+  @override
+  String get format;
+  @override
+  String get fileName;
+  @override
+  int? get sizeBytes;
+  @override
+  @JsonKey(ignore: true)
+  _$$ChatExportResponseImplCopyWith<_$ChatExportResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ChatShareResponse _$ChatShareResponseFromJson(Map<String, dynamic> json) {
+  return _ChatShareResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChatShareResponse {
+  String get shareId => throw _privateConstructorUsedError;
+  String get shareUrl => throw _privateConstructorUsedError;
+  String get expiresAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ChatShareResponseCopyWith<ChatShareResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChatShareResponseCopyWith<$Res> {
+  factory $ChatShareResponseCopyWith(
+          ChatShareResponse value, $Res Function(ChatShareResponse) then) =
+      _$ChatShareResponseCopyWithImpl<$Res, ChatShareResponse>;
+  @useResult
+  $Res call({String shareId, String shareUrl, String expiresAt});
+}
+
+/// @nodoc
+class _$ChatShareResponseCopyWithImpl<$Res, $Val extends ChatShareResponse>
+    implements $ChatShareResponseCopyWith<$Res> {
+  _$ChatShareResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? shareId = null,
+    Object? shareUrl = null,
+    Object? expiresAt = null,
+  }) {
+    return _then(_value.copyWith(
+      shareId: null == shareId
+          ? _value.shareId
+          : shareId // ignore: cast_nullable_to_non_nullable
+              as String,
+      shareUrl: null == shareUrl
+          ? _value.shareUrl
+          : shareUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiresAt: null == expiresAt
+          ? _value.expiresAt
+          : expiresAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChatShareResponseImplCopyWith<$Res>
+    implements $ChatShareResponseCopyWith<$Res> {
+  factory _$$ChatShareResponseImplCopyWith(_$ChatShareResponseImpl value,
+          $Res Function(_$ChatShareResponseImpl) then) =
+      __$$ChatShareResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String shareId, String shareUrl, String expiresAt});
+}
+
+/// @nodoc
+class __$$ChatShareResponseImplCopyWithImpl<$Res>
+    extends _$ChatShareResponseCopyWithImpl<$Res, _$ChatShareResponseImpl>
+    implements _$$ChatShareResponseImplCopyWith<$Res> {
+  __$$ChatShareResponseImplCopyWithImpl(_$ChatShareResponseImpl _value,
+      $Res Function(_$ChatShareResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? shareId = null,
+    Object? shareUrl = null,
+    Object? expiresAt = null,
+  }) {
+    return _then(_$ChatShareResponseImpl(
+      shareId: null == shareId
+          ? _value.shareId
+          : shareId // ignore: cast_nullable_to_non_nullable
+              as String,
+      shareUrl: null == shareUrl
+          ? _value.shareUrl
+          : shareUrl // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiresAt: null == expiresAt
+          ? _value.expiresAt
+          : expiresAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChatShareResponseImpl implements _ChatShareResponse {
+  const _$ChatShareResponseImpl(
+      {required this.shareId, required this.shareUrl, required this.expiresAt});
+
+  factory _$ChatShareResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChatShareResponseImplFromJson(json);
+
+  @override
+  final String shareId;
+  @override
+  final String shareUrl;
+  @override
+  final String expiresAt;
+
+  @override
+  String toString() {
+    return 'ChatShareResponse(shareId: $shareId, shareUrl: $shareUrl, expiresAt: $expiresAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChatShareResponseImpl &&
+            (identical(other.shareId, shareId) || other.shareId == shareId) &&
+            (identical(other.shareUrl, shareUrl) ||
+                other.shareUrl == shareUrl) &&
+            (identical(other.expiresAt, expiresAt) ||
+                other.expiresAt == expiresAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, shareId, shareUrl, expiresAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChatShareResponseImplCopyWith<_$ChatShareResponseImpl> get copyWith =>
+      __$$ChatShareResponseImplCopyWithImpl<_$ChatShareResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChatShareResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChatShareResponse implements ChatShareResponse {
+  const factory _ChatShareResponse(
+      {required final String shareId,
+      required final String shareUrl,
+      required final String expiresAt}) = _$ChatShareResponseImpl;
+
+  factory _ChatShareResponse.fromJson(Map<String, dynamic> json) =
+      _$ChatShareResponseImpl.fromJson;
+
+  @override
+  String get shareId;
+  @override
+  String get shareUrl;
+  @override
+  String get expiresAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$ChatShareResponseImplCopyWith<_$ChatShareResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ChatSharedResponse _$ChatSharedResponseFromJson(Map<String, dynamic> json) {
+  return _ChatSharedResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChatSharedResponse {
+  String get chatId => throw _privateConstructorUsedError;
+  List<ChatMessage> get messages => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ChatSharedResponseCopyWith<ChatSharedResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChatSharedResponseCopyWith<$Res> {
+  factory $ChatSharedResponseCopyWith(
+          ChatSharedResponse value, $Res Function(ChatSharedResponse) then) =
+      _$ChatSharedResponseCopyWithImpl<$Res, ChatSharedResponse>;
+  @useResult
+  $Res call(
+      {String chatId,
+      List<ChatMessage> messages,
+      String? title,
+      DateTime? createdAt});
+}
+
+/// @nodoc
+class _$ChatSharedResponseCopyWithImpl<$Res, $Val extends ChatSharedResponse>
+    implements $ChatSharedResponseCopyWith<$Res> {
+  _$ChatSharedResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? chatId = null,
+    Object? messages = null,
+    Object? title = freezed,
+    Object? createdAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      chatId: null == chatId
+          ? _value.chatId
+          : chatId // ignore: cast_nullable_to_non_nullable
+              as String,
+      messages: null == messages
+          ? _value.messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<ChatMessage>,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChatSharedResponseImplCopyWith<$Res>
+    implements $ChatSharedResponseCopyWith<$Res> {
+  factory _$$ChatSharedResponseImplCopyWith(_$ChatSharedResponseImpl value,
+          $Res Function(_$ChatSharedResponseImpl) then) =
+      __$$ChatSharedResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String chatId,
+      List<ChatMessage> messages,
+      String? title,
+      DateTime? createdAt});
+}
+
+/// @nodoc
+class __$$ChatSharedResponseImplCopyWithImpl<$Res>
+    extends _$ChatSharedResponseCopyWithImpl<$Res, _$ChatSharedResponseImpl>
+    implements _$$ChatSharedResponseImplCopyWith<$Res> {
+  __$$ChatSharedResponseImplCopyWithImpl(_$ChatSharedResponseImpl _value,
+      $Res Function(_$ChatSharedResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? chatId = null,
+    Object? messages = null,
+    Object? title = freezed,
+    Object? createdAt = freezed,
+  }) {
+    return _then(_$ChatSharedResponseImpl(
+      chatId: null == chatId
+          ? _value.chatId
+          : chatId // ignore: cast_nullable_to_non_nullable
+              as String,
+      messages: null == messages
+          ? _value._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<ChatMessage>,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChatSharedResponseImpl implements _ChatSharedResponse {
+  const _$ChatSharedResponseImpl(
+      {required this.chatId,
+      required final List<ChatMessage> messages,
+      this.title,
+      this.createdAt})
+      : _messages = messages;
+
+  factory _$ChatSharedResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChatSharedResponseImplFromJson(json);
+
+  @override
+  final String chatId;
+  final List<ChatMessage> _messages;
+  @override
+  List<ChatMessage> get messages {
+    if (_messages is EqualUnmodifiableListView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  @override
+  final String? title;
+  @override
+  final DateTime? createdAt;
+
+  @override
+  String toString() {
+    return 'ChatSharedResponse(chatId: $chatId, messages: $messages, title: $title, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChatSharedResponseImpl &&
+            (identical(other.chatId, chatId) || other.chatId == chatId) &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, chatId,
+      const DeepCollectionEquality().hash(_messages), title, createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChatSharedResponseImplCopyWith<_$ChatSharedResponseImpl> get copyWith =>
+      __$$ChatSharedResponseImplCopyWithImpl<_$ChatSharedResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChatSharedResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChatSharedResponse implements ChatSharedResponse {
+  const factory _ChatSharedResponse(
+      {required final String chatId,
+      required final List<ChatMessage> messages,
+      final String? title,
+      final DateTime? createdAt}) = _$ChatSharedResponseImpl;
+
+  factory _ChatSharedResponse.fromJson(Map<String, dynamic> json) =
+      _$ChatSharedResponseImpl.fromJson;
+
+  @override
+  String get chatId;
+  @override
+  List<ChatMessage> get messages;
+  @override
+  String? get title;
+  @override
+  DateTime? get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$ChatSharedResponseImplCopyWith<_$ChatSharedResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ChatBatchExportResponse _$ChatBatchExportResponseFromJson(
+    Map<String, dynamic> json) {
+  return _ChatBatchExportResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChatBatchExportResponse {
+  String get content => throw _privateConstructorUsedError;
+  String get format => throw _privateConstructorUsedError;
+  String get fileName => throw _privateConstructorUsedError;
+  int? get sizeBytes => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ChatBatchExportResponseCopyWith<ChatBatchExportResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChatBatchExportResponseCopyWith<$Res> {
+  factory $ChatBatchExportResponseCopyWith(ChatBatchExportResponse value,
+          $Res Function(ChatBatchExportResponse) then) =
+      _$ChatBatchExportResponseCopyWithImpl<$Res, ChatBatchExportResponse>;
+  @useResult
+  $Res call({String content, String format, String fileName, int? sizeBytes});
+}
+
+/// @nodoc
+class _$ChatBatchExportResponseCopyWithImpl<$Res,
+        $Val extends ChatBatchExportResponse>
+    implements $ChatBatchExportResponseCopyWith<$Res> {
+  _$ChatBatchExportResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? content = null,
+    Object? format = null,
+    Object? fileName = null,
+    Object? sizeBytes = freezed,
+  }) {
+    return _then(_value.copyWith(
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      format: null == format
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+      sizeBytes: freezed == sizeBytes
+          ? _value.sizeBytes
+          : sizeBytes // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChatBatchExportResponseImplCopyWith<$Res>
+    implements $ChatBatchExportResponseCopyWith<$Res> {
+  factory _$$ChatBatchExportResponseImplCopyWith(
+          _$ChatBatchExportResponseImpl value,
+          $Res Function(_$ChatBatchExportResponseImpl) then) =
+      __$$ChatBatchExportResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String content, String format, String fileName, int? sizeBytes});
+}
+
+/// @nodoc
+class __$$ChatBatchExportResponseImplCopyWithImpl<$Res>
+    extends _$ChatBatchExportResponseCopyWithImpl<$Res,
+        _$ChatBatchExportResponseImpl>
+    implements _$$ChatBatchExportResponseImplCopyWith<$Res> {
+  __$$ChatBatchExportResponseImplCopyWithImpl(
+      _$ChatBatchExportResponseImpl _value,
+      $Res Function(_$ChatBatchExportResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? content = null,
+    Object? format = null,
+    Object? fileName = null,
+    Object? sizeBytes = freezed,
+  }) {
+    return _then(_$ChatBatchExportResponseImpl(
+      content: null == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String,
+      format: null == format
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+      sizeBytes: freezed == sizeBytes
+          ? _value.sizeBytes
+          : sizeBytes // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChatBatchExportResponseImpl implements _ChatBatchExportResponse {
+  const _$ChatBatchExportResponseImpl(
+      {required this.content,
+      required this.format,
+      required this.fileName,
+      this.sizeBytes});
+
+  factory _$ChatBatchExportResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChatBatchExportResponseImplFromJson(json);
+
+  @override
+  final String content;
+  @override
+  final String format;
+  @override
+  final String fileName;
+  @override
+  final int? sizeBytes;
+
+  @override
+  String toString() {
+    return 'ChatBatchExportResponse(content: $content, format: $format, fileName: $fileName, sizeBytes: $sizeBytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChatBatchExportResponseImpl &&
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.format, format) || other.format == format) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName) &&
+            (identical(other.sizeBytes, sizeBytes) ||
+                other.sizeBytes == sizeBytes));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, content, format, fileName, sizeBytes);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChatBatchExportResponseImplCopyWith<_$ChatBatchExportResponseImpl>
+      get copyWith => __$$ChatBatchExportResponseImplCopyWithImpl<
+          _$ChatBatchExportResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChatBatchExportResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChatBatchExportResponse implements ChatBatchExportResponse {
+  const factory _ChatBatchExportResponse(
+      {required final String content,
+      required final String format,
+      required final String fileName,
+      final int? sizeBytes}) = _$ChatBatchExportResponseImpl;
+
+  factory _ChatBatchExportResponse.fromJson(Map<String, dynamic> json) =
+      _$ChatBatchExportResponseImpl.fromJson;
+
+  @override
+  String get content;
+  @override
+  String get format;
+  @override
+  String get fileName;
+  @override
+  int? get sizeBytes;
+  @override
+  @JsonKey(ignore: true)
+  _$$ChatBatchExportResponseImplCopyWith<_$ChatBatchExportResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 AgentRunResponse _$AgentRunResponseFromJson(Map<String, dynamic> json) {
   return _AgentRunResponse.fromJson(json);
 }
@@ -44740,189 +45705,6 @@ abstract class _AgentRunResponse implements AgentRunResponse {
   @override
   @JsonKey(ignore: true)
   _$$AgentRunResponseImplCopyWith<_$AgentRunResponseImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-AgentThinkResponse _$AgentThinkResponseFromJson(Map<String, dynamic> json) {
-  return _AgentThinkResponse.fromJson(json);
-}
-
-/// @nodoc
-mixin _$AgentThinkResponse {
-  String get analysis => throw _privateConstructorUsedError;
-  String? get plan => throw _privateConstructorUsedError;
-  List<String>? get steps => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $AgentThinkResponseCopyWith<AgentThinkResponse> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $AgentThinkResponseCopyWith<$Res> {
-  factory $AgentThinkResponseCopyWith(
-          AgentThinkResponse value, $Res Function(AgentThinkResponse) then) =
-      _$AgentThinkResponseCopyWithImpl<$Res, AgentThinkResponse>;
-  @useResult
-  $Res call({String analysis, String? plan, List<String>? steps});
-}
-
-/// @nodoc
-class _$AgentThinkResponseCopyWithImpl<$Res, $Val extends AgentThinkResponse>
-    implements $AgentThinkResponseCopyWith<$Res> {
-  _$AgentThinkResponseCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? analysis = null,
-    Object? plan = freezed,
-    Object? steps = freezed,
-  }) {
-    return _then(_value.copyWith(
-      analysis: null == analysis
-          ? _value.analysis
-          : analysis // ignore: cast_nullable_to_non_nullable
-              as String,
-      plan: freezed == plan
-          ? _value.plan
-          : plan // ignore: cast_nullable_to_non_nullable
-              as String?,
-      steps: freezed == steps
-          ? _value.steps
-          : steps // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$AgentThinkResponseImplCopyWith<$Res>
-    implements $AgentThinkResponseCopyWith<$Res> {
-  factory _$$AgentThinkResponseImplCopyWith(_$AgentThinkResponseImpl value,
-          $Res Function(_$AgentThinkResponseImpl) then) =
-      __$$AgentThinkResponseImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String analysis, String? plan, List<String>? steps});
-}
-
-/// @nodoc
-class __$$AgentThinkResponseImplCopyWithImpl<$Res>
-    extends _$AgentThinkResponseCopyWithImpl<$Res, _$AgentThinkResponseImpl>
-    implements _$$AgentThinkResponseImplCopyWith<$Res> {
-  __$$AgentThinkResponseImplCopyWithImpl(_$AgentThinkResponseImpl _value,
-      $Res Function(_$AgentThinkResponseImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? analysis = null,
-    Object? plan = freezed,
-    Object? steps = freezed,
-  }) {
-    return _then(_$AgentThinkResponseImpl(
-      analysis: null == analysis
-          ? _value.analysis
-          : analysis // ignore: cast_nullable_to_non_nullable
-              as String,
-      plan: freezed == plan
-          ? _value.plan
-          : plan // ignore: cast_nullable_to_non_nullable
-              as String?,
-      steps: freezed == steps
-          ? _value._steps
-          : steps // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$AgentThinkResponseImpl implements _AgentThinkResponse {
-  const _$AgentThinkResponseImpl(
-      {required this.analysis, this.plan, final List<String>? steps})
-      : _steps = steps;
-
-  factory _$AgentThinkResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AgentThinkResponseImplFromJson(json);
-
-  @override
-  final String analysis;
-  @override
-  final String? plan;
-  final List<String>? _steps;
-  @override
-  List<String>? get steps {
-    final value = _steps;
-    if (value == null) return null;
-    if (_steps is EqualUnmodifiableListView) return _steps;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  @override
-  String toString() {
-    return 'AgentThinkResponse(analysis: $analysis, plan: $plan, steps: $steps)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AgentThinkResponseImpl &&
-            (identical(other.analysis, analysis) ||
-                other.analysis == analysis) &&
-            (identical(other.plan, plan) || other.plan == plan) &&
-            const DeepCollectionEquality().equals(other._steps, _steps));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, analysis, plan, const DeepCollectionEquality().hash(_steps));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AgentThinkResponseImplCopyWith<_$AgentThinkResponseImpl> get copyWith =>
-      __$$AgentThinkResponseImplCopyWithImpl<_$AgentThinkResponseImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AgentThinkResponseImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _AgentThinkResponse implements AgentThinkResponse {
-  const factory _AgentThinkResponse(
-      {required final String analysis,
-      final String? plan,
-      final List<String>? steps}) = _$AgentThinkResponseImpl;
-
-  factory _AgentThinkResponse.fromJson(Map<String, dynamic> json) =
-      _$AgentThinkResponseImpl.fromJson;
-
-  @override
-  String get analysis;
-  @override
-  String? get plan;
-  @override
-  List<String>? get steps;
-  @override
-  @JsonKey(ignore: true)
-  _$$AgentThinkResponseImplCopyWith<_$AgentThinkResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

@@ -405,6 +405,58 @@ class ApiService {
     return AgentThinkResponse.fromJson(response.data);
   }
 
+  // Chat Export & Share
+  Future<ChatExportResponse> exportChat({
+    required String chatId,
+    String format = 'markdown',
+    bool includeMetadata = true,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.chatExport,
+      data: {
+        'chat_id': chatId,
+        'format': format,
+        'include_metadata': includeMetadata,
+      },
+    );
+    return ChatExportResponse.fromJson(response.data);
+  }
+
+  Future<ChatShareResponse> shareChat({
+    required String chatId,
+    int expiresInDays = 7,
+    String? password,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.chatShare,
+      data: {
+        'chat_id': chatId,
+        'expires_in_days': expiresInDays,
+        if (password != null) 'password': password,
+      },
+    );
+    return ChatShareResponse.fromJson(response.data);
+  }
+
+  Future<ChatSharedResponse> getSharedChat(String shareId) async {
+    final response = await _dio.get('${AppConfig.chatShared}$shareId');
+    return ChatSharedResponse.fromJson(response.data);
+  }
+
+  Future<ChatBatchExportResponse> exportBatchChats({
+    required List<String> chatIds,
+    String format = 'markdown',
+  }) async {
+    final response = await _dio.post(
+      AppConfig.chatExportBatch,
+      data: {
+        'chat_ids': chatIds,
+        'format': format,
+      },
+    );
+    return ChatBatchExportResponse.fromJson(response.data);
+  }
+
   // Learn & Complete (Phase 37/39)
   Future<LearnCompleteResponse> learnAndComplete({
     required String goal,
@@ -7228,6 +7280,90 @@ class TaskStreamEvent with _$TaskStreamEvent {
 }
 
 @freezed
+class AgentThinkResponse with _$AgentThinkResponse {
+  const factory AgentThinkResponse({
+    required String analysis,
+    String? plan,
+    List<String>? steps,
+  }) = _AgentThinkResponse;
+
+  factory AgentThinkResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentThinkResponseFromJson(json);
+}
+
+// Chat Export & Share Models
+@freezed
+class ChatExportResponse with _$ChatExportResponse {
+  const factory ChatExportResponse({
+    required String content,
+    required String format,
+    required String fileName,
+    int? sizeBytes,
+  }) = _ChatExportResponse;
+
+  factory ChatExportResponse.fromJson(Map<String, dynamic> json) =>
+      _$ChatExportResponseFromJson(json);
+}
+
+@freezed
+class ChatShareResponse with _$ChatShareResponse {
+  const factory ChatShareResponse({
+    required String shareId,
+    required String shareUrl,
+    required String expiresAt,
+  }) = _ChatShareResponse;
+
+  factory ChatShareResponse.fromJson(Map<String, dynamic> json) =>
+      _$ChatShareResponseFromJson(json);
+}
+
+@freezed
+class ChatSharedResponse with _$ChatSharedResponse {
+  const factory ChatSharedResponse({
+    required String chatId,
+    required List<ChatMessage> messages,
+    String? title,
+    DateTime? createdAt,
+  }) = _ChatSharedResponse;
+
+  factory ChatSharedResponse.fromJson(Map<String, dynamic> json) =>
+      _$ChatSharedResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ChatMessage {
+  final String role;
+  final String content;
+  final DateTime timestamp;
+  final String? model;
+
+  const ChatMessage({
+    required this.role,
+    required this.content,
+    required this.timestamp,
+    this.model,
+  });
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) =>
+      _$ChatMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChatMessageToJson(this);
+}
+
+@freezed
+class ChatBatchExportResponse with _$ChatBatchExportResponse {
+  const factory ChatBatchExportResponse({
+    required String content,
+    required String format,
+    required String fileName,
+    int? sizeBytes,
+  }) = _ChatBatchExportResponse;
+
+  factory ChatBatchExportResponse.fromJson(Map<String, dynamic> json) =>
+      _$ChatBatchExportResponseFromJson(json);
+}
+
+@freezed
 class AgentRunResponse with _$AgentRunResponse {
   const factory AgentRunResponse({
     required String taskId,
@@ -7238,18 +7374,6 @@ class AgentRunResponse with _$AgentRunResponse {
 
   factory AgentRunResponse.fromJson(Map<String, dynamic> json) =>
       _$AgentRunResponseFromJson(json);
-}
-
-@freezed
-class AgentThinkResponse with _$AgentThinkResponse {
-  const factory AgentThinkResponse({
-    required String analysis,
-    String? plan,
-    List<String>? steps,
-  }) = _AgentThinkResponse;
-
-  factory AgentThinkResponse.fromJson(Map<String, dynamic> json) =>
-      _$AgentThinkResponseFromJson(json);
 }
 
 @freezed

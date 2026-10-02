@@ -1755,6 +1755,38 @@ Map<String, dynamic> _$ApprovalItemToJson(ApprovalItem instance) {
   return val;
 }
 
+ChatMessage _$ChatMessageFromJson(Map json) => $checkedCreate(
+      'ChatMessage',
+      json,
+      ($checkedConvert) {
+        final val = ChatMessage(
+          role: $checkedConvert('role', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+          model: $checkedConvert('model', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$ChatMessageToJson(ChatMessage instance) {
+  final val = <String, dynamic>{
+    'role': instance.role,
+    'content': instance.content,
+    'timestamp': instance.timestamp.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('model', instance.model);
+  return val;
+}
+
 _$KernelStatusResponseImpl _$$KernelStatusResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$KernelStatusResponseImpl',
@@ -8678,6 +8710,174 @@ Map<String, dynamic> _$$TaskStreamEventImplToJson(
   return val;
 }
 
+_$AgentThinkResponseImpl _$$AgentThinkResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AgentThinkResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentThinkResponseImpl(
+          analysis: $checkedConvert('analysis', (v) => v as String),
+          plan: $checkedConvert('plan', (v) => v as String?),
+          steps: $checkedConvert('steps',
+              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentThinkResponseImplToJson(
+    _$AgentThinkResponseImpl instance) {
+  final val = <String, dynamic>{
+    'analysis': instance.analysis,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('plan', instance.plan);
+  writeNotNull('steps', instance.steps);
+  return val;
+}
+
+_$ChatExportResponseImpl _$$ChatExportResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ChatExportResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ChatExportResponseImpl(
+          content: $checkedConvert('content', (v) => v as String),
+          format: $checkedConvert('format', (v) => v as String),
+          fileName: $checkedConvert('file_name', (v) => v as String),
+          sizeBytes: $checkedConvert('size_bytes', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'fileName': 'file_name', 'sizeBytes': 'size_bytes'},
+    );
+
+Map<String, dynamic> _$$ChatExportResponseImplToJson(
+    _$ChatExportResponseImpl instance) {
+  final val = <String, dynamic>{
+    'content': instance.content,
+    'format': instance.format,
+    'file_name': instance.fileName,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('size_bytes', instance.sizeBytes);
+  return val;
+}
+
+_$ChatShareResponseImpl _$$ChatShareResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ChatShareResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ChatShareResponseImpl(
+          shareId: $checkedConvert('share_id', (v) => v as String),
+          shareUrl: $checkedConvert('share_url', (v) => v as String),
+          expiresAt: $checkedConvert('expires_at', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'shareId': 'share_id',
+        'shareUrl': 'share_url',
+        'expiresAt': 'expires_at'
+      },
+    );
+
+Map<String, dynamic> _$$ChatShareResponseImplToJson(
+        _$ChatShareResponseImpl instance) =>
+    <String, dynamic>{
+      'share_id': instance.shareId,
+      'share_url': instance.shareUrl,
+      'expires_at': instance.expiresAt,
+    };
+
+_$ChatSharedResponseImpl _$$ChatSharedResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ChatSharedResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ChatSharedResponseImpl(
+          chatId: $checkedConvert('chat_id', (v) => v as String),
+          messages: $checkedConvert(
+              'messages',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      ChatMessage.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          title: $checkedConvert('title', (v) => v as String?),
+          createdAt: $checkedConvert('created_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'chatId': 'chat_id', 'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$$ChatSharedResponseImplToJson(
+    _$ChatSharedResponseImpl instance) {
+  final val = <String, dynamic>{
+    'chat_id': instance.chatId,
+    'messages': instance.messages,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('title', instance.title);
+  writeNotNull('created_at', instance.createdAt?.toIso8601String());
+  return val;
+}
+
+_$ChatBatchExportResponseImpl _$$ChatBatchExportResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ChatBatchExportResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ChatBatchExportResponseImpl(
+          content: $checkedConvert('content', (v) => v as String),
+          format: $checkedConvert('format', (v) => v as String),
+          fileName: $checkedConvert('file_name', (v) => v as String),
+          sizeBytes: $checkedConvert('size_bytes', (v) => (v as num?)?.toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'fileName': 'file_name', 'sizeBytes': 'size_bytes'},
+    );
+
+Map<String, dynamic> _$$ChatBatchExportResponseImplToJson(
+    _$ChatBatchExportResponseImpl instance) {
+  final val = <String, dynamic>{
+    'content': instance.content,
+    'format': instance.format,
+    'file_name': instance.fileName,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('size_bytes', instance.sizeBytes);
+  return val;
+}
+
 _$AgentRunResponseImpl _$$AgentRunResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$AgentRunResponseImpl',
@@ -8709,38 +8909,6 @@ Map<String, dynamic> _$$AgentRunResponseImplToJson(
 
   writeNotNull('result', instance.result);
   writeNotNull('error', instance.error);
-  return val;
-}
-
-_$AgentThinkResponseImpl _$$AgentThinkResponseImplFromJson(Map json) =>
-    $checkedCreate(
-      r'_$AgentThinkResponseImpl',
-      json,
-      ($checkedConvert) {
-        final val = _$AgentThinkResponseImpl(
-          analysis: $checkedConvert('analysis', (v) => v as String),
-          plan: $checkedConvert('plan', (v) => v as String?),
-          steps: $checkedConvert('steps',
-              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
-        );
-        return val;
-      },
-    );
-
-Map<String, dynamic> _$$AgentThinkResponseImplToJson(
-    _$AgentThinkResponseImpl instance) {
-  final val = <String, dynamic>{
-    'analysis': instance.analysis,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('plan', instance.plan);
-  writeNotNull('steps', instance.steps);
   return val;
 }
 
