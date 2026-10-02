@@ -2759,6 +2759,104 @@ class _AppDrawer extends ConsumerWidget {
                     );
                   },
                 ),
+                _DrawerActionTile(
+                  icon: Icons.auto_awesome_rounded,
+                  label: 'Capabilities',
+                  subtitle: 'Capability registry, search & stats',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _CapabilitiesScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.webhook_rounded,
+                  label: 'Webhooks',
+                  subtitle: 'Register & manage webhook endpoints',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _WebhooksScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.description_rounded,
+                  label: 'Documentation',
+                  subtitle: 'Browse & create documentation',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _DocsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.analytics_rounded,
+                  label: 'Analytics',
+                  subtitle: 'System metrics, provider & tool stats',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _AnalyticsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.history_rounded,
+                  label: 'Logs',
+                  subtitle: 'LLM & tool execution logs',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _LogsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.extension_rounded,
+                  label: 'Plugins',
+                  subtitle: 'Manage installed plugins',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _PluginsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.visibility_rounded,
+                  label: 'Vision AI',
+                  subtitle: 'Image analysis & OCR',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _VisionScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
 
