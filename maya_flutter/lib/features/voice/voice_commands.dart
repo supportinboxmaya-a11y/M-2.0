@@ -136,6 +136,15 @@ class AppScreenMapping {
     'pause goal': 'persistent_goals',
     'cancel goal': 'persistent_goals',
     'goal progress': 'persistent_goals',
+    'knowledge engine': 'knowledge_engine',
+    'knowledge': 'knowledge_engine',
+    'knowledge base': 'knowledge_engine',
+    'query knowledge': 'knowledge_engine',
+    'teach knowledge': 'knowledge_engine',
+    'learn knowledge': 'knowledge_engine',
+    'beliefs': 'knowledge_engine',
+    'my beliefs': 'knowledge_engine',
+    'knowledge stats': 'knowledge_engine',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -170,6 +179,7 @@ class AppScreenMapping {
     'communication': 'Communication Tools',
     'unified_loop': 'Unified Cognitive Loop',
     'persistent_goals': 'Persistent Goal Pursuit',
+    'knowledge_engine': 'Knowledge Engine',
   };
 
   static String? resolveScreenRoute(String command) {

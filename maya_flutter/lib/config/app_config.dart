@@ -269,6 +269,10 @@ class AppConfig {
   static const String knowledgeStats = '/api/v1/cognitive/knowledge/stats';
   static const String knowledgeLearn = '/api/v1/cognitive/knowledge/learn';
 
+  // Beliefs (Phase 36 - Knowledge Engine)
+  static const String beliefsAdd = '/api/v1/cognitive/beliefs';
+  static const String beliefsQuery = '/api/v1/cognitive/beliefs';
+
   // Working Memory
   static const String workingMemoryAdd = '/api/v1/cognitive/memory/working/add';
   static const String workingMemorySearch = '/api/v1/cognitive/memory/working/search';

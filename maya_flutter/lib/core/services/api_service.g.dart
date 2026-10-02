@@ -475,6 +475,49 @@ Map<String, dynamic> _$KnowledgeItemToJson(KnowledgeItem instance) {
   return val;
 }
 
+Belief _$BeliefFromJson(Map json) => $checkedCreate(
+      'Belief',
+      json,
+      ($checkedConvert) {
+        final val = Belief(
+          id: $checkedConvert('id', (v) => v as String),
+          proposition: $checkedConvert('proposition', (v) => v as String),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num).toDouble()),
+          domain: $checkedConvert('domain', (v) => v as String),
+          source: $checkedConvert('source', (v) => v as String),
+          evidence: $checkedConvert('evidence', (v) => v as String?),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at', 'updatedAt': 'updated_at'},
+    );
+
+Map<String, dynamic> _$BeliefToJson(Belief instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'proposition': instance.proposition,
+    'confidence': instance.confidence,
+    'domain': instance.domain,
+    'source': instance.source,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('evidence', instance.evidence);
+  val['created_at'] = instance.createdAt.toIso8601String();
+  val['updated_at'] = instance.updatedAt.toIso8601String();
+  return val;
+}
+
 WorkingMemoryItem _$WorkingMemoryItemFromJson(Map json) => $checkedCreate(
       'WorkingMemoryItem',
       json,
@@ -2937,6 +2980,57 @@ Map<String, dynamic> _$$KnowledgeLearnResponseImplToJson(
       'belief_id': instance.beliefId,
       'confidence': instance.confidence,
       'action': instance.action,
+    };
+
+_$BeliefAddResponseImpl _$$BeliefAddResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BeliefAddResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BeliefAddResponseImpl(
+          beliefId: $checkedConvert('belief_id', (v) => v as String),
+          proposition: $checkedConvert('proposition', (v) => v as String),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num).toDouble()),
+          domain: $checkedConvert('domain', (v) => v as String),
+          source: $checkedConvert('source', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'beliefId': 'belief_id'},
+    );
+
+Map<String, dynamic> _$$BeliefAddResponseImplToJson(
+        _$BeliefAddResponseImpl instance) =>
+    <String, dynamic>{
+      'belief_id': instance.beliefId,
+      'proposition': instance.proposition,
+      'confidence': instance.confidence,
+      'domain': instance.domain,
+      'source': instance.source,
+    };
+
+_$BeliefsQueryResponseImpl _$$BeliefsQueryResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BeliefsQueryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BeliefsQueryResponseImpl(
+          beliefs: $checkedConvert(
+              'beliefs',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Belief.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BeliefsQueryResponseImplToJson(
+        _$BeliefsQueryResponseImpl instance) =>
+    <String, dynamic>{
+      'beliefs': instance.beliefs,
     };
 
 _$WorkingMemoryAddResponseImpl _$$WorkingMemoryAddResponseImplFromJson(

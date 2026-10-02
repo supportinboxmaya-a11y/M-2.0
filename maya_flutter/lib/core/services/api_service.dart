@@ -1973,6 +1973,41 @@ class ApiService {
     return KnowledgeLearnResponse.fromJson(response.data);
   }
 
+  // Beliefs (Phase 36 - Knowledge Engine)
+  Future<BeliefAddResponse> addBelief({
+    required String proposition,
+    double confidence = 0.5,
+    String? evidence,
+    String source = "observation",
+    String domain = "general",
+  }) async {
+    final response = await _dio.post(
+      AppConfig.beliefsAdd,
+      data: {
+        "proposition": proposition,
+        "confidence": confidence,
+        if (evidence != null) "evidence": evidence,
+        "source": source,
+        "domain": domain,
+      },
+    );
+    return BeliefAddResponse.fromJson(response.data);
+  }
+
+  Future<BeliefsQueryResponse> queryBeliefs({
+    String? domain,
+    double minConfidence = 0.0,
+  }) async {
+    final response = await _dio.get(
+      AppConfig.beliefsQuery,
+      queryParameters: {
+        if (domain != null) "domain": domain,
+        "min_conf": minConfidence,
+      },
+    );
+    return BeliefsQueryResponse.fromJson(response.data);
+  }
+
   // Working Memory
   Future<WorkingMemoryAddResponse> addWorkingMemory({
     required String content,
@@ -3505,6 +3540,59 @@ class KnowledgeLearnResponse with _$KnowledgeLearnResponse {
 
   factory KnowledgeLearnResponse.fromJson(Map<String, dynamic> json) =>
       _$KnowledgeLearnResponseFromJson(json);
+}
+
+// Belief Models (Phase 36 - Knowledge Engine)
+@freezed
+class BeliefAddResponse with _$BeliefAddResponse {
+  const factory BeliefAddResponse({
+    required String beliefId,
+    required String proposition,
+    required double confidence,
+    required String domain,
+    required String source,
+  }) = _BeliefAddResponse;
+
+  factory BeliefAddResponse.fromJson(Map<String, dynamic> json) =>
+      _$BeliefAddResponseFromJson(json);
+}
+
+@freezed
+class BeliefsQueryResponse with _$BeliefsQueryResponse {
+  const factory BeliefsQueryResponse({
+    required List<Belief> beliefs,
+  }) = _BeliefsQueryResponse;
+
+  factory BeliefsQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$BeliefsQueryResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Belief {
+  final String id;
+  final String proposition;
+  final double confidence;
+  final String domain;
+  final String source;
+  final String? evidence;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  const Belief({
+    required this.id,
+    required this.proposition,
+    required this.confidence,
+    required this.domain,
+    required this.source,
+    this.evidence,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Belief.fromJson(Map<String, dynamic> json) =>
+      _$BeliefFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BeliefToJson(this);
 }
 
 // Working Memory Models

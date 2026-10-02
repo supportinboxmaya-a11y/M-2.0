@@ -14506,6 +14506,378 @@ abstract class _KnowledgeLearnResponse implements KnowledgeLearnResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+BeliefAddResponse _$BeliefAddResponseFromJson(Map<String, dynamic> json) {
+  return _BeliefAddResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BeliefAddResponse {
+  String get beliefId => throw _privateConstructorUsedError;
+  String get proposition => throw _privateConstructorUsedError;
+  double get confidence => throw _privateConstructorUsedError;
+  String get domain => throw _privateConstructorUsedError;
+  String get source => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BeliefAddResponseCopyWith<BeliefAddResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BeliefAddResponseCopyWith<$Res> {
+  factory $BeliefAddResponseCopyWith(
+          BeliefAddResponse value, $Res Function(BeliefAddResponse) then) =
+      _$BeliefAddResponseCopyWithImpl<$Res, BeliefAddResponse>;
+  @useResult
+  $Res call(
+      {String beliefId,
+      String proposition,
+      double confidence,
+      String domain,
+      String source});
+}
+
+/// @nodoc
+class _$BeliefAddResponseCopyWithImpl<$Res, $Val extends BeliefAddResponse>
+    implements $BeliefAddResponseCopyWith<$Res> {
+  _$BeliefAddResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? beliefId = null,
+    Object? proposition = null,
+    Object? confidence = null,
+    Object? domain = null,
+    Object? source = null,
+  }) {
+    return _then(_value.copyWith(
+      beliefId: null == beliefId
+          ? _value.beliefId
+          : beliefId // ignore: cast_nullable_to_non_nullable
+              as String,
+      proposition: null == proposition
+          ? _value.proposition
+          : proposition // ignore: cast_nullable_to_non_nullable
+              as String,
+      confidence: null == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      domain: null == domain
+          ? _value.domain
+          : domain // ignore: cast_nullable_to_non_nullable
+              as String,
+      source: null == source
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BeliefAddResponseImplCopyWith<$Res>
+    implements $BeliefAddResponseCopyWith<$Res> {
+  factory _$$BeliefAddResponseImplCopyWith(_$BeliefAddResponseImpl value,
+          $Res Function(_$BeliefAddResponseImpl) then) =
+      __$$BeliefAddResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String beliefId,
+      String proposition,
+      double confidence,
+      String domain,
+      String source});
+}
+
+/// @nodoc
+class __$$BeliefAddResponseImplCopyWithImpl<$Res>
+    extends _$BeliefAddResponseCopyWithImpl<$Res, _$BeliefAddResponseImpl>
+    implements _$$BeliefAddResponseImplCopyWith<$Res> {
+  __$$BeliefAddResponseImplCopyWithImpl(_$BeliefAddResponseImpl _value,
+      $Res Function(_$BeliefAddResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? beliefId = null,
+    Object? proposition = null,
+    Object? confidence = null,
+    Object? domain = null,
+    Object? source = null,
+  }) {
+    return _then(_$BeliefAddResponseImpl(
+      beliefId: null == beliefId
+          ? _value.beliefId
+          : beliefId // ignore: cast_nullable_to_non_nullable
+              as String,
+      proposition: null == proposition
+          ? _value.proposition
+          : proposition // ignore: cast_nullable_to_non_nullable
+              as String,
+      confidence: null == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      domain: null == domain
+          ? _value.domain
+          : domain // ignore: cast_nullable_to_non_nullable
+              as String,
+      source: null == source
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BeliefAddResponseImpl implements _BeliefAddResponse {
+  const _$BeliefAddResponseImpl(
+      {required this.beliefId,
+      required this.proposition,
+      required this.confidence,
+      required this.domain,
+      required this.source});
+
+  factory _$BeliefAddResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BeliefAddResponseImplFromJson(json);
+
+  @override
+  final String beliefId;
+  @override
+  final String proposition;
+  @override
+  final double confidence;
+  @override
+  final String domain;
+  @override
+  final String source;
+
+  @override
+  String toString() {
+    return 'BeliefAddResponse(beliefId: $beliefId, proposition: $proposition, confidence: $confidence, domain: $domain, source: $source)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BeliefAddResponseImpl &&
+            (identical(other.beliefId, beliefId) ||
+                other.beliefId == beliefId) &&
+            (identical(other.proposition, proposition) ||
+                other.proposition == proposition) &&
+            (identical(other.confidence, confidence) ||
+                other.confidence == confidence) &&
+            (identical(other.domain, domain) || other.domain == domain) &&
+            (identical(other.source, source) || other.source == source));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, beliefId, proposition, confidence, domain, source);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BeliefAddResponseImplCopyWith<_$BeliefAddResponseImpl> get copyWith =>
+      __$$BeliefAddResponseImplCopyWithImpl<_$BeliefAddResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BeliefAddResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BeliefAddResponse implements BeliefAddResponse {
+  const factory _BeliefAddResponse(
+      {required final String beliefId,
+      required final String proposition,
+      required final double confidence,
+      required final String domain,
+      required final String source}) = _$BeliefAddResponseImpl;
+
+  factory _BeliefAddResponse.fromJson(Map<String, dynamic> json) =
+      _$BeliefAddResponseImpl.fromJson;
+
+  @override
+  String get beliefId;
+  @override
+  String get proposition;
+  @override
+  double get confidence;
+  @override
+  String get domain;
+  @override
+  String get source;
+  @override
+  @JsonKey(ignore: true)
+  _$$BeliefAddResponseImplCopyWith<_$BeliefAddResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BeliefsQueryResponse _$BeliefsQueryResponseFromJson(Map<String, dynamic> json) {
+  return _BeliefsQueryResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BeliefsQueryResponse {
+  List<Belief> get beliefs => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BeliefsQueryResponseCopyWith<BeliefsQueryResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BeliefsQueryResponseCopyWith<$Res> {
+  factory $BeliefsQueryResponseCopyWith(BeliefsQueryResponse value,
+          $Res Function(BeliefsQueryResponse) then) =
+      _$BeliefsQueryResponseCopyWithImpl<$Res, BeliefsQueryResponse>;
+  @useResult
+  $Res call({List<Belief> beliefs});
+}
+
+/// @nodoc
+class _$BeliefsQueryResponseCopyWithImpl<$Res,
+        $Val extends BeliefsQueryResponse>
+    implements $BeliefsQueryResponseCopyWith<$Res> {
+  _$BeliefsQueryResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? beliefs = null,
+  }) {
+    return _then(_value.copyWith(
+      beliefs: null == beliefs
+          ? _value.beliefs
+          : beliefs // ignore: cast_nullable_to_non_nullable
+              as List<Belief>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$BeliefsQueryResponseImplCopyWith<$Res>
+    implements $BeliefsQueryResponseCopyWith<$Res> {
+  factory _$$BeliefsQueryResponseImplCopyWith(_$BeliefsQueryResponseImpl value,
+          $Res Function(_$BeliefsQueryResponseImpl) then) =
+      __$$BeliefsQueryResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<Belief> beliefs});
+}
+
+/// @nodoc
+class __$$BeliefsQueryResponseImplCopyWithImpl<$Res>
+    extends _$BeliefsQueryResponseCopyWithImpl<$Res, _$BeliefsQueryResponseImpl>
+    implements _$$BeliefsQueryResponseImplCopyWith<$Res> {
+  __$$BeliefsQueryResponseImplCopyWithImpl(_$BeliefsQueryResponseImpl _value,
+      $Res Function(_$BeliefsQueryResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? beliefs = null,
+  }) {
+    return _then(_$BeliefsQueryResponseImpl(
+      beliefs: null == beliefs
+          ? _value._beliefs
+          : beliefs // ignore: cast_nullable_to_non_nullable
+              as List<Belief>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BeliefsQueryResponseImpl implements _BeliefsQueryResponse {
+  const _$BeliefsQueryResponseImpl({required final List<Belief> beliefs})
+      : _beliefs = beliefs;
+
+  factory _$BeliefsQueryResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BeliefsQueryResponseImplFromJson(json);
+
+  final List<Belief> _beliefs;
+  @override
+  List<Belief> get beliefs {
+    if (_beliefs is EqualUnmodifiableListView) return _beliefs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_beliefs);
+  }
+
+  @override
+  String toString() {
+    return 'BeliefsQueryResponse(beliefs: $beliefs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BeliefsQueryResponseImpl &&
+            const DeepCollectionEquality().equals(other._beliefs, _beliefs));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_beliefs));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BeliefsQueryResponseImplCopyWith<_$BeliefsQueryResponseImpl>
+      get copyWith =>
+          __$$BeliefsQueryResponseImplCopyWithImpl<_$BeliefsQueryResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BeliefsQueryResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _BeliefsQueryResponse implements BeliefsQueryResponse {
+  const factory _BeliefsQueryResponse({required final List<Belief> beliefs}) =
+      _$BeliefsQueryResponseImpl;
+
+  factory _BeliefsQueryResponse.fromJson(Map<String, dynamic> json) =
+      _$BeliefsQueryResponseImpl.fromJson;
+
+  @override
+  List<Belief> get beliefs;
+  @override
+  @JsonKey(ignore: true)
+  _$$BeliefsQueryResponseImplCopyWith<_$BeliefsQueryResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 WorkingMemoryAddResponse _$WorkingMemoryAddResponseFromJson(
     Map<String, dynamic> json) {
   return _WorkingMemoryAddResponse.fromJson(json);
