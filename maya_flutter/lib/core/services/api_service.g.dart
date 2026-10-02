@@ -640,6 +640,832 @@ Map<String, dynamic> _$BeliefToJson(Belief instance) {
   return val;
 }
 
+ScoutScanRecord _$ScoutScanRecordFromJson(Map json) => $checkedCreate(
+      'ScoutScanRecord',
+      json,
+      ($checkedConvert) {
+        final val = ScoutScanRecord(
+          scanId: $checkedConvert('scan_id', (v) => v as String),
+          signals: $checkedConvert('signals', (v) => (v as num).toInt()),
+          opportunities:
+              $checkedConvert('opportunities', (v) => (v as num).toInt()),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+          status: $checkedConvert('status', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'scanId': 'scan_id'},
+    );
+
+Map<String, dynamic> _$ScoutScanRecordToJson(ScoutScanRecord instance) =>
+    <String, dynamic>{
+      'scan_id': instance.scanId,
+      'signals': instance.signals,
+      'opportunities': instance.opportunities,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'status': instance.status,
+    };
+
+ScoutSignal _$ScoutSignalFromJson(Map json) => $checkedCreate(
+      'ScoutSignal',
+      json,
+      ($checkedConvert) {
+        final val = ScoutSignal(
+          id: $checkedConvert('id', (v) => v as String),
+          source: $checkedConvert('source', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          summary: $checkedConvert('summary', (v) => v as String),
+          score: $checkedConvert('score', (v) => (v as num).toDouble()),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$ScoutSignalToJson(ScoutSignal instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'source': instance.source,
+      'title': instance.title,
+      'summary': instance.summary,
+      'score': instance.score,
+      'timestamp': instance.timestamp.toIso8601String(),
+    };
+
+ScoutOpportunity _$ScoutOpportunityFromJson(Map json) => $checkedCreate(
+      'ScoutOpportunity',
+      json,
+      ($checkedConvert) {
+        final val = ScoutOpportunity(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          source: $checkedConvert('source', (v) => v as String),
+          score: $checkedConvert('score', (v) => (v as num).toDouble()),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$ScoutOpportunityToJson(ScoutOpportunity instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'source': instance.source,
+      'score': instance.score,
+      'status': instance.status,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+StrategistReviewRecord _$StrategistReviewRecordFromJson(Map json) =>
+    $checkedCreate(
+      'StrategistReviewRecord',
+      json,
+      ($checkedConvert) {
+        final val = StrategistReviewRecord(
+          reviewId: $checkedConvert('review_id', (v) => v as String),
+          opportunitiesReviewed: $checkedConvert(
+              'opportunities_reviewed', (v) => (v as num).toInt()),
+          plansCreated:
+              $checkedConvert('plans_created', (v) => (v as num).toInt()),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'reviewId': 'review_id',
+        'opportunitiesReviewed': 'opportunities_reviewed',
+        'plansCreated': 'plans_created'
+      },
+    );
+
+Map<String, dynamic> _$StrategistReviewRecordToJson(
+        StrategistReviewRecord instance) =>
+    <String, dynamic>{
+      'review_id': instance.reviewId,
+      'opportunities_reviewed': instance.opportunitiesReviewed,
+      'plans_created': instance.plansCreated,
+      'timestamp': instance.timestamp.toIso8601String(),
+    };
+
+StrategistPlan _$StrategistPlanFromJson(Map json) => $checkedCreate(
+      'StrategistPlan',
+      json,
+      ($checkedConvert) {
+        final val = StrategistPlan(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          opportunityId: $checkedConvert('opportunity_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'opportunityId': 'opportunity_id',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$StrategistPlanToJson(StrategistPlan instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'opportunity_id': instance.opportunityId,
+      'status': instance.status,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+StrategistRankedOpportunity _$StrategistRankedOpportunityFromJson(Map json) =>
+    $checkedCreate(
+      'StrategistRankedOpportunity',
+      json,
+      ($checkedConvert) {
+        final val = StrategistRankedOpportunity(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          score: $checkedConvert('score', (v) => (v as num).toDouble()),
+          reason: $checkedConvert('reason', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$StrategistRankedOpportunityToJson(
+        StrategistRankedOpportunity instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'score': instance.score,
+      'reason': instance.reason,
+    };
+
+BuilderProject _$BuilderProjectFromJson(Map json) => $checkedCreate(
+      'BuilderProject',
+      json,
+      ($checkedConvert) {
+        final val = BuilderProject(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          planId: $checkedConvert('plan_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt: $checkedConvert('updated_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'planId': 'plan_id',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$BuilderProjectToJson(BuilderProject instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'description': instance.description,
+    'plan_id': instance.planId,
+    'status': instance.status,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated_at', instance.updatedAt?.toIso8601String());
+  return val;
+}
+
+BuilderStep _$BuilderStepFromJson(Map json) => $checkedCreate(
+      'BuilderStep',
+      json,
+      ($checkedConvert) {
+        final val = BuilderStep(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          order: $checkedConvert('order', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$BuilderStepToJson(BuilderStep instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'status': instance.status,
+      'order': instance.order,
+    };
+
+LauncherLaunch _$LauncherLaunchFromJson(Map json) => $checkedCreate(
+      'LauncherLaunch',
+      json,
+      ($checkedConvert) {
+        final val = LauncherLaunch(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          launchedAt: $checkedConvert('launched_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'projectId': 'project_id',
+        'createdAt': 'created_at',
+        'launchedAt': 'launched_at'
+      },
+    );
+
+Map<String, dynamic> _$LauncherLaunchToJson(LauncherLaunch instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'status': instance.status,
+    'project_id': instance.projectId,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('launched_at', instance.launchedAt?.toIso8601String());
+  return val;
+}
+
+LauncherContent _$LauncherContentFromJson(Map json) => $checkedCreate(
+      'LauncherContent',
+      json,
+      ($checkedConvert) {
+        final val = LauncherContent(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          type: $checkedConvert('type', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$LauncherContentToJson(LauncherContent instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'type': instance.type,
+      'status': instance.status,
+      'content': instance.content,
+    };
+
+GrowthProposal _$GrowthProposalFromJson(Map json) => $checkedCreate(
+      'GrowthProposal',
+      json,
+      ($checkedConvert) {
+        final val = GrowthProposal(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          estimatedImpact:
+              $checkedConvert('estimated_impact', (v) => (v as num).toDouble()),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'projectId': 'project_id',
+        'estimatedImpact': 'estimated_impact',
+        'createdAt': 'created_at'
+      },
+    );
+
+Map<String, dynamic> _$GrowthProposalToJson(GrowthProposal instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'project_id': instance.projectId,
+      'status': instance.status,
+      'estimated_impact': instance.estimatedImpact,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+GrowthMetric _$GrowthMetricFromJson(Map json) => $checkedCreate(
+      'GrowthMetric',
+      json,
+      ($checkedConvert) {
+        final val = GrowthMetric(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          metricName: $checkedConvert('metric_name', (v) => v as String),
+          value: $checkedConvert('value', (v) => (v as num).toDouble()),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'projectId': 'project_id',
+        'metricName': 'metric_name'
+      },
+    );
+
+Map<String, dynamic> _$GrowthMetricToJson(GrowthMetric instance) =>
+    <String, dynamic>{
+      'project_id': instance.projectId,
+      'metric_name': instance.metricName,
+      'value': instance.value,
+      'timestamp': instance.timestamp.toIso8601String(),
+    };
+
+GrowthRecommendation _$GrowthRecommendationFromJson(Map json) => $checkedCreate(
+      'GrowthRecommendation',
+      json,
+      ($checkedConvert) {
+        final val = GrowthRecommendation(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          recommendation: $checkedConvert('recommendation', (v) => v as String),
+          priority: $checkedConvert('priority', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id'},
+    );
+
+Map<String, dynamic> _$GrowthRecommendationToJson(
+        GrowthRecommendation instance) =>
+    <String, dynamic>{
+      'project_id': instance.projectId,
+      'recommendation': instance.recommendation,
+      'priority': instance.priority,
+    };
+
+GrowthAction _$GrowthActionFromJson(Map json) => $checkedCreate(
+      'GrowthAction',
+      json,
+      ($checkedConvert) {
+        final val = GrowthAction(
+          id: $checkedConvert('id', (v) => v as String),
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          action: $checkedConvert('action', (v) => v as String),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+          userId: $checkedConvert('user_id', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id', 'userId': 'user_id'},
+    );
+
+Map<String, dynamic> _$GrowthActionToJson(GrowthAction instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'project_id': instance.projectId,
+      'action': instance.action,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'user_id': instance.userId,
+    };
+
+NotifApproval _$NotifApprovalFromJson(Map json) => $checkedCreate(
+      'NotifApproval',
+      json,
+      ($checkedConvert) {
+        final val = NotifApproval(
+          id: $checkedConvert('id', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          channel: $checkedConvert('channel', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$NotifApprovalToJson(NotifApproval instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'description': instance.description,
+      'status': instance.status,
+      'channel': instance.channel,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+NotifTemplate _$NotifTemplateFromJson(Map json) => $checkedCreate(
+      'NotifTemplate',
+      json,
+      ($checkedConvert) {
+        final val = NotifTemplate(
+          name: $checkedConvert('name', (v) => v as String),
+          subject: $checkedConvert('subject', (v) => v as String),
+          body: $checkedConvert('body', (v) => v as String),
+          channel: $checkedConvert('channel', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$NotifTemplateToJson(NotifTemplate instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'subject': instance.subject,
+      'body': instance.body,
+      'channel': instance.channel,
+    };
+
+ExtTask _$ExtTaskFromJson(Map json) => $checkedCreate(
+      'ExtTask',
+      json,
+      ($checkedConvert) {
+        final val = ExtTask(
+          id: $checkedConvert('id', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$ExtTaskToJson(ExtTask instance) => <String, dynamic>{
+      'id': instance.id,
+      'description': instance.description,
+      'status': instance.status,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+ProactiveJob _$ProactiveJobFromJson(Map json) => $checkedCreate(
+      'ProactiveJob',
+      json,
+      ($checkedConvert) {
+        final val = ProactiveJob(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          cron: $checkedConvert('cron', (v) => v as String),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$ProactiveJobToJson(ProactiveJob instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'cron': instance.cron,
+      'enabled': instance.enabled,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+ExtMemFact _$ExtMemFactFromJson(Map json) => $checkedCreate(
+      'ExtMemFact',
+      json,
+      ($checkedConvert) {
+        final val = ExtMemFact(
+          id: $checkedConvert('id', (v) => v as String),
+          fact: $checkedConvert('fact', (v) => v as String),
+          source: $checkedConvert('source', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$ExtMemFactToJson(ExtMemFact instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'fact': instance.fact,
+      'source': instance.source,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+ExtInterruption _$ExtInterruptionFromJson(Map json) => $checkedCreate(
+      'ExtInterruption',
+      json,
+      ($checkedConvert) {
+        final val = ExtInterruption(
+          id: $checkedConvert('id', (v) => v as String),
+          reason: $checkedConvert('reason', (v) => v as String),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$ExtInterruptionToJson(ExtInterruption instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'reason': instance.reason,
+      'timestamp': instance.timestamp.toIso8601String(),
+    };
+
+Capability _$CapabilityFromJson(Map json) => $checkedCreate(
+      'Capability',
+      json,
+      ($checkedConvert) {
+        final val = Capability(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          verified: $checkedConvert('verified', (v) => v as bool),
+          usageCount: $checkedConvert('usage_count', (v) => (v as num).toInt()),
+          successRate:
+              $checkedConvert('success_rate', (v) => (v as num).toDouble()),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt: $checkedConvert('updated_at',
+              (v) => v == null ? null : DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'usageCount': 'usage_count',
+        'successRate': 'success_rate',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$CapabilityToJson(Capability instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'name': instance.name,
+    'description': instance.description,
+    'verified': instance.verified,
+    'usage_count': instance.usageCount,
+    'success_rate': instance.successRate,
+    'created_at': instance.createdAt.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated_at', instance.updatedAt?.toIso8601String());
+  return val;
+}
+
+Webhook _$WebhookFromJson(Map json) => $checkedCreate(
+      'Webhook',
+      json,
+      ($checkedConvert) {
+        final val = Webhook(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          url: $checkedConvert('url', (v) => v as String),
+          events: $checkedConvert('events',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          active: $checkedConvert('active', (v) => v as bool),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$WebhookToJson(Webhook instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'url': instance.url,
+      'events': instance.events,
+      'active': instance.active,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+Doc _$DocFromJson(Map json) => $checkedCreate(
+      'Doc',
+      json,
+      ($checkedConvert) {
+        final val = Doc(
+          name: $checkedConvert('name', (v) => v as String),
+          title: $checkedConvert('title', (v) => v as String),
+          category: $checkedConvert('category', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$DocToJson(Doc instance) => <String, dynamic>{
+      'name': instance.name,
+      'title': instance.title,
+      'category': instance.category,
+    };
+
+Project _$ProjectFromJson(Map json) => $checkedCreate(
+      'Project',
+      json,
+      ($checkedConvert) {
+        final val = Project(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'status': instance.status,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+Schedule _$ScheduleFromJson(Map json) => $checkedCreate(
+      'Schedule',
+      json,
+      ($checkedConvert) {
+        final val = Schedule(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          cron: $checkedConvert('cron', (v) => v as String),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'createdAt': 'created_at'},
+    );
+
+Map<String, dynamic> _$ScheduleToJson(Schedule instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'cron': instance.cron,
+      'enabled': instance.enabled,
+      'created_at': instance.createdAt.toIso8601String(),
+    };
+
+AnalyticsDailyPoint _$AnalyticsDailyPointFromJson(Map json) => $checkedCreate(
+      'AnalyticsDailyPoint',
+      json,
+      ($checkedConvert) {
+        final val = AnalyticsDailyPoint(
+          date: $checkedConvert('date', (v) => v as String),
+          requests: $checkedConvert('requests', (v) => (v as num).toInt()),
+          errors: $checkedConvert('errors', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$AnalyticsDailyPointToJson(
+        AnalyticsDailyPoint instance) =>
+    <String, dynamic>{
+      'date': instance.date,
+      'requests': instance.requests,
+      'errors': instance.errors,
+    };
+
+AnalyticsProviderStat _$AnalyticsProviderStatFromJson(Map json) =>
+    $checkedCreate(
+      'AnalyticsProviderStat',
+      json,
+      ($checkedConvert) {
+        final val = AnalyticsProviderStat(
+          provider: $checkedConvert('provider', (v) => v as String),
+          requests: $checkedConvert('requests', (v) => (v as num).toInt()),
+          errors: $checkedConvert('errors', (v) => (v as num).toInt()),
+          avgLatency:
+              $checkedConvert('avg_latency', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'avgLatency': 'avg_latency'},
+    );
+
+Map<String, dynamic> _$AnalyticsProviderStatToJson(
+        AnalyticsProviderStat instance) =>
+    <String, dynamic>{
+      'provider': instance.provider,
+      'requests': instance.requests,
+      'errors': instance.errors,
+      'avg_latency': instance.avgLatency,
+    };
+
+AnalyticsToolStat _$AnalyticsToolStatFromJson(Map json) => $checkedCreate(
+      'AnalyticsToolStat',
+      json,
+      ($checkedConvert) {
+        final val = AnalyticsToolStat(
+          tool: $checkedConvert('tool', (v) => v as String),
+          calls: $checkedConvert('calls', (v) => (v as num).toInt()),
+          errors: $checkedConvert('errors', (v) => (v as num).toInt()),
+          avgLatency:
+              $checkedConvert('avg_latency', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'avgLatency': 'avg_latency'},
+    );
+
+Map<String, dynamic> _$AnalyticsToolStatToJson(AnalyticsToolStat instance) =>
+    <String, dynamic>{
+      'tool': instance.tool,
+      'calls': instance.calls,
+      'errors': instance.errors,
+      'avg_latency': instance.avgLatency,
+    };
+
+LogEntry _$LogEntryFromJson(Map json) => $checkedCreate(
+      'LogEntry',
+      json,
+      ($checkedConvert) {
+        final val = LogEntry(
+          id: $checkedConvert('id', (v) => v as String),
+          level: $checkedConvert('level', (v) => v as String),
+          message: $checkedConvert('message', (v) => v as String),
+          provider: $checkedConvert('provider', (v) => v as String),
+          timestamp:
+              $checkedConvert('timestamp', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$LogEntryToJson(LogEntry instance) => <String, dynamic>{
+      'id': instance.id,
+      'level': instance.level,
+      'message': instance.message,
+      'provider': instance.provider,
+      'timestamp': instance.timestamp.toIso8601String(),
+    };
+
+Plugin _$PluginFromJson(Map json) => $checkedCreate(
+      'Plugin',
+      json,
+      ($checkedConvert) {
+        final val = Plugin(
+          name: $checkedConvert('name', (v) => v as String),
+          version: $checkedConvert('version', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          enabled: $checkedConvert('enabled', (v) => v as bool),
+          installedAt: $checkedConvert(
+              'installed_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'installedAt': 'installed_at'},
+    );
+
+Map<String, dynamic> _$PluginToJson(Plugin instance) => <String, dynamic>{
+      'name': instance.name,
+      'version': instance.version,
+      'description': instance.description,
+      'enabled': instance.enabled,
+      'installed_at': instance.installedAt.toIso8601String(),
+    };
+
 WorkingMemoryItem _$WorkingMemoryItemFromJson(Map json) => $checkedCreate(
       'WorkingMemoryItem',
       json,
@@ -3763,6 +4589,2776 @@ Map<String, dynamic> _$$SelfImproveExecuteResponseImplToJson(
   writeNotNull('result', instance.result);
   return val;
 }
+
+_$ScoutScanResponseImpl _$$ScoutScanResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScoutScanResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutScanResponseImpl(
+          scanId: $checkedConvert('scan_id', (v) => v as String),
+          signalsFound:
+              $checkedConvert('signals_found', (v) => (v as num).toInt()),
+          opportunitiesCreated: $checkedConvert(
+              'opportunities_created', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'scanId': 'scan_id',
+        'signalsFound': 'signals_found',
+        'opportunitiesCreated': 'opportunities_created'
+      },
+    );
+
+Map<String, dynamic> _$$ScoutScanResponseImplToJson(
+        _$ScoutScanResponseImpl instance) =>
+    <String, dynamic>{
+      'scan_id': instance.scanId,
+      'signals_found': instance.signalsFound,
+      'opportunities_created': instance.opportunitiesCreated,
+    };
+
+_$ScoutScanHistoryResponseImpl _$$ScoutScanHistoryResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ScoutScanHistoryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutScanHistoryResponseImpl(
+          scans: $checkedConvert(
+              'scans',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ScoutScanRecord.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScoutScanHistoryResponseImplToJson(
+        _$ScoutScanHistoryResponseImpl instance) =>
+    <String, dynamic>{
+      'scans': instance.scans,
+    };
+
+_$ScoutSignalsResponseImpl _$$ScoutSignalsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScoutSignalsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutSignalsResponseImpl(
+          signals: $checkedConvert(
+              'signals',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      ScoutSignal.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScoutSignalsResponseImplToJson(
+        _$ScoutSignalsResponseImpl instance) =>
+    <String, dynamic>{
+      'signals': instance.signals,
+    };
+
+_$ScoutOpportunitiesResponseImpl _$$ScoutOpportunitiesResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ScoutOpportunitiesResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutOpportunitiesResponseImpl(
+          opportunities: $checkedConvert(
+              'opportunities',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ScoutOpportunity.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScoutOpportunitiesResponseImplToJson(
+        _$ScoutOpportunitiesResponseImpl instance) =>
+    <String, dynamic>{
+      'opportunities': instance.opportunities,
+    };
+
+_$ScoutOpportunityDetailResponseImpl
+    _$$ScoutOpportunityDetailResponseImplFromJson(Map json) => $checkedCreate(
+          r'_$ScoutOpportunityDetailResponseImpl',
+          json,
+          ($checkedConvert) {
+            final val = _$ScoutOpportunityDetailResponseImpl(
+              opportunity: $checkedConvert(
+                  'opportunity',
+                  (v) => ScoutOpportunity.fromJson(
+                      Map<String, dynamic>.from(v as Map))),
+              relatedSignals: $checkedConvert(
+                  'related_signals',
+                  (v) => (v as List<dynamic>)
+                      .map((e) => ScoutSignal.fromJson(
+                          Map<String, dynamic>.from(e as Map)))
+                      .toList()),
+            );
+            return val;
+          },
+          fieldKeyMap: const {'relatedSignals': 'related_signals'},
+        );
+
+Map<String, dynamic> _$$ScoutOpportunityDetailResponseImplToJson(
+        _$ScoutOpportunityDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'opportunity': instance.opportunity,
+      'related_signals': instance.relatedSignals,
+    };
+
+_$ScoutDecisionResponseImpl _$$ScoutDecisionResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScoutDecisionResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutDecisionResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScoutDecisionResponseImplToJson(
+    _$ScoutDecisionResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ScoutDeleteResponseImpl _$$ScoutDeleteResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScoutDeleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutDeleteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScoutDeleteResponseImplToJson(
+    _$ScoutDeleteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ScoutPreferencesResponseImpl _$$ScoutPreferencesResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ScoutPreferencesResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutPreferencesResponseImpl(
+          preferences: $checkedConvert(
+              'preferences', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScoutPreferencesResponseImplToJson(
+        _$ScoutPreferencesResponseImpl instance) =>
+    <String, dynamic>{
+      'preferences': instance.preferences,
+    };
+
+_$ScoutStatsResponseImpl _$$ScoutStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScoutStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScoutStatsResponseImpl(
+          totalScans: $checkedConvert('total_scans', (v) => (v as num).toInt()),
+          totalSignals:
+              $checkedConvert('total_signals', (v) => (v as num).toInt()),
+          totalOpportunities:
+              $checkedConvert('total_opportunities', (v) => (v as num).toInt()),
+          avgScore: $checkedConvert('avg_score', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalScans': 'total_scans',
+        'totalSignals': 'total_signals',
+        'totalOpportunities': 'total_opportunities',
+        'avgScore': 'avg_score'
+      },
+    );
+
+Map<String, dynamic> _$$ScoutStatsResponseImplToJson(
+        _$ScoutStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_scans': instance.totalScans,
+      'total_signals': instance.totalSignals,
+      'total_opportunities': instance.totalOpportunities,
+      'avg_score': instance.avgScore,
+    };
+
+_$StrategistReviewResponseImpl _$$StrategistReviewResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$StrategistReviewResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$StrategistReviewResponseImpl(
+          reviewId: $checkedConvert('review_id', (v) => v as String),
+          opportunitiesReviewed: $checkedConvert(
+              'opportunities_reviewed', (v) => (v as num).toInt()),
+          plansCreated:
+              $checkedConvert('plans_created', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'reviewId': 'review_id',
+        'opportunitiesReviewed': 'opportunities_reviewed',
+        'plansCreated': 'plans_created'
+      },
+    );
+
+Map<String, dynamic> _$$StrategistReviewResponseImplToJson(
+        _$StrategistReviewResponseImpl instance) =>
+    <String, dynamic>{
+      'review_id': instance.reviewId,
+      'opportunities_reviewed': instance.opportunitiesReviewed,
+      'plans_created': instance.plansCreated,
+    };
+
+_$StrategistReviewHistoryResponseImpl
+    _$$StrategistReviewHistoryResponseImplFromJson(Map json) => $checkedCreate(
+          r'_$StrategistReviewHistoryResponseImpl',
+          json,
+          ($checkedConvert) {
+            final val = _$StrategistReviewHistoryResponseImpl(
+              reviews: $checkedConvert(
+                  'reviews',
+                  (v) => (v as List<dynamic>)
+                      .map((e) => StrategistReviewRecord.fromJson(
+                          Map<String, dynamic>.from(e as Map)))
+                      .toList()),
+            );
+            return val;
+          },
+        );
+
+Map<String, dynamic> _$$StrategistReviewHistoryResponseImplToJson(
+        _$StrategistReviewHistoryResponseImpl instance) =>
+    <String, dynamic>{
+      'reviews': instance.reviews,
+    };
+
+_$StrategistPlansResponseImpl _$$StrategistPlansResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$StrategistPlansResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$StrategistPlansResponseImpl(
+          plans: $checkedConvert(
+              'plans',
+              (v) => (v as List<dynamic>)
+                  .map((e) => StrategistPlan.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$StrategistPlansResponseImplToJson(
+        _$StrategistPlansResponseImpl instance) =>
+    <String, dynamic>{
+      'plans': instance.plans,
+    };
+
+_$StrategistPlanDetailResponseImpl _$$StrategistPlanDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$StrategistPlanDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$StrategistPlanDetailResponseImpl(
+          plan: $checkedConvert(
+              'plan',
+              (v) =>
+                  StrategistPlan.fromJson(Map<String, dynamic>.from(v as Map))),
+          steps: $checkedConvert('steps',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$StrategistPlanDetailResponseImplToJson(
+        _$StrategistPlanDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'plan': instance.plan,
+      'steps': instance.steps,
+    };
+
+_$StrategistDecisionResponseImpl _$$StrategistDecisionResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$StrategistDecisionResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$StrategistDecisionResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$StrategistDecisionResponseImplToJson(
+    _$StrategistDecisionResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$StrategistRankedResponseImpl _$$StrategistRankedResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$StrategistRankedResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$StrategistRankedResponseImpl(
+          opportunities: $checkedConvert(
+              'opportunities',
+              (v) => (v as List<dynamic>)
+                  .map((e) => StrategistRankedOpportunity.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$StrategistRankedResponseImplToJson(
+        _$StrategistRankedResponseImpl instance) =>
+    <String, dynamic>{
+      'opportunities': instance.opportunities,
+    };
+
+_$StrategistConfigResponseImpl _$$StrategistConfigResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$StrategistConfigResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$StrategistConfigResponseImpl(
+          config: $checkedConvert(
+              'config', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$StrategistConfigResponseImplToJson(
+        _$StrategistConfigResponseImpl instance) =>
+    <String, dynamic>{
+      'config': instance.config,
+    };
+
+_$BuilderProjectsResponseImpl _$$BuilderProjectsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$BuilderProjectsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderProjectsResponseImpl(
+          projects: $checkedConvert(
+              'projects',
+              (v) => (v as List<dynamic>)
+                  .map((e) => BuilderProject.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BuilderProjectsResponseImplToJson(
+        _$BuilderProjectsResponseImpl instance) =>
+    <String, dynamic>{
+      'projects': instance.projects,
+    };
+
+_$BuilderProjectDetailResponseImpl _$$BuilderProjectDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$BuilderProjectDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderProjectDetailResponseImpl(
+          project: $checkedConvert(
+              'project',
+              (v) =>
+                  BuilderProject.fromJson(Map<String, dynamic>.from(v as Map))),
+          steps: $checkedConvert(
+              'steps',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      BuilderStep.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BuilderProjectDetailResponseImplToJson(
+        _$BuilderProjectDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'project': instance.project,
+      'steps': instance.steps,
+    };
+
+_$BuilderStatusResponseImpl _$$BuilderStatusResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BuilderStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderStatusResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BuilderStatusResponseImplToJson(
+    _$BuilderStatusResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$BuilderStepsResponseImpl _$$BuilderStepsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BuilderStepsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderStepsResponseImpl(
+          steps: $checkedConvert(
+              'steps',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      BuilderStep.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BuilderStepsResponseImplToJson(
+        _$BuilderStepsResponseImpl instance) =>
+    <String, dynamic>{
+      'steps': instance.steps,
+    };
+
+_$BuilderStepExecuteResponseImpl _$$BuilderStepExecuteResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$BuilderStepExecuteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderStepExecuteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+          output: $checkedConvert('output', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$BuilderStepExecuteResponseImplToJson(
+    _$BuilderStepExecuteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  writeNotNull('output', instance.output);
+  return val;
+}
+
+_$BuilderBuildResponseImpl _$$BuilderBuildResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BuilderBuildResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderBuildResponseImpl(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id'},
+    );
+
+Map<String, dynamic> _$$BuilderBuildResponseImplToJson(
+    _$BuilderBuildResponseImpl instance) {
+  final val = <String, dynamic>{
+    'project_id': instance.projectId,
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$BuilderStatsResponseImpl _$$BuilderStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$BuilderStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$BuilderStatsResponseImpl(
+          totalProjects:
+              $checkedConvert('total_projects', (v) => (v as num).toInt()),
+          completedProjects:
+              $checkedConvert('completed_projects', (v) => (v as num).toInt()),
+          activeProjects:
+              $checkedConvert('active_projects', (v) => (v as num).toInt()),
+          totalStepsExecuted: $checkedConvert(
+              'total_steps_executed', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalProjects': 'total_projects',
+        'completedProjects': 'completed_projects',
+        'activeProjects': 'active_projects',
+        'totalStepsExecuted': 'total_steps_executed'
+      },
+    );
+
+Map<String, dynamic> _$$BuilderStatsResponseImplToJson(
+        _$BuilderStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_projects': instance.totalProjects,
+      'completed_projects': instance.completedProjects,
+      'active_projects': instance.activeProjects,
+      'total_steps_executed': instance.totalStepsExecuted,
+    };
+
+_$LauncherLaunchesResponseImpl _$$LauncherLaunchesResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LauncherLaunchesResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherLaunchesResponseImpl(
+          launches: $checkedConvert(
+              'launches',
+              (v) => (v as List<dynamic>)
+                  .map((e) => LauncherLaunch.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherLaunchesResponseImplToJson(
+        _$LauncherLaunchesResponseImpl instance) =>
+    <String, dynamic>{
+      'launches': instance.launches,
+    };
+
+_$LauncherLaunchDetailResponseImpl _$$LauncherLaunchDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LauncherLaunchDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherLaunchDetailResponseImpl(
+          launch: $checkedConvert(
+              'launch',
+              (v) =>
+                  LauncherLaunch.fromJson(Map<String, dynamic>.from(v as Map))),
+          content: $checkedConvert(
+              'content',
+              (v) => (v as List<dynamic>)
+                  .map((e) => LauncherContent.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherLaunchDetailResponseImplToJson(
+        _$LauncherLaunchDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'launch': instance.launch,
+      'content': instance.content,
+    };
+
+_$LauncherContentResponseImpl _$$LauncherContentResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LauncherContentResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherContentResponseImpl(
+          content: $checkedConvert(
+              'content',
+              (v) => (v as List<dynamic>)
+                  .map((e) => LauncherContent.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherContentResponseImplToJson(
+        _$LauncherContentResponseImpl instance) =>
+    <String, dynamic>{
+      'content': instance.content,
+    };
+
+_$LauncherApproveResponseImpl _$$LauncherApproveResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$LauncherApproveResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherApproveResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherApproveResponseImplToJson(
+    _$LauncherApproveResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$LauncherUpdateResponseImpl _$$LauncherUpdateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LauncherUpdateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherUpdateResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherUpdateResponseImplToJson(
+    _$LauncherUpdateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$LauncherConfigResponseImpl _$$LauncherConfigResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LauncherConfigResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherConfigResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherConfigResponseImplToJson(
+    _$LauncherConfigResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$LauncherStartResponseImpl _$$LauncherStartResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LauncherStartResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherStartResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherStartResponseImplToJson(
+    _$LauncherStartResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$LauncherRetryResponseImpl _$$LauncherRetryResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LauncherRetryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherRetryResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LauncherRetryResponseImplToJson(
+    _$LauncherRetryResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$LauncherStatsResponseImpl _$$LauncherStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LauncherStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LauncherStatsResponseImpl(
+          totalLaunches:
+              $checkedConvert('total_launches', (v) => (v as num).toInt()),
+          successfulLaunches:
+              $checkedConvert('successful_launches', (v) => (v as num).toInt()),
+          failedLaunches:
+              $checkedConvert('failed_launches', (v) => (v as num).toInt()),
+          pendingLaunches:
+              $checkedConvert('pending_launches', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalLaunches': 'total_launches',
+        'successfulLaunches': 'successful_launches',
+        'failedLaunches': 'failed_launches',
+        'pendingLaunches': 'pending_launches'
+      },
+    );
+
+Map<String, dynamic> _$$LauncherStatsResponseImplToJson(
+        _$LauncherStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_launches': instance.totalLaunches,
+      'successful_launches': instance.successfulLaunches,
+      'failed_launches': instance.failedLaunches,
+      'pending_launches': instance.pendingLaunches,
+    };
+
+_$GrowthProposalsResponseImpl _$$GrowthProposalsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$GrowthProposalsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthProposalsResponseImpl(
+          proposals: $checkedConvert(
+              'proposals',
+              (v) => (v as List<dynamic>)
+                  .map((e) => GrowthProposal.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthProposalsResponseImplToJson(
+        _$GrowthProposalsResponseImpl instance) =>
+    <String, dynamic>{
+      'proposals': instance.proposals,
+    };
+
+_$GrowthProposalDetailResponseImpl _$$GrowthProposalDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$GrowthProposalDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthProposalDetailResponseImpl(
+          proposal: $checkedConvert(
+              'proposal',
+              (v) =>
+                  GrowthProposal.fromJson(Map<String, dynamic>.from(v as Map))),
+          metrics: $checkedConvert(
+              'metrics', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthProposalDetailResponseImplToJson(
+        _$GrowthProposalDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'proposal': instance.proposal,
+      'metrics': instance.metrics,
+    };
+
+_$GrowthDecideResponseImpl _$$GrowthDecideResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GrowthDecideResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthDecideResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthDecideResponseImplToJson(
+    _$GrowthDecideResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$GrowthMetricsResponseImpl _$$GrowthMetricsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GrowthMetricsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthMetricsResponseImpl(
+          metrics: $checkedConvert(
+              'metrics',
+              (v) => (v as List<dynamic>)
+                  .map((e) => GrowthMetric.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthMetricsResponseImplToJson(
+        _$GrowthMetricsResponseImpl instance) =>
+    <String, dynamic>{
+      'metrics': instance.metrics,
+    };
+
+_$GrowthMetricsProjectResponseImpl _$$GrowthMetricsProjectResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$GrowthMetricsProjectResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthMetricsProjectResponseImpl(
+          metrics: $checkedConvert(
+              'metrics',
+              (v) => (v as List<dynamic>)
+                  .map((e) => GrowthMetric.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthMetricsProjectResponseImplToJson(
+        _$GrowthMetricsProjectResponseImpl instance) =>
+    <String, dynamic>{
+      'metrics': instance.metrics,
+    };
+
+_$GrowthRecommendationsResponseImpl
+    _$$GrowthRecommendationsResponseImplFromJson(Map json) => $checkedCreate(
+          r'_$GrowthRecommendationsResponseImpl',
+          json,
+          ($checkedConvert) {
+            final val = _$GrowthRecommendationsResponseImpl(
+              recommendations: $checkedConvert(
+                  'recommendations',
+                  (v) => (v as List<dynamic>)
+                      .map((e) => GrowthRecommendation.fromJson(
+                          Map<String, dynamic>.from(e as Map)))
+                      .toList()),
+            );
+            return val;
+          },
+        );
+
+Map<String, dynamic> _$$GrowthRecommendationsResponseImplToJson(
+        _$GrowthRecommendationsResponseImpl instance) =>
+    <String, dynamic>{
+      'recommendations': instance.recommendations,
+    };
+
+_$GrowthReviewResponseImpl _$$GrowthReviewResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GrowthReviewResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthReviewResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+          report: $checkedConvert('report', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthReviewResponseImplToJson(
+    _$GrowthReviewResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  writeNotNull('report', instance.report);
+  return val;
+}
+
+_$GrowthSummaryResponseImpl _$$GrowthSummaryResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GrowthSummaryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthSummaryResponseImpl(
+          totalProposals:
+              $checkedConvert('total_proposals', (v) => (v as num).toInt()),
+          approvedProposals:
+              $checkedConvert('approved_proposals', (v) => (v as num).toInt()),
+          totalEstimatedImpact: $checkedConvert(
+              'total_estimated_impact', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalProposals': 'total_proposals',
+        'approvedProposals': 'approved_proposals',
+        'totalEstimatedImpact': 'total_estimated_impact'
+      },
+    );
+
+Map<String, dynamic> _$$GrowthSummaryResponseImplToJson(
+        _$GrowthSummaryResponseImpl instance) =>
+    <String, dynamic>{
+      'total_proposals': instance.totalProposals,
+      'approved_proposals': instance.approvedProposals,
+      'total_estimated_impact': instance.totalEstimatedImpact,
+    };
+
+_$GrowthActionsResponseImpl _$$GrowthActionsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$GrowthActionsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$GrowthActionsResponseImpl(
+          actions: $checkedConvert(
+              'actions',
+              (v) => (v as List<dynamic>)
+                  .map((e) => GrowthAction.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$GrowthActionsResponseImplToJson(
+        _$GrowthActionsResponseImpl instance) =>
+    <String, dynamic>{
+      'actions': instance.actions,
+    };
+
+_$NotifSendResponseImpl _$$NotifSendResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifSendResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifSendResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifSendResponseImplToJson(
+    _$NotifSendResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$NotifApprovalRequestResponseImpl _$$NotifApprovalRequestResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$NotifApprovalRequestResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifApprovalRequestResponseImpl(
+          approvalId: $checkedConvert('approval_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'approvalId': 'approval_id'},
+    );
+
+Map<String, dynamic> _$$NotifApprovalRequestResponseImplToJson(
+        _$NotifApprovalRequestResponseImpl instance) =>
+    <String, dynamic>{
+      'approval_id': instance.approvalId,
+      'success': instance.success,
+    };
+
+_$NotifApprovalsListResponseImpl _$$NotifApprovalsListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$NotifApprovalsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifApprovalsListResponseImpl(
+          approvals: $checkedConvert(
+              'approvals',
+              (v) => (v as List<dynamic>)
+                  .map((e) => NotifApproval.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifApprovalsListResponseImplToJson(
+        _$NotifApprovalsListResponseImpl instance) =>
+    <String, dynamic>{
+      'approvals': instance.approvals,
+    };
+
+_$NotifApprovalDetailResponseImpl _$$NotifApprovalDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$NotifApprovalDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifApprovalDetailResponseImpl(
+          approval: $checkedConvert(
+              'approval',
+              (v) =>
+                  NotifApproval.fromJson(Map<String, dynamic>.from(v as Map))),
+          history: $checkedConvert('history',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifApprovalDetailResponseImplToJson(
+        _$NotifApprovalDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'approval': instance.approval,
+      'history': instance.history,
+    };
+
+_$NotifApprovalDecideResponseImpl _$$NotifApprovalDecideResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$NotifApprovalDecideResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifApprovalDecideResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifApprovalDecideResponseImplToJson(
+    _$NotifApprovalDecideResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$NotifDigestResponseImpl _$$NotifDigestResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifDigestResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifDigestResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifDigestResponseImplToJson(
+    _$NotifDigestResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$NotifAlertResponseImpl _$$NotifAlertResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifAlertResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifAlertResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifAlertResponseImplToJson(
+    _$NotifAlertResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$NotifTemplatesResponseImpl _$$NotifTemplatesResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifTemplatesResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifTemplatesResponseImpl(
+          templates: $checkedConvert(
+              'templates',
+              (v) => (v as List<dynamic>)
+                  .map((e) => NotifTemplate.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifTemplatesResponseImplToJson(
+        _$NotifTemplatesResponseImpl instance) =>
+    <String, dynamic>{
+      'templates': instance.templates,
+    };
+
+_$NotifTemplateResponseImpl _$$NotifTemplateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifTemplateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifTemplateResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifTemplateResponseImplToJson(
+    _$NotifTemplateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$NotifDeleteResponseImpl _$$NotifDeleteResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifDeleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifDeleteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifDeleteResponseImplToJson(
+    _$NotifDeleteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$NotifChannelsResponseImpl _$$NotifChannelsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifChannelsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifChannelsResponseImpl(
+          channels: $checkedConvert('channels',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$NotifChannelsResponseImplToJson(
+        _$NotifChannelsResponseImpl instance) =>
+    <String, dynamic>{
+      'channels': instance.channels,
+    };
+
+_$NotifStatsResponseImpl _$$NotifStatsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$NotifStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$NotifStatsResponseImpl(
+          totalSent: $checkedConvert('total_sent', (v) => (v as num).toInt()),
+          totalFailed:
+              $checkedConvert('total_failed', (v) => (v as num).toInt()),
+          totalPending:
+              $checkedConvert('total_pending', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalSent': 'total_sent',
+        'totalFailed': 'total_failed',
+        'totalPending': 'total_pending'
+      },
+    );
+
+Map<String, dynamic> _$$NotifStatsResponseImplToJson(
+        _$NotifStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_sent': instance.totalSent,
+      'total_failed': instance.totalFailed,
+      'total_pending': instance.totalPending,
+    };
+
+_$ExtStatusResponseImpl _$$ExtStatusResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtStatusResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtStatusResponseImpl(
+          running: $checkedConvert('running', (v) => v as bool),
+          activeTasks:
+              $checkedConvert('active_tasks', (v) => (v as num).toInt()),
+          queuedTasks:
+              $checkedConvert('queued_tasks', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'activeTasks': 'active_tasks',
+        'queuedTasks': 'queued_tasks'
+      },
+    );
+
+Map<String, dynamic> _$$ExtStatusResponseImplToJson(
+        _$ExtStatusResponseImpl instance) =>
+    <String, dynamic>{
+      'running': instance.running,
+      'active_tasks': instance.activeTasks,
+      'queued_tasks': instance.queuedTasks,
+    };
+
+_$ExtHealthResponseImpl _$$ExtHealthResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtHealthResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtHealthResponseImpl(
+          healthy: $checkedConvert('healthy', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtHealthResponseImplToJson(
+    _$ExtHealthResponseImpl instance) {
+  final val = <String, dynamic>{
+    'healthy': instance.healthy,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ExtTaskCreateResponseImpl _$$ExtTaskCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtTaskCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtTaskCreateResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id'},
+    );
+
+Map<String, dynamic> _$$ExtTaskCreateResponseImplToJson(
+        _$ExtTaskCreateResponseImpl instance) =>
+    <String, dynamic>{
+      'task_id': instance.taskId,
+      'success': instance.success,
+    };
+
+_$ExtTaskDetailResponseImpl _$$ExtTaskDetailResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtTaskDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtTaskDetailResponseImpl(
+          taskId: $checkedConvert('task_id', (v) => v as String),
+          status: $checkedConvert('status', (v) => v as String),
+          result: $checkedConvert('result', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'taskId': 'task_id'},
+    );
+
+Map<String, dynamic> _$$ExtTaskDetailResponseImplToJson(
+    _$ExtTaskDetailResponseImpl instance) {
+  final val = <String, dynamic>{
+    'task_id': instance.taskId,
+    'status': instance.status,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
+_$ExtInterruptResponseImpl _$$ExtInterruptResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtInterruptResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtInterruptResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtInterruptResponseImplToJson(
+    _$ExtInterruptResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ExtCancelResponseImpl _$$ExtCancelResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtCancelResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtCancelResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtCancelResponseImplToJson(
+    _$ExtCancelResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ExtTasksListResponseImpl _$$ExtTasksListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtTasksListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtTasksListResponseImpl(
+          tasks: $checkedConvert(
+              'tasks',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      ExtTask.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtTasksListResponseImplToJson(
+        _$ExtTasksListResponseImpl instance) =>
+    <String, dynamic>{
+      'tasks': instance.tasks,
+    };
+
+_$ProactiveJobsResponseImpl _$$ProactiveJobsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProactiveJobsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProactiveJobsResponseImpl(
+          jobs: $checkedConvert(
+              'jobs',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ProactiveJob.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProactiveJobsResponseImplToJson(
+        _$ProactiveJobsResponseImpl instance) =>
+    <String, dynamic>{
+      'jobs': instance.jobs,
+    };
+
+_$ProactiveJobCreateResponseImpl _$$ProactiveJobCreateResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProactiveJobCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProactiveJobCreateResponseImpl(
+          jobId: $checkedConvert('job_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'jobId': 'job_id'},
+    );
+
+Map<String, dynamic> _$$ProactiveJobCreateResponseImplToJson(
+        _$ProactiveJobCreateResponseImpl instance) =>
+    <String, dynamic>{
+      'job_id': instance.jobId,
+      'success': instance.success,
+    };
+
+_$ProactiveDeleteResponseImpl _$$ProactiveDeleteResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProactiveDeleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProactiveDeleteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProactiveDeleteResponseImplToJson(
+    _$ProactiveDeleteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ProactiveRunResponseImpl _$$ProactiveRunResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProactiveRunResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProactiveRunResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProactiveRunResponseImplToJson(
+    _$ProactiveRunResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ExtMemPrefsResponseImpl _$$ExtMemPrefsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtMemPrefsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemPrefsResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtMemPrefsResponseImplToJson(
+    _$ExtMemPrefsResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ExtMemPrefDetailResponseImpl _$$ExtMemPrefDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ExtMemPrefDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemPrefDetailResponseImpl(
+          key: $checkedConvert('key', (v) => v as String),
+          value: $checkedConvert('value', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtMemPrefDetailResponseImplToJson(
+        _$ExtMemPrefDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'key': instance.key,
+      'value': instance.value,
+    };
+
+_$ExtMemPrefsListResponseImpl _$$ExtMemPrefsListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ExtMemPrefsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemPrefsListResponseImpl(
+          preferences: $checkedConvert(
+              'preferences', (v) => Map<String, String>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtMemPrefsListResponseImplToJson(
+        _$ExtMemPrefsListResponseImpl instance) =>
+    <String, dynamic>{
+      'preferences': instance.preferences,
+    };
+
+_$ExtMemFactsResponseImpl _$$ExtMemFactsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtMemFactsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemFactsResponseImpl(
+          factId: $checkedConvert('fact_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'factId': 'fact_id'},
+    );
+
+Map<String, dynamic> _$$ExtMemFactsResponseImplToJson(
+        _$ExtMemFactsResponseImpl instance) =>
+    <String, dynamic>{
+      'fact_id': instance.factId,
+      'success': instance.success,
+    };
+
+_$ExtMemFactsListResponseImpl _$$ExtMemFactsListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ExtMemFactsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemFactsListResponseImpl(
+          facts: $checkedConvert(
+              'facts',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      ExtMemFact.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtMemFactsListResponseImplToJson(
+        _$ExtMemFactsListResponseImpl instance) =>
+    <String, dynamic>{
+      'facts': instance.facts,
+    };
+
+_$ExtMemProjectsResponseImpl _$$ExtMemProjectsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtMemProjectsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemProjectsResponseImpl(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id'},
+    );
+
+Map<String, dynamic> _$$ExtMemProjectsResponseImplToJson(
+        _$ExtMemProjectsResponseImpl instance) =>
+    <String, dynamic>{
+      'project_id': instance.projectId,
+      'success': instance.success,
+    };
+
+_$ExtMemProjectDetailResponseImpl _$$ExtMemProjectDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ExtMemProjectDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemProjectDetailResponseImpl(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id'},
+    );
+
+Map<String, dynamic> _$$ExtMemProjectDetailResponseImplToJson(
+        _$ExtMemProjectDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'project_id': instance.projectId,
+      'name': instance.name,
+      'description': instance.description,
+    };
+
+_$ExtMemContextResponseImpl _$$ExtMemContextResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtMemContextResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtMemContextResponseImpl(
+          context: $checkedConvert('context', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtMemContextResponseImplToJson(
+        _$ExtMemContextResponseImpl instance) =>
+    <String, dynamic>{
+      'context': instance.context,
+    };
+
+_$ExtInterruptionsResponseImpl _$$ExtInterruptionsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ExtInterruptionsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtInterruptionsResponseImpl(
+          interruptions: $checkedConvert(
+              'interruptions',
+              (v) => (v as List<dynamic>)
+                  .map((e) => ExtInterruption.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtInterruptionsResponseImplToJson(
+        _$ExtInterruptionsResponseImpl instance) =>
+    <String, dynamic>{
+      'interruptions': instance.interruptions,
+    };
+
+_$ExtVoiceCommandResponseImpl _$$ExtVoiceCommandResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ExtVoiceCommandResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtVoiceCommandResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          result: $checkedConvert('result', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtVoiceCommandResponseImplToJson(
+    _$ExtVoiceCommandResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('result', instance.result);
+  return val;
+}
+
+_$ExtToolsResponseImpl _$$ExtToolsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtToolsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtToolsResponseImpl(
+          tools: $checkedConvert('tools',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtToolsResponseImplToJson(
+        _$ExtToolsResponseImpl instance) =>
+    <String, dynamic>{
+      'tools': instance.tools,
+    };
+
+_$ExtConfigResponseImpl _$$ExtConfigResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ExtConfigResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ExtConfigResponseImpl(
+          config: $checkedConvert(
+              'config', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ExtConfigResponseImplToJson(
+        _$ExtConfigResponseImpl instance) =>
+    <String, dynamic>{
+      'config': instance.config,
+    };
+
+_$CapabilitiesListResponseImpl _$$CapabilitiesListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilitiesListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilitiesListResponseImpl(
+          capabilities: $checkedConvert(
+              'capabilities',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Capability.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$CapabilitiesListResponseImplToJson(
+        _$CapabilitiesListResponseImpl instance) =>
+    <String, dynamic>{
+      'capabilities': instance.capabilities,
+    };
+
+_$CapabilitiesSearchResponseImpl _$$CapabilitiesSearchResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilitiesSearchResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilitiesSearchResponseImpl(
+          capabilities: $checkedConvert(
+              'capabilities',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Capability.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$CapabilitiesSearchResponseImplToJson(
+        _$CapabilitiesSearchResponseImpl instance) =>
+    <String, dynamic>{
+      'capabilities': instance.capabilities,
+    };
+
+_$CapabilitiesStatsResponseImpl _$$CapabilitiesStatsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilitiesStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilitiesStatsResponseImpl(
+          totalCapabilities:
+              $checkedConvert('total_capabilities', (v) => (v as num).toInt()),
+          verifiedCapabilities: $checkedConvert(
+              'verified_capabilities', (v) => (v as num).toInt()),
+          totalUsages:
+              $checkedConvert('total_usages', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalCapabilities': 'total_capabilities',
+        'verifiedCapabilities': 'verified_capabilities',
+        'totalUsages': 'total_usages'
+      },
+    );
+
+Map<String, dynamic> _$$CapabilitiesStatsResponseImplToJson(
+        _$CapabilitiesStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_capabilities': instance.totalCapabilities,
+      'verified_capabilities': instance.verifiedCapabilities,
+      'total_usages': instance.totalUsages,
+    };
+
+_$CapabilityDetailResponseImpl _$$CapabilityDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilityDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilityDetailResponseImpl(
+          capability: $checkedConvert('capability',
+              (v) => Capability.fromJson(Map<String, dynamic>.from(v as Map))),
+          composableWith: $checkedConvert(
+              'composable_with',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Capability.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          relations: $checkedConvert(
+              'relations',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Capability.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'composableWith': 'composable_with'},
+    );
+
+Map<String, dynamic> _$$CapabilityDetailResponseImplToJson(
+        _$CapabilityDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'capability': instance.capability,
+      'composable_with': instance.composableWith,
+      'relations': instance.relations,
+    };
+
+_$CapabilityVerifyResponseImpl _$$CapabilityVerifyResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilityVerifyResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilityVerifyResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$CapabilityVerifyResponseImplToJson(
+    _$CapabilityVerifyResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$CapabilityComposableResponseImpl _$$CapabilityComposableResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilityComposableResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilityComposableResponseImpl(
+          composable: $checkedConvert(
+              'composable',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Capability.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$CapabilityComposableResponseImplToJson(
+        _$CapabilityComposableResponseImpl instance) =>
+    <String, dynamic>{
+      'composable': instance.composable,
+    };
+
+_$CapabilityRelationsResponseImpl _$$CapabilityRelationsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$CapabilityRelationsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$CapabilityRelationsResponseImpl(
+          relations: $checkedConvert(
+              'relations',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Capability.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$CapabilityRelationsResponseImplToJson(
+        _$CapabilityRelationsResponseImpl instance) =>
+    <String, dynamic>{
+      'relations': instance.relations,
+    };
+
+_$WebhooksListResponseImpl _$$WebhooksListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WebhooksListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WebhooksListResponseImpl(
+          webhooks: $checkedConvert(
+              'webhooks',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Webhook.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$WebhooksListResponseImplToJson(
+        _$WebhooksListResponseImpl instance) =>
+    <String, dynamic>{
+      'webhooks': instance.webhooks,
+    };
+
+_$WebhookCreateResponseImpl _$$WebhookCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WebhookCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WebhookCreateResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$WebhookCreateResponseImplToJson(
+        _$WebhookCreateResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'success': instance.success,
+    };
+
+_$WebhookUpdateResponseImpl _$$WebhookUpdateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WebhookUpdateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WebhookUpdateResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$WebhookUpdateResponseImplToJson(
+    _$WebhookUpdateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$WebhookDeleteResponseImpl _$$WebhookDeleteResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$WebhookDeleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$WebhookDeleteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$WebhookDeleteResponseImplToJson(
+    _$WebhookDeleteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$DocsListResponseImpl _$$DocsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DocsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DocsListResponseImpl(
+          docs: $checkedConvert(
+              'docs',
+              (v) => (v as List<dynamic>)
+                  .map((e) => Doc.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$DocsListResponseImplToJson(
+        _$DocsListResponseImpl instance) =>
+    <String, dynamic>{
+      'docs': instance.docs,
+    };
+
+_$DocsDetailResponseImpl _$$DocsDetailResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DocsDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DocsDetailResponseImpl(
+          name: $checkedConvert('name', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$DocsDetailResponseImplToJson(
+        _$DocsDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'content': instance.content,
+    };
+
+_$ProjectsListResponseImpl _$$ProjectsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProjectsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProjectsListResponseImpl(
+          projects: $checkedConvert(
+              'projects',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Project.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProjectsListResponseImplToJson(
+        _$ProjectsListResponseImpl instance) =>
+    <String, dynamic>{
+      'projects': instance.projects,
+    };
+
+_$ProjectCreateResponseImpl _$$ProjectCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProjectCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProjectCreateResponseImpl(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id'},
+    );
+
+Map<String, dynamic> _$$ProjectCreateResponseImplToJson(
+        _$ProjectCreateResponseImpl instance) =>
+    <String, dynamic>{
+      'project_id': instance.projectId,
+      'success': instance.success,
+    };
+
+_$ProjectProgressResponseImpl _$$ProjectProgressResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ProjectProgressResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProjectProgressResponseImpl(
+          projectId: $checkedConvert('project_id', (v) => v as String),
+          progress: $checkedConvert('progress', (v) => (v as num).toDouble()),
+          status: $checkedConvert('status', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'projectId': 'project_id'},
+    );
+
+Map<String, dynamic> _$$ProjectProgressResponseImplToJson(
+        _$ProjectProgressResponseImpl instance) =>
+    <String, dynamic>{
+      'project_id': instance.projectId,
+      'progress': instance.progress,
+      'status': instance.status,
+    };
+
+_$ProjectDeleteResponseImpl _$$ProjectDeleteResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ProjectDeleteResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ProjectDeleteResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ProjectDeleteResponseImplToJson(
+    _$ProjectDeleteResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$SchedulesListResponseImpl _$$SchedulesListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SchedulesListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SchedulesListResponseImpl(
+          schedules: $checkedConvert(
+              'schedules',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Schedule.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SchedulesListResponseImplToJson(
+        _$SchedulesListResponseImpl instance) =>
+    <String, dynamic>{
+      'schedules': instance.schedules,
+    };
+
+_$ScheduleCreateResponseImpl _$$ScheduleCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScheduleCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScheduleCreateResponseImpl(
+          scheduleId: $checkedConvert('schedule_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'scheduleId': 'schedule_id'},
+    );
+
+Map<String, dynamic> _$$ScheduleCreateResponseImplToJson(
+        _$ScheduleCreateResponseImpl instance) =>
+    <String, dynamic>{
+      'schedule_id': instance.scheduleId,
+      'success': instance.success,
+    };
+
+_$ScheduleUpdateResponseImpl _$$ScheduleUpdateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$ScheduleUpdateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScheduleUpdateResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScheduleUpdateResponseImplToJson(
+    _$ScheduleUpdateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$ScheduleEnabledResponseImpl _$$ScheduleEnabledResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$ScheduleEnabledResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$ScheduleEnabledResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$ScheduleEnabledResponseImplToJson(
+    _$ScheduleEnabledResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$AnalyticsSummaryResponseImpl _$$AnalyticsSummaryResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AnalyticsSummaryResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AnalyticsSummaryResponseImpl(
+          totalRequests:
+              $checkedConvert('total_requests', (v) => (v as num).toInt()),
+          totalErrors:
+              $checkedConvert('total_errors', (v) => (v as num).toInt()),
+          avgLatency:
+              $checkedConvert('avg_latency', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalRequests': 'total_requests',
+        'totalErrors': 'total_errors',
+        'avgLatency': 'avg_latency'
+      },
+    );
+
+Map<String, dynamic> _$$AnalyticsSummaryResponseImplToJson(
+        _$AnalyticsSummaryResponseImpl instance) =>
+    <String, dynamic>{
+      'total_requests': instance.totalRequests,
+      'total_errors': instance.totalErrors,
+      'avg_latency': instance.avgLatency,
+    };
+
+_$AnalyticsDailyResponseImpl _$$AnalyticsDailyResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AnalyticsDailyResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AnalyticsDailyResponseImpl(
+          points: $checkedConvert(
+              'points',
+              (v) => (v as List<dynamic>)
+                  .map((e) => AnalyticsDailyPoint.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AnalyticsDailyResponseImplToJson(
+        _$AnalyticsDailyResponseImpl instance) =>
+    <String, dynamic>{
+      'points': instance.points,
+    };
+
+_$AnalyticsProvidersResponseImpl _$$AnalyticsProvidersResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AnalyticsProvidersResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AnalyticsProvidersResponseImpl(
+          providers: $checkedConvert(
+              'providers',
+              (v) => (v as List<dynamic>)
+                  .map((e) => AnalyticsProviderStat.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AnalyticsProvidersResponseImplToJson(
+        _$AnalyticsProvidersResponseImpl instance) =>
+    <String, dynamic>{
+      'providers': instance.providers,
+    };
+
+_$AnalyticsToolsResponseImpl _$$AnalyticsToolsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AnalyticsToolsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AnalyticsToolsResponseImpl(
+          tools: $checkedConvert(
+              'tools',
+              (v) => (v as List<dynamic>)
+                  .map((e) => AnalyticsToolStat.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AnalyticsToolsResponseImplToJson(
+        _$AnalyticsToolsResponseImpl instance) =>
+    <String, dynamic>{
+      'tools': instance.tools,
+    };
+
+_$LogsLLMResponseImpl _$$LogsLLMResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LogsLLMResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LogsLLMResponseImpl(
+          logs: $checkedConvert(
+              'logs',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      LogEntry.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LogsLLMResponseImplToJson(
+        _$LogsLLMResponseImpl instance) =>
+    <String, dynamic>{
+      'logs': instance.logs,
+    };
+
+_$LogsToolsResponseImpl _$$LogsToolsResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$LogsToolsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$LogsToolsResponseImpl(
+          logs: $checkedConvert(
+              'logs',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      LogEntry.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$LogsToolsResponseImplToJson(
+        _$LogsToolsResponseImpl instance) =>
+    <String, dynamic>{
+      'logs': instance.logs,
+    };
+
+_$PluginsListResponseImpl _$$PluginsListResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$PluginsListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PluginsListResponseImpl(
+          plugins: $checkedConvert(
+              'plugins',
+              (v) => (v as List<dynamic>)
+                  .map((e) =>
+                      Plugin.fromJson(Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$PluginsListResponseImplToJson(
+        _$PluginsListResponseImpl instance) =>
+    <String, dynamic>{
+      'plugins': instance.plugins,
+    };
+
+_$PluginInstallResponseImpl _$$PluginInstallResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$PluginInstallResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$PluginInstallResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          message: $checkedConvert('message', (v) => v as String?),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$PluginInstallResponseImplToJson(
+    _$PluginInstallResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('message', instance.message);
+  return val;
+}
+
+_$VisionAnalyzeResponseImpl _$$VisionAnalyzeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$VisionAnalyzeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$VisionAnalyzeResponseImpl(
+          description: $checkedConvert('description', (v) => v as String),
+          objects: $checkedConvert('objects',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          text: $checkedConvert('text',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$VisionAnalyzeResponseImplToJson(
+        _$VisionAnalyzeResponseImpl instance) =>
+    <String, dynamic>{
+      'description': instance.description,
+      'objects': instance.objects,
+      'text': instance.text,
+    };
+
+_$VisionOCRResponseImpl _$$VisionOCRResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$VisionOCRResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$VisionOCRResponseImpl(
+          text: $checkedConvert('text', (v) => v as String),
+          confidence:
+              $checkedConvert('confidence', (v) => (v as num).toDouble()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$VisionOCRResponseImplToJson(
+        _$VisionOCRResponseImpl instance) =>
+    <String, dynamic>{
+      'text': instance.text,
+      'confidence': instance.confidence,
+    };
 
 _$WorkingMemoryAddResponseImpl _$$WorkingMemoryAddResponseImplFromJson(
         Map json) =>

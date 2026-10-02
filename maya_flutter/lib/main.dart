@@ -1232,6 +1232,25 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'mcp_client': screen = const _McpClientScreen(); break;
       case 'self_model': screen = const _SelfModelScreen(); break;
       case 'business': screen = const _BusinessAnalysisScreen(); break;
+      case 'income_scout': screen = const _IncomeScoutScreen(); break;
+      case 'income_strategist': screen = const _IncomeStrategistScreen(); break;
+      case 'income_builder': screen = const _IncomeBuilderScreen(); break;
+      case 'income_launcher': screen = const _IncomeLauncherScreen(); break;
+      case 'income_growth': screen = const _IncomeGrowthScreen(); break;
+      case 'income_notifications': screen = const _IncomeNotificationsScreen(); break;
+      case 'extended_tasks': screen = const _ExtendedTasksScreen(); break;
+      case 'proactive_jobs': screen = const _ProactiveJobsScreen(); break;
+      case 'memory_prefs': screen = const _MemoryPreferencesScreen(); break;
+      case 'extended_projects': screen = const _ExtendedProjectsScreen(); break;
+      case 'browser_tools': screen = const _BrowserToolsScreen(); break;
+      case 'sandbox_tools': screen = const _SandboxToolsScreen(); break;
+      case 'capabilities': screen = const _CapabilitiesScreen(); break;
+      case 'webhooks': screen = const _WebhooksScreen(); break;
+      case 'docs': screen = const _DocsScreen(); break;
+      case 'analytics': screen = const _AnalyticsScreen(); break;
+      case 'logs': screen = const _LogsScreen(); break;
+      case 'plugins': screen = const _PluginsScreen(); break;
+      case 'vision': screen = const _VisionScreen(); break;
       case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
       case 'approvals': screen = const _ApprovalsScreen(); break;
@@ -20069,7 +20088,759 @@ final webhookToolTestProvider = FutureProvider<WebhookToolResponse>((ref) async 
   return apiService.runWebhookTool(action: 'test', channel: 'slack');
 });
 
-// API Key Provisioner Screen (Phase 33)
+// Income Engine - Scout Providers
+final scoutScanProvider = FutureProvider<ScoutScanResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.scoutScan();
+});
+
+final scoutScanHistoryProvider = FutureProvider<ScoutScanHistoryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getScoutScanHistory();
+});
+
+final scoutSignalsProvider = FutureProvider<ScoutSignalsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getScoutSignals();
+});
+
+final scoutOpportunitiesProvider = FutureProvider<ScoutOpportunitiesResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getScoutOpportunities();
+});
+
+final scoutOpportunityDetailProvider = FutureProvider.family<ScoutOpportunityDetailResponse, String>((ref, opportunityId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getScoutOpportunityDetail(opportunityId);
+});
+
+final scoutStatsProvider = FutureProvider<ScoutStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getScoutStats();
+});
+
+final scoutPreferencesProvider = FutureProvider<ScoutPreferencesResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getScoutPreferences();
+});
+
+// Income Engine - Strategist Providers
+final strategistReviewProvider = FutureProvider<StrategistReviewResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.strategistReview();
+});
+
+final strategistReviewHistoryProvider = FutureProvider<StrategistReviewHistoryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getStrategistReviewHistory();
+});
+
+final strategistPlansProvider = FutureProvider<StrategistPlansResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getStrategistPlans();
+});
+
+final strategistPlanDetailProvider = FutureProvider.family<StrategistPlanDetailResponse, String>((ref, planId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getStrategistPlanDetail(planId);
+});
+
+final strategistRankedProvider = FutureProvider<StrategistRankedResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getStrategistRankedOpportunities();
+});
+
+final strategistConfigProvider = FutureProvider<StrategistConfigResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getStrategistConfig();
+});
+
+// Income Engine - Builder Providers
+final builderProjectsProvider = FutureProvider<BuilderProjectsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBuilderProjects();
+});
+
+final builderProjectDetailProvider = FutureProvider.family<BuilderProjectDetailResponse, String>((ref, projectId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBuilderProjectDetail(projectId);
+});
+
+final builderStatsProvider = FutureProvider<BuilderStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getBuilderStats();
+});
+
+// Income Engine - Launcher Providers
+final launcherLaunchesProvider = FutureProvider<LauncherLaunchesResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLauncherLaunches();
+});
+
+final launcherLaunchDetailProvider = FutureProvider.family<LauncherLaunchDetailResponse, String>((ref, launchId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLauncherLaunchDetail(launchId);
+});
+
+final launcherStatsProvider = FutureProvider<LauncherStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLauncherStats();
+});
+
+// Income Engine - Growth Portfolio Providers
+final growthProposalsProvider = FutureProvider<GrowthProposalsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGrowthProposals();
+});
+
+final growthProposalDetailProvider = FutureProvider.family<GrowthProposalDetailResponse, String>((ref, proposalId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGrowthProposalDetail(proposalId);
+});
+
+final growthMetricsProvider = FutureProvider<GrowthMetricsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGrowthMetrics();
+});
+
+final growthRecommendationsProvider = FutureProvider<GrowthRecommendationsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGrowthRecommendations();
+});
+
+final growthSummaryProvider = FutureProvider<GrowthSummaryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getGrowthSummary();
+});
+
+// Income Engine - Notifications Providers
+final notifApprovalsProvider = FutureProvider<NotifApprovalsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getApprovalsList();
+});
+
+final notifStatsProvider = FutureProvider<NotifStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getNotificationStats();
+});
+
+final notifTemplatesProvider = FutureProvider<NotifTemplatesResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getNotificationTemplates();
+});
+
+final notifChannelsProvider = FutureProvider<NotifChannelsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getNotificationChannels();
+});
+
+// Extended Agent - Task Management Providers
+final extStatusProvider = FutureProvider<ExtStatusResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getExtendedStatus();
+});
+
+final extHealthProvider = FutureProvider<ExtHealthResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getExtendedHealth();
+});
+
+final extTasksListProvider = FutureProvider<ExtTasksListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.listExtendedTasks();
+});
+
+final extTaskDetailProvider = FutureProvider.family<ExtTaskDetailResponse, String>((ref, taskId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getExtendedTaskDetail(taskId);
+});
+
+// Extended Agent - Proactive Jobs Providers
+final proactiveJobsProvider = FutureProvider<ProactiveJobsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.listProactiveJobs();
+});
+
+// Extended Agent - Memory Preferences Providers
+final extMemPrefsListProvider = FutureProvider.family<ExtMemPrefsListResponse, String>((ref, userId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.listMemoryPreferences(userId);
+});
+
+final extMemPrefDetailProvider = FutureProvider.family<ExtMemPrefDetailResponse, ({String userId, String key})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMemoryPreference(params.userId, params.key);
+});
+
+// Extended Agent - Memory Facts Providers
+final extMemFactsListProvider = FutureProvider.family<ExtMemFactsListResponse, String>((ref, userId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.listMemoryFacts(userId);
+});
+
+// Extended Agent - Projects Providers
+final extMemProjectDetailProvider = FutureProvider.family<ExtMemProjectDetailResponse, String>((ref, projectId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMemoryProject(projectId);
+});
+
+// Extended Agent - Memory Context Providers
+final extMemContextProvider = FutureProvider.family<ExtMemContextResponse, Map<String, dynamic>>((ref, query) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getMemoryContext(query);
+});
+
+// Extended Agent - Interruptions Providers
+final extInterruptionsProvider = FutureProvider<ExtInterruptionsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getInterruptions();
+});
+
+// Extended Agent - Extended Tools Providers
+final extToolsProvider = FutureProvider<ExtToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getExtendedTools();
+});
+
+// Extended Agent - Config Providers
+final extConfigProvider = FutureProvider<ExtConfigResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getExtendedConfig();
+});
+
+// Capabilities Providers
+final capabilitiesProvider = FutureProvider<CapabilitiesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getCapabilities();
+});
+
+final capabilitiesSearchProvider = FutureProvider.family<CapabilitiesSearchResponse, String>((ref, query) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.searchCapabilities(query);
+});
+
+final capabilitiesStatsProvider = FutureProvider<CapabilitiesStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getCapabilitiesStats();
+});
+
+final capabilityDetailProvider = FutureProvider.family<CapabilityDetailResponse, String>((ref, capId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getCapabilityDetail(capId);
+});
+
+// Webhooks Providers
+final webhooksProvider = FutureProvider<WebhooksListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getWebhooks();
+});
+
+// Docs Providers
+final docsProvider = FutureProvider<DocsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getDocs();
+});
+
+final docDetailProvider = FutureProvider.family<DocsDetailResponse, String>((ref, name) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getDocDetail(name);
+});
+
+// Projects & Schedules Providers
+final projectsProvider = FutureProvider<ProjectsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjects();
+});
+
+final schedulesProvider = FutureProvider<SchedulesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSchedules();
+});
+
+final projectProgressProvider = FutureProvider.family<ProjectProgressResponse, String>((ref, scheduleId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjectProgress(scheduleId);
+});
+
+// Analytics Providers
+final analyticsSummaryProvider = FutureProvider<AnalyticsSummaryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsSummary();
+});
+
+final analyticsDailyProvider = FutureProvider<AnalyticsDailyResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsDaily();
+});
+
+final analyticsProvidersProvider = FutureProvider<AnalyticsProvidersResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsProviders();
+});
+
+final analyticsToolsProvider = FutureProvider<AnalyticsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsTools();
+});
+
+// Logs Providers
+final logsLLMProvider = FutureProvider<LogsLLMResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMLogs();
+});
+
+final logsToolsProvider = FutureProvider<LogsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getToolLogs();
+});
+
+// Plugins Providers
+final pluginsProvider = FutureProvider<PluginsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getPlugins();
+});
+
+// Vision Providers
+final visionStatsProvider = FutureProvider<VisionStatsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  // Note: This would need a stats endpoint, using a placeholder for now
+  return VisionStatsResponse(totalAnalyses: 0, totalOCR: 0);
+});
+
+// Browser & Sandbox Providers
+final browserActionProvider = FutureProvider.family<BrowserActionResponse, ({String action, String? url, String? selector, String? text, String? query})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.browserAction(action: params.action, url: params.url, selector: params.selector, text: params.text, query: params.query);
+});
+
+final sandboxExecuteProvider = FutureProvider.family<SandboxExecuteResponse, ({String code, String language, int timeoutSeconds})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.sandboxExecute(code: params.code, language: params.language, timeoutSeconds: params.timeoutSeconds);
+});
+
+// Working Memory Providers
+final workingMemoryAddProvider = FutureProvider.family<WorkingMemoryAddResponse, ({String content, String type, double attention, Map<String, dynamic>? metadata, Map<String, dynamic>? bindings})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.addWorkingMemory(content: params.content, type: params.type, attention: params.attention, metadata: params.metadata, bindings: params.bindings);
+});
+
+final workingMemorySearchProvider = FutureProvider.family<WorkingMemorySearchResponse, ({String query, int limit, String? type})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.searchWorkingMemory(query: params.query, limit: params.limit, type: params.type);
+});
+
+final workingMemoryCapacityProvider = FutureProvider<WorkingMemoryCapacityResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getWorkingMemoryCapacity();
+});
+
+// Browser & Sandbox Tools Providers (Phase 40)
+final browserActionProvider = FutureProvider.family<BrowserActionResponse, ({String action, String? url, String? selector, String? text, String? query})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.browserAction(action: params.action, url: params.url, selector: params.selector, text: params.text, query: params.query);
+});
+
+final sandboxExecuteProvider = FutureProvider.family<SandboxExecuteResponse, ({String code, String language, int timeoutSeconds})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.sandboxExecute(code: params.code, language: params.language, timeoutSeconds: params.timeoutSeconds);
+});
+
+// Working Memory v2 Providers
+final wmAddProvider = FutureProvider.family<WMAddResponse, ({String content, String? chunkId, double attention})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmAdd(content: params.content, chunkId: params.chunkId, attention: params.attention);
+});
+
+final wmRetrieveProvider = FutureProvider.family<WMRetrieveResponse, ({String query, int limit})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmRetrieve(query: params.query, limit: params.limit);
+});
+
+final wmDecayProvider = FutureProvider<WMDecayResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmDecay();
+});
+
+// Vision Providers
+final visionAnalyzeProvider = FutureProvider.family<VisionAnalyzeResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.analyzeVision(data);
+});
+
+final visionOCRProvider = FutureProvider.family<VisionOCRResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.ocrVision(data);
+});
+
+// Projects & Schedules Providers
+final projectsProvider = FutureProvider<ProjectsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjects();
+});
+
+final projectProgressProvider = FutureProvider.family<ProjectProgressResponse, String>((ref, scheduleId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjectProgress(scheduleId);
+});
+
+final schedulesProvider = FutureProvider<SchedulesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSchedules();
+});
+
+// Analytics Providers
+final analyticsSummaryProvider = FutureProvider<AnalyticsSummaryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsSummary();
+});
+
+final analyticsDailyProvider = FutureProvider<AnalyticsDailyResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsDaily();
+});
+
+final analyticsProvidersProvider = FutureProvider<AnalyticsProvidersResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsProviders();
+});
+
+final analyticsToolsProvider = FutureProvider<AnalyticsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsTools();
+});
+
+// Logs Providers
+final logsLLMProvider = FutureProvider<LogsLLMResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMLogs();
+});
+
+final logsToolsProvider = FutureProvider<LogsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getToolLogs();
+});
+
+// Plugins Providers
+final pluginsProvider = FutureProvider<PluginsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getPlugins();
+});
+
+// Vision Providers
+final visionAnalyzeProvider = FutureProvider.family<VisionAnalyzeResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.analyzeVision(data);
+});
+
+final visionOCRProvider = FutureProvider.family<VisionOCRResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.ocrVision(data);
+});
+
+// Browser & Sandbox Tools Providers
+final browserActionProvider = FutureProvider.family<BrowserActionResponse, ({String action, String? url, String? selector, String? text, String? query})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.browserAction(action: params.action, url: params.url, selector: params.selector, text: params.text, query: params.query);
+});
+
+final sandboxExecuteProvider = FutureProvider.family<SandboxExecuteResponse, ({String code, String language, int timeoutSeconds})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.sandboxExecute(code: params.code, language: params.language, timeoutSeconds: params.timeoutSeconds);
+});
+
+// Working Memory v2 Providers
+final wmAddProvider = FutureProvider.family<WMAddResponse, ({String content, String? chunkId, double attention})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmAdd(content: params.content, chunkId: params.chunkId, attention: params.attention);
+});
+
+final wmRetrieveProvider = FutureProvider.family<WMRetrieveResponse, ({String query, int limit})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmRetrieve(query: params.query, limit: params.limit);
+});
+
+final wmDecayProvider = FutureProvider<WMDecayResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmDecay();
+});
+
+// Projects & Schedules Providers
+final projectsProvider = FutureProvider<ProjectsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjects();
+});
+
+final projectProgressProvider = FutureProvider.family<ProjectProgressResponse, String>((ref, scheduleId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjectProgress(scheduleId);
+});
+
+final schedulesProvider = FutureProvider<SchedulesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSchedules();
+});
+
+// Analytics Providers
+final analyticsSummaryProvider = FutureProvider<AnalyticsSummaryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsSummary();
+});
+
+final analyticsDailyProvider = FutureProvider<AnalyticsDailyResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsDaily();
+});
+
+final analyticsProvidersProvider = FutureProvider<AnalyticsProvidersResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsProviders();
+});
+
+final analyticsToolsProvider = FutureProvider<AnalyticsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsTools();
+});
+
+// Logs Providers
+final logsLLMProvider = FutureProvider<LogsLLMResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMLogs();
+});
+
+final logsToolsProvider = FutureProvider<LogsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getToolLogs();
+});
+
+// Plugins Providers
+final pluginsProvider = FutureProvider<PluginsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getPlugins();
+});
+
+// Vision Providers
+final visionAnalyzeProvider = FutureProvider.family<VisionAnalyzeResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.analyzeVision(data);
+});
+
+final visionOCRProvider = FutureProvider.family<VisionOCRResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.ocrVision(data);
+});
+
+// Browser & Sandbox Tools Providers
+final browserActionProvider = FutureProvider.family<BrowserActionResponse, ({String action, String? url, String? selector, String? text, String? query})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.browserAction(action: params.action, url: params.url, selector: params.selector, text: params.text, query: params.query);
+});
+
+final sandboxExecuteProvider = FutureProvider.family<SandboxExecuteResponse, ({String code, String language, int timeoutSeconds})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.sandboxExecute(code: params.code, language: params.language, timeoutSeconds: params.timeoutSeconds);
+});
+
+// Working Memory v2 Providers
+final wmAddProvider = FutureProvider.family<WMAddResponse, ({String content, String? chunkId, double attention})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmAdd(content: params.content, chunkId: params.chunkId, attention: params.attention);
+});
+
+final wmRetrieveProvider = FutureProvider.family<WMRetrieveResponse, ({String query, int limit})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmRetrieve(query: params.query, limit: params.limit);
+});
+
+final wmDecayProvider = FutureProvider<WMDecayResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmDecay();
+});
+
+// Projects & Schedules Providers
+final projectsProvider = FutureProvider<ProjectsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjects();
+});
+
+final projectProgressProvider = FutureProvider.family<ProjectProgressResponse, String>((ref, scheduleId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjectProgress(scheduleId);
+});
+
+final schedulesProvider = FutureProvider<SchedulesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSchedules();
+});
+
+// Analytics Providers
+final analyticsSummaryProvider = FutureProvider<AnalyticsSummaryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsSummary();
+});
+
+final analyticsDailyProvider = FutureProvider<AnalyticsDailyResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsDaily();
+});
+
+final analyticsProvidersProvider = FutureProvider<AnalyticsProvidersResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsProviders();
+});
+
+final analyticsToolsProvider = FutureProvider<AnalyticsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsTools();
+});
+
+// Logs Providers
+final logsLLMProvider = FutureProvider<LogsLLMResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMLogs();
+});
+
+final logsToolsProvider = FutureProvider<LogsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getToolLogs();
+});
+
+// Plugins Providers
+final pluginsProvider = FutureProvider<PluginsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getPlugins();
+});
+
+// Vision Providers
+final visionAnalyzeProvider = FutureProvider.family<VisionAnalyzeResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.analyzeVision(data);
+});
+
+final visionOCRProvider = FutureProvider.family<VisionOCRResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.ocrVision(data);
+});
+
+// Browser & Sandbox Tools Providers
+final browserActionProvider = FutureProvider.family<BrowserActionResponse, ({String action, String? url, String? selector, String? text, String? query})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.browserAction(action: params.action, url: params.url, selector: params.selector, text: params.text, query: params.query);
+});
+
+final sandboxExecuteProvider = FutureProvider.family<SandboxExecuteResponse, ({String code, String language, int timeoutSeconds})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.sandboxExecute(code: params.code, language: params.language, timeoutSeconds: params.timeoutSeconds);
+});
+
+// Working Memory v2 Providers
+final wmAddProvider = FutureProvider.family<WMAddResponse, ({String content, String? chunkId, double attention})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmAdd(content: params.content, chunkId: params.chunkId, attention: params.attention);
+});
+
+final wmRetrieveProvider = FutureProvider.family<WMRetrieveResponse, ({String query, int limit})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmRetrieve(query: params.query, limit: params.limit);
+});
+
+final wmDecayProvider = FutureProvider<WMDecayResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmDecay();
+});
+
+// Projects & Schedules Providers
+final projectsProvider = FutureProvider<ProjectsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjects();
+});
+
+final projectProgressProvider = FutureProvider.family<ProjectProgressResponse, String>((ref, scheduleId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjectProgress(scheduleId);
+});
+
+final schedulesProvider = FutureProvider<SchedulesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSchedules();
+});
+
+// Analytics Providers
+final analyticsSummaryProvider = FutureProvider<AnalyticsSummaryResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsSummary();
+});
+
+final analyticsDailyProvider = FutureProvider<AnalyticsDailyResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsDaily();
+});
+
+final analyticsProvidersProvider = FutureProvider<AnalyticsProvidersResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsProviders();
+});
+
+final analyticsToolsProvider = FutureProvider<AnalyticsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getAnalyticsTools();
+});
+
+// Logs Providers
+final logsLLMProvider = FutureProvider<LogsLLMResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getLLMLogs();
+});
+
+final logsToolsProvider = FutureProvider<LogsToolsResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getToolLogs();
+});
+
+// Plugins Providers
+final pluginsProvider = FutureProvider<PluginsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getPlugins();
+});
+
+// Vision Providers
+final visionAnalyzeProvider = FutureProvider.family<VisionAnalyzeResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.analyzeVision(data);
+});
+
+final visionOCRProvider = FutureProvider.family<VisionOCRResponse, Map<String, dynamic>>((ref, data) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.ocrVision(data);
+});
+
+// Browser & Sandbox Tools Providers
+final browserActionProvider = FutureProvider.family<BrowserActionResponse, ({String action, String? url, String? selector, String? text, String? query})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.browserAction(action: params.action, url: params.url, selector: params.selector, text: params.text, query: params.query);
+});
+
+final sandboxExecuteProvider = FutureProvider.family<SandboxExecuteResponse, ({String code, String language, int timeoutSeconds})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.sandboxExecute(code: params.code, language: params.language, timeoutSeconds: params.timeoutSeconds);
+});
+
+// Working Memory v2 Providers
+final wmAddProvider = FutureProvider.family<WMAddResponse, ({String content, String? chunkId, double attention})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmAdd(content: params.content, chunkId: params.chunkId, attention: params.attention);
+});
+
+final wmRetrieveProvider = FutureProvider.family<WMRetrieveResponse, ({String query, int limit})>((ref, params) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmRetrieve(query: params.query, limit: params.limit);
+});
+
+final wmDecayProvider = FutureProvider<WMDecayResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.wmDecay();
+});
+
+// Working Memory Models
 class _ApiKeyProvisionerScreen extends ConsumerStatefulWidget {
   const _ApiKeyProvisionerScreen();
 
@@ -28345,3 +29116,4667 @@ class _HowItWorksStep extends StatelessWidget {
     );
   }
 }
+
+// ============================================================================
+// INCOME ENGINE SCREENS
+// ============================================================================
+
+// Income Scout Screen
+class _IncomeScoutScreen extends ConsumerStatefulWidget {
+  const _IncomeScoutScreen();
+
+  @override
+  ConsumerState<_IncomeScoutScreen> createState() => _IncomeScoutScreenState();
+}
+
+class _IncomeScoutScreenState extends ConsumerState<_IncomeScoutScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Income Scout', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(scoutScanHistoryProvider);
+                ref.invalidate(scoutSignalsProvider);
+                ref.invalidate(scoutOpportunitiesProvider);
+                ref.invalidate(scoutStatsProvider);
+                ref.invalidate(scoutPreferencesProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.radar_rounded), text: 'Scan'),
+              Tab(icon: Icon(Icons.signal_cellular_alt_rounded), text: 'Signals'),
+              Tab(icon: Icon(Icons.flag_rounded), text: 'Opportunities'),
+              Tab(icon: Icon(Icons.settings_rounded), text: 'Config'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ScoutScanTab(),
+            _ScoutSignalsTab(),
+            _ScoutOpportunitiesTab(),
+            _ScoutConfigTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScoutScanTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ScoutScanTab> createState() => _ScoutScanTabState();
+}
+
+class _ScoutScanTabState extends ConsumerState<_ScoutScanTab> {
+  bool _isScanning = false;
+  ScoutScanResponse? _lastResult;
+
+  Future<void> _runScan() async {
+    setState(() => _isScanning = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.scoutScan();
+      setState(() {
+        _lastResult = result;
+        _isScanning = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Scan complete: ${result.signalsFound} signals, ${result.opportunitiesCreated} opportunities'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isScanning = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Scan failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final historyAsync = ref.watch(scoutScanHistoryProvider);
+    final statsAsync = ref.watch(scoutStatsProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Scan Button
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Run Scout Scan', style: MayaTheme.titleLarge),
+                const SizedBox(height: 8),
+                Text(
+                  'Scans Reddit, Hacker News, and other sources for new income opportunities.',
+                  style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isScanning ? null : _runScan,
+                    icon: _isScanning
+                        ? const SizedBox(
+                            width: 20, height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)),
+                          )
+                        : const Icon(Icons.radar_rounded),
+                    label: Text(_isScanning ? 'Scanning...' : 'Run Scan'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Last Result
+          if (_lastResult != null) ...[
+            const Text('Last Scan Result', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.radar_rounded, color: MayaTheme.neonCyan, size: 24),
+                      const SizedBox(width: 8),
+                      Text('Scan ID: ${_lastResult!.scanId}', style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace')),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(child: _ScoutStatCard(label: 'Signals Found', value: _lastResult!.signalsFound.toString(), color: MayaTheme.neonCyan, icon: Icons.signal_cellular_alt_rounded)),
+                      const SizedBox(width: 12),
+                      Expanded(child: _ScoutStatCard(label: 'Opportunities', value: _lastResult!.opportunitiesCreated.toString(), color: MayaTheme.neonEmerald, icon: Icons.flag_rounded)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+          // Scan History
+          const Text('Scan History', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          historyAsync.when(
+            data: (data) => data.scans.isEmpty
+                ? _emptyState('No Scans Yet', 'Run your first scan to see history', Icons.history_rounded)
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.scans.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final scan = data.scans[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: scan.status == 'completed' ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(scan.status == 'completed' ? Icons.check_circle_rounded : Icons.hourglass_empty_rounded, color: scan.status == 'completed' ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Scan ${scan.scanId}', style: MayaTheme.titleMedium),
+                                  Text('${scan.signals} signals • ${scan.opportunities} opportunities', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                  Text(scan.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: scan.status == 'completed' ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: scan.status == 'completed' ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                              ),
+                              child: Text(scan.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: scan.status == 'completed' ? MayaTheme.neonEmerald : MayaTheme.neonOrange)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+          const SizedBox(height: 24),
+          // Stats
+          const Text('Statistics', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          statsAsync.when(
+            data: (stats) => Row(
+              children: [
+                Expanded(child: _ScoutStatCard(label: 'Total Scans', value: stats.totalScans.toString(), color: MayaTheme.neonCyan, icon: Icons.radar_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _ScoutStatCard(label: 'Total Signals', value: stats.totalSignals.toString(), color: MayaTheme.neonViolet, icon: Icons.signal_cellular_alt_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _ScoutStatCard(label: 'Total Opportunities', value: stats.totalOpportunities.toString(), color: MayaTheme.neonEmerald, icon: Icons.flag_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _ScoutStatCard(label: 'Avg Score', value: stats.avgScore.toStringAsFixed(2), color: MayaTheme.neonOrange, icon: Icons.trending_up_rounded)),
+              ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScoutStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _ScoutStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScoutSignalsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signalsAsync = ref.watch(scoutSignalsProvider);
+
+    return signalsAsync.when(
+      data: (data) => data.signals.isEmpty
+          ? _emptyState('No Signals', 'Run a scan to discover signals', Icons.signal_cellular_alt_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Discovered Signals', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Raw signals from monitored sources before filtering',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.signals.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final signal = data.signals[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(Icons.signal_cellular_alt_rounded, color: MayaTheme.neonCyan, size: 20),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(signal.title, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                      Text(signal.source, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: MayaTheme.neonViolet),
+                                  ),
+                                  child: Text('Score: ${signal.score.toStringAsFixed(2)}', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(signal.summary, style: MayaTheme.bodySmall.copyWith(color: Colors.white70), maxLines: 3, overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 4),
+                            Text(signal.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading signals', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ScoutOpportunitiesTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final opportunitiesAsync = ref.watch(scoutOpportunitiesProvider);
+
+    return opportunitiesAsync.when(
+      data: (data) => data.opportunities.isEmpty
+          ? _emptyState('No Opportunities', 'Run a scan to discover opportunities', Icons.flag_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Opportunities', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Filtered and ranked opportunities from scout signals',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.opportunities.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final opp = data.opportunities[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(Icons.flag_rounded, color: MayaTheme.neonEmerald, size: 24),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(child: Text(opp.title, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(color: MayaTheme.neonViolet),
+                                            ),
+                                            child: Text('Score: ${opp.score.toStringAsFixed(2)}', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(opp.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                                      Text('Source: ${opp.source}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: MayaTheme.neonEmerald),
+                                  ),
+                                  child: Text(opp.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonEmerald)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Text(opp.createdAt.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading opportunities', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ScoutConfigTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prefsAsync = ref.watch(scoutPreferencesProvider);
+
+    return prefsAsync.when(
+      data: (prefs) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Scout Configuration', style: MayaTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Configure scout sources, keywords, and filtering preferences',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Monitored Sources', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  _SourceToggle(source: 'Reddit', enabled: true),
+                  _SourceToggle(source: 'Hacker News', enabled: true),
+                  _SourceToggle(source: 'Indie Hackers', enabled: true),
+                  _SourceToggle(source: 'Product Hunt', enabled: false),
+                  _SourceToggle(source: 'GitHub Trending', enabled: false),
+                  _SourceToggle(source: 'Twitter', enabled: false),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Keywords', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Comma-separated keywords to filter opportunities',
+                    style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 12),
+                  _KeywordsInput(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading config', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _SourceToggle extends StatelessWidget {
+  final String source;
+  final bool enabled;
+
+  const _SourceToggle({required this.source, required this.enabled});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Expanded(child: Text(source, style: MayaTheme.bodyMedium)),
+          Switch(
+            value: enabled,
+            onChanged: (v) {
+              // TODO: Implement config update
+            },
+            activeColor: MayaTheme.neonEmerald,
+            inactiveThumbColor: MayaTheme.neonOrange,
+            inactiveTrackColor: MayaTheme.neonOrange.withValues(alpha: 0.3),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KeywordsInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        hintText: 'saas, ai, automation, b2b, micro-saas',
+        hintStyle: const TextStyle(color: Colors.white38),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white24),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: MayaTheme.neonCyan),
+        ),
+        filled: true,
+        fillColor: MayaTheme.slate800,
+      ),
+    );
+  }
+}
+
+class _IncomeStrategistScreen extends ConsumerStatefulWidget {
+  const _IncomeStrategistScreen();
+
+  @override
+  ConsumerState<_IncomeStrategistScreen> createState() => _IncomeStrategistScreenState();
+}
+
+class _IncomeStrategistScreenState extends ConsumerState<_IncomeStrategistScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Income Strategist', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(strategistReviewHistoryProvider);
+                ref.invalidate(strategistPlansProvider);
+                ref.invalidate(strategistRankedProvider);
+                ref.invalidate(strategistConfigProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.review_rounded), text: 'Reviews'),
+              Tab(icon: Icon(Icons.assignment_rounded), text: 'Plans'),
+              Tab(icon: Icon(Icons.leaderboard_rounded), text: 'Ranked'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _StrategistReviewsTab(),
+            _StrategistPlansTab(),
+            _StrategistRankedTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StrategistReviewsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(strategistReviewHistoryProvider);
+
+    return historyAsync.when(
+      data: (data) => data.reviews.isEmpty
+          ? _emptyState('No Reviews', 'Run a strategist review to see history', Icons.review_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Review History', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Historical strategist review runs',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.reviews.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final review = data.reviews[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(Icons.review_rounded, color: MayaTheme.neonViolet, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Review ${review.reviewId}', style: MayaTheme.titleMedium),
+                                  Text('${review.opportunitiesReviewed} opportunities • ${review.plansCreated} plans', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                  Text(review.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading reviews', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _StrategistPlansTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final plansAsync = ref.watch(strategistPlansProvider);
+
+    return plansAsync.when(
+      data: (data) => data.plans.isEmpty
+          ? _emptyState('No Plans', 'Run a strategist review to generate plans', Icons.assignment_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Business Plans', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Generated business plans from strategist reviews',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.plans.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final plan = data.plans[index];
+                      return _StrategistPlanCard(plan: plan);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading plans', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _StrategistPlanCard extends ConsumerWidget {
+  final StrategistPlan plan;
+
+  const _StrategistPlanCard({required this.plan});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.assignment_rounded, color: MayaTheme.neonViolet, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(plan.title, style: MayaTheme.titleMedium),
+                    Text(plan.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(plan.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(plan.status)),
+                ),
+                child: Text(plan.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(plan.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Opp ID: ${plan.opportunityId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+              const Spacer(),
+              Text('Created: ${plan.createdAt.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved': return MayaTheme.neonEmerald;
+      case 'pending': return MayaTheme.neonOrange;
+      case 'rejected': return MayaTheme.error;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _StrategistRankedTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final rankedAsync = ref.watch(strategistRankedProvider);
+
+    return rankedAsync.when(
+      data: (data) => data.opportunities.isEmpty
+          ? _emptyState('No Ranked Opportunities', 'Run a strategist review to rank opportunities', Icons.leaderboard_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Ranked Opportunities', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Opportunities ranked by strategist analysis',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.opportunities.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final opp = data.opportunities[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text('#${index + 1}', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.bold)),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(opp.title, style: MayaTheme.titleMedium),
+                                      Text(opp.reason, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: MayaTheme.neonViolet),
+                                  ),
+                                  child: Text('Score: ${opp.score.toStringAsFixed(2)}', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonViolet)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading ranked', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+// Income Builder Screen
+class _IncomeBuilderScreen extends ConsumerStatefulWidget {
+  const _IncomeBuilderScreen();
+
+  @override
+  ConsumerState<_IncomeBuilderScreen> createState() => _IncomeBuilderScreenState();
+}
+
+class _IncomeBuilderScreenState extends ConsumerState<_IncomeBuilderScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Income Builder', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(builderProjectsProvider);
+                ref.invalidate(builderStatsProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.folder_rounded), text: 'Projects'),
+              Tab(icon: Icon(Icons.auto_awesome_rounded), text: 'Build from Plan'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _BuilderProjectsTab(),
+            _BuilderFromPlanTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BuilderProjectsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final projectsAsync = ref.watch(builderProjectsProvider);
+    final statsAsync = ref.watch(builderStatsProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Builder Projects', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Manage and track your building projects',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 16),
+          // Stats
+          statsAsync.when(
+            data: (stats) => Row(
+              children: [
+                Expanded(child: _BuilderStatCard(label: 'Total Projects', value: stats.totalProjects.toString(), color: MayaTheme.neonCyan, icon: Icons.folder_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _BuilderStatCard(label: 'Completed', value: stats.completedProjects.toString(), color: MayaTheme.neonEmerald, icon: Icons.check_circle_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _BuilderStatCard(label: 'Active', value: stats.activeProjects.toString(), color: MayaTheme.neonOrange, icon: Icons.play_circle_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _BuilderStatCard(label: 'Steps Executed', value: stats.totalStepsExecuted.toString(), color: MayaTheme.neonViolet, icon: Icons.play_arrow_rounded)),
+              ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+          const SizedBox(height: 24),
+          // Projects List
+          const Text('Projects', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          projectsAsync.when(
+            data: (data) => data.projects.isEmpty
+                ? _emptyState('No Projects', 'Build a project from a plan to get started', Icons.folder_rounded)
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.projects.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final project = data.projects[index];
+                      return _BuilderProjectCard(project: project);
+                    },
+                  ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+              const SizedBox(height: 16),
+              Text('Error loading projects', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+              const SizedBox(height: 8),
+              Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ])),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BuilderStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _BuilderStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _BuilderProjectCard extends ConsumerWidget {
+  final BuilderProject project;
+
+  const _BuilderProjectCard({required this.project});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(project.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.folder_rounded, color: _getStatusColor(project.status), size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(project.name, style: MayaTheme.titleMedium),
+                    Text(project.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(project.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(project.status)),
+                ),
+                child: Text(project.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(project.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Plan: ${project.planId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+              const Spacer(),
+              Text('Created: ${project.createdAt.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed': return MayaTheme.neonEmerald;
+      case 'building': return MayaTheme.neonCyan;
+      case 'testing': return MayaTheme.neonViolet;
+      case 'deploying': return MayaTheme.neonOrange;
+      case 'failed': return MayaTheme.error;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _BuilderFromPlanTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_BuilderFromPlanTab> createState() => _BuilderFromPlanTabState();
+}
+
+class _BuilderFromPlanTabState extends ConsumerState<_BuilderFromPlanTab> {
+  final _planIdController = TextEditingController();
+  bool _isBuilding = false;
+
+  @override
+  void dispose() {
+    _planIdController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _buildFromPlan() async {
+    if (_planIdController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Plan ID is required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isBuilding = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.buildFromPlan(_planIdController.text.trim());
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.success ? 'Project created: ${result.projectId}' : 'Build failed: ${result.message}'),
+            backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
+        );
+        if (result.success) {
+          _planIdController.clear();
+          ref.invalidate(builderProjectsProvider);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Build failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    } finally {
+      setState(() => _isBuilding = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Build from Plan', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Enter a Strategist plan ID to automatically build the project',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _planIdController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Plan ID *',
+                    hintText: 'e.g., plan_abc123',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.assignment_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('The builder will:', style: MayaTheme.bodyMedium),
+                const SizedBox(height: 8),
+                const Text('• Scaffold the project structure', style: MayaTheme.bodySmall),
+                const Text('• Generate code for each step', style: MayaTheme.bodySmall),
+                const Text('• Run tests and linting', style: MayaTheme.bodySmall),
+                const Text('• Deploy if configured', style: MayaTheme.bodySmall),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isBuilding ? null : _buildFromPlan,
+                    icon: _isBuilding
+                        ? const SizedBox(
+                            width: 20, height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)),
+                          )
+                        : const Icon(Icons.auto_awesome_rounded),
+                    label: Text(_isBuilding ? 'Building...' : 'Build Project'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonViolet,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Income Launcher Screen
+class _IncomeLauncherScreen extends ConsumerStatefulWidget {
+  const _IncomeLauncherScreen();
+
+  @override
+  ConsumerState<_IncomeLauncherScreen> createState() => _IncomeLauncherScreenState();
+}
+
+class _IncomeLauncherScreenState extends ConsumerState<_IncomeLauncherScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Income Launcher', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(launcherLaunchesProvider);
+                ref.invalidate(launcherStatsProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.rocket_launch_rounded), text: 'Launches'),
+              Tab(icon: Icon(Icons.content_paste_rounded), text: 'Content'),
+              Tab(icon: Icon(Icons.bar_chart_rounded), text: 'Stats'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _LauncherLaunchesTab(),
+            _LauncherContentTab(),
+            _LauncherStatsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LauncherLaunchesTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final launchesAsync = ref.watch(launcherLaunchesProvider);
+
+    return launchesAsync.when(
+      data: (data) => data.launches.isEmpty
+          ? _emptyState('No Launches', 'Create your first launch to get started', Icons.rocket_launch_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Launches', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Manage your product launches',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.launches.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final launch = data.launches[index];
+                      return _LauncherLaunchCard(launch: launch);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading launches', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _LauncherLaunchCard extends ConsumerWidget {
+  final LauncherLaunch launch;
+
+  const _LauncherLaunchCard({required this.launch});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(launch.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.rocket_launch_rounded, color: _getStatusColor(launch.status), size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(launch.name, style: MayaTheme.titleMedium),
+                    Text('Project: ${launch.projectId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(launch.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(launch.status)),
+                ),
+                child: Text(launch.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(launch.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Created: ${launch.createdAt.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              const Spacer(),
+              if (launch.launchedAt != null)
+                Text('Launched: ${launch.launchedAt!.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'launched': return MayaTheme.neonEmerald;
+      case 'ready': return MayaTheme.neonCyan;
+      case 'draft': return MayaTheme.neonOrange;
+      case 'failed': return MayaTheme.error;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _LauncherContentTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_LauncherContentTab> createState() => _LauncherContentTabState();
+}
+
+class _LauncherContentTabState extends ConsumerState<_LauncherContentTab> {
+  final _launchIdController = TextEditingController();
+  LauncherLaunchDetailResponse? _lastResult;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _launchIdController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadContent() async {
+    if (_launchIdController.text.trim().isEmpty) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.getLauncherLaunchDetail(_launchIdController.text.trim());
+      setState(() {
+        _lastResult = result;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  Future<void> _approveContent(String launchId, String contentId) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.approveLauncherContent(launchId, contentId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.success ? 'Content approved' : 'Failed: ${result.message}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error),
+        );
+        ref.invalidate(launcherLaunchesProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Launch Content', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Manage launch content and approve for publishing',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _launchIdController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Launch ID',
+                    hintText: 'e.g., launch_abc123',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.rocket_launch_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _loadContent,
+                    icon: _isLoading
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.search_rounded),
+                    label: Text(_isLoading ? 'Loading...' : 'Load Content'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_lastResult != null) ...[
+            const Text('Launch Content', style: MayaTheme.titleLarge),
+            const SizedBox(height: 12),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _lastResult!.content.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (_, index) {
+                final content = _lastResult!.content[index];
+                return _LauncherContentCard(content: content);
+              },
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _LauncherContentCard extends ConsumerWidget {
+  final LauncherContent content;
+
+  const _LauncherContentCard({required this.content});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(_getContentIcon(content.type), color: MayaTheme.neonCyan, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(content.title, style: MayaTheme.titleMedium),
+                    Text('Type: ${content.type}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(content.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(content.status)),
+                ),
+                child: Text(content.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(content.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(content.content, style: MayaTheme.bodyMedium.copyWith(color: Colors.white70), maxLines: 3, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 12),
+          if (content.status == 'pending')
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _approveContent(_launchIdController.text.trim(), content.id),
+                icon: const Icon(Icons.check_circle_rounded),
+                label: const Text('Approve Content'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonEmerald,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved': return MayaTheme.neonEmerald;
+      case 'pending': return MayaTheme.neonOrange;
+      case 'rejected': return MayaTheme.error;
+      default: return Colors.white54;
+    }
+  }
+
+  IconData _getContentIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'blog': return Icons.article_rounded;
+      case 'social': return Icons.share_rounded;
+      case 'email': return Icons.email_rounded;
+      case 'video': return Icons.videocam_rounded;
+      default: return Icons.description_rounded;
+    }
+  }
+
+  Future<void> _approveContent(String launchId, String contentId) async {
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.approveLauncherContent(launchId, contentId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.success ? 'Content approved' : 'Failed: ${result.message}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error),
+        );
+        ref.invalidate(launcherLaunchesProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+}
+
+class _LauncherStatsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(launcherStatsProvider);
+
+    return statsAsync.when(
+      data: (stats) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Launcher Statistics', style: MayaTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Overview of launch performance and content pipeline',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(child: _LauncherStatCard(label: 'Total Launches', value: stats.totalLaunches.toString(), color: MayaTheme.neonCyan, icon: Icons.rocket_launch_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LauncherStatCard(label: 'Successful', value: stats.successfulLaunches.toString(), color: MayaTheme.neonEmerald, icon: Icons.check_circle_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LauncherStatCard(label: 'Failed', value: stats.failedLaunches.toString(), color: MayaTheme.error, icon: Icons.cancel_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _LauncherStatCard(label: 'Pending', value: stats.pendingLaunches.toString(), color: MayaTheme.neonOrange, icon: Icons.hourglass_empty_rounded)),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const Text('Launch Pipeline', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            _PipelineStage(label: 'Draft', count: stats.pendingLaunches, color: MayaTheme.neonOrange),
+            _PipelineStage(label: 'Ready', count: stats.successfulLaunches, color: MayaTheme.neonCyan),
+            _PipelineStage(label: 'Launched', count: stats.successfulLaunches, color: MayaTheme.neonEmerald),
+            _PipelineStage(label: 'Failed', count: stats.failedLaunches, color: MayaTheme.error),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading stats', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _LauncherStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _LauncherStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _PipelineStage extends StatelessWidget {
+  final String label;
+  final int count;
+  final Color color;
+
+  const _PipelineStage({
+    required this.label,
+    required this.count,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(child: Text(label, style: MayaTheme.bodyMedium)),
+          Text('$count', style: MayaTheme.titleMedium.copyWith(color: color)),
+        ],
+      ),
+    );
+  }
+}
+
+// Income Growth Screen
+class _IncomeGrowthScreen extends ConsumerStatefulWidget {
+  const _IncomeGrowthScreen();
+
+  @override
+  ConsumerState<_IncomeGrowthScreen> createState() => _IncomeGrowthScreenState();
+}
+
+class _IncomeGrowthScreenState extends ConsumerState<_IncomeGrowthScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Growth Portfolio', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(growthProposalsProvider);
+                ref.invalidate(growthMetricsProvider);
+                ref.invalidate(growthRecommendationsProvider);
+                ref.invalidate(growthSummaryProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.lightbulb_rounded), text: 'Proposals'),
+              Tab(icon: Icon(Icons.trending_up_rounded), text: 'Metrics'),
+              Tab(icon: Icon(Icons.recommend_rounded), text: 'Recommendations'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _GrowthProposalsTab(),
+            _GrowthMetricsTab(),
+            _GrowthRecommendationsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GrowthProposalsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final proposalsAsync = ref.watch(growthProposalsProvider);
+
+    return proposalsAsync.when(
+      data: (data) => data.proposals.isEmpty
+          ? _emptyState('No Proposals', 'Submit growth proposals for review', Icons.lightbulb_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Growth Proposals', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Investment and growth proposals for portfolio companies',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.proposals.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final proposal = data.proposals[index];
+                      return _GrowthProposalCard(proposal: proposal);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading proposals', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _GrowthProposalCard extends ConsumerWidget {
+  final GrowthProposal proposal;
+
+  const _GrowthProposalCard({required this.proposal});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.lightbulb_rounded, color: MayaTheme.neonViolet, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(proposal.title, style: MayaTheme.titleMedium),
+                    Text(proposal.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(proposal.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(proposal.status)),
+                ),
+                child: Text(proposal.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(proposal.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Project: ${proposal.projectId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+              const Spacer(),
+              Text('Impact: \$${proposal.estimatedImpact.toStringAsFixed(0)}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonEmerald, fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved': return MayaTheme.neonEmerald;
+      case 'pending': return MayaTheme.neonOrange;
+      case 'rejected': return MayaTheme.error;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _GrowthMetricsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final metricsAsync = ref.watch(growthMetricsProvider);
+
+    return metricsAsync.when(
+      data: (data) => data.metrics.isEmpty
+          ? _emptyState('No Metrics', 'Run growth analysis to see metrics', Icons.trending_up_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Growth Metrics', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Portfolio performance metrics across all projects',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.metrics.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final metric = data.metrics[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(Icons.trending_up_rounded, color: MayaTheme.neonCyan, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(metric.metricName, style: MayaTheme.titleMedium),
+                                  Text('Project: ${metric.projectId}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(metric.value.toStringAsFixed(2), style: MayaTheme.titleMedium.copyWith(color: MayaTheme.neonEmerald)),
+                                Text(metric.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading metrics', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _GrowthRecommendationsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recsAsync = ref.watch(growthRecommendationsProvider);
+
+    return recsAsync.when(
+      data: (data) => data.recommendations.isEmpty
+          ? _emptyState('No Recommendations', 'Run growth analysis to get recommendations', Icons.recommend_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Recommendations', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'AI-generated growth recommendations for portfolio companies',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.recommendations.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final rec = data.recommendations[index];
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: MayaTheme.glassCard(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(Icons.recommend_rounded, color: MayaTheme.neonViolet, size: 24),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Project: ${rec.projectId}', style: MayaTheme.titleMedium),
+                                      Text(rec.recommendation, style: MayaTheme.bodyMedium),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text('Priority: ${rec.priority.toStringAsFixed(1)}', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading recommendations', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+// Income Notifications Screen
+class _IncomeNotificationsScreen extends ConsumerStatefulWidget {
+  const _IncomeNotificationsScreen();
+
+  @override
+  ConsumerState<_IncomeNotificationsScreen> createState() => _IncomeNotificationsScreenState();
+}
+
+class _IncomeNotificationsScreenState extends ConsumerState<_IncomeNotificationsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Income Notifications', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(notifApprovalsProvider);
+                ref.invalidate(notifStatsProvider);
+                ref.invalidate(notifTemplatesProvider);
+                ref.invalidate(notifChannelsProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.approval_rounded), text: 'Approvals'),
+              Tab(icon: Icon(Icons.campaign_rounded), text: 'Templates'),
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Stats'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _NotifApprovalsTab(),
+            _NotifTemplatesTab(),
+            _NotifStatsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NotifApprovalsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final approvalsAsync = ref.watch(notifApprovalsProvider);
+
+    return approvalsAsync.when(
+      data: (data) => data.approvals.isEmpty
+          ? _emptyState('No Approvals', 'No pending approval requests', Icons.approval_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Approval Requests', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Review and decide on pending notification approvals',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.approvals.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final approval = data.approvals[index];
+                      return _NotifApprovalCard(approval: approval);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading approvals', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _NotifApprovalCard extends ConsumerWidget {
+  final NotifApproval approval;
+
+  const _NotifApprovalCard({required this.approval});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(approval.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.approval_rounded, color: _getStatusColor(approval.status), size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(approval.title, style: MayaTheme.titleMedium),
+                    Text(approval.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(approval.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(approval.status)),
+                ),
+                child: Text(approval.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(approval.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: MayaTheme.neonViolet),
+                ),
+                child: Text(approval.channel.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+              ),
+              const Spacer(),
+              Text(approval.createdAt.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved': return MayaTheme.neonEmerald;
+      case 'pending': return MayaTheme.neonOrange;
+      case 'rejected': return MayaTheme.error;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _NotifTemplatesTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final templatesAsync = ref.watch(notifTemplatesProvider);
+
+    return templatesAsync.when(
+      data: (data) => data.templates.isEmpty
+          ? _emptyState('No Templates', 'Create notification templates for reuse', Icons.campaign_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Notification Templates', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Manage reusable notification templates',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.templates.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final template = data.templates[index];
+                      return _NotifTemplateCard(template: template);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading templates', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _NotifTemplateCard extends StatelessWidget {
+  final NotifTemplate template;
+
+  const _NotifTemplateCard({required this.template});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.campaign_rounded, color: MayaTheme.neonCyan, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(template.name, style: MayaTheme.titleMedium),
+                    Text('Channel: ${template.channel}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text('Subject: ${template.subject}', style: MayaTheme.bodyMedium),
+          const SizedBox(height: 4),
+          Text(template.body, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: MayaTheme.neonViolet),
+            ),
+            child: Text('Channel: ${template.channel}', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NotifStatsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(notifStatsProvider);
+
+    return statsAsync.when(
+      data: (stats) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Notification Statistics', style: MayaTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Overview of notification delivery performance',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(child: _NotifStatCard(label: 'Total Sent', value: stats.totalSent.toString(), color: MayaTheme.neonCyan, icon: Icons.send_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _NotifStatCard(label: 'Total Failed', value: stats.totalFailed.toString(), color: MayaTheme.error, icon: Icons.error_rounded)),
+                const SizedBox(width: 12),
+                Expanded(child: _NotifStatCard(label: 'Pending', value: stats.totalPending.toString(), color: MayaTheme.neonOrange, icon: Icons.hourglass_empty_rounded)),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Delivery Health', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  _HealthBar(label: 'Success Rate', value: stats.totalSent > 0 ? (stats.totalSent / (stats.totalSent + stats.totalFailed) * 100) : 0, color: MayaTheme.neonEmerald),
+                  const SizedBox(height: 12),
+                  _HealthBar(label: 'Failure Rate', value: stats.totalFailed > 0 ? (stats.totalFailed / (stats.totalSent + stats.totalFailed) * 100) : 0, color: MayaTheme.error),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading stats', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _NotifStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _NotifStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _HealthBar extends StatelessWidget {
+  final String label;
+  final double value;
+  final Color color;
+
+  const _HealthBar({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: MayaTheme.bodyMedium),
+            Text('${value.toStringAsFixed(1)}%', style: MayaTheme.bodyMedium.copyWith(color: color, fontWeight: FontWeight.w600)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        LinearProgressIndicator(
+          value: value / 100,
+          backgroundColor: Colors.white12,
+          valueColor: AlwaysStoppedAnimation(color),
+          minHeight: 8,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================================
+// EXTENDED AGENT SCREENS
+// ============================================================================
+
+// Extended Tasks Screen
+class _ExtendedTasksScreen extends ConsumerStatefulWidget {
+  const _ExtendedTasksScreen();
+
+  @override
+  ConsumerState<_ExtendedTasksScreen> createState() => _ExtendedTasksScreenState();
+}
+
+class _ExtendedTasksScreenState extends ConsumerState<_ExtendedTasksScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Extended Tasks', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(extStatusProvider);
+                ref.invalidate(extHealthProvider);
+                ref.invalidate(extTasksListProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.list_alt_rounded), text: 'Tasks'),
+              Tab(icon: Icon(Icons.add_task_rounded), text: 'Create'),
+              Tab(icon: Icon(Icons.monitor_heart_rounded), text: 'Health'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ExtTasksListTab(),
+            _ExtCreateTaskTab(),
+            _ExtHealthTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExtTasksListTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tasksAsync = ref.watch(extTasksListProvider);
+
+    return tasksAsync.when(
+      data: (data) => data.tasks.isEmpty
+          ? _emptyState('No Tasks', 'Create a new extended task to get started', Icons.list_alt_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Extended Tasks', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Background tasks managed by the extended agent',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.tasks.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final task = data.tasks[index];
+                      return _ExtTaskCard(task: task);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading tasks', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ExtTaskCard extends ConsumerWidget {
+  final ExtTask task;
+
+  const _ExtTaskCard({required this.task});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(task.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.task_alt_rounded, color: _getStatusColor(task.status), size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(task.description, style: MayaTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Text('Created: ${task.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(task.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(task.status)),
+                ),
+                child: Text(task.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(task.status))),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'running': return MayaTheme.neonEmerald;
+      case 'completed': return MayaTheme.neonCyan;
+      case 'failed': return MayaTheme.error;
+      case 'pending': return MayaTheme.neonOrange;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _ExtCreateTaskTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ExtCreateTaskTab> createState() => _ExtCreateTaskTabState();
+}
+
+class _ExtCreateTaskTabState extends ConsumerState<_ExtCreateTaskTab> {
+  final _descriptionController = TextEditingController();
+  bool _isCreating = false;
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _createTask() async {
+    if (_descriptionController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Description is required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isCreating = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.createExtendedTask({'description': _descriptionController.text.trim()});
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.success ? 'Task created: ${result.taskId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error),
+        );
+        if (result.success) {
+          _descriptionController.clear();
+          ref.invalidate(extTasksListProvider);
+        }
+      }
+    } catch (e) {
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Create Extended Task', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Create a new background task for the extended agent',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _descriptionController,
+                  style: const TextStyle(color: Colors.white),
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: 'Task Description *',
+                    hintText: 'Describe the task for the extended agent...',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    alignLabelWithHint: true,
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 60),
+                      child: Icon(Icons.description_rounded, color: Colors.white54),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isCreating ? null : _createTask,
+                    icon: _isCreating
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.add_task_rounded),
+                    label: Text(_isCreating ? 'Creating...' : 'Create Task'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExtHealthTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statusAsync = ref.watch(extStatusProvider);
+    final healthAsync = ref.watch(extHealthProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Extended Agent Health', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Monitor the health and status of the extended agent',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          // Status
+          statusAsync.when(
+            data: (status) => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCardGlow(glowColor: status.running ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+              child: Row(
+                children: [
+                  Icon(status.running ? Icons.check_circle_rounded : Icons.warning_rounded, color: status.running ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 32),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(status.running ? 'Running' : 'Stopped', style: MayaTheme.titleLarge.copyWith(color: status.running ? MayaTheme.neonEmerald : MayaTheme.neonOrange)),
+                        Text('Active: ${status.activeTasks} • Queued: ${status.queuedTasks}', style: MayaTheme.bodyMedium.copyWith(color: Colors.white70)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+          const SizedBox(height: 24),
+          // Health
+          const Text('Health Details', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          healthAsync.when(
+            data: (health) => Container(
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                children: [
+                  _HealthItem(label: 'Healthy', value: health.healthy ? 'Yes' : 'No', color: health.healthy ? MayaTheme.neonEmerald : MayaTheme.error),
+                  if (health.message != null) _HealthItem(label: 'Message', value: health.message!, color: MayaTheme.neonOrange),
+                ],
+              ),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HealthItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _HealthItem({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: MayaTheme.bodyMedium),
+          Text(value, style: MayaTheme.bodyMedium.copyWith(color: color, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExtCreateTaskTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ExtCreateTaskTab> createState() => _ExtCreateTaskTabState();
+}
+
+class _ExtCreateTaskTabState extends ConsumerState<_ExtCreateTaskTab> {
+  final _descriptionController = TextEditingController();
+  bool _isCreating = false;
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _createTask() async {
+    if (_descriptionController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Description is required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isCreating = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.createExtendedTask({'description': _descriptionController.text.trim()});
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.success ? 'Task created: ${result.taskId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error),
+        );
+        if (result.success) {
+          _descriptionController.clear();
+          ref.invalidate(extTasksListProvider);
+        }
+      }
+    } catch (e) {
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Create Extended Task', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Create a new background task for the extended agent',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _descriptionController,
+                  style: const TextStyle(color: Colors.white),
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: 'Task Description *',
+                    hintText: 'Describe the task for the extended agent...',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    alignLabelWithHint: true,
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 60),
+                      child: Icon(Icons.description_rounded, color: Colors.white54),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isCreating ? null : _createTask,
+                    icon: _isCreating
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.add_task_rounded),
+                    label: Text(_isCreating ? 'Creating...' : 'Create Task'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Proactive Jobs Screen
+class _ProactiveJobsScreen extends ConsumerStatefulWidget {
+  const _ProactiveJobsScreen();
+
+  @override
+  ConsumerState<_ProactiveJobsScreen> createState() => _ProactiveJobsScreenState();
+}
+
+class _ProactiveJobsScreenState extends ConsumerState<_ProactiveJobsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Proactive Jobs', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(proactiveJobsProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.schedule_rounded), text: 'Jobs'),
+              Tab(icon: Icon(Icons.add_circle_rounded), text: 'Create'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ProactiveJobsListTab(),
+            _ProactiveCreateJobTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProactiveJobsListTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final jobsAsync = ref.watch(proactiveJobsProvider);
+
+    return jobsAsync.when(
+      data: (data) => data.jobs.isEmpty
+          ? _emptyState('No Proactive Jobs', 'Create a scheduled job to run automatically', Icons.schedule_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Proactive Jobs', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Scheduled jobs that run automatically on a cron schedule',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.jobs.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      final job = data.jobs[index];
+                      return _ProactiveJobCard(job: job);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading jobs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ProactiveJobCard extends ConsumerWidget {
+  final ProactiveJob job;
+
+  const _ProactiveJobCard({required this.job});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: job.enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.schedule_rounded, color: job.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(job.name, style: MayaTheme.titleMedium),
+                    Text(job.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: job.enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: job.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                    ),
+                    child: Text(job.enabled ? 'ENABLED' : 'DISABLED', style: MayaTheme.labelSmall.copyWith(color: job.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(job.cron, style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Created: ${job.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProactiveCreateJobTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ProactiveCreateJobTab> createState() => _ProactiveCreateJobTabState();
+}
+
+class _ProactiveCreateJobTabState extends ConsumerState<_ProactiveCreateJobTab> {
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _cronController = TextEditingController(text: '0 * * * *');
+  bool _enabled = true;
+  bool _isCreating = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _cronController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _createJob() async {
+    if (_nameController.text.trim().isEmpty || _cronController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: const Text('Name and cron are required'), backgroundColor: MayaTheme.error),
+      );
+      return;
+    }
+
+    setState(() => _isCreating = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.createProactiveJob(
+        name: _nameController.text.trim(),
+        description: _descriptionController.text.trim(),
+        cron: _cronController.text.trim(),
+        enabled: _enabled,
+      );
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.success ? 'Job created: ${result.jobId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error),
+        );
+        if (result.success) {
+          _nameController.clear();
+          _descriptionController.clear();
+          ref.invalidate(proactiveJobsProvider);
+        }
+      }
+    } catch (e) {
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Create Proactive Job', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Schedule a recurring job with cron expression',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Job Name *',
+                    hintText: 'e.g., daily_health_check',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _descriptionController,
+                  style: const TextStyle(color: Colors.white),
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    hintText: 'What this job does...',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    alignLabelWithHint: true,
+                    prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 60), child: Icon(Icons.description_rounded, color: Colors.white54)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _cronController,
+                  style: const TextStyle(color: Colors.white, fontFamily: 'monospace'),
+                  decoration: InputDecoration(
+                    labelText: 'Cron Expression *',
+                    hintText: 'e.g., 0 * * * * (hourly), 0 6 * * * (daily 6AM)',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.schedule_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: Text('Enabled', style: MayaTheme.bodyMedium),
+                  subtitle: Text('Job will run on schedule', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  value: true,
+                  onChanged: (v) => setState(() => _enabled = v),
+                  activeColor: MayaTheme.neonEmerald,
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isCreating ? null : () => setState(() => _isCreating = true) ?? _createJob(),
+                    icon: _isCreating
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.schedule_rounded),
+                    label: Text(_isCreating ? 'Creating...' : 'Create Job'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonViolet,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Memory Preferences Screen
+class _MemoryPreferencesScreen extends ConsumerStatefulWidget {
+  const _MemoryPreferencesScreen();
+
+  @override
+  ConsumerState<_MemoryPreferencesScreen> createState() => _MemoryPreferencesScreenState();
+}
+
+class _MemoryPreferencesScreenState extends ConsumerState<_MemoryPreferencesScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Memory Preferences', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)),
+          actions: [
+            IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () {
+              // TODO: add refresh
+            }),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.settings_rounded), text: 'Preferences'),
+              Tab(icon: Icon(Icons.fact_check_rounded), text: 'Facts'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _MemPrefsTab(),
+            _MemFactsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MemPrefsTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_MemPrefsTab> createState() => _MemPrefsTabState();
+}
+
+class _MemPrefsTabState extends ConsumerState<_MemPrefsTab> {
+  final _userIdController = TextEditingController(text: 'default');
+  ExtMemPrefsListResponse? _prefs;
+  bool _isLoading = false;
+
+  Future<void> _loadPrefs() async {
+    setState(() => _isLoading = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.listMemoryPreferences(_userIdController.text.trim());
+      setState(() {
+        _prefs = result;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Memory Preferences', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text('User-specific key-value preferences stored in extended memory', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _userIdController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'User ID',
+                    hintText: 'default',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.person_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)),
+                    filled: true, fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _loadPrefs,
+                    icon: _isLoading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.refresh_rounded),
+                    label: Text(_isLoading ? 'Loading...' : 'Load Preferences'),
+                    style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_prefs != null) ...[
+            const Text('Preferences', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            _prefs!.preferences.isEmpty
+                ? _emptyState('No Preferences', 'No preferences set for this user', Icons.settings_rounded)
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _prefs!.preferences.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final entry = _prefs!.preferences.entries.elementAt(index);
+                      return _PrefCard(key: entry.key, value: entry.value);
+                    },
+                  ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PrefCard extends StatelessWidget {
+  final String key;
+  final String value;
+
+  const _PrefCard({required this.key, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: MayaTheme.neonViolet.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
+            child: Icon(Icons.key_rounded, color: MayaTheme.neonViolet, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(key, style: MayaTheme.titleMedium),
+            Text(value, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+          ])),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemFactsTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_MemFactsTab> createState() => _MemFactsTabState();
+}
+
+class _MemFactsTabState extends ConsumerState<_MemFactsTab> {
+  final _userIdController = TextEditingController(text: 'default');
+  final _factController = TextEditingController();
+  final _sourceController = TextEditingController();
+  ExtMemFactsListResponse? _facts;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _userIdController.dispose();
+    _factController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadFacts() async {
+    setState(() => _isLoading = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.listMemoryFacts(_userIdController.text.trim());
+      setState(() { _facts = result; _isLoading = false; });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error));
+    }
+  }
+
+  Future<void> _addFact() async {
+    if (_factController.text.trim().isEmpty || _sourceController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Fact and source required'), backgroundColor: MayaTheme.error));
+      return;
+    }
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.addMemoryFact(fact: _factController.text.trim(), source: _sourceController.text.trim());
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fact added: ${result.factId}'), backgroundColor: MayaTheme.neonEmerald));
+        _factController.clear();
+        _sourceController.clear();
+        _loadFacts();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Memory Facts', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text('Facts stored in extended memory', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(controller: _userIdController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'User ID', hintText: 'default', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.person_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+                const SizedBox(height: 16),
+                SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isLoading ? null : _loadFacts, icon: _isLoading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.refresh_rounded), label: Text(_isLoading ? 'Loading...' : 'Load Facts'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text('Add New Fact', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              children: [
+                TextField(controller: _factController, style: const TextStyle(color: Colors.white), maxLines: 3, decoration: InputDecoration(labelText: 'Fact *', hintText: 'The fact to store...', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 60), child: Icon(Icons.fact_check_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+                const SizedBox(height: 16),
+                TextField(controller: _sourceController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Source *', hintText: 'e.g., observation, research, deduction', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.source_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+                const SizedBox(height: 16),
+                SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _addFact, icon: const Icon(Icons.add_rounded), label: const Text('Add Fact'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonEmerald, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))))),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_facts != null) ...[
+            const Text('Facts', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            _facts!.facts.isEmpty ? _emptyState('No Facts', 'Add your first fact', Icons.fact_check_rounded) : ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: _facts!.facts.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) {
+              final fact = _facts!.facts[index];
+              return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(fact.fact, style: MayaTheme.bodyMedium),
+                const SizedBox(height: 4),
+                Text('Source: ${fact.source} • ${fact.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              ]));
+            }),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// Extended Projects Screen
+class _ExtendedProjectsScreen extends ConsumerStatefulWidget {
+  const _ExtendedProjectsScreen();
+
+  @override
+  ConsumerState<_ExtendedProjectsScreen> createState() => _ExtendedProjectsScreenState();
+}
+
+class _ExtendedProjectsScreenState extends ConsumerState<_ExtendedProjectsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Extended Projects', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)),
+          actions: [
+            IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () {}),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.folder_rounded), text: 'Projects'),
+              Tab(icon: Icon(Icons.add_circle_rounded), text: 'Create'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ExtProjectsListTab(),
+            _ExtCreateProjectTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExtProjectsListTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Note: This would need a projects list provider
+    return _emptyState('Extended Projects', 'Memory-based project management', Icons.folder_rounded);
+  }
+}
+
+class _ExtCreateProjectTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ExtCreateProjectTab> createState() => _ExtCreateProjectTabState();
+}
+
+class _ExtCreateProjectTabState extends ConsumerState<_ExtCreateProjectTab> {
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  bool _isCreating = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _createProject() async {
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Name is required'), backgroundColor: MayaTheme.error));
+      return;
+    }
+    setState(() => _isCreating = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.addMemoryProject(name: _nameController.text.trim(), description: _descriptionController.text.trim());
+      setState(() => _isCreating = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Project created: ${result.projectId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error));
+        if (result.success) {
+          _nameController.clear();
+          _descriptionController.clear();
+        }
+      }
+    } catch (e) {
+      setState(() => _isCreating = false);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Create Memory Project', style: MayaTheme.titleLarge),
+        const SizedBox(height: 8),
+        Text('Create a project to organize related memory facts', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+        const SizedBox(height: 24),
+        Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(
+          children: [
+            TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Project Name *', hintText: 'e.g., research_project', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+            const SizedBox(height: 16),
+            TextField(controller: _descriptionController, style: const TextStyle(color: Colors.white), maxLines: 3, decoration: InputDecoration(labelText: 'Description', hintText: 'What this project is about...', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 60), child: Icon(Icons.description_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+            const SizedBox(height: 24),
+            SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isCreating ? null : () async {
+              setState(() => _isCreating = true);
+              try {
+                final apiService = ref.read(apiServiceProvider);
+                final result = await apiService.addMemoryProject(name: _nameController.text.trim(), description: _descriptionController.text.trim());
+                setState(() => _isCreating = false);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Project created' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error));
+                  if (result.success) { _nameController.clear(); _descriptionController.clear(); }
+                }
+              } catch (e) { setState(() => _isCreating = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error)); }
+            },
+            icon: _isCreating ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.folder_rounded),
+            label: Text(_isCreating ? 'Creating...' : 'Create Project'),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonViolet, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+          ),
+        ],
+      )),
+    ]);
+  }
+}
+
+// Browser Tools Screen
+class _BrowserToolsScreen extends ConsumerStatefulWidget {
+  const _BrowserToolsScreen();
+
+  @override
+  ConsumerState<_BrowserToolsScreen> createState() => _BrowserToolsScreenState();
+}
+
+class _BrowserToolsScreenState extends ConsumerState<_BrowserToolsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Browser Tools', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)),
+          actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () {})],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.web_rounded), text: 'Actions'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'History'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _BrowserActionsTab(),
+            _BrowserHistoryTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BrowserActionsTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_BrowserActionsTab> createState() => _BrowserActionsTabState();
+}
+
+class _BrowserActionsTabState extends ConsumerState<_BrowserActionsTab> {
+  final _actionController = TextEditingController(text: 'navigate');
+  final _urlController = TextEditingController();
+  final _selectorController = TextEditingController();
+  final _textController = TextEditingController();
+  final _queryController = TextEditingController();
+  BrowserActionResponse? _lastResult;
+  bool _isExecuting = false;
+
+  @override
+  void dispose() {
+    _actionController.dispose();
+    _urlController.dispose();
+    _selectorController.dispose();
+    _textController.dispose();
+    _queryController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _executeAction() async {
+    if (_actionController.text.trim().isEmpty || (_actionController.text != 'navigate' && _urlController.text.trim().isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Action and URL required for navigate'), backgroundColor: MayaTheme.error));
+      return;
+    }
+
+    setState(() => _isExecuting = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.browserAction(
+        action: _actionController.text.trim(),
+        url: _urlController.text.trim().isEmpty ? null : _urlController.text.trim(),
+        selector: _selectorController.text.trim().isEmpty ? null : _selectorController.text.trim(),
+        text: _textController.text.trim().isEmpty ? null : _textController.text.trim(),
+        query: _queryController.text.trim().isEmpty ? null : _queryController.text.trim(),
+      );
+      setState(() { _lastResult = result; _isExecuting = false; });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Action completed' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error));
+      }
+    } catch (e) {
+      setState(() => _isExecuting = false);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Browser Actions', style: MayaTheme.titleLarge),
+        const SizedBox(height: 8),
+        Text('Execute browser actions via the browser pool', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+        const SizedBox(height: 24),
+        Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          DropdownButtonFormField<String>(
+            value: _actionController.text,
+            decoration: InputDecoration(labelText: 'Action', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.play_arrow_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800),
+            items: const [
+              DropdownMenuItem(value: 'navigate', child: Text('Navigate')),
+              DropdownMenuItem(value: 'click', child: Text('Click')),
+              DropdownMenuItem(value: 'type', child: Text('Type')),
+              DropdownMenuItem(value: 'screenshot', child: Text('Screenshot')),
+              DropdownMenuItem(value: 'get_text', child: Text('Get Text')),
+              DropdownMenuItem(value: 'wait', child: Text('Wait')),
+              DropdownMenuItem(value: 'scroll', child: Text('Scroll')),
+            ],
+            onChanged: (v) => setState(() => _actionController.text = v!),
+            dropdownColor: MayaTheme.slate800,
+            style: const TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 16),
+          TextField(controller: _urlController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'URL', hintText: 'https://example.com', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.link_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+          const SizedBox(height: 16),
+          TextField(controller: _selectorController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Selector (CSS/XPath)', hintText: '.btn-primary, #submit, //button[@id="submit"]', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.code_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+          const SizedBox(height: 16),
+          TextField(controller: _textController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Text (for type)', hintText: 'Text to type...', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.text_fields_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+          const SizedBox(height: 16),
+          TextField(controller: _queryController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Query (for get_text/wait)', hintText: 'What to wait for or extract...', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.search_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+          const SizedBox(height: 24),
+          SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isExecuting ? null : () { setState(() => _isExecuting = true); _executeAction(); }, icon: _isExecuting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.play_arrow_rounded), label: Text(_isExecuting ? 'Executing...' : 'Execute Action'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),
+        ]),
+        const SizedBox(height: 24),
+        if (_lastResult != null) ...[
+          const Text('Result', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: SingleChildScrollView(child: SelectableText(_lastResult!.result?.toString() ?? 'No result', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace')))),
+          if (_lastResult!.error != null) ...[const SizedBox(height: 8), Text('Error: ${_lastResult!.error}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error))],
+        ],
+      )),
+    );
+  }
+}
+
+class _BrowserHistoryTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return _emptyState('Browser History', 'Browser action history will appear here', Icons.history_rounded);
+  }
+}
+
+// Sandbox Tools Screen
+class _SandboxToolsScreen extends ConsumerStatefulWidget {
+  const _SandboxToolsScreen();
+
+  @override
+  ConsumerState<_SandboxToolsScreen> createState() => _SandboxToolsScreenState();
+}
+
+class _SandboxToolsScreenState extends ConsumerState<_SandboxToolsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Sandbox Tools', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)),
+          actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () {})],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.code_rounded), text: 'Execute'),
+              Tab(icon: Icon(Icons.history_rounded), text: 'History'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _SandboxExecuteTab(),
+            _SandboxHistoryTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SandboxExecuteTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_SandboxExecuteTab> createState() => _SandboxExecuteTabState();
+}
+
+class _SandboxExecuteTabState extends ConsumerState<_SandboxExecuteTab> {
+  final _codeController = TextEditingController(text: 'print("Hello from Maya Sandbox!")');
+  final _languageController = TextEditingController(text: 'python');
+  final _timeoutController = TextEditingController(text: '30');
+  SandboxExecuteResponse? _lastResult;
+  bool _isExecuting = false;
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    _languageController.dispose();
+    _timeoutController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _executeCode() async {
+    if (_codeController.text.trim().isEmpty) return;
+
+    setState(() => _isExecuting = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.sandboxExecute(
+        code: _codeController.text.trim(),
+        language: _languageController.text.trim(),
+        timeoutSeconds: int.tryParse(_timeoutController.text.trim()) ?? 30,
+      );
+      setState(() { _lastResult = result; _isExecuting = false; });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Execution completed' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error));
+      }
+    } catch (e) {
+      setState(() => _isExecuting = false);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Sandbox Execute', style: MayaTheme.titleLarge),
+        const SizedBox(height: 8),
+        Text('Execute code in a secure sandbox environment', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+        const SizedBox(height: 24),
+        Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TextField(controller: _codeController, style: const TextStyle(color: Colors.white, fontFamily: 'monospace'), maxLines: 15, decoration: InputDecoration(labelText: 'Code *', hintText: 'Enter your code here...', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 100), child: Icon(Icons.code_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(child: TextField(controller: _languageController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Language', hintText: 'python, javascript, bash', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.code_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800))),
+            const SizedBox(width: 16),
+            Expanded(child: TextField(controller: _timeoutController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Timeout (s)', hintText: '30', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.timer_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800))),
+          ]),
+          const SizedBox(height: 24),
+          SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isExecuting ? null : () { setState(() => _isExecuting = true); _executeCode(); }, icon: _isExecuting ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.play_arrow_rounded), label: Text(_isExecuting ? 'Executing...' : 'Execute Code'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),
+        ]),
+        const SizedBox(height: 24),
+        if (_lastResult != null) ...[
+          const Text('Result', style: MayaTheme.titleLarge),
+          const SizedBox(height: 12),
+          Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: SingleChildScrollView(child: SelectableText(_lastResult!.output ?? _lastResult!.result?.toString() ?? 'No output', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'))),
+          if (_lastResult!.error != null) ...[const SizedBox(height: 8), Text('Error: ${_lastResult!.error}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error))],
+          if (_lastResult!.exitCode != null) ...[const SizedBox(height: 8), Text('Exit Code: ${_lastResult!.exitCode}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54))],
+          if (_lastResult!.executionTimeMs != null) ...[const SizedBox(height: 8), Text('Execution Time: ${_lastResult!.executionTimeMs}ms', style: MayaTheme.bodySmall.copyWith(color: Colors.white54))],
+        ],
+      ]),
+    );
+  }
+}
+
+class _SandboxHistoryTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return _emptyState('Execution History', 'Code execution history will appear here', Icons.history_rounded);
+  }
+}
+
+// Capabilities Screen
+class _CapabilitiesScreen extends ConsumerStatefulWidget {
+  const _CapabilitiesScreen();
+
+  @override
+  ConsumerState<_CapabilitiesScreen> createState() => _CapabilitiesScreenState();
+}
+
+class _CapabilitiesScreenState extends ConsumerState<_CapabilitiesScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Capabilities', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)),
+          actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(capabilitiesProvider); ref.invalidate(capabilitiesStatsProvider); })],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.list_alt_rounded), text: 'All'),
+              Tab(icon: Icon(Icons.search_rounded), text: 'Search'),
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Stats'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _CapabilitiesListTab(),
+            _CapabilitiesSearchTab(),
+            _CapabilitiesStatsTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CapabilitiesListTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final capabilitiesAsync = ref.watch(capabilitiesProvider);
+
+    return capabilitiesAsync.when(
+      data: (data) => data.capabilities.isEmpty
+          ? _emptyState('No Capabilities', 'No capabilities registered yet', Icons.list_alt_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('All Capabilities', style: MayaTheme.titleLarge),
+                const SizedBox(height: 8),
+                Text('Registered capabilities in the registry', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+                const SizedBox(height: 16),
+                ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.capabilities.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) {
+                  final cap = data.capabilities[index];
+                  return _CapabilityCard(capability: cap);
+                }),
+              ],
+            ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading capabilities', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),
+    );
+  }
+}
+
+class _CapabilityCard extends StatelessWidget {
+  final Capability capability;
+
+  const _CapabilityCard({required this.capability});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: capability.verified ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(capability.verified ? Icons.verified_rounded : Icons.psychology_rounded, color: capability.verified ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24)),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(capability.name, style: MayaTheme.titleMedium),
+          Text(capability.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+        ])),
+        Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: capability.verified ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: capability.verified ? MayaTheme.neonEmerald : MayaTheme.neonOrange)), child: Text(capability.verified ? 'VERIFIED' : 'UNVERIFIED', style: MayaTheme.labelSmall.copyWith(color: capability.verified ? MayaTheme.neonEmerald : MayaTheme.neonOrange))),
+      ]),
+      const SizedBox(height: 12),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        _CapInfoChip(label: 'Usage', value: capability.usageCount.toString(), color: MayaTheme.neonCyan),
+        _CapInfoChip(label: 'Success Rate', value: '${(capability.successRate * 100).toStringAsFixed(1)}%', color: capability.successRate >= 0.8 ? MayaTheme.neonEmerald : (capability.successRate >= 0.5 ? MayaTheme.neonOrange : MayaTheme.error)),
+      ]),
+    ]));
+  }
+}
+
+class _CapInfoChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _CapInfoChip({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: color.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: color)), child: Text('$label: $value', style: MayaTheme.labelSmall.copyWith(color: color)));
+  }
+}
+
+class _CapabilitiesSearchTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_CapabilitiesSearchTab> createState() => _CapabilitiesSearchTabState();
+}
+
+class _CapabilitiesSearchTabState extends ConsumerState<_CapabilitiesSearchTab> {
+  final _queryController = TextEditingController();
+  CapabilitiesSearchResponse? _lastResult;
+  bool _isSearching = false;
+
+  @override
+  void dispose() { _queryController.dispose(); super.dispose(); }
+
+  Future<void> _search() async {
+    if (_queryController.text.trim().isEmpty) return;
+    setState(() => _isSearching = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.searchCapabilities(_queryController.text.trim());
+      setState(() { _lastResult = result; _isSearching = false; });
+    } catch (e) { setState(() => _isSearching = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Search failed: $e'), backgroundColor: MayaTheme.error)); }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Text('Search Capabilities', style: MayaTheme.titleLarge),
+      const SizedBox(height: 8), Text('Search capabilities by name or description', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+      const SizedBox(height: 24),
+      Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TextField(controller: _queryController, style: const TextStyle(color: Colors.white), maxLines: 2, decoration: InputDecoration(labelText: 'Search Query *', hintText: 'e.g., file operations, web search', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 40), child: Icon(Icons.search_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)),
+        const SizedBox(height: 16),
+        SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isSearching ? null : _search, icon: _isSearching ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.search_rounded), label: Text(_isSearching ? 'Searching...' : 'Search'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),
+      ])),
+      const SizedBox(height: 24),
+      if (_lastResult != null) ...[
+        const Text('Results', style: MayaTheme.titleLarge),
+        const SizedBox(height: 12),
+        _lastResult!.capabilities.isEmpty ? _emptyState('No Results', 'No capabilities match your query', Icons.search_rounded) : ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: _lastResult!.capabilities.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) {
+          final cap = _lastResult!.capabilities[index];
+          return _CapabilityCard(capability: cap);
+        }),
+      ],
+    ));
+  }
+}
+
+class _CapabilitiesStatsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(capabilitiesStatsProvider);
+
+    return statsAsync.when(
+      data: (stats) => SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Capabilities Statistics', style: MayaTheme.titleLarge),
+        const SizedBox(height: 8), Text('Overview of the capability registry', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+        const SizedBox(height: 24),
+        Row(children: [
+          Expanded(child: _CapStatCard(label: 'Total', value: stats.totalCapabilities.toString(), color: MayaTheme.neonCyan, icon: Icons.list_alt_rounded)),
+          const SizedBox(width: 12), Expanded(child: _CapStatCard(label: 'Verified', value: stats.verifiedCapabilities.toString(), color: MayaTheme.neonEmerald, icon: Icons.verified_rounded)),
+          const SizedBox(width: 12), Expanded(child: _CapStatCard(label: 'Total Usages', value: stats.totalUsages.toString(), color: MayaTheme.neonViolet, icon: Icons.play_arrow_rounded)),
+        ]),
+      ])),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading stats', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),
+    );
+  }
+}
+
+class _CapStatCard extends StatelessWidget {
+  final String label; final String value; final Color color; final IconData icon;
+  const _CapStatCard({required this.label, required this.value, required this.color, required this.icon});
+  @override Widget build(BuildContext context) => Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCardGlow(glowColor: color), child: Column(children: [Icon(icon, color: color, size: 28), const SizedBox(height: 8), Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)), const SizedBox(height: 4), Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54))]));
+}
+
+// Webhooks Screen
+class _WebhooksScreen extends ConsumerStatefulWidget {
+  const _WebhooksScreen();
+
+  @override
+  ConsumerState<_WebhooksScreen> createState() => _WebhooksScreenState();
+}
+
+class _WebhooksScreenState extends ConsumerState<_WebhooksScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() { _tabController.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Webhooks', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(webhooksProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.webhook_rounded), text: 'Webhooks'), Tab(icon: Icon(Icons.add_circle_rounded), text: 'Create')],), body: TabBarView(controller: _tabController, children: [_WebhooksListTab(), _WebhookCreateTab()],),));
+  }
+}
+
+class _WebhooksListTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(webhooksProvider); return async.when(data: (data) => data.webhooks.isEmpty ? _emptyState('No Webhooks', 'Register webhooks to receive events', Icons.webhook_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Webhooks', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Configured webhook endpoints', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.webhooks.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final w = data.webhooks[index]; return _WebhookCard(webhook: w); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading webhooks', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
+
+class _WebhookCard extends StatelessWidget { final Webhook webhook; const _WebhookCard({required this.webhook}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: webhook.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(webhook.active ? Icons.cloud_done_rounded : Icons.cloud_off_rounded, color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(webhook.name, style: MayaTheme.titleMedium), Text(webhook.url, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),])), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: webhook.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange)), child: Text(webhook.active ? 'ACTIVE' : 'INACTIVE', style: MayaTheme.labelSmall.copyWith(color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange))),],), const SizedBox(height: 12), Wrap(spacing: 6, children: webhook.events.map((e) => Chip(label: Text(e, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: BorderSide(color: Colors.white12))).toList(),), const SizedBox(height: 8), Text('Created: ${webhook.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),]) }
+
+class _WebhookCreateTab extends ConsumerStatefulWidget { @override ConsumerState<_WebhookCreateTab> createState() => _WebhookCreateTabState(); }
+class _WebhookCreateTabState extends ConsumerState<_WebhookCreateTab> {
+  final _nameController = TextEditingController(); final _urlController = TextEditingController(); final _eventsController = TextEditingController(); bool _isCreating = false;
+  @override void dispose() { _nameController.dispose(); _urlController.dispose(); _eventsController.dispose(); super.dispose(); }
+  Future<void> _create() async { if (_nameController.text.trim().isEmpty || _urlController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Name and URL required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isCreating = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.createWebhook(name: _nameController.text.trim(), url: _urlController.text.trim(), events: _eventsController.text.trim().split(',').map((e) => e.trim()).toList()); setState(() => _isCreating = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Webhook created: ${result.id}' : 'Failed: ${result.message}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); _urlController.clear(); _eventsController.clear(); ref.invalidate(webhooksProvider); } } } catch (e) { setState(() => _isCreating = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error)); } }
+  @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Create Webhook', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Register a webhook endpoint to receive events', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Name *', hintText: 'e.g., github_webhook', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _urlController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'URL *', hintText: 'https://your-domain.com/webhook', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.link_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _eventsController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Events (comma-separated)', hintText: 'task.created,task.completed,agent.spawned', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.event_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isCreating ? null : () { setState(() => _isCreating = true); _create(); }, icon: _isCreating ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.webhook_rounded), label: Text(_isCreating ? 'Creating...' : 'Create Webhook'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonViolet, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
+
+// Docs Screen
+class _DocsScreen extends ConsumerStatefulWidget {
+  const _DocsScreen();
+
+  @override
+  ConsumerState<_DocsScreen> createState() => _DocsScreenState();
+}
+
+class _DocsScreenState extends ConsumerState<_DocsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() { _tabController.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Documentation', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(docsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.list_alt_rounded), text: 'Documents'), Tab(icon: Icon(Icons.add_circle_rounded), text: 'Create')],), body: TabBarView(controller: _tabController, children: [_DocsListTab(), _DocsCreateTab()],),));
+  }
+}
+
+class _DocsListTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(docsProvider); return async.when(data: (data) => data.docs.isEmpty ? _emptyState('No Documents', 'Create your first document', Icons.list_alt_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Documents', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Project documentation and guides', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.docs.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final doc = data.docs[index]; return _DocCard(doc: doc); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading docs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))]),); } }
+
+class _DocCard extends StatelessWidget { final Doc doc; const _DocCard({required this.doc}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: MayaTheme.neonCyan.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(doc.title, style: MayaTheme.titleMedium), Text(doc.category, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]),]),],),]) }
+
+class _DocsCreateTab extends ConsumerStatefulWidget { @override ConsumerState<_DocsCreateTab> createState() => _DocsCreateTabState(); }
+class _DocsCreateTabState extends ConsumerState<_DocsCreateTab> { final _nameController = TextEditingController(); final _titleController = TextEditingController(); final _categoryController = TextEditingController(); final _contentController = TextEditingController(); bool _isCreating = false; @override void dispose() { _nameController.dispose(); _titleController.dispose(); _categoryController.dispose(); _contentController.dispose(); super.dispose(); } Future<void> _create() async { if (_nameController.text.trim().isEmpty || _titleController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Name and title required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isCreating = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.createDoc(name: _nameController.text.trim(), title: _titleController.text.trim(), category: _categoryController.text.trim(), content: _contentController.text.trim()); setState(() => _isCreating = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Doc created: ${result.docId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); _titleController.clear(); _categoryController.clear(); _contentController.clear(); } } } catch (e) { setState(() => _isCreating = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error)); } } @override void dispose() { _nameController.dispose(); _titleController.dispose(); _categoryController.dispose(); _contentController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Create Document', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Create a new documentation page', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Name *', hintText: 'e.g., getting_started', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _titleController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Title *', hintText: 'Document title', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.title_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _categoryController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Category', hintText: 'e.g., guide, reference, tutorial', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.category_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _contentController, style: const TextStyle(color: Colors.white), maxLines: 10, decoration: InputDecoration(labelText: 'Content', hintText: 'Markdown content...', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 100), child: Icon(Icons.description_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isCreating ? null : () { setState(() => _isCreating = true); _create(); }, icon: _isCreating ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.description_rounded), label: Text(_isCreating ? 'Creating...' : 'Create Document'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
+
+// Analytics Screen
+class _AnalyticsScreen extends ConsumerStatefulWidget {
+  const _AnalyticsScreen();
+
+  @override
+  ConsumerState<_AnalyticsScreen> createState() => _AnalyticsScreenState();
+}
+
+class _AnalyticsScreenState extends ConsumerState<_AnalyticsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() { _tabController.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Analytics', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(analyticsSummaryProvider); ref.invalidate(analyticsDailyProvider); ref.invalidate(analyticsProvidersProvider); ref.invalidate(analyticsToolsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, isScrollable: true, tabs: const [Tab(icon: Icon(Icons.dashboard_rounded), text: 'Summary'), Tab(icon: Icon(Icons.calendar_today_rounded), text: 'Daily'), Tab(icon: Icon(Icons.memory_rounded), text: 'Providers'), Tab(icon: Icon(Icons.build_rounded), text: 'Tools')],), body: TabBarView(controller: _tabController, children: [_AnalyticsSummaryTab(), _AnalyticsDailyTab(), _AnalyticsProvidersTab(), _AnalyticsToolsTab()],),));
+  }
+}
+
+class _AnalyticsSummaryTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(analyticsSummaryProvider); return async.when(data: (stats) => SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Analytics Summary', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Overall system analytics', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Row(children: [Expanded(child: _AnalyticsStatCard(label: 'Total Requests', value: stats.totalRequests.toString(), color: MayaTheme.neonCyan, icon: Icons.http_rounded)), const SizedBox(width: 12), Expanded(child: _AnalyticsStatCard(label: 'Total Errors', value: stats.totalErrors.toString(), color: MayaTheme.error, icon: Icons.error_rounded)), const SizedBox(width: 12), Expanded(child: _AnalyticsStatCard(label: 'Avg Latency', value: '${stats.avgLatency.toStringAsFixed(2)}ms', color: MayaTheme.neonEmerald, icon: Icons.speed_rounded)),],), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Health', style: MayaTheme.titleMedium), const SizedBox(height: 12), _HealthBar(label: 'Success Rate', value: stats.totalRequests > 0 ? ((stats.totalRequests - stats.totalErrors) / stats.totalRequests * 100) : 100, color: MayaTheme.neonEmerald), const SizedBox(height: 12), _HealthBar(label: 'Error Rate', value: stats.totalRequests > 0 ? (stats.totalErrors / stats.totalRequests * 100) : 0, color: MayaTheme.error),],),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading summary', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); }
+
+class _AnalyticsDailyTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(analyticsDailyProvider); return async.when(data: (data) => data.points.isEmpty ? _emptyState('No Daily Data', 'Analytics will appear here over time', Icons.calendar_today_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Daily Analytics', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Daily request and error trends', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.points.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final p = data.points[index]; return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(p.date, style: MayaTheme.bodyMedium), Text('${p.requests} requests', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]), Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text(p.errors > 0 ? '${p.errors} errors' : 'No errors', style: MayaTheme.bodyMedium.copyWith(color: p.errors > 0 ? MayaTheme.error : MayaTheme.neonEmerald)), Text('${p.requests} requests', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]),],); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading daily', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); }
+
+class _AnalyticsProvidersTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(analyticsProvidersProvider); return async.when(data: (data) => data.providers.isEmpty ? _emptyState('No Provider Data', 'Provider stats will appear here', Icons.memory_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Provider Analytics', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Per-provider performance metrics', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.providers.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final p = data.providers[index]; return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(p.provider, style: MayaTheme.titleMedium), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: p.errors > 0 ? MayaTheme.error.withValues(alpha: 0.2) : MayaTheme.neonEmerald.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)), child: Text(p.errors > 0 ? '${p.errors} errors' : 'Healthy', style: MayaTheme.labelSmall.copyWith(color: p.errors > 0 ? MayaTheme.error : MayaTheme.neonEmerald))),]), const SizedBox(height: 8), Row(children: [Expanded(child: _ProviderStat(label: 'Requests', value: p.requests.toString(), color: MayaTheme.neonCyan)), const SizedBox(width: 12), Expanded(child: _ProviderStat(label: 'Errors', value: p.errors.toString(), color: p.errors > 0 ? MayaTheme.error : MayaTheme.neonEmerald)), const SizedBox(width: 12), Expanded(child: _ProviderStat(label: 'Avg Latency', value: '${p.avgLatency.toStringAsFixed(2)}ms', color: MayaTheme.neonViolet)),],),],),); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading providers', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
+
+class _ProviderStat extends StatelessWidget { final String label; final String value; final Color color; const _ProviderStat({required this.label, required this.value, required this.color}); @override Widget build(BuildContext context) => Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)), Text(value, style: MayaTheme.bodyMedium.copyWith(color: color, fontWeight: FontWeight.w600))])); }
+
+class _AnalyticsToolsTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(analyticsToolsProvider); return async.when(data: (data) => data.tools.isEmpty ? _emptyState('No Tool Data', 'Tool usage stats will appear here', Icons.build_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Tool Analytics', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Tool usage statistics', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.tools.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final t = data.tools[index]; return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(t.tool, style: MayaTheme.titleMedium), Text('${t.calls} calls', style: MayaTheme.bodySmall.copyWith(color: Colors.white54))]), Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text(t.errors > 0 ? '${t.errors} errors' : 'No errors', style: MayaTheme.bodyMedium.copyWith(color: t.errors > 0 ? MayaTheme.error : MayaTheme.neonEmerald)), Text('Avg: ${t.avgLatency.toStringAsFixed(2)}ms', style: MayaTheme.bodySmall.copyWith(color: Colors.white54))]),],),); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading tools', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
+
+class _AnalyticsStatCard extends StatelessWidget { final String label; final String value; final Color color; final IconData icon; const _AnalyticsStatCard({required this.label, required this.value, required this.color, required this.icon}); @override Widget build(BuildContext context) => Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCardGlow(glowColor: color), child: Column(children: [Icon(icon, color: color, size: 28), const SizedBox(height: 8), Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)), const SizedBox(height: 4), Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54))])); }
+
+// Logs Screen
+class _LogsScreen extends ConsumerStatefulWidget {
+  const _LogsScreen();
+
+  @override
+  ConsumerState<_LogsScreen> createState() => _LogsScreenState();
+}
+
+class _LogsScreenState extends ConsumerState<_LogsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() { _tabController.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Logs', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(logsLLMProvider); ref.invalidate(logsToolsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.smart_toy_rounded), text: 'LLM Logs'), Tab(icon: Icon(Icons.build_rounded), text: 'Tool Logs')],), body: TabBarView(controller: _tabController, children: [_LogsLLMTab(), _LogsToolsTab()],),));
+  }
+}
+
+class _LogsLLMTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(logsLLMProvider); return async.when(data: (data) => data.logs.isEmpty ? _emptyState('No LLM Logs', 'LLM request logs will appear here', Icons.smart_toy_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('LLM Logs', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Recent LLM request/response logs', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.logs.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final log = data.logs[index]; return _LogEntryCard(log: log); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading LLM logs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
+
+class _LogsToolsTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(logsToolsProvider); return async.when(data: (data) => data.logs.isEmpty ? _emptyState('No Tool Logs', 'Tool execution logs will appear here', Icons.build_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Tool Logs', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Recent tool execution logs', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.logs.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final log = data.logs[index]; return _LogEntryCard(log: log); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading tool logs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
+
+class _LogEntryCard extends StatelessWidget { final LogEntry log; const _LogEntryCard({required this.log}); @override Widget build(BuildContext context) { Color levelColor; switch (log.level.toLowerCase()) { case 'error': case 'critical': levelColor = MayaTheme.error; break; case 'warning': levelColor = MayaTheme.neonOrange; break; case 'info': levelColor = MayaTheme.neonCyan; break; default: levelColor = Colors.white54; } return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: levelColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)), child: Text(log.level.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: levelColor))), const Spacer(), Text(log.provider, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]), const SizedBox(height: 8), Text(log.message, style: MayaTheme.bodyMedium.copyWith(color: Colors.white70), maxLines: 3, overflow: TextOverflow.ellipsis), const SizedBox(height: 4), Text(log.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),],) } }
+
+// Plugins Screen
+class _PluginsScreen extends ConsumerStatefulWidget {
+  const _PluginsScreen();
+
+  @override
+  ConsumerState<_PluginsScreen> createState() => _PluginsScreenState();
+}
+
+class _PluginsScreenState extends ConsumerState<_PluginsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() { _tabController.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Plugins', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(pluginsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.extension_rounded), text: 'Installed'), Tab(icon: Icon(Icons.add_circle_rounded), text: 'Install')],), body: TabBarView(controller: _tabController, children: [_PluginsListTab(), _PluginsInstallTab()],),));
+  }
+}
+
+class _PluginsListTab extends ConsumerWidget {
+  @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(pluginsProvider); return async.when(data: (data) => data.plugins.isEmpty ? _emptyState('No Plugins', 'No plugins installed', Icons.extension_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Installed Plugins', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Manage your installed plugins', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.plugins.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final p = data.plugins[index]; return _PluginCard(plugin: p); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading plugins', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
+
+class _PluginCard extends StatelessWidget { final Plugin plugin; const _PluginCard({required this.plugin}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: plugin.enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(plugin.enabled ? Icons.check_circle_rounded : Icons.cancel_rounded, color: plugin.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(plugin.name, style: MayaTheme.titleMedium), Text('v${plugin.version}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54))])), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: plugin.enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: plugin.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange)), child: Text(plugin.enabled ? 'ENABLED' : 'DISABLED', style: MayaTheme.labelSmall.copyWith(color: plugin.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange))),],), const SizedBox(height: 8), Text(plugin.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis), const SizedBox(height: 4), Text('Installed: ${plugin.installedAt.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),]) }
+
+class _PluginsInstallTab extends ConsumerStatefulWidget { @override ConsumerState<_PluginsInstallTab> createState() => _PluginsInstallTabState(); }
+class _PluginsInstallTabState extends ConsumerState<_PluginsInstallTab> { final _nameController = TextEditingController(); bool _isInstalling = false; @override void dispose() { _nameController.dispose(); super.dispose(); } Future<void> _install() async { if (_nameController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Plugin name required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isInstalling = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.installPlugin(_nameController.text.trim()); setState(() => _isInstalling = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Plugin installed: ${result.name}' : 'Failed: ${result.message}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); ref.invalidate(pluginsProvider); } } } catch (e) { setState(() => _isInstalling = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Install failed: $e'), backgroundColor: MayaTheme.error)); } } @override void dispose() { _nameController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Install Plugin', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Install a new plugin by name', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Plugin Name *', hintText: 'e.g., maya-plugin-github', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.extension_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isInstalling ? null : () { setState(() => _isInstalling = true); _install(); }, icon: _isInstalling ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.extension_rounded), label: Text(_isInstalling ? 'Installing...' : 'Install Plugin'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonViolet, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
+
+// Vision Screen
+class _VisionScreen extends ConsumerStatefulWidget {
+  const _VisionScreen();
+
+  @override
+  ConsumerState<_VisionScreen> createState() => _VisionScreenState();
+}
+
+class _VisionScreenState extends ConsumerState<_VisionScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() { _tabController.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Vision AI', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(visionStatsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.image_rounded), text: 'Analyze'), Tab(icon: Icon(Icons.text_fields_rounded), text: 'OCR')],), body: TabBarView(controller: _tabController, children: [_VisionAnalyzeTab(), _VisionOCRTab()],),));
+  }
+}
+
+class _VisionAnalyzeTab extends ConsumerStatefulWidget { @override ConsumerState<_VisionAnalyzeTab> createState() => _VisionAnalyzeTabState(); }
+class _VisionAnalyzeTabState extends ConsumerState<_VisionAnalyzeTab> {
+  final _imagePathController = TextEditingController();
+  VisionAnalyzeResponse? _lastResult;
+  bool _isAnalyzing = false;
+
+  @override void dispose() { _imagePathController.dispose(); super.dispose(); }
+
+  Future<void> _analyze() async {
+    if (_imagePathController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Image path or URL required'), backgroundColor: MayaTheme.error));
+      return;
+    }
+    setState(() => _isAnalyzing = true);
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.analyzeVision({'image_path': _imagePathController.text.trim()});
+      setState(() { _lastResult = result; _isAnalyzing = false; });
+    } catch (e) { setState(() => _isAnalyzing = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error)); }
+  }
+
+  @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Image Analysis', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Analyze an image using AI vision', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _imagePathController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Image Path/URL *', hintText: '/path/to/image.jpg or https://example.com/image.png', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.image_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isAnalyzing ? null : _analyze, icon: _isAnalyzing ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.search_rounded), label: Text(_isAnalyzing ? 'Analyzing...' : 'Analyze Image'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],), const SizedBox(height: 24), if (_lastResult != null) ...[const Text('Analysis Result', style: MayaTheme.titleLarge), const SizedBox(height: 12), Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Description', style: MayaTheme.titleMedium), const SizedBox(height: 8), Text(_lastResult!.description, style: MayaTheme.bodyMedium), const SizedBox(height: 16), const Text('Objects Detected', style: MayaTheme.titleMedium), const SizedBox(height: 8), Wrap(spacing: 8, runSpacing: 8, children: _lastResult!.objects.map((o) => Chip(label: Text(o, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: BorderSide(color: Colors.white12))).toList(),), const SizedBox(height: 16), const Text('Text Extracted', style: MayaTheme.titleMedium), const SizedBox(height: 8), Container(width: double.infinity, padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: SelectableText(_lastResult!.text.isNotEmpty ? _lastResult!.text : 'No text detected', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'))),],),]),],); } }
+
+class _VisionOCRTab extends ConsumerStatefulWidget { @override ConsumerState<_VisionOCRTab> createState() => _VisionOCRTabState(); }
+class _VisionOCRTabState extends ConsumerState<_VisionOCRTab> {
+  final _imagePathController = TextEditingController();
+  VisionOCRResponse? _lastResult;
+  bool _isProcessing = false;
+
+  @override void dispose() { _imagePathController.dispose(); super.dispose(); }
+
+  Future<void> _ocr() async {
+    if (_imagePathController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Image path or URL required'), backgroundColor: MayaTheme.error)); return; }
+    setState(() => _isProcessing = true);
+    try { final apiService = ref.read(apiServiceProvider); final result = await apiService.ocrVision({'image_path': _imagePathController.text.trim()}); setState(() { _lastResult = result; _isProcessing = false; }); } catch (e) { setState(() => _isProcessing = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error)); }
+  }
+
+  @override void dispose() { _imagePathController.dispose(); super.dispose(); }
+
+  @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('OCR (Text Extraction)', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Extract text from an image', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _imagePathController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Image Path/URL *', hintText: '/path/to/image.jpg or https://example.com/image.png', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.image_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isProcessing ? null : _ocr, icon: _isProcessing ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.text_fields_rounded), label: Text(_isProcessing ? 'Processing...' : 'Extract Text'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],), const SizedBox(height: 24), if (_lastResult != null) ...[const Text('Extracted Text', style: MayaTheme.titleLarge), const SizedBox(height: 12), Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: SelectableText(_lastResult!.text.isNotEmpty ? _lastResult!.text : 'No text detected', style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace'))), const SizedBox(height: 16), Row(children: [Expanded(child: _OCRStatCard(label: 'Confidence', value: '${(_lastResult!.confidence * 100).toStringAsFixed(1)}%', color: MayaTheme.neonEmerald)), const SizedBox(width: 12), Expanded(child: _OCRStatCard(label: 'Status', value: _lastResult!.text.isNotEmpty ? 'Success' : 'No Text', color: _lastResult!.text.isNotEmpty ? MayaTheme.neonEmerald : MayaTheme.neonOrange))],),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))]),); } }
+
+class _OCRStatCard extends StatelessWidget { final String label; final String value; final Color color; const _OCRStatCard({required this.label, required this.value, required this.color}); @override Widget build(BuildContext context) { return Expanded(child: Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCardGlow(glowColor: color), child: Column(children: [Icon(Icons.text_fields_rounded, color: color, size: 28), const SizedBox(height: 8), Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)), const SizedBox(height: 4), Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54))])); } }

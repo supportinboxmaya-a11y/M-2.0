@@ -262,16 +262,6 @@ class ApiService {
     return ApprovalsListResponse.fromJson(response.data);
   }
 
-  Future<ApprovalDecideResponse> decideApproval({
-    required String approvalId,
-    required String decision,
-  }) async {
-    final response = await _dio.post(
-      '${AppConfig.approvalsDecide}$approvalId/$decision',
-    );
-    return ApprovalDecideResponse.fromJson(response.data);
-  }
-
   Future<ApprovalModeResponse> getApprovalMode() async {
     final response = await _dio.get(AppConfig.approvalMode);
     return ApprovalModeResponse.fromJson(response.data);
@@ -2166,6 +2156,600 @@ class ApiService {
   }) async {
     final response = await _dio.post('${AppConfig.selfImproveExecute}$proposalId/execute');
     return SelfImproveExecuteResponse.fromJson(response.data);
+  }
+
+  // Income Engine - Scout
+  Future<ScoutScanResponse> scoutScan() async {
+    final response = await _dio.post(AppConfig.scoutScan);
+    return ScoutScanResponse.fromJson(response.data);
+  }
+
+  Future<ScoutScanHistoryResponse> getScoutScanHistory() async {
+    final response = await _dio.get(AppConfig.scoutScanHistory);
+    return ScoutScanHistoryResponse.fromJson(response.data);
+  }
+
+  Future<ScoutSignalsResponse> getScoutSignals() async {
+    final response = await _dio.get(AppConfig.scoutSignals);
+    return ScoutSignalsResponse.fromJson(response.data);
+  }
+
+  Future<ScoutOpportunitiesResponse> getScoutOpportunities() async {
+    final response = await _dio.get(AppConfig.scoutOpportunities);
+    return ScoutOpportunitiesResponse.fromJson(response.data);
+  }
+
+  Future<ScoutOpportunityDetailResponse> getScoutOpportunityDetail(String opportunityId) async {
+    final response = await _dio.get('${AppConfig.scoutOpportunityDetail}$opportunityId');
+    return ScoutOpportunityDetailResponse.fromJson(response.data);
+  }
+
+  Future<ScoutDecisionResponse> decideScoutOpportunity(String opportunityId, String decision) async {
+    final response = await _dio.post('${AppConfig.scoutOpportunityDecision}$opportunityId/decision', data: {'decision': decision});
+    return ScoutDecisionResponse.fromJson(response.data);
+  }
+
+  Future<ScoutDeleteResponse> deleteScoutOpportunity(String opportunityId) async {
+    final response = await _dio.delete('${AppConfig.scoutOpportunityDelete}$opportunityId');
+    return ScoutDeleteResponse.fromJson(response.data);
+  }
+
+  Future<ScoutPreferencesResponse> getScoutPreferences() async {
+    final response = await _dio.get(AppConfig.scoutPreferences);
+    return ScoutPreferencesResponse.fromJson(response.data);
+  }
+
+  Future<ScoutPreferencesResponse> updateScoutPreferences(Map<String, dynamic> prefs) async {
+    final response = await _dio.post(AppConfig.scoutPreferencesPost, data: prefs);
+    return ScoutPreferencesResponse.fromJson(response.data);
+  }
+
+  Future<ScoutDeleteResponse> deleteScoutPreference(String category) async {
+    final response = await _dio.delete('${AppConfig.scoutPreferencesDelete}$category');
+    return ScoutDeleteResponse.fromJson(response.data);
+  }
+
+  Future<ScoutStatsResponse> getScoutStats() async {
+    final response = await _dio.get(AppConfig.scoutStats);
+    return ScoutStatsResponse.fromJson(response.data);
+  }
+
+  // Income Engine - Strategist
+  Future<StrategistReviewResponse> strategistReview() async {
+    final response = await _dio.post(AppConfig.strategistReview);
+    return StrategistReviewResponse.fromJson(response.data);
+  }
+
+  Future<StrategistReviewHistoryResponse> getStrategistReviewHistory() async {
+    final response = await _dio.get(AppConfig.strategistReviewHistory);
+    return StrategistReviewHistoryResponse.fromJson(response.data);
+  }
+
+  Future<StrategistPlansResponse> getStrategistPlans() async {
+    final response = await _dio.get(AppConfig.strategistPlans);
+    return StrategistPlansResponse.fromJson(response.data);
+  }
+
+  Future<StrategistPlanDetailResponse> getStrategistPlanDetail(String planId) async {
+    final response = await _dio.get('${AppConfig.strategistPlanDetail}$planId');
+    return StrategistPlanDetailResponse.fromJson(response.data);
+  }
+
+  Future<StrategistDecisionResponse> approveStrategistPlan(String planId) async {
+    final response = await _dio.post('${AppConfig.strategistApprove}$planId/approve');
+    return StrategistDecisionResponse.fromJson(response.data);
+  }
+
+  Future<StrategistDecisionResponse> rejectStrategistPlan(String planId) async {
+    final response = await _dio.post('${AppConfig.strategistReject}$planId/reject');
+    return StrategistDecisionResponse.fromJson(response.data);
+  }
+
+  Future<StrategistRankedResponse> getStrategistRankedOpportunities() async {
+    final response = await _dio.get(AppConfig.strategistRanked);
+    return StrategistRankedResponse.fromJson(response.data);
+  }
+
+  Future<StrategistConfigResponse> getStrategistConfig() async {
+    final response = await _dio.get(AppConfig.strategistConfig);
+    return StrategistConfigResponse.fromJson(response.data);
+  }
+
+  // Income Engine - Builder
+  Future<BuilderProjectsResponse> getBuilderProjects() async {
+    final response = await _dio.get(AppConfig.builderProjects);
+    return BuilderProjectsResponse.fromJson(response.data);
+  }
+
+  Future<BuilderProjectDetailResponse> getBuilderProjectDetail(String projectId) async {
+    final response = await _dio.get('${AppConfig.builderProjectDetail}$projectId');
+    return BuilderProjectDetailResponse.fromJson(response.data);
+  }
+
+  Future<BuilderStatusResponse> updateBuilderProjectStatus(String projectId, String status) async {
+    final response = await _dio.post('${AppConfig.builderProjectStatus}$projectId/status', data: {'status': status});
+    return BuilderStatusResponse.fromJson(response.data);
+  }
+
+  Future<BuilderStepsResponse> getBuilderProjectSteps(String projectId) async {
+    final response = await _dio.get('${AppConfig.builderProjectSteps}$projectId/steps');
+    return BuilderStepsResponse.fromJson(response.data);
+  }
+
+  Future<BuilderStepExecuteResponse> executeBuilderStep(String projectId, String stepId) async {
+    final response = await _dio.post('${AppConfig.builderStepExecute}$projectId/steps/$stepId/execute');
+    return BuilderStepExecuteResponse.fromJson(response.data);
+  }
+
+  Future<BuilderBuildResponse> buildFromPlan(String planId) async {
+    final response = await _dio.post(AppConfig.builderBuildFromPlan, data: {'plan_id': planId});
+    return BuilderBuildResponse.fromJson(response.data);
+  }
+
+  Future<BuilderStatsResponse> getBuilderStats() async {
+    final response = await _dio.get(AppConfig.builderStats);
+    return BuilderStatsResponse.fromJson(response.data);
+  }
+
+  // Income Engine - Launcher
+  Future<LauncherLaunchesResponse> getLauncherLaunches() async {
+    final response = await _dio.get(AppConfig.launcherLaunches);
+    return LauncherLaunchesResponse.fromJson(response.data);
+  }
+
+  Future<LauncherLaunchDetailResponse> getLauncherLaunchDetail(String launchId) async {
+    final response = await _dio.get('${AppConfig.launcherLaunchDetail}$launchId');
+    return LauncherLaunchDetailResponse.fromJson(response.data);
+  }
+
+  Future<LauncherContentResponse> getLauncherLaunchContent(String launchId) async {
+    final response = await _dio.get('${AppConfig.launcherLaunchContent}$launchId/content');
+    return LauncherContentResponse.fromJson(response.data);
+  }
+
+  Future<LauncherApproveResponse> approveLauncherContent(String launchId, String contentId) async {
+    final response = await _dio.post('${AppConfig.launcherContentApprove}$launchId/content/$contentId/approve');
+    return LauncherApproveResponse.fromJson(response.data);
+  }
+
+  Future<LauncherUpdateResponse> updateLauncherContent(String launchId, String contentId, Map<String, dynamic> updates) async {
+    final response = await _dio.post('${AppConfig.launcherContentUpdate}$launchId/content/$contentId', data: updates);
+    return LauncherUpdateResponse.fromJson(response.data);
+  }
+
+  Future<LauncherConfigResponse> updateLauncherConfig(String launchId, Map<String, dynamic> config) async {
+    final response = await _dio.post('${AppConfig.launcherConfig}$launchId/config', data: config);
+    return LauncherConfigResponse.fromJson(response.data);
+  }
+
+  Future<LauncherStartResponse> startLauncher(String launchId) async {
+    final response = await _dio.post('${AppConfig.launcherStart}$launchId/start');
+    return LauncherStartResponse.fromJson(response.data);
+  }
+
+  Future<LauncherRetryResponse> retryLauncher(String launchId) async {
+    final response = await _dio.post('${AppConfig.launcherRetry}$launchId/retry');
+    return LauncherRetryResponse.fromJson(response.data);
+  }
+
+  Future<LauncherStatsResponse> getLauncherStats() async {
+    final response = await _dio.get(AppConfig.launcherStats);
+    return LauncherStatsResponse.fromJson(response.data);
+  }
+
+  // Income Engine - Growth Portfolio
+  Future<GrowthProposalsResponse> getGrowthProposals() async {
+    final response = await _dio.get(AppConfig.growthProposals);
+    return GrowthProposalsResponse.fromJson(response.data);
+  }
+
+  Future<GrowthProposalDetailResponse> getGrowthProposalDetail(String proposalId) async {
+    final response = await _dio.get('${AppConfig.growthProposalDetail}$proposalId');
+    return GrowthProposalDetailResponse.fromJson(response.data);
+  }
+
+  Future<GrowthDecideResponse> decideGrowthProposal(String proposalId, String decision) async {
+    final response = await _dio.post('${AppConfig.growthDecide}$proposalId/decide', data: {'decision': decision});
+    return GrowthDecideResponse.fromJson(response.data);
+  }
+
+  Future<GrowthMetricsResponse> getGrowthMetrics() async {
+    final response = await _dio.get(AppConfig.growthMetrics);
+    return GrowthMetricsResponse.fromJson(response.data);
+  }
+
+  Future<GrowthMetricsProjectResponse> getGrowthMetricsProject(String projectId) async {
+    final response = await _dio.get('${AppConfig.growthMetricsProject}$projectId');
+    return GrowthMetricsProjectResponse.fromJson(response.data);
+  }
+
+  Future<GrowthRecommendationsResponse> getGrowthRecommendations() async {
+    final response = await _dio.get(AppConfig.growthRecommendations);
+    return GrowthRecommendationsResponse.fromJson(response.data);
+  }
+
+  Future<GrowthReviewResponse> growthPortfolioReview() async {
+    final response = await _dio.post(AppConfig.growthReview);
+    return GrowthReviewResponse.fromJson(response.data);
+  }
+
+  Future<GrowthSummaryResponse> getGrowthSummary() async {
+    final response = await _dio.get(AppConfig.growthSummary);
+    return GrowthSummaryResponse.fromJson(response.data);
+  }
+
+  Future<GrowthActionsResponse> getGrowthActions() async {
+    final response = await _dio.get(AppConfig.growthActions);
+    return GrowthActionsResponse.fromJson(response.data);
+  }
+
+  // Income Engine - Notifications
+  Future<NotifSendResponse> sendNotification(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.notifSend, data: data);
+    return NotifSendResponse.fromJson(response.data);
+  }
+
+  Future<NotifApprovalsListResponse> getApprovalsList() async {
+    final response = await _dio.get(AppConfig.notifApprovalsList);
+    return NotifApprovalsListResponse.fromJson(response.data);
+  }
+
+  Future<NotifApprovalDetailResponse> getApprovalDetail(String approvalId) async {
+    final response = await _dio.get('${AppConfig.notifApprovalDetail}$approvalId');
+    return NotifApprovalDetailResponse.fromJson(response.data);
+  }
+
+  Future<NotifApprovalDecideResponse> decideApproval(String approvalId, String decision) async {
+    final response = await _dio.post('${AppConfig.notifApprovalDecide}$approvalId/decide', data: {'decision': decision});
+    return NotifApprovalDecideResponse.fromJson(response.data);
+  }
+
+  Future<NotifDigestResponse> sendDailyDigest() async {
+    final response = await _dio.post(AppConfig.notifDigest);
+    return NotifDigestResponse.fromJson(response.data);
+  }
+
+  Future<NotifAlertResponse> sendBuilderAlert(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.notifBuilderAlert, data: data);
+    return NotifAlertResponse.fromJson(response.data);
+  }
+
+  Future<NotifAlertResponse> sendLaunchReadyAlert(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.notifLaunchAlert, data: data);
+    return NotifAlertResponse.fromJson(response.data);
+  }
+
+  Future<NotifAlertResponse> sendErrorAlert(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.notifErrorAlert, data: data);
+    return NotifAlertResponse.fromJson(response.data);
+  }
+
+  Future<NotifTemplatesResponse> getNotificationTemplates() async {
+    final response = await _dio.get(AppConfig.notifTemplates);
+    return NotifTemplatesResponse.fromJson(response.data);
+  }
+
+  Future<NotifTemplateResponse> createNotificationTemplate(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.notifTemplatesPost, data: data);
+    return NotifTemplateResponse.fromJson(response.data);
+  }
+
+  Future<NotifDeleteResponse> deleteNotificationTemplate(String name) async {
+    final response = await _dio.delete('${AppConfig.notifTemplatesDelete}$name');
+    return NotifDeleteResponse.fromJson(response.data);
+  }
+
+  Future<NotifChannelsResponse> getNotificationChannels() async {
+    final response = await _dio.get(AppConfig.notifChannels);
+    return NotifChannelsResponse.fromJson(response.data);
+  }
+
+  Future<NotifStatsResponse> getNotificationStats() async {
+    final response = await _dio.get(AppConfig.notifStats);
+    return NotifStatsResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Task Management
+  Future<ExtStatusResponse> getExtendedStatus() async {
+    final response = await _dio.get(AppConfig.extTaskStatus);
+    return ExtStatusResponse.fromJson(response.data);
+  }
+
+  Future<ExtHealthResponse> getExtendedHealth() async {
+    final response = await _dio.get(AppConfig.extTaskHealth);
+    return ExtHealthResponse.fromJson(response.data);
+  }
+
+  Future<ExtTaskCreateResponse> createExtendedTask(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extTasksCreate, data: data);
+    return ExtTaskCreateResponse.fromJson(response.data);
+  }
+
+  Future<ExtTaskDetailResponse> getExtendedTaskDetail(String taskId) async {
+    final response = await _dio.get('${AppConfig.extTaskDetail}$taskId');
+    return ExtTaskDetailResponse.fromJson(response.data);
+  }
+
+  Future<ExtInterruptResponse> interruptExtendedTask(String taskId) async {
+    final response = await _dio.post('${AppConfig.extTaskInterrupt}$taskId/interrupt');
+    return ExtInterruptResponse.fromJson(response.data);
+  }
+
+  Future<ExtCancelResponse> cancelExtendedTask(String taskId) async {
+    final response = await _dio.post('${AppConfig.extTaskCancel}$taskId/cancel');
+    return ExtCancelResponse.fromJson(response.data);
+  }
+
+  Future<ExtTasksListResponse> listExtendedTasks() async {
+    final response = await _dio.get(AppConfig.extTasksList);
+    return ExtTasksListResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Proactive Jobs
+  Future<ProactiveJobsResponse> listProactiveJobs() async {
+    final response = await _dio.get(AppConfig.proactiveJobsList);
+    return ProactiveJobsResponse.fromJson(response.data);
+  }
+
+  Future<ProactiveJobCreateResponse> createProactiveJob(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.proactiveJobsCreate, data: data);
+    return ProactiveJobCreateResponse.fromJson(response.data);
+  }
+
+  Future<ProactiveDeleteResponse> deleteProactiveJob(String jobId) async {
+    final response = await _dio.delete('${AppConfig.proactiveJobDelete}$jobId');
+    return ProactiveDeleteResponse.fromJson(response.data);
+  }
+
+  Future<ProactiveRunResponse> runProactiveJob(String jobId) async {
+    final response = await _dio.post('${AppConfig.proactiveJobRun}$jobId/run');
+    return ProactiveRunResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Memory Preferences
+  Future<ExtMemPrefsResponse> setMemoryPreference(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extMemPrefs, data: data);
+    return ExtMemPrefsResponse.fromJson(response.data);
+  }
+
+  Future<ExtMemPrefDetailResponse> getMemoryPreference(String userId, String key) async {
+    final response = await _dio.get('${AppConfig.extMemPrefDetail}$userId/$key');
+    return ExtMemPrefDetailResponse.fromJson(response.data);
+  }
+
+  Future<ExtMemPrefsListResponse> listMemoryPreferences(String userId) async {
+    final response = await _dio.get('${AppConfig.extMemPrefsList}$userId');
+    return ExtMemPrefsListResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Memory Facts
+  Future<ExtMemFactsResponse> addMemoryFact(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extMemFacts, data: data);
+    return ExtMemFactsResponse.fromJson(response.data);
+  }
+
+  Future<ExtMemFactsListResponse> listMemoryFacts(String userId) async {
+    final response = await _dio.get('${AppConfig.extMemFactsList}$userId');
+    return ExtMemFactsListResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Projects
+  Future<ExtMemProjectsResponse> addMemoryProject(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extMemProjects, data: data);
+    return ExtMemProjectsResponse.fromJson(response.data);
+  }
+
+  Future<ExtMemProjectDetailResponse> getMemoryProject(String projectId) async {
+    final response = await _dio.get('${AppConfig.extMemProjectDetail}$projectId');
+    return ExtMemProjectDetailResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Memory Context
+  Future<ExtMemContextResponse> getMemoryContext(Map<String, dynamic> query) async {
+    final response = await _dio.get(AppConfig.extMemContext, queryParameters: query);
+    return ExtMemContextResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Interruptions
+  Future<ExtInterruptionsResponse> getInterruptions() async {
+    final response = await _dio.get(AppConfig.extInterruptions);
+    return ExtInterruptionsResponse.fromJson(response.data);
+  }
+
+  Future<ExtInterruptResponse> postInterruption(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extInterrupt, data: data);
+    return ExtInterruptResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Voice Commands
+  Future<ExtVoiceCommandResponse> executeVoiceCommand(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extVoiceCommand, data: data);
+    return ExtVoiceCommandResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Extended Tools
+  Future<ExtToolsResponse> getExtendedTools() async {
+    final response = await _dio.get(AppConfig.extTools);
+    return ExtToolsResponse.fromJson(response.data);
+  }
+
+  // Extended Agent - Config
+  Future<ExtConfigResponse> getExtendedConfig() async {
+    final response = await _dio.get(AppConfig.extConfigGet);
+    return ExtConfigResponse.fromJson(response.data);
+  }
+
+  Future<ExtConfigResponse> updateExtendedConfig(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.extConfigPost, data: data);
+    return ExtConfigResponse.fromJson(response.data);
+  }
+
+  // Capabilities
+  Future<CapabilitiesListResponse> getCapabilities() async {
+    final response = await _dio.get(AppConfig.capabilitiesList);
+    return CapabilitiesListResponse.fromJson(response.data);
+  }
+
+  Future<CapabilitiesSearchResponse> searchCapabilities(String query) async {
+    final response = await _dio.get(AppConfig.capabilitiesSearch, queryParameters: {'q': query});
+    return CapabilitiesSearchResponse.fromJson(response.data);
+  }
+
+  Future<CapabilitiesStatsResponse> getCapabilitiesStats() async {
+    final response = await _dio.get(AppConfig.capabilitiesStats);
+    return CapabilitiesStatsResponse.fromJson(response.data);
+  }
+
+  Future<CapabilityDetailResponse> getCapabilityDetail(String capId) async {
+    final response = await _dio.get('${AppConfig.capabilityDetail}$capId');
+    return CapabilityDetailResponse.fromJson(response.data);
+  }
+
+  Future<CapabilityVerifyResponse> verifyCapability(String capId) async {
+    final response = await _dio.post('${AppConfig.capabilityVerify}$capId/verify');
+    return CapabilityVerifyResponse.fromJson(response.data);
+  }
+
+  Future<CapabilityComposableResponse> getCapabilityComposable(String capId) async {
+    final response = await _dio.get('${AppConfig.capabilityComposable}$capId/composable');
+    return CapabilityComposableResponse.fromJson(response.data);
+  }
+
+  Future<CapabilityRelationsResponse> getCapabilityRelations(String capId) async {
+    final response = await _dio.get('${AppConfig.capabilityRelationsGet}$capId/relations');
+    return CapabilityRelationsResponse.fromJson(response.data);
+  }
+
+  Future<CapabilityRelationsResponse> addCapabilityRelation(String capId, Map<String, dynamic> data) async {
+    final response = await _dio.post('${AppConfig.capabilityRelationsPost}$capId/relations', data: data);
+    return CapabilityRelationsResponse.fromJson(response.data);
+  }
+
+  // Webhooks
+  Future<WebhooksListResponse> getWebhooks() async {
+    final response = await _dio.get(AppConfig.webhooksList);
+    return WebhooksListResponse.fromJson(response.data);
+  }
+
+  Future<WebhookCreateResponse> createWebhook(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.webhooksCreate, data: data);
+    return WebhookCreateResponse.fromJson(response.data);
+  }
+
+  Future<WebhookUpdateResponse> updateWebhook(String webhookId, Map<String, dynamic> data) async {
+    final response = await _dio.patch('${AppConfig.webhooksUpdate}$webhookId', data: data);
+    return WebhookUpdateResponse.fromJson(response.data);
+  }
+
+  Future<WebhookDeleteResponse> deleteWebhook(String webhookId) async {
+    final response = await _dio.delete('${AppConfig.webhooksDelete}$webhookId');
+    return WebhookDeleteResponse.fromJson(response.data);
+  }
+
+  // Docs
+  Future<DocsListResponse> getDocs() async {
+    final response = await _dio.get(AppConfig.docsList);
+    return DocsListResponse.fromJson(response.data);
+  }
+
+  Future<DocsDetailResponse> getDocDetail(String name) async {
+    final response = await _dio.get('${AppConfig.docsDetail}$name');
+    return DocsDetailResponse.fromJson(response.data);
+  }
+
+  // Projects & Schedules
+  Future<ProjectsListResponse> getProjects() async {
+    final response = await _dio.get(AppConfig.projectsList);
+    return ProjectsListResponse.fromJson(response.data);
+  }
+
+  Future<ProjectCreateResponse> createProject(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.projectsCreate, data: data);
+    return ProjectCreateResponse.fromJson(response.data);
+  }
+
+  Future<ProjectProgressResponse> getProjectProgress(String scheduleId) async {
+    final response = await _dio.get('${AppConfig.projectsProgress}$scheduleId/progress');
+    return ProjectProgressResponse.fromJson(response.data);
+  }
+
+  Future<ProjectDeleteResponse> deleteProject(String scheduleId) async {
+    final response = await _dio.delete('${AppConfig.projectsDelete}$scheduleId');
+    return ProjectDeleteResponse.fromJson(response.data);
+  }
+
+  Future<SchedulesListResponse> getSchedules() async {
+    final response = await _dio.get(AppConfig.schedulesList);
+    return SchedulesListResponse.fromJson(response.data);
+  }
+
+  Future<ScheduleCreateResponse> createSchedule(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.schedulesCreate, data: data);
+    return ScheduleCreateResponse.fromJson(response.data);
+  }
+
+  Future<ScheduleUpdateResponse> updateSchedule(String scheduleId, Map<String, dynamic> data) async {
+    final response = await _dio.patch('${AppConfig.schedulesUpdate}$scheduleId', data: data);
+    return ScheduleUpdateResponse.fromJson(response.data);
+  }
+
+  Future<ScheduleEnabledResponse> setScheduleEnabled(String scheduleId, bool enabled) async {
+    final response = await _dio.post('${AppConfig.schedulesEnabled}$scheduleId/enabled', data: {'enabled': enabled});
+    return ScheduleEnabledResponse.fromJson(response.data);
+  }
+
+  // Analytics
+  Future<AnalyticsSummaryResponse> getAnalyticsSummary() async {
+    final response = await _dio.get(AppConfig.analyticsSummary);
+    return AnalyticsSummaryResponse.fromJson(response.data);
+  }
+
+  Future<AnalyticsDailyResponse> getAnalyticsDaily() async {
+    final response = await _dio.get(AppConfig.analyticsDaily);
+    return AnalyticsDailyResponse.fromJson(response.data);
+  }
+
+  Future<AnalyticsProvidersResponse> getAnalyticsProviders() async {
+    final response = await _dio.get(AppConfig.analyticsProviders);
+    return AnalyticsProvidersResponse.fromJson(response.data);
+  }
+
+  Future<AnalyticsToolsResponse> getAnalyticsTools() async {
+    final response = await _dio.get(AppConfig.analyticsTools);
+    return AnalyticsToolsResponse.fromJson(response.data);
+  }
+
+  // Logs
+  Future<LogsLLMResponse> getLLMLogs() async {
+    final response = await _dio.get(AppConfig.logsLLM);
+    return LogsLLMResponse.fromJson(response.data);
+  }
+
+  Future<LogsToolsResponse> getToolLogs() async {
+    final response = await _dio.get(AppConfig.logsTools);
+    return LogsToolsResponse.fromJson(response.data);
+  }
+
+  // Plugins
+  Future<PluginsListResponse> getPlugins() async {
+    final response = await _dio.get(AppConfig.pluginsList);
+    return PluginsListResponse.fromJson(response.data);
+  }
+
+  Future<PluginInstallResponse> installPlugin(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.pluginsInstall, data: data);
+    return PluginInstallResponse.fromJson(response.data);
+  }
+
+  // Vision
+  Future<VisionAnalyzeResponse> analyzeVision(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.visionAnalyze, data: data);
+    return VisionAnalyzeResponse.fromJson(response.data);
+  }
+
+  Future<VisionOCRResponse> ocrVision(Map<String, dynamic> data) async {
+    final response = await _dio.post(AppConfig.visionOCR, data: data);
+    return VisionOCRResponse.fromJson(response.data);
   }
 
   // Working Memory
@@ -4067,6 +4651,1845 @@ class Belief {
       _$BeliefFromJson(json);
 
   Map<String, dynamic> toJson() => _$BeliefToJson(this);
+}
+
+// Income Engine - Scout Models
+@freezed
+class ScoutScanResponse with _$ScoutScanResponse {
+  const factory ScoutScanResponse({
+    required String scanId,
+    required int signalsFound,
+    required int opportunitiesCreated,
+  }) = _ScoutScanResponse;
+
+  factory ScoutScanResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutScanResponseFromJson(json);
+}
+
+@freezed
+class ScoutScanHistoryResponse with _$ScoutScanHistoryResponse {
+  const factory ScoutScanHistoryResponse({
+    required List<ScoutScanRecord> scans,
+  }) = _ScoutScanHistoryResponse;
+
+  factory ScoutScanHistoryResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutScanHistoryResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ScoutScanRecord {
+  final String scanId;
+  final int signals;
+  final int opportunities;
+  final DateTime timestamp;
+  final String status;
+
+  const ScoutScanRecord({
+    required this.scanId,
+    required this.signals,
+    required this.opportunities,
+    required this.timestamp,
+    required this.status,
+  });
+
+  factory ScoutScanRecord.fromJson(Map<String, dynamic> json) =>
+      _$ScoutScanRecordFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ScoutScanRecordToJson(this);
+}
+
+@freezed
+class ScoutSignalsResponse with _$ScoutSignalsResponse {
+  const factory ScoutSignalsResponse({
+    required List<ScoutSignal> signals,
+  }) = _ScoutSignalsResponse;
+
+  factory ScoutSignalsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutSignalsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ScoutSignal {
+  final String id;
+  final String source;
+  final String title;
+  final String summary;
+  final double score;
+  final DateTime timestamp;
+
+  const ScoutSignal({
+    required this.id,
+    required this.source,
+    required this.title,
+    required this.summary,
+    required this.score,
+    required this.timestamp,
+  });
+
+  factory ScoutSignal.fromJson(Map<String, dynamic> json) =>
+      _$ScoutSignalFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ScoutSignalToJson(this);
+}
+
+@freezed
+class ScoutOpportunitiesResponse with _$ScoutOpportunitiesResponse {
+  const factory ScoutOpportunitiesResponse({
+    required List<ScoutOpportunity> opportunities,
+  }) = _ScoutOpportunitiesResponse;
+
+  factory ScoutOpportunitiesResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutOpportunitiesResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ScoutOpportunity {
+  final String id;
+  final String title;
+  final String description;
+  final String source;
+  final double score;
+  final String status;
+  final DateTime createdAt;
+
+  const ScoutOpportunity({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.source,
+    required this.score,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory ScoutOpportunity.fromJson(Map<String, dynamic> json) =>
+      _$ScoutOpportunityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ScoutOpportunityToJson(this);
+}
+
+@freezed
+class ScoutOpportunityDetailResponse with _$ScoutOpportunityDetailResponse {
+  const factory ScoutOpportunityDetailResponse({
+    required ScoutOpportunity opportunity,
+    required List<ScoutSignal> relatedSignals,
+  }) = _ScoutOpportunityDetailResponse;
+
+  factory ScoutOpportunityDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutOpportunityDetailResponseFromJson(json);
+}
+
+@freezed
+class ScoutDecisionResponse with _$ScoutDecisionResponse {
+  const factory ScoutDecisionResponse({
+    required bool success,
+    String? message,
+  }) = _ScoutDecisionResponse;
+
+  factory ScoutDecisionResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutDecisionResponseFromJson(json);
+}
+
+@freezed
+class ScoutDeleteResponse with _$ScoutDeleteResponse {
+  const factory ScoutDeleteResponse({
+    required bool success,
+    String? message,
+  }) = _ScoutDeleteResponse;
+
+  factory ScoutDeleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutDeleteResponseFromJson(json);
+}
+
+@freezed
+class ScoutPreferencesResponse with _$ScoutPreferencesResponse {
+  const factory ScoutPreferencesResponse({
+    required Map<String, dynamic> preferences,
+  }) = _ScoutPreferencesResponse;
+
+  factory ScoutPreferencesResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutPreferencesResponseFromJson(json);
+}
+
+@freezed
+class ScoutStatsResponse with _$ScoutStatsResponse {
+  const factory ScoutStatsResponse({
+    required int totalScans,
+    required int totalSignals,
+    required int totalOpportunities,
+    required double avgScore,
+  }) = _ScoutStatsResponse;
+
+  factory ScoutStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScoutStatsResponseFromJson(json);
+}
+
+// Income Engine - Strategist Models
+@freezed
+class StrategistReviewResponse with _$StrategistReviewResponse {
+  const factory StrategistReviewResponse({
+    required String reviewId,
+    required int opportunitiesReviewed,
+    required int plansCreated,
+  }) = _StrategistReviewResponse;
+
+  factory StrategistReviewResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistReviewResponseFromJson(json);
+}
+
+@freezed
+class StrategistReviewHistoryResponse with _$StrategistReviewHistoryResponse {
+  const factory StrategistReviewHistoryResponse({
+    required List<StrategistReviewRecord> reviews,
+  }) = _StrategistReviewHistoryResponse;
+
+  factory StrategistReviewHistoryResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistReviewHistoryResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrategistReviewRecord {
+  final String reviewId;
+  final int opportunitiesReviewed;
+  final int plansCreated;
+  final DateTime timestamp;
+
+  const StrategistReviewRecord({
+    required this.reviewId,
+    required this.opportunitiesReviewed,
+    required this.plansCreated,
+    required this.timestamp,
+  });
+
+  factory StrategistReviewRecord.fromJson(Map<String, dynamic> json) =>
+      _$StrategistReviewRecordFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StrategistReviewRecordToJson(this);
+}
+
+@freezed
+class StrategistPlansResponse with _$StrategistPlansResponse {
+  const factory StrategistPlansResponse({
+    required List<StrategistPlan> plans,
+  }) = _StrategistPlansResponse;
+
+  factory StrategistPlansResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistPlansResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrategistPlan {
+  final String id;
+  final String title;
+  final String description;
+  final String opportunityId;
+  final String status;
+  final DateTime createdAt;
+
+  const StrategistPlan({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.opportunityId,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory StrategistPlan.fromJson(Map<String, dynamic> json) =>
+      _$StrategistPlanFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StrategistPlanToJson(this);
+}
+
+@freezed
+class StrategistPlanDetailResponse with _$StrategistPlanDetailResponse {
+  const factory StrategistPlanDetailResponse({
+    required StrategistPlan plan,
+    required List<String> steps,
+  }) = _StrategistPlanDetailResponse;
+
+  factory StrategistPlanDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistPlanDetailResponseFromJson(json);
+}
+
+@freezed
+class StrategistDecisionResponse with _$StrategistDecisionResponse {
+  const factory StrategistDecisionResponse({
+    required bool success,
+    String? message,
+  }) = _StrategistDecisionResponse;
+
+  factory StrategistDecisionResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistDecisionResponseFromJson(json);
+}
+
+@freezed
+class StrategistRankedResponse with _$StrategistRankedResponse {
+  const factory StrategistRankedResponse({
+    required List<StrategistRankedOpportunity> opportunities,
+  }) = _StrategistRankedResponse;
+
+  factory StrategistRankedResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistRankedResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrategistRankedOpportunity {
+  final String id;
+  final String title;
+  final double score;
+  final String reason;
+
+  const StrategistRankedOpportunity({
+    required this.id,
+    required this.title,
+    required this.score,
+    required this.reason,
+  });
+
+  factory StrategistRankedOpportunity.fromJson(Map<String, dynamic> json) =>
+      _$StrategistRankedOpportunityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StrategistRankedOpportunityToJson(this);
+}
+
+@freezed
+class StrategistConfigResponse with _$StrategistConfigResponse {
+  const factory StrategistConfigResponse({
+    required Map<String, dynamic> config,
+  }) = _StrategistConfigResponse;
+
+  factory StrategistConfigResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrategistConfigResponseFromJson(json);
+}
+
+// Income Engine - Builder Models
+@freezed
+class BuilderProjectsResponse with _$BuilderProjectsResponse {
+  const factory BuilderProjectsResponse({
+    required List<BuilderProject> projects,
+  }) = _BuilderProjectsResponse;
+
+  factory BuilderProjectsResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderProjectsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class BuilderProject {
+  final String id;
+  final String name;
+  final String description;
+  final String planId;
+  final String status;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+
+  const BuilderProject({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.planId,
+    required this.status,
+    required this.createdAt,
+    this.updatedAt,
+  });
+
+  factory BuilderProject.fromJson(Map<String, dynamic> json) =>
+      _$BuilderProjectFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BuilderProjectToJson(this);
+}
+
+@freezed
+class BuilderProjectDetailResponse with _$BuilderProjectDetailResponse {
+  const factory BuilderProjectDetailResponse({
+    required BuilderProject project,
+    required List<BuilderStep> steps,
+  }) = _BuilderProjectDetailResponse;
+
+  factory BuilderProjectDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderProjectDetailResponseFromJson(json);
+}
+
+@JsonSerializable()
+class BuilderStep {
+  final String id;
+  final String title;
+  final String description;
+  final String status;
+  final int order;
+
+  const BuilderStep({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.order,
+  });
+
+  factory BuilderStep.fromJson(Map<String, dynamic> json) =>
+      _$BuilderStepFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BuilderStepToJson(this);
+}
+
+@freezed
+class BuilderStatusResponse with _$BuilderStatusResponse {
+  const factory BuilderStatusResponse({
+    required bool success,
+    String? message,
+  }) = _BuilderStatusResponse;
+
+  factory BuilderStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderStatusResponseFromJson(json);
+}
+
+@freezed
+class BuilderStepsResponse with _$BuilderStepsResponse {
+  const factory BuilderStepsResponse({
+    required List<BuilderStep> steps,
+  }) = _BuilderStepsResponse;
+
+  factory BuilderStepsResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderStepsResponseFromJson(json);
+}
+
+@freezed
+class BuilderStepExecuteResponse with _$BuilderStepExecuteResponse {
+  const factory BuilderStepExecuteResponse({
+    required bool success,
+    String? message,
+    String? output,
+  }) = _BuilderStepExecuteResponse;
+
+  factory BuilderStepExecuteResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderStepExecuteResponseFromJson(json);
+}
+
+@freezed
+class BuilderBuildResponse with _$BuilderBuildResponse {
+  const factory BuilderBuildResponse({
+    required String projectId,
+    required bool success,
+    String? message,
+  }) = _BuilderBuildResponse;
+
+  factory BuilderBuildResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderBuildResponseFromJson(json);
+}
+
+@freezed
+class BuilderStatsResponse with _$BuilderStatsResponse {
+  const factory BuilderStatsResponse({
+    required int totalProjects,
+    required int completedProjects,
+    required int activeProjects,
+    required int totalStepsExecuted,
+  }) = _BuilderStatsResponse;
+
+  factory BuilderStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$BuilderStatsResponseFromJson(json);
+}
+
+// Income Engine - Launcher Models
+@freezed
+class LauncherLaunchesResponse with _$LauncherLaunchesResponse {
+  const factory LauncherLaunchesResponse({
+    required List<LauncherLaunch> launches,
+  }) = _LauncherLaunchesResponse;
+
+  factory LauncherLaunchesResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherLaunchesResponseFromJson(json);
+}
+
+@JsonSerializable()
+class LauncherLaunch {
+  final String id;
+  final String name;
+  final String status;
+  final String projectId;
+  final DateTime createdAt;
+  final DateTime? launchedAt;
+
+  const LauncherLaunch({
+    required this.id,
+    required this.name,
+    required this.status,
+    required this.projectId,
+    required this.createdAt,
+    this.launchedAt,
+  });
+
+  factory LauncherLaunch.fromJson(Map<String, dynamic> json) =>
+      _$LauncherLaunchFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LauncherLaunchToJson(this);
+}
+
+@freezed
+class LauncherLaunchDetailResponse with _$LauncherLaunchDetailResponse {
+  const factory LauncherLaunchDetailResponse({
+    required LauncherLaunch launch,
+    required List<LauncherContent> content,
+  }) = _LauncherLaunchDetailResponse;
+
+  factory LauncherLaunchDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherLaunchDetailResponseFromJson(json);
+}
+
+@JsonSerializable()
+class LauncherContent {
+  final String id;
+  final String title;
+  final String type;
+  final String status;
+  final String content;
+
+  const LauncherContent({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.status,
+    required this.content,
+  });
+
+  factory LauncherContent.fromJson(Map<String, dynamic> json) =>
+      _$LauncherContentFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LauncherContentToJson(this);
+}
+
+@freezed
+class LauncherContentResponse with _$LauncherContentResponse {
+  const factory LauncherContentResponse({
+    required List<LauncherContent> content,
+  }) = _LauncherContentResponse;
+
+  factory LauncherContentResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherContentResponseFromJson(json);
+}
+
+@freezed
+class LauncherApproveResponse with _$LauncherApproveResponse {
+  const factory LauncherApproveResponse({
+    required bool success,
+    String? message,
+  }) = _LauncherApproveResponse;
+
+  factory LauncherApproveResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherApproveResponseFromJson(json);
+}
+
+@freezed
+class LauncherUpdateResponse with _$LauncherUpdateResponse {
+  const factory LauncherUpdateResponse({
+    required bool success,
+    String? message,
+  }) = _LauncherUpdateResponse;
+
+  factory LauncherUpdateResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherUpdateResponseFromJson(json);
+}
+
+@freezed
+class LauncherConfigResponse with _$LauncherConfigResponse {
+  const factory LauncherConfigResponse({
+    required bool success,
+    String? message,
+  }) = _LauncherConfigResponse;
+
+  factory LauncherConfigResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherConfigResponseFromJson(json);
+}
+
+@freezed
+class LauncherStartResponse with _$LauncherStartResponse {
+  const factory LauncherStartResponse({
+    required bool success,
+    String? message,
+  }) = _LauncherStartResponse;
+
+  factory LauncherStartResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherStartResponseFromJson(json);
+}
+
+@freezed
+class LauncherRetryResponse with _$LauncherRetryResponse {
+  const factory LauncherRetryResponse({
+    required bool success,
+    String? message,
+  }) = _LauncherRetryResponse;
+
+  factory LauncherRetryResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherRetryResponseFromJson(json);
+}
+
+@freezed
+class LauncherStatsResponse with _$LauncherStatsResponse {
+  const factory LauncherStatsResponse({
+    required int totalLaunches,
+    required int successfulLaunches,
+    required int failedLaunches,
+    required int pendingLaunches,
+  }) = _LauncherStatsResponse;
+
+  factory LauncherStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$LauncherStatsResponseFromJson(json);
+}
+
+// Income Engine - Growth Portfolio Models
+@freezed
+class GrowthProposalsResponse with _$GrowthProposalsResponse {
+  const factory GrowthProposalsResponse({
+    required List<GrowthProposal> proposals,
+  }) = _GrowthProposalsResponse;
+
+  factory GrowthProposalsResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthProposalsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class GrowthProposal {
+  final String id;
+  final String title;
+  final String description;
+  final String projectId;
+  final String status;
+  final double estimatedImpact;
+  final DateTime createdAt;
+
+  const GrowthProposal({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.projectId,
+    required this.status,
+    required this.estimatedImpact,
+    required this.createdAt,
+  });
+
+  factory GrowthProposal.fromJson(Map<String, dynamic> json) =>
+      _$GrowthProposalFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GrowthProposalToJson(this);
+}
+
+@freezed
+class GrowthProposalDetailResponse with _$GrowthProposalDetailResponse {
+  const factory GrowthProposalDetailResponse({
+    required GrowthProposal proposal,
+    required Map<String, dynamic> metrics,
+  }) = _GrowthProposalDetailResponse;
+
+  factory GrowthProposalDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthProposalDetailResponseFromJson(json);
+}
+
+@freezed
+class GrowthDecideResponse with _$GrowthDecideResponse {
+  const factory GrowthDecideResponse({
+    required bool success,
+    String? message,
+  }) = _GrowthDecideResponse;
+
+  factory GrowthDecideResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthDecideResponseFromJson(json);
+}
+
+@freezed
+class GrowthMetricsResponse with _$GrowthMetricsResponse {
+  const factory GrowthMetricsResponse({
+    required List<GrowthMetric> metrics,
+  }) = _GrowthMetricsResponse;
+
+  factory GrowthMetricsResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthMetricsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class GrowthMetric {
+  final String projectId;
+  final String metricName;
+  final double value;
+  final DateTime timestamp;
+
+  const GrowthMetric({
+    required this.projectId,
+    required this.metricName,
+    required this.value,
+    required this.timestamp,
+  });
+
+  factory GrowthMetric.fromJson(Map<String, dynamic> json) =>
+      _$GrowthMetricFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GrowthMetricToJson(this);
+}
+
+@freezed
+class GrowthMetricsProjectResponse with _$GrowthMetricsProjectResponse {
+  const factory GrowthMetricsProjectResponse({
+    required List<GrowthMetric> metrics,
+  }) = _GrowthMetricsProjectResponse;
+
+  factory GrowthMetricsProjectResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthMetricsProjectResponseFromJson(json);
+}
+
+@freezed
+class GrowthRecommendationsResponse with _$GrowthRecommendationsResponse {
+  const factory GrowthRecommendationsResponse({
+    required List<GrowthRecommendation> recommendations,
+  }) = _GrowthRecommendationsResponse;
+
+  factory GrowthRecommendationsResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthRecommendationsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class GrowthRecommendation {
+  final String projectId;
+  final String recommendation;
+  final double priority;
+
+  const GrowthRecommendation({
+    required this.projectId,
+    required this.recommendation,
+    required this.priority,
+  });
+
+  factory GrowthRecommendation.fromJson(Map<String, dynamic> json) =>
+      _$GrowthRecommendationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GrowthRecommendationToJson(this);
+}
+
+@freezed
+class GrowthReviewResponse with _$GrowthReviewResponse {
+  const factory GrowthReviewResponse({
+    required bool success,
+    String? message,
+    String? report,
+  }) = _GrowthReviewResponse;
+
+  factory GrowthReviewResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthReviewResponseFromJson(json);
+}
+
+@freezed
+class GrowthSummaryResponse with _$GrowthSummaryResponse {
+  const factory GrowthSummaryResponse({
+    required int totalProposals,
+    required int approvedProposals,
+    required double totalEstimatedImpact,
+  }) = _GrowthSummaryResponse;
+
+  factory GrowthSummaryResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthSummaryResponseFromJson(json);
+}
+
+@freezed
+class GrowthActionsResponse with _$GrowthActionsResponse {
+  const factory GrowthActionsResponse({
+    required List<GrowthAction> actions,
+  }) = _GrowthActionsResponse;
+
+  factory GrowthActionsResponse.fromJson(Map<String, dynamic> json) =>
+      _$GrowthActionsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class GrowthAction {
+  final String id;
+  final String projectId;
+  final String action;
+  final DateTime timestamp;
+  final String userId;
+
+  const GrowthAction({
+    required this.id,
+    required this.projectId,
+    required this.action,
+    required this.timestamp,
+    required this.userId,
+  });
+
+  factory GrowthAction.fromJson(Map<String, dynamic> json) =>
+      _$GrowthActionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GrowthActionToJson(this);
+}
+
+// Income Engine - Notifications Models
+@freezed
+class NotifSendResponse with _$NotifSendResponse {
+  const factory NotifSendResponse({
+    required bool success,
+    String? message,
+  }) = _NotifSendResponse;
+
+  factory NotifSendResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifSendResponseFromJson(json);
+}
+
+@freezed
+class NotifApprovalRequestResponse with _$NotifApprovalRequestResponse {
+  const factory NotifApprovalRequestResponse({
+    required String approvalId,
+    required bool success,
+  }) = _NotifApprovalRequestResponse;
+
+  factory NotifApprovalRequestResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifApprovalRequestResponseFromJson(json);
+}
+
+@freezed
+class NotifApprovalsListResponse with _$NotifApprovalsListResponse {
+  const factory NotifApprovalsListResponse({
+    required List<NotifApproval> approvals,
+  }) = _NotifApprovalsListResponse;
+
+  factory NotifApprovalsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifApprovalsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class NotifApproval {
+  final String id;
+  final String title;
+  final String description;
+  final String status;
+  final String channel;
+  final DateTime createdAt;
+
+  const NotifApproval({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.channel,
+    required this.createdAt,
+  });
+
+  factory NotifApproval.fromJson(Map<String, dynamic> json) =>
+      _$NotifApprovalFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NotifApprovalToJson(this);
+}
+
+@freezed
+class NotifApprovalDetailResponse with _$NotifApprovalDetailResponse {
+  const factory NotifApprovalDetailResponse({
+    required NotifApproval approval,
+    required List<String> history,
+  }) = _NotifApprovalDetailResponse;
+
+  factory NotifApprovalDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifApprovalDetailResponseFromJson(json);
+}
+
+@freezed
+class NotifApprovalDecideResponse with _$NotifApprovalDecideResponse {
+  const factory NotifApprovalDecideResponse({
+    required bool success,
+    String? message,
+  }) = _NotifApprovalDecideResponse;
+
+  factory NotifApprovalDecideResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifApprovalDecideResponseFromJson(json);
+}
+
+@freezed
+class NotifDigestResponse with _$NotifDigestResponse {
+  const factory NotifDigestResponse({
+    required bool success,
+    String? message,
+  }) = _NotifDigestResponse;
+
+  factory NotifDigestResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifDigestResponseFromJson(json);
+}
+
+@freezed
+class NotifAlertResponse with _$NotifAlertResponse {
+  const factory NotifAlertResponse({
+    required bool success,
+    String? message,
+  }) = _NotifAlertResponse;
+
+  factory NotifAlertResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifAlertResponseFromJson(json);
+}
+
+@freezed
+class NotifTemplatesResponse with _$NotifTemplatesResponse {
+  const factory NotifTemplatesResponse({
+    required List<NotifTemplate> templates,
+  }) = _NotifTemplatesResponse;
+
+  factory NotifTemplatesResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifTemplatesResponseFromJson(json);
+}
+
+@JsonSerializable()
+class NotifTemplate {
+  final String name;
+  final String subject;
+  final String body;
+  final String channel;
+
+  const NotifTemplate({
+    required this.name,
+    required this.subject,
+    required this.body,
+    required this.channel,
+  });
+
+  factory NotifTemplate.fromJson(Map<String, dynamic> json) =>
+      _$NotifTemplateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NotifTemplateToJson(this);
+}
+
+@freezed
+class NotifTemplateResponse with _$NotifTemplateResponse {
+  const factory NotifTemplateResponse({
+    required bool success,
+    String? message,
+  }) = _NotifTemplateResponse;
+
+  factory NotifTemplateResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifTemplateResponseFromJson(json);
+}
+
+@freezed
+class NotifDeleteResponse with _$NotifDeleteResponse {
+  const factory NotifDeleteResponse({
+    required bool success,
+    String? message,
+  }) = _NotifDeleteResponse;
+
+  factory NotifDeleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifDeleteResponseFromJson(json);
+}
+
+@freezed
+class NotifChannelsResponse with _$NotifChannelsResponse {
+  const factory NotifChannelsResponse({
+    required List<String> channels,
+  }) = _NotifChannelsResponse;
+
+  factory NotifChannelsResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifChannelsResponseFromJson(json);
+}
+
+@freezed
+class NotifStatsResponse with _$NotifStatsResponse {
+  const factory NotifStatsResponse({
+    required int totalSent,
+    required int totalFailed,
+    required int totalPending,
+  }) = _NotifStatsResponse;
+
+  factory NotifStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotifStatsResponseFromJson(json);
+}
+
+// Extended Agent - Task Management Models
+@freezed
+class ExtStatusResponse with _$ExtStatusResponse {
+  const factory ExtStatusResponse({
+    required bool running,
+    required int activeTasks,
+    required int queuedTasks,
+  }) = _ExtStatusResponse;
+
+  factory ExtStatusResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtStatusResponseFromJson(json);
+}
+
+@freezed
+class ExtHealthResponse with _$ExtHealthResponse {
+  const factory ExtHealthResponse({
+    required bool healthy,
+    String? message,
+  }) = _ExtHealthResponse;
+
+  factory ExtHealthResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtHealthResponseFromJson(json);
+}
+
+@freezed
+class ExtTaskCreateResponse with _$ExtTaskCreateResponse {
+  const factory ExtTaskCreateResponse({
+    required String taskId,
+    required bool success,
+  }) = _ExtTaskCreateResponse;
+
+  factory ExtTaskCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtTaskCreateResponseFromJson(json);
+}
+
+@freezed
+class ExtTaskDetailResponse with _$ExtTaskDetailResponse {
+  const factory ExtTaskDetailResponse({
+    required String taskId,
+    required String status,
+    String? result,
+    String? error,
+  }) = _ExtTaskDetailResponse;
+
+  factory ExtTaskDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtTaskDetailResponseFromJson(json);
+}
+
+@freezed
+class ExtInterruptResponse with _$ExtInterruptResponse {
+  const factory ExtInterruptResponse({
+    required bool success,
+    String? message,
+  }) = _ExtInterruptResponse;
+
+  factory ExtInterruptResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtInterruptResponseFromJson(json);
+}
+
+@freezed
+class ExtCancelResponse with _$ExtCancelResponse {
+  const factory ExtCancelResponse({
+    required bool success,
+    String? message,
+  }) = _ExtCancelResponse;
+
+  factory ExtCancelResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtCancelResponseFromJson(json);
+}
+
+@freezed
+class ExtTasksListResponse with _$ExtTasksListResponse {
+  const factory ExtTasksListResponse({
+    required List<ExtTask> tasks,
+  }) = _ExtTasksListResponse;
+
+  factory ExtTasksListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtTasksListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ExtTask {
+  final String id;
+  final String description;
+  final String status;
+  final DateTime createdAt;
+
+  const ExtTask({
+    required this.id,
+    required this.description,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory ExtTask.fromJson(Map<String, dynamic> json) =>
+      _$ExtTaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExtTaskToJson(this);
+}
+
+// Extended Agent - Proactive Jobs Models
+@freezed
+class ProactiveJobsResponse with _$ProactiveJobsResponse {
+  const factory ProactiveJobsResponse({
+    required List<ProactiveJob> jobs,
+  }) = _ProactiveJobsResponse;
+
+  factory ProactiveJobsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProactiveJobsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ProactiveJob {
+  final String id;
+  final String name;
+  final String description;
+  final String cron;
+  final bool enabled;
+  final DateTime createdAt;
+
+  const ProactiveJob({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.cron,
+    required this.enabled,
+    required this.createdAt,
+  });
+
+  factory ProactiveJob.fromJson(Map<String, dynamic> json) =>
+      _$ProactiveJobFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProactiveJobToJson(this);
+}
+
+@freezed
+class ProactiveJobCreateResponse with _$ProactiveJobCreateResponse {
+  const factory ProactiveJobCreateResponse({
+    required String jobId,
+    required bool success,
+  }) = _ProactiveJobCreateResponse;
+
+  factory ProactiveJobCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProactiveJobCreateResponseFromJson(json);
+}
+
+@freezed
+class ProactiveDeleteResponse with _$ProactiveDeleteResponse {
+  const factory ProactiveDeleteResponse({
+    required bool success,
+    String? message,
+  }) = _ProactiveDeleteResponse;
+
+  factory ProactiveDeleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProactiveDeleteResponseFromJson(json);
+}
+
+@freezed
+class ProactiveRunResponse with _$ProactiveRunResponse {
+  const factory ProactiveRunResponse({
+    required bool success,
+    String? message,
+  }) = _ProactiveRunResponse;
+
+  factory ProactiveRunResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProactiveRunResponseFromJson(json);
+}
+
+// Extended Agent - Memory Preferences Models
+@freezed
+class ExtMemPrefsResponse with _$ExtMemPrefsResponse {
+  const factory ExtMemPrefsResponse({
+    required bool success,
+    String? message,
+  }) = _ExtMemPrefsResponse;
+
+  factory ExtMemPrefsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemPrefsResponseFromJson(json);
+}
+
+@freezed
+class ExtMemPrefDetailResponse with _$ExtMemPrefDetailResponse {
+  const factory ExtMemPrefDetailResponse({
+    required String key,
+    required String value,
+  }) = _ExtMemPrefDetailResponse;
+
+  factory ExtMemPrefDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemPrefDetailResponseFromJson(json);
+}
+
+@freezed
+class ExtMemPrefsListResponse with _$ExtMemPrefsListResponse {
+  const factory ExtMemPrefsListResponse({
+    required Map<String, String> preferences,
+  }) = _ExtMemPrefsListResponse;
+
+  factory ExtMemPrefsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemPrefsListResponseFromJson(json);
+}
+
+// Extended Agent - Memory Facts Models
+@freezed
+class ExtMemFactsResponse with _$ExtMemFactsResponse {
+  const factory ExtMemFactsResponse({
+    required String factId,
+    required bool success,
+  }) = _ExtMemFactsResponse;
+
+  factory ExtMemFactsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemFactsResponseFromJson(json);
+}
+
+@freezed
+class ExtMemFactsListResponse with _$ExtMemFactsListResponse {
+  const factory ExtMemFactsListResponse({
+    required List<ExtMemFact> facts,
+  }) = _ExtMemFactsListResponse;
+
+  factory ExtMemFactsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemFactsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ExtMemFact {
+  final String id;
+  final String fact;
+  final String source;
+  final DateTime createdAt;
+
+  const ExtMemFact({
+    required this.id,
+    required this.fact,
+    required this.source,
+    required this.createdAt,
+  });
+
+  factory ExtMemFact.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemFactFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExtMemFactToJson(this);
+}
+
+// Extended Agent - Projects Models
+@freezed
+class ExtMemProjectsResponse with _$ExtMemProjectsResponse {
+  const factory ExtMemProjectsResponse({
+    required String projectId,
+    required bool success,
+  }) = _ExtMemProjectsResponse;
+
+  factory ExtMemProjectsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemProjectsResponseFromJson(json);
+}
+
+@freezed
+class ExtMemProjectDetailResponse with _$ExtMemProjectDetailResponse {
+  const factory ExtMemProjectDetailResponse({
+    required String projectId,
+    required String name,
+    required String description,
+  }) = _ExtMemProjectDetailResponse;
+
+  factory ExtMemProjectDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemProjectDetailResponseFromJson(json);
+}
+
+// Extended Agent - Memory Context Models
+@freezed
+class ExtMemContextResponse with _$ExtMemContextResponse {
+  const factory ExtMemContextResponse({
+    required String context,
+  }) = _ExtMemContextResponse;
+
+  factory ExtMemContextResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtMemContextResponseFromJson(json);
+}
+
+// Extended Agent - Interruptions Models
+@freezed
+class ExtInterruptionsResponse with _$ExtInterruptionsResponse {
+  const factory ExtInterruptionsResponse({
+    required List<ExtInterruption> interruptions,
+  }) = _ExtInterruptionsResponse;
+
+  factory ExtInterruptionsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtInterruptionsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class ExtInterruption {
+  final String id;
+  final String reason;
+  final DateTime timestamp;
+
+  const ExtInterruption({
+    required this.id,
+    required this.reason,
+    required this.timestamp,
+  });
+
+  factory ExtInterruption.fromJson(Map<String, dynamic> json) =>
+      _$ExtInterruptionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExtInterruptionToJson(this);
+}
+
+// Extended Agent - Voice Commands Models
+@freezed
+class ExtVoiceCommandResponse with _$ExtVoiceCommandResponse {
+  const factory ExtVoiceCommandResponse({
+    required bool success,
+    String? result,
+  }) = _ExtVoiceCommandResponse;
+
+  factory ExtVoiceCommandResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtVoiceCommandResponseFromJson(json);
+}
+
+// Extended Agent - Extended Tools Models
+@freezed
+class ExtToolsResponse with _$ExtToolsResponse {
+  const factory ExtToolsResponse({
+    required List<String> tools,
+  }) = _ExtToolsResponse;
+
+  factory ExtToolsResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtToolsResponseFromJson(json);
+}
+
+// Extended Agent - Config Models
+@freezed
+class ExtConfigResponse with _$ExtConfigResponse {
+  const factory ExtConfigResponse({
+    required Map<String, dynamic> config,
+  }) = _ExtConfigResponse;
+
+  factory ExtConfigResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExtConfigResponseFromJson(json);
+}
+
+// Capabilities Models
+@freezed
+class CapabilitiesListResponse with _$CapabilitiesListResponse {
+  const factory CapabilitiesListResponse({
+    required List<Capability> capabilities,
+  }) = _CapabilitiesListResponse;
+
+  factory CapabilitiesListResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilitiesListResponseFromJson(json);
+}
+
+@freezed
+class CapabilitiesSearchResponse with _$CapabilitiesSearchResponse {
+  const factory CapabilitiesSearchResponse({
+    required List<Capability> capabilities,
+  }) = _CapabilitiesSearchResponse;
+
+  factory CapabilitiesSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilitiesSearchResponseFromJson(json);
+}
+
+@freezed
+class CapabilitiesStatsResponse with _$CapabilitiesStatsResponse {
+  const factory CapabilitiesStatsResponse({
+    required int totalCapabilities,
+    required int verifiedCapabilities,
+    required int totalUsages,
+  }) = _CapabilitiesStatsResponse;
+
+  factory CapabilitiesStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilitiesStatsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Capability {
+  final String id;
+  final String name;
+  final String description;
+  final bool verified;
+  final int usageCount;
+  final double successRate;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+
+  const Capability({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.verified,
+    required this.usageCount,
+    required this.successRate,
+    required this.createdAt,
+    this.updatedAt,
+  });
+
+  factory Capability.fromJson(Map<String, dynamic> json) =>
+      _$CapabilityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CapabilityToJson(this);
+}
+
+@freezed
+class CapabilityDetailResponse with _$CapabilityDetailResponse {
+  const factory CapabilityDetailResponse({
+    required Capability capability,
+    required List<Capability> composableWith,
+    required List<Capability> relations,
+  }) = _CapabilityDetailResponse;
+
+  factory CapabilityDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilityDetailResponseFromJson(json);
+}
+
+@freezed
+class CapabilityVerifyResponse with _$CapabilityVerifyResponse {
+  const factory CapabilityVerifyResponse({
+    required bool success,
+    String? message,
+  }) = _CapabilityVerifyResponse;
+
+  factory CapabilityVerifyResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilityVerifyResponseFromJson(json);
+}
+
+@freezed
+class CapabilityComposableResponse with _$CapabilityComposableResponse {
+  const factory CapabilityComposableResponse({
+    required List<Capability> composable,
+  }) = _CapabilityComposableResponse;
+
+  factory CapabilityComposableResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilityComposableResponseFromJson(json);
+}
+
+@freezed
+class CapabilityRelationsResponse with _$CapabilityRelationsResponse {
+  const factory CapabilityRelationsResponse({
+    required List<Capability> relations,
+  }) = _CapabilityRelationsResponse;
+
+  factory CapabilityRelationsResponse.fromJson(Map<String, dynamic> json) =>
+      _$CapabilityRelationsResponseFromJson(json);
+}
+
+// Webhooks Models
+@freezed
+class WebhooksListResponse with _$WebhooksListResponse {
+  const factory WebhooksListResponse({
+    required List<Webhook> webhooks,
+  }) = _WebhooksListResponse;
+
+  factory WebhooksListResponse.fromJson(Map<String, dynamic> json) =>
+      _$WebhooksListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Webhook {
+  final String id;
+  final String name;
+  final String url;
+  final List<String> events;
+  final bool active;
+  final DateTime createdAt;
+
+  const Webhook({
+    required this.id,
+    required this.name,
+    required this.url,
+    required this.events,
+    required this.active,
+    required this.createdAt,
+  });
+
+  factory Webhook.fromJson(Map<String, dynamic> json) =>
+      _$WebhookFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WebhookToJson(this);
+}
+
+@freezed
+class WebhookCreateResponse with _$WebhookCreateResponse {
+  const factory WebhookCreateResponse({
+    required String id,
+    required bool success,
+  }) = _WebhookCreateResponse;
+
+  factory WebhookCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$WebhookCreateResponseFromJson(json);
+}
+
+@freezed
+class WebhookUpdateResponse with _$WebhookUpdateResponse {
+  const factory WebhookUpdateResponse({
+    required bool success,
+    String? message,
+  }) = _WebhookUpdateResponse;
+
+  factory WebhookUpdateResponse.fromJson(Map<String, dynamic> json) =>
+      _$WebhookUpdateResponseFromJson(json);
+}
+
+@freezed
+class WebhookDeleteResponse with _$WebhookDeleteResponse {
+  const factory WebhookDeleteResponse({
+    required bool success,
+    String? message,
+  }) = _WebhookDeleteResponse;
+
+  factory WebhookDeleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$WebhookDeleteResponseFromJson(json);
+}
+
+// Docs Models
+@freezed
+class DocsListResponse with _$DocsListResponse {
+  const factory DocsListResponse({
+    required List<Doc> docs,
+  }) = _DocsListResponse;
+
+  factory DocsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$DocsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Doc {
+  final String name;
+  final String title;
+  final String category;
+
+  const Doc({
+    required this.name,
+    required this.title,
+    required this.category,
+  });
+
+  factory Doc.fromJson(Map<String, dynamic> json) =>
+      _$DocFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DocToJson(this);
+}
+
+@freezed
+class DocsDetailResponse with _$DocsDetailResponse {
+  const factory DocsDetailResponse({
+    required String name,
+    required String content,
+  }) = _DocsDetailResponse;
+
+  factory DocsDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$DocsDetailResponseFromJson(json);
+}
+
+// Projects & Schedules Models
+@freezed
+class ProjectsListResponse with _$ProjectsListResponse {
+  const factory ProjectsListResponse({
+    required List<Project> projects,
+  }) = _ProjectsListResponse;
+
+  factory ProjectsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProjectsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Project {
+  final String id;
+  final String name;
+  final String description;
+  final String status;
+  final DateTime createdAt;
+
+  const Project({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory Project.fromJson(Map<String, dynamic> json) =>
+      _$ProjectFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProjectToJson(this);
+}
+
+@freezed
+class ProjectCreateResponse with _$ProjectCreateResponse {
+  const factory ProjectCreateResponse({
+    required String projectId,
+    required bool success,
+  }) = _ProjectCreateResponse;
+
+  factory ProjectCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProjectCreateResponseFromJson(json);
+}
+
+@freezed
+class ProjectProgressResponse with _$ProjectProgressResponse {
+  const factory ProjectProgressResponse({
+    required String projectId,
+    required double progress,
+    required String status,
+  }) = _ProjectProgressResponse;
+
+  factory ProjectProgressResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProjectProgressResponseFromJson(json);
+}
+
+@freezed
+class ProjectDeleteResponse with _$ProjectDeleteResponse {
+  const factory ProjectDeleteResponse({
+    required bool success,
+    String? message,
+  }) = _ProjectDeleteResponse;
+
+  factory ProjectDeleteResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProjectDeleteResponseFromJson(json);
+}
+
+@freezed
+class SchedulesListResponse with _$SchedulesListResponse {
+  const factory SchedulesListResponse({
+    required List<Schedule> schedules,
+  }) = _SchedulesListResponse;
+
+  factory SchedulesListResponse.fromJson(Map<String, dynamic> json) =>
+      _$SchedulesListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Schedule {
+  final String id;
+  final String name;
+  final String cron;
+  final bool enabled;
+  final DateTime createdAt;
+
+  const Schedule({
+    required this.id,
+    required this.name,
+    required this.cron,
+    required this.enabled,
+    required this.createdAt,
+  });
+
+  factory Schedule.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ScheduleToJson(this);
+}
+
+@freezed
+class ScheduleCreateResponse with _$ScheduleCreateResponse {
+  const factory ScheduleCreateResponse({
+    required String scheduleId,
+    required bool success,
+  }) = _ScheduleCreateResponse;
+
+  factory ScheduleCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleCreateResponseFromJson(json);
+}
+
+@freezed
+class ScheduleUpdateResponse with _$ScheduleUpdateResponse {
+  const factory ScheduleUpdateResponse({
+    required bool success,
+    String? message,
+  }) = _ScheduleUpdateResponse;
+
+  factory ScheduleUpdateResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleUpdateResponseFromJson(json);
+}
+
+@freezed
+class ScheduleEnabledResponse with _$ScheduleEnabledResponse {
+  const factory ScheduleEnabledResponse({
+    required bool success,
+    String? message,
+  }) = _ScheduleEnabledResponse;
+
+  factory ScheduleEnabledResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleEnabledResponseFromJson(json);
+}
+
+// Analytics Models
+@freezed
+class AnalyticsSummaryResponse with _$AnalyticsSummaryResponse {
+  const factory AnalyticsSummaryResponse({
+    required int totalRequests,
+    required int totalErrors,
+    required double avgLatency,
+  }) = _AnalyticsSummaryResponse;
+
+  factory AnalyticsSummaryResponse.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsSummaryResponseFromJson(json);
+}
+
+@freezed
+class AnalyticsDailyResponse with _$AnalyticsDailyResponse {
+  const factory AnalyticsDailyResponse({
+    required List<AnalyticsDailyPoint> points,
+  }) = _AnalyticsDailyResponse;
+
+  factory AnalyticsDailyResponse.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsDailyResponseFromJson(json);
+}
+
+@JsonSerializable()
+class AnalyticsDailyPoint {
+  final String date;
+  final int requests;
+  final int errors;
+
+  const AnalyticsDailyPoint({
+    required this.date,
+    required this.requests,
+    required this.errors,
+  });
+
+  factory AnalyticsDailyPoint.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsDailyPointFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnalyticsDailyPointToJson(this);
+}
+
+@freezed
+class AnalyticsProvidersResponse with _$AnalyticsProvidersResponse {
+  const factory AnalyticsProvidersResponse({
+    required List<AnalyticsProviderStat> providers,
+  }) = _AnalyticsProvidersResponse;
+
+  factory AnalyticsProvidersResponse.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsProvidersResponseFromJson(json);
+}
+
+@JsonSerializable()
+class AnalyticsProviderStat {
+  final String provider;
+  final int requests;
+  final int errors;
+  final double avgLatency;
+
+  const AnalyticsProviderStat({
+    required this.provider,
+    required this.requests,
+    required this.errors,
+    required this.avgLatency,
+  });
+
+  factory AnalyticsProviderStat.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsProviderStatFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnalyticsProviderStatToJson(this);
+}
+
+@freezed
+class AnalyticsToolsResponse with _$AnalyticsToolsResponse {
+  const factory AnalyticsToolsResponse({
+    required List<AnalyticsToolStat> tools,
+  }) = _AnalyticsToolsResponse;
+
+  factory AnalyticsToolsResponse.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsToolsResponseFromJson(json);
+}
+
+@JsonSerializable()
+class AnalyticsToolStat {
+  final String tool;
+  final int calls;
+  final int errors;
+  final double avgLatency;
+
+  const AnalyticsToolStat({
+    required this.tool,
+    required this.calls,
+    required this.errors,
+    required this.avgLatency,
+  });
+
+  factory AnalyticsToolStat.fromJson(Map<String, dynamic> json) =>
+      _$AnalyticsToolStatFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnalyticsToolStatToJson(this);
+}
+
+// Logs Models
+@freezed
+class LogsLLMResponse with _$LogsLLMResponse {
+  const factory LogsLLMResponse({
+    required List<LogEntry> logs,
+  }) = _LogsLLMResponse;
+
+  factory LogsLLMResponse.fromJson(Map<String, dynamic> json) =>
+      _$LogsLLMResponseFromJson(json);
+}
+
+@JsonSerializable()
+class LogEntry {
+  final String id;
+  final String level;
+  final String message;
+  final String provider;
+  final DateTime timestamp;
+
+  const LogEntry({
+    required this.id,
+    required this.level,
+    required this.message,
+    required this.provider,
+    required this.timestamp,
+  });
+
+  factory LogEntry.fromJson(Map<String, dynamic> json) =>
+      _$LogEntryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LogEntryToJson(this);
+}
+
+@freezed
+class LogsToolsResponse with _$LogsToolsResponse {
+  const factory LogsToolsResponse({
+    required List<LogEntry> logs,
+  }) = _LogsToolsResponse;
+
+  factory LogsToolsResponse.fromJson(Map<String, dynamic> json) =>
+      _$LogsToolsResponseFromJson(json);
+}
+
+// Plugins Models
+@freezed
+class PluginsListResponse with _$PluginsListResponse {
+  const factory PluginsListResponse({
+    required List<Plugin> plugins,
+  }) = _PluginsListResponse;
+
+  factory PluginsListResponse.fromJson(Map<String, dynamic> json) =>
+      _$PluginsListResponseFromJson(json);
+}
+
+@JsonSerializable()
+class Plugin {
+  final String name;
+  final String version;
+  final String description;
+  final bool enabled;
+  final DateTime installedAt;
+
+  const Plugin({
+    required this.name,
+    required this.version,
+    required this.description,
+    required this.enabled,
+    required this.installedAt,
+  });
+
+  factory Plugin.fromJson(Map<String, dynamic> json) =>
+      _$PluginFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PluginToJson(this);
+}
+
+@freezed
+class PluginInstallResponse with _$PluginInstallResponse {
+  const factory PluginInstallResponse({
+    required bool success,
+    String? message,
+  }) = _PluginInstallResponse;
+
+  factory PluginInstallResponse.fromJson(Map<String, dynamic> json) =>
+      _$PluginInstallResponseFromJson(json);
+}
+
+// Vision Models
+@freezed
+class VisionAnalyzeResponse with _$VisionAnalyzeResponse {
+  const factory VisionAnalyzeResponse({
+    required String description,
+    required List<String> objects,
+    required List<String> text,
+  }) = _VisionAnalyzeResponse;
+
+  factory VisionAnalyzeResponse.fromJson(Map<String, dynamic> json) =>
+      _$VisionAnalyzeResponseFromJson(json);
+}
+
+@freezed
+class VisionOCRResponse with _$VisionOCRResponse {
+  const factory VisionOCRResponse({
+    required String text,
+    required double confidence,
+  }) = _VisionOCRResponse;
+
+  factory VisionOCRResponse.fromJson(Map<String, dynamic> json) =>
+      _$VisionOCRResponseFromJson(json);
 }
 
 // Working Memory Models

@@ -494,8 +494,8 @@ class VoiceCommandExecutor {
       final decision = action.contains('approve') || action.contains('accept') ? 'approve' : 'reject';
 
       await apiService.decideApproval(
-        approvalId: targetApproval.id,
-        decision: decision,
+        targetApproval.id,
+        decision,
       );
 
       return VoiceCommandResult(

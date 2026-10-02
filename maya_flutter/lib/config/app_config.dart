@@ -329,6 +329,157 @@ class AppConfig {
   static const String emailToolRun = '/api/v1/communication/email';
   static const String webhookToolRun = '/api/v1/communication/webhook';
 
+  // Income Engine (Phase 20/30)
+  // Scout
+  static const String scoutScan = '/api/v1/income/scout/scan';
+  static const String scoutScanHistory = '/api/v1/income/scout/scan/history';
+  static const String scoutSignals = '/api/v1/income/scout/signals';
+  static const String scoutOpportunities = '/api/v1/income/scout/opportunities';
+  static const String scoutOpportunityDetail = '/api/v1/income/scout/opportunities/';
+  static const String scoutOpportunityDecision = '/api/v1/income/scout/opportunities/';
+  static const String scoutOpportunityDelete = '/api/v1/income/scout/opportunities/';
+  static const String scoutPreferences = '/api/v1/income/scout/preferences';
+  static const String scoutPreferencesPost = '/api/v1/income/scout/preferences';
+  static const String scoutPreferencesDelete = '/api/v1/income/scout/preferences/';
+  static const String scoutStats = '/api/v1/income/scout/stats';
+  // Strategist
+  static const String strategistReview = '/api/v1/income/strategist/review';
+  static const String strategistReviewHistory = '/api/v1/income/strategist/review/history';
+  static const String strategistPlans = '/api/v1/income/strategist/plans';
+  static const String strategistPlanDetail = '/api/v1/income/strategist/plans/';
+  static const String strategistApprove = '/api/v1/income/strategist/plans/';
+  static const String strategistReject = '/api/v1/income/strategist/plans/';
+  static const String strategistRanked = '/api/v1/income/strategist/ranked-opportunities';
+  static const String strategistConfig = '/api/v1/income/strategist/config';
+  // Builder
+  static const String builderProjects = '/api/v1/income/builder/projects';
+  static const String builderProjectDetail = '/api/v1/income/builder/projects/';
+  static const String builderProjectStatus = '/api/v1/income/builder/projects/';
+  static const String builderProjectSteps = '/api/v1/income/builder/projects/';
+  static const String builderStepExecute = '/api/v1/income/builder/projects/';
+  static const String builderBuildFromPlan = '/api/v1/income/builder/build-from-plan';
+  static const String builderStats = '/api/v1/income/builder/stats';
+  // Launcher
+  static const String launcherLaunches = '/api/v1/income/launcher/launches';
+  static const String launcherLaunchDetail = '/api/v1/income/launcher/launches/';
+  static const String launcherLaunchContent = '/api/v1/income/launcher/launches/';
+  static const String launcherContentApprove = '/api/v1/income/launcher/content/approve';
+  static const String launcherContentUpdate = '/api/v1/income/launcher/content/update';
+  static const String launcherConfig = '/api/v1/income/launcher/launches/';
+  static const String launcherStart = '/api/v1/income/launcher/launches/';
+  static const String launcherRetry = '/api/v1/income/launcher/launches/';
+  static const String launcherStats = '/api/v1/income/launcher/stats';
+  // Growth Portfolio
+  static const String growthProposals = '/api/v1/income/growth/proposals';
+  static const String growthProposalDetail = '/api/v1/income/growth/proposals/';
+  static const String growthDecide = '/api/v1/income/growth/proposals/';
+  static const String growthMetrics = '/api/v1/income/growth/metrics';
+  static const String growthMetricsProject = '/api/v1/income/growth/metrics/';
+  static const String growthRecommendations = '/api/v1/income/growth/portfolio/recommendations';
+  static const String growthReview = '/api/v1/income/growth/portfolio/review';
+  static const String growthSummary = '/api/v1/income/growth/portfolio/summary';
+  static const String growthActions = '/api/v1/income/growth/actions/log';
+  // Notifications
+  static const String notifSend = '/api/v1/income/notifications/send';
+  static const String notifApprovalsRequest = '/api/v1/income/notifications/approvals/request';
+  static const String notifApprovalsList = '/api/v1/income/notifications/approvals';
+  static const String notifApprovalDetail = '/api/v1/income/notifications/approvals/';
+  static const String notifApprovalDecide = '/api/v1/income/notifications/approvals/';
+  static const String notifDigest = '/api/v1/income/notifications/digest/daily';
+  static const String notifBuilderAlert = '/api/v1/income/notifications/alerts/builder';
+  static const String notifLaunchAlert = '/api/v1/income/notifications/alerts/launch-ready';
+  static const String notifErrorAlert = '/api/v1/income/notifications/alerts/error';
+  static const String notifTemplates = '/api/v1/income/notifications/templates';
+  static const String notifTemplatesPost = '/api/v1/income/notifications/templates';
+  static const String notifTemplatesDelete = '/api/v1/income/notifications/templates/';
+  static const String notifChannels = '/api/v1/income/notifications/channels';
+  static const String notifStats = '/api/v1/income/notifications/stats';
+
+  // Extended Agent (Phase 17+)
+  // Task Management
+  static const String extTaskStatus = '/api/v1/extended/status';
+  static const String extTaskHealth = '/api/v1/extended/health';
+  static const String extTasksCreate = '/api/v1/extended/tasks';
+  static const String extTaskDetail = '/api/v1/extended/tasks/';
+  static const String extTaskInterrupt = '/api/v1/extended/tasks/';
+  static const String extTaskCancel = '/api/v1/extended/tasks/';
+  static const String extTasksList = '/api/v1/extended/tasks';
+  // Proactive Jobs
+  static const String proactiveJobsList = '/api/v1/extended/proactive/jobs';
+  static const String proactiveJobsCreate = '/api/v1/extended/proactive/jobs';
+  static const String proactiveJobDelete = '/api/v1/extended/proactive/jobs/';
+  static const String proactiveJobRun = '/api/v1/extended/proactive/jobs/';
+  // Memory Preferences
+  static const String extMemPrefs = '/api/v1/extended/memory/preferences';
+  static const String extMemPrefDetail = '/api/v1/extended/memory/preferences/';
+  static const String extMemPrefsList = '/api/v1/extended/memory/preferences/';
+  // Memory Facts
+  static const String extMemFacts = '/api/v1/extended/memory/facts';
+  static const String extMemFactsList = '/api/v1/extended/memory/facts/';
+  // Projects
+  static const String extMemProjects = '/api/v1/extended/memory/projects';
+  static const String extMemProjectDetail = '/api/v1/extended/memory/projects/';
+  // Memory Context
+  static const String extMemContext = '/api/v1/extended/memory/context';
+  // Interruptions
+  static const String extInterruptions = '/api/v1/extended/interruptions';
+  static const String extInterrupt = '/api/v1/extended/interrupt';
+  // Voice Commands
+  static const String extVoiceCommand = '/api/v1/extended/voice/command';
+  // Extended Tools
+  static const String extTools = '/api/v1/extended/tools/extended';
+  // Config
+  static const String extConfigGet = '/api/v1/extended/config';
+  static const String extConfigPost = '/api/v1/extended/config';
+
+  // Capabilities
+  static const String capabilitiesList = '/api/v1/capabilities';
+  static const String capabilitiesSearch = '/api/v1/capabilities/search';
+  static const String capabilitiesStats = '/api/v1/capabilities/stats';
+  static const String capabilityDetail = '/api/v1/capabilities/';
+  static const String capabilityVerify = '/api/v1/capabilities/';
+  static const String capabilityComposable = '/api/v1/capabilities/';
+  static const String capabilityRelationsGet = '/api/v1/capabilities/';
+  static const String capabilityRelationsPost = '/api/v1/capabilities/';
+
+  // Webhooks
+  static const String webhooksList = '/api/v1/webhooks';
+  static const String webhooksCreate = '/api/v1/webhooks';
+  static const String webhooksUpdate = '/api/v1/webhooks/';
+  static const String webhooksDelete = '/api/v1/webhooks/';
+
+  // Docs
+  static const String docsList = '/api/v1/docs';
+  static const String docsDetail = '/api/v1/docs/';
+
+  // Analytics
+  static const String analyticsSummary = '/api/v1/analytics/summary';
+  static const String analyticsDaily = '/api/v1/analytics/daily';
+  static const String analyticsProviders = '/api/v1/analytics/providers';
+  static const String analyticsTools = '/api/v1/analytics/tools';
+
+  // Logs
+  static const String logsLLM = '/api/v1/logs/llm';
+  static const String logsTools = '/api/v1/logs/tools';
+
+  // Plugins
+  static const String pluginsList = '/api/v1/plugins';
+  static const String pluginsInstall = '/api/v1/plugins/';
+
+  // Vision
+  static const String visionAnalyze = '/api/v1/vision/analyze';
+  static const String visionOCR = '/api/v1/vision/ocr';
+
+  // Projects & Schedules
+  static const String projectsList = '/api/v1/projects';
+  static const String projectsCreate = '/api/v1/projects';
+  static const String projectsProgress = '/api/v1/projects/';
+  static const String projectsDelete = '/api/v1/projects/';
+  static const String schedulesList = '/api/v1/schedules';
+  static const String schedulesCreate = '/api/v1/schedules';
+  static const String schedulesUpdate = '/api/v1/schedules/';
+  static const String schedulesEnabled = '/api/v1/schedules/';
+
   // Storage Keys
   static const String keyAuthToken = 'maya_auth_token';
   static const String keyRefreshToken = 'maya_refresh_token';
