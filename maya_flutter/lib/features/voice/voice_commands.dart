@@ -157,6 +157,13 @@ class AppScreenMapping {
     'mcp server': 'mcp_client',
     'model context protocol': 'mcp_client',
     'connect mcp': 'mcp_client',
+    'self model': 'self_model',
+    'self': 'self_model',
+    'capability map': 'self_model',
+    'strengths': 'self_model',
+    'weaknesses': 'self_model',
+    'self assess': 'self_model',
+    'assess myself': 'self_model',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -194,6 +201,7 @@ class AppScreenMapping {
     'knowledge_engine': 'Knowledge Engine',
     'skill_generalization': 'Skill Generalization',
     'mcp_client': 'MCP Servers',
+    'self_model': 'Self Model',
   };
 
   static String? resolveScreenRoute(String command) {

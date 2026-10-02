@@ -3165,6 +3165,169 @@ Map<String, dynamic> _$$McpCallResponseImplToJson(
   return val;
 }
 
+_$SelfProfileResponseImpl _$$SelfProfileResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SelfProfileResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfProfileResponseImpl(
+          totalOutcomes:
+              $checkedConvert('total_outcomes', (v) => (v as num).toInt()),
+          overallSuccessRate: $checkedConvert(
+              'overall_success_rate', (v) => (v as num?)?.toDouble()),
+          byTaskType: $checkedConvert(
+              'by_task_type',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SelfTypeStat.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          strengths: $checkedConvert(
+              'strengths',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SelfTypeStat.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          weaknesses: $checkedConvert(
+              'weaknesses',
+              (v) => (v as List<dynamic>)
+                  .map((e) => SelfTypeStat.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+          traits: $checkedConvert(
+              'traits', (v) => Map<String, dynamic>.from(v as Map)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalOutcomes': 'total_outcomes',
+        'overallSuccessRate': 'overall_success_rate',
+        'byTaskType': 'by_task_type'
+      },
+    );
+
+Map<String, dynamic> _$$SelfProfileResponseImplToJson(
+    _$SelfProfileResponseImpl instance) {
+  final val = <String, dynamic>{
+    'total_outcomes': instance.totalOutcomes,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('overall_success_rate', instance.overallSuccessRate);
+  val['by_task_type'] = instance.byTaskType;
+  val['strengths'] = instance.strengths;
+  val['weaknesses'] = instance.weaknesses;
+  val['traits'] = instance.traits;
+  return val;
+}
+
+_$SelfTypeStatImpl _$$SelfTypeStatImplFromJson(Map json) => $checkedCreate(
+      r'_$SelfTypeStatImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfTypeStatImpl(
+          taskType: $checkedConvert('task_type', (v) => v as String),
+          attempts: $checkedConvert('attempts', (v) => (v as num).toInt()),
+          successRate:
+              $checkedConvert('success_rate', (v) => (v as num).toDouble()),
+          avgDuration:
+              $checkedConvert('avg_duration', (v) => (v as num).toDouble()),
+          avgQuality:
+              $checkedConvert('avg_quality', (v) => (v as num?)?.toDouble()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'taskType': 'task_type',
+        'successRate': 'success_rate',
+        'avgDuration': 'avg_duration',
+        'avgQuality': 'avg_quality'
+      },
+    );
+
+Map<String, dynamic> _$$SelfTypeStatImplToJson(_$SelfTypeStatImpl instance) {
+  final val = <String, dynamic>{
+    'task_type': instance.taskType,
+    'attempts': instance.attempts,
+    'success_rate': instance.successRate,
+    'avg_duration': instance.avgDuration,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('avg_quality', instance.avgQuality);
+  return val;
+}
+
+_$SelfAssessResponseImpl _$$SelfAssessResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SelfAssessResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfAssessResponseImpl(
+          taskType: $checkedConvert('task_type', (v) => v as String),
+          experience: $checkedConvert(
+              'experience',
+              (v) => v == null
+                  ? null
+                  : SelfTypeStat.fromJson(Map<String, dynamic>.from(v as Map))),
+          novel: $checkedConvert('novel', (v) => v as bool),
+          knownWeakness: $checkedConvert('known_weakness', (v) => v as bool),
+          recommendation: $checkedConvert('recommendation', (v) => v as String),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'taskType': 'task_type',
+        'knownWeakness': 'known_weakness'
+      },
+    );
+
+Map<String, dynamic> _$$SelfAssessResponseImplToJson(
+    _$SelfAssessResponseImpl instance) {
+  final val = <String, dynamic>{
+    'task_type': instance.taskType,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('experience', instance.experience);
+  val['novel'] = instance.novel;
+  val['known_weakness'] = instance.knownWeakness;
+  val['recommendation'] = instance.recommendation;
+  return val;
+}
+
+_$SelfTraitResponseImpl _$$SelfTraitResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$SelfTraitResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$SelfTraitResponseImpl(
+          recorded: $checkedConvert('recorded', (v) => v as bool),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$SelfTraitResponseImplToJson(
+        _$SelfTraitResponseImpl instance) =>
+    <String, dynamic>{
+      'recorded': instance.recorded,
+    };
+
 _$WorkingMemoryAddResponseImpl _$$WorkingMemoryAddResponseImplFromJson(
         Map json) =>
     $checkedCreate(

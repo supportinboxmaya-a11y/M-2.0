@@ -2051,6 +2051,31 @@ class ApiService {
     return McpCallResponse.fromJson(response.data);
   }
 
+  // Self Model (Phase 39)
+  Future<SelfProfileResponse> getSelfProfile() async {
+    final response = await _dio.get(AppConfig.selfProfile);
+    return SelfProfileResponse.fromJson(response.data);
+  }
+
+  Future<SelfAssessResponse> assessSelf({required String goal}) async {
+    final response = await _dio.get(
+      AppConfig.selfAssess,
+      queryParameters: {'q': goal},
+    );
+    return SelfAssessResponse.fromJson(response.data);
+  }
+
+  Future<SelfTraitResponse> setSelfTrait({
+    required String key,
+    required dynamic value,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.selfTraits,
+      data: {'key': key, 'value': value},
+    );
+    return SelfTraitResponse.fromJson(response.data);
+  }
+
   // Working Memory
   Future<WorkingMemoryAddResponse> addWorkingMemory({
     required String content,
@@ -3666,6 +3691,60 @@ class McpCallResponse with _$McpCallResponse {
 
   factory McpCallResponse.fromJson(Map<String, dynamic> json) =>
       _$McpCallResponseFromJson(json);
+}
+
+// Self Model (Phase 39)
+@freezed
+class SelfProfileResponse with _$SelfProfileResponse {
+  const factory SelfProfileResponse({
+    required int totalOutcomes,
+    required double? overallSuccessRate,
+    required List<SelfTypeStat> byTaskType,
+    required List<SelfTypeStat> strengths,
+    required List<SelfTypeStat> weaknesses,
+    required Map<String, dynamic> traits,
+  }) = _SelfProfileResponse;
+
+  factory SelfProfileResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfProfileResponseFromJson(json);
+}
+
+@freezed
+class SelfTypeStat with _$SelfTypeStat {
+  const factory SelfTypeStat({
+    required String taskType,
+    required int attempts,
+    required double successRate,
+    required double avgDuration,
+    double? avgQuality,
+  }) = _SelfTypeStat;
+
+  factory SelfTypeStat.fromJson(Map<String, dynamic> json) =>
+      _$SelfTypeStatFromJson(json);
+}
+
+@freezed
+class SelfAssessResponse with _$SelfAssessResponse {
+  const factory SelfAssessResponse({
+    required String taskType,
+    required SelfTypeStat? experience,
+    required bool novel,
+    required bool knownWeakness,
+    required String recommendation,
+  }) = _SelfAssessResponse;
+
+  factory SelfAssessResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfAssessResponseFromJson(json);
+}
+
+@freezed
+class SelfTraitResponse with _$SelfTraitResponse {
+  const factory SelfTraitResponse({
+    required bool recorded,
+  }) = _SelfTraitResponse;
+
+  factory SelfTraitResponse.fromJson(Map<String, dynamic> json) =>
+      _$SelfTraitResponseFromJson(json);
 }
 
 @JsonSerializable()

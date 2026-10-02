@@ -279,6 +279,11 @@ class AppConfig {
   static const String mcpDisconnect = '/api/v1/mcp/disconnect';
   static const String mcpCall = '/api/v1/mcp/call/';
 
+  // Self Model (Phase 39)
+  static const String selfProfile = '/api/v1/cognitive/self/profile';
+  static const String selfAssess = '/api/v1/cognitive/self/assess';
+  static const String selfTraits = '/api/v1/cognitive/self/traits';
+
   // Working Memory
   static const String workingMemoryAdd = '/api/v1/cognitive/memory/working/add';
   static const String workingMemorySearch = '/api/v1/cognitive/memory/working/search';

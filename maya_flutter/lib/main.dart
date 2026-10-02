@@ -1227,6 +1227,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'knowledge_engine': screen = const _KnowledgeEngineScreen(); break;
       case 'skill_generalization': screen = const _SkillGeneralizationScreen(); break;
       case 'mcp_client': screen = const _McpClientScreen(); break;
+      case 'self_model': screen = const _SelfModelScreen(); break;
       case 'business': screen = const _BusinessAnalysisScreen(); break;
       case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
@@ -2646,6 +2647,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _McpClientScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.psychology_rounded,
+                  label: 'Self Model',
+                  subtitle: 'Capability map, strengths/weaknesses, self-assessment',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _SelfModelScreen(),
                       ),
                     );
                   },
@@ -19894,6 +19909,17 @@ final mcpStatusProvider = FutureProvider<McpStatusResponse>((ref) async {
   return apiService.getMcpStatus();
 });
 
+// Self Model Providers (Phase 39)
+final selfProfileProvider = FutureProvider<SelfProfileResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSelfProfile();
+});
+
+final selfAssessProvider = FutureProvider.family<SelfAssessResponse, String>((ref, goal) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.assessSelf(goal: goal);
+});
+
 // Business Analysis Providers (Phase 20)
 final businessMissionsProvider = FutureProvider<MissionListResponse>((ref) async {
   final apiService = ref.read(apiServiceProvider);
@@ -25463,6 +25489,758 @@ class _McpCallTabState extends ConsumerState<_McpCallTab> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// Self Model Screen (Phase 39)
+class _SelfModelScreen extends ConsumerStatefulWidget {
+  const _SelfModelScreen();
+
+  @override
+  ConsumerState<_SelfModelScreen> createState() => _SelfModelScreenState();
+}
+
+class _SelfModelScreenState extends ConsumerState<_SelfModelScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) {
+        ref.invalidate(selfProfileProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Self Model', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(selfProfileProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.analytics_rounded), text: 'Capability Map'),
+              Tab(icon: Icon(Icons.star_rounded), text: 'Strengths'),
+              Tab(icon: Icon(Icons.warning_rounded), text: 'Weaknesses'),
+              Tab(icon: Icon(Icons.search_rounded), text: 'Self-Assess'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _CapabilityMapTab(),
+            _StrengthsTab(),
+            _WeaknessesTab(),
+            _SelfAssessTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CapabilityMapTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(selfProfileProvider);
+
+    return profileAsync.when(
+      data: (profile) => profile.byTaskType.isEmpty
+          ? _emptyState(
+              'No Capability Data',
+              'Maya needs more task outcomes to build a capability map',
+              Icons.analytics_rounded,
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Overall Stats
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: MayaTheme.glassCardGlow(glowColor: MayaTheme.neonCyan),
+                    child: Row(
+                      children: [
+                        Expanded(child: _CapabilityStatCard(
+                          label: 'Total Outcomes',
+                          value: profile.totalOutcomes.toString(),
+                          color: MayaTheme.neonCyan,
+                          icon: Icons.flag_rounded,
+                        )),
+                        const SizedBox(width: 12),
+                        Expanded(child: _CapabilityStatCard(
+                          label: 'Overall Success Rate',
+                          value: profile.overallSuccessRate != null
+                              ? '${(profile.overallSuccessRate! * 100).toStringAsFixed(1)}%'
+                              : 'N/A',
+                          color: MayaTheme.neonEmerald,
+                          icon: Icons.trending_up_rounded,
+                        )),
+                        const SizedBox(width: 12),
+                        Expanded(child: _CapabilityStatCard(
+                          label: 'Task Types',
+                          value: profile.byTaskType.length.toString(),
+                          color: MayaTheme.neonViolet,
+                          icon: Icons.category_rounded,
+                        )),
+                        const SizedBox(width: 12),
+                        Expanded(child: _CapabilityStatCard(
+                          label: 'Traits',
+                          value: (profile.traits?.length ?? 0).toString(),
+                          color: MayaTheme.neonOrange,
+                          icon: Icons.psychology_rounded,
+                        )),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // Domain Breakdown
+                  const Text('Capability Map by Task Type', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Maya\'s performance across different task domains. Higher success rate = stronger capability.',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: profile.byTaskType.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final stat = profile.byTaskType[index];
+                      final isStrength = stat.successRate >= 0.8;
+                      final isWeakness = stat.successRate <= 0.5 && stat.attempts >= 2;
+                      return _CapabilityDomainCard(stat: stat, isStrength: isStrength, isWeakness: isWeakness);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading profile', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _CapabilityStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final IconData icon;
+
+  const _CapabilityStatCard({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
+          const SizedBox(height: 4),
+          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        ],
+      ),
+    );
+  }
+}
+
+class _CapabilityDomainCard extends StatelessWidget {
+  final SelfTypeStat stat;
+  final bool isStrength;
+  final bool isWeakness;
+
+  const _CapabilityDomainCard({
+    required this.stat,
+    required this.isStrength,
+    required this.isWeakness,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isStrength ? MayaTheme.neonEmerald : (isWeakness ? MayaTheme.error : MayaTheme.neonOrange);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isStrength ? Icons.star_rounded : (isWeakness ? Icons.warning_rounded : Icons.psychology_rounded),
+                  color: color,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(stat.taskType, style: MayaTheme.titleMedium),
+                        const SizedBox(width: 8),
+                        if (isStrength)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: MayaTheme.neonEmerald),
+                            ),
+                            child: Text('STRENGTH', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonEmerald)),
+                          )
+                        else if (isWeakness)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.error.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: MayaTheme.error),
+                            ),
+                            child: Text('WEAKNESS', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.error)),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text('${stat.attempts} attempts • Avg duration: ${stat.avgDuration.toStringAsFixed(1)}s', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: color),
+                ),
+                child: Text(
+                  '${(stat.successRate * 100).toStringAsFixed(1)}% success',
+                  style: MayaTheme.titleMedium.copyWith(color: color),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Progress Bar
+          LinearProgressIndicator(
+            value: stat.successRate,
+            backgroundColor: Colors.white12,
+            valueColor: AlwaysStoppedAnimation(color),
+            minHeight: 6,
+            borderRadius: BorderRadius.circular(3),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: [
+              _DomainDetailChip(label: 'Attempts', value: stat.attempts.toString(), color: MayaTheme.neonCyan),
+              if (stat.avgQuality != null)
+                _DomainDetailChip(label: 'Avg Quality', value: stat.avgQuality!.toStringAsFixed(2), color: MayaTheme.neonViolet),
+              _DomainDetailChip(label: 'Avg Duration', value: '${stat.avgDuration.toStringAsFixed(1)}s', color: MayaTheme.neonOrange),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StrengthsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(selfProfileProvider);
+
+    return profileAsync.when(
+      data: (profile) => profile.strengths.isEmpty
+          ? _emptyState('No Strengths Yet', 'Maya needs more successful outcomes to identify strengths', Icons.star_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Strengths', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Task types where Maya consistently succeeds (>=80% success rate, >=2 attempts)',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: profile.strengths.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final stat = profile.strengths[index];
+                      return _StrengthWeaknessCard(stat: stat, isStrength: true);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading strengths', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _WeaknessesTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(selfProfileProvider);
+
+    return profileAsync.when(
+      data: (profile) => profile.weaknesses.isEmpty
+          ? _emptyState('No Known Weaknesses', 'No task types with repeated failures yet', Icons.warning_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Weaknesses', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Task types where Maya struggles (<50% success rate, >=2 attempts). May need extra verification or learning.',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: profile.weaknesses.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final stat = profile.weaknesses[index];
+                      return _StrengthWeaknessCard(stat: stat, isStrength: false);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading weaknesses', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _StrengthWeaknessCard extends StatelessWidget {
+  final SelfTypeStat stat;
+  final bool isStrength;
+
+  const _StrengthWeaknessCard({required this.stat, required this.isStrength});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isStrength ? MayaTheme.neonEmerald : MayaTheme.error;
+    final icon = isStrength ? Icons.star_rounded : Icons.warning_rounded;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(stat.taskType, style: MayaTheme.titleMedium),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: color),
+                          ),
+                          child: Text(
+                            isStrength ? 'STRENGTH' : 'WEAKNESS',
+                            style: MayaTheme.labelSmall.copyWith(color: color),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text('${stat.attempts} attempts • ${(stat.successRate * 100).toStringAsFixed(1)}% success', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          LinearProgressIndicator(
+            value: stat.successRate,
+            backgroundColor: Colors.white12,
+            valueColor: AlwaysStoppedAnimation(color),
+            minHeight: 6,
+            borderRadius: BorderRadius.circular(3),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: [
+              _DetailChip(label: 'Attempts', value: stat.attempts.toString(), color: MayaTheme.neonCyan),
+              if (stat.avgQuality != null)
+                _DetailChip(label: 'Avg Quality', value: stat.avgQuality!.toStringAsFixed(2), color: MayaTheme.neonViolet),
+              _DetailChip(label: 'Avg Duration', value: '${stat.avgDuration.toStringAsFixed(1)}s', color: MayaTheme.neonOrange),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SelfAssessTab extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_SelfAssessTab> createState() => _SelfAssessTabState();
+}
+
+class _SelfAssessTabState extends ConsumerState<_SelfAssessTab> {
+  final _goalController = TextEditingController();
+  SelfAssessResponse? _lastResult;
+
+  @override
+  void dispose() {
+    _goalController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _assess() async {
+    if (_goalController.text.trim().isEmpty) return;
+
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.assessSelf(goal: _goalController.text.trim());
+      setState(() => _lastResult = result);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Assessment failed: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Self-Assessment', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Describe a hypothetical goal. Maya will check her experience and give a recommendation.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _goalController,
+                  style: const TextStyle(color: Colors.white),
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: 'Goal / Task Description *',
+                    hintText: 'e.g., Deploy a Django app to VPS with PostgreSQL',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    alignLabelWithHint: true,
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(bottom: 40),
+                      child: Icon(Icons.search_rounded, color: Colors.white54),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.white24),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: MayaTheme.neonCyan),
+                    ),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _assess,
+                    icon: const Icon(Icons.psychology_rounded),
+                    label: const Text('Assess'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_lastResult != null) ...[
+            const Text('Assessment Result', style: MayaTheme.titleLarge),
+            const SizedBox(height: 12),
+            _AssessmentResultCard(result: _lastResult!),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _AssessmentResultCard extends StatelessWidget {
+  final SelfAssessResponse result;
+
+  const _AssessmentResultCard({required this.result});
+
+  @override
+  Widget build(BuildContext context) {
+    final isWeakness = result.knownWeakness;
+    final isNovel = result.novel;
+    final color = isWeakness ? MayaTheme.error : (isNovel ? MayaTheme.neonOrange : MayaTheme.neonEmerald);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCardGlow(glowColor: color),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isWeakness ? Icons.warning_rounded : (isNovel ? Icons.lightbulb_rounded : Icons.check_circle_rounded),
+                  color: color,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isWeakness ? 'Known Weakness' : (isNovel ? 'Novel Task Type' : 'Experienced'),
+                      style: MayaTheme.titleMedium.copyWith(color: color),
+                    ),
+                    Text('Task Type: ${result.taskType}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (result.experience != null) ...[
+            const Text('Experience', style: MayaTheme.titleMedium),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: MayaTheme.glassCard(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _AssessDetailChip(label: 'Attempts', value: result.experience!.attempts.toString(), color: MayaTheme.neonCyan),
+                      _AssessDetailChip(label: 'Success Rate', value: '${(result.experience!.successRate * 100).toStringAsFixed(1)}%', color: result.experience!.successRate >= 0.5 ? MayaTheme.neonEmerald : MayaTheme.error),
+                      _AssessDetailChip(label: 'Avg Duration', value: '${result.experience!.avgDuration.toStringAsFixed(1)}s', color: MayaTheme.neonOrange),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          const Text('Recommendation', style: MayaTheme.titleMedium),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: color),
+            ),
+            child: Text(result.recommendation, style: MayaTheme.bodyMedium.copyWith(color: color)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AssessDetailChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _AssessDetailChip({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color),
+      ),
+      child: Text('$label: $value', style: MayaTheme.labelSmall.copyWith(color: color)),
+    );
+  }
+}
+
+class _DomainDetailChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _DomainDetailChip({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color),
+      ),
+      child: Text('$label: $value', style: MayaTheme.labelSmall.copyWith(color: color)),
+    );
+  }
+}
+
+class _DetailChip extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _DetailChip({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color),
+      ),
+      child: Text('$label: $value', style: MayaTheme.labelSmall.copyWith(color: color)),
     );
   }
 }

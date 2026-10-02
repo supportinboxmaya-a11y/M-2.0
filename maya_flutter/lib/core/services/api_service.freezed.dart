@@ -15731,6 +15731,894 @@ abstract class _McpCallResponse implements McpCallResponse {
       throw _privateConstructorUsedError;
 }
 
+SelfProfileResponse _$SelfProfileResponseFromJson(Map<String, dynamic> json) {
+  return _SelfProfileResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfProfileResponse {
+  int get totalOutcomes => throw _privateConstructorUsedError;
+  double? get overallSuccessRate => throw _privateConstructorUsedError;
+  List<SelfTypeStat> get byTaskType => throw _privateConstructorUsedError;
+  List<SelfTypeStat> get strengths => throw _privateConstructorUsedError;
+  List<SelfTypeStat> get weaknesses => throw _privateConstructorUsedError;
+  Map<String, dynamic> get traits => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfProfileResponseCopyWith<SelfProfileResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfProfileResponseCopyWith<$Res> {
+  factory $SelfProfileResponseCopyWith(
+          SelfProfileResponse value, $Res Function(SelfProfileResponse) then) =
+      _$SelfProfileResponseCopyWithImpl<$Res, SelfProfileResponse>;
+  @useResult
+  $Res call(
+      {int totalOutcomes,
+      double? overallSuccessRate,
+      List<SelfTypeStat> byTaskType,
+      List<SelfTypeStat> strengths,
+      List<SelfTypeStat> weaknesses,
+      Map<String, dynamic> traits});
+}
+
+/// @nodoc
+class _$SelfProfileResponseCopyWithImpl<$Res, $Val extends SelfProfileResponse>
+    implements $SelfProfileResponseCopyWith<$Res> {
+  _$SelfProfileResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalOutcomes = null,
+    Object? overallSuccessRate = freezed,
+    Object? byTaskType = null,
+    Object? strengths = null,
+    Object? weaknesses = null,
+    Object? traits = null,
+  }) {
+    return _then(_value.copyWith(
+      totalOutcomes: null == totalOutcomes
+          ? _value.totalOutcomes
+          : totalOutcomes // ignore: cast_nullable_to_non_nullable
+              as int,
+      overallSuccessRate: freezed == overallSuccessRate
+          ? _value.overallSuccessRate
+          : overallSuccessRate // ignore: cast_nullable_to_non_nullable
+              as double?,
+      byTaskType: null == byTaskType
+          ? _value.byTaskType
+          : byTaskType // ignore: cast_nullable_to_non_nullable
+              as List<SelfTypeStat>,
+      strengths: null == strengths
+          ? _value.strengths
+          : strengths // ignore: cast_nullable_to_non_nullable
+              as List<SelfTypeStat>,
+      weaknesses: null == weaknesses
+          ? _value.weaknesses
+          : weaknesses // ignore: cast_nullable_to_non_nullable
+              as List<SelfTypeStat>,
+      traits: null == traits
+          ? _value.traits
+          : traits // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfProfileResponseImplCopyWith<$Res>
+    implements $SelfProfileResponseCopyWith<$Res> {
+  factory _$$SelfProfileResponseImplCopyWith(_$SelfProfileResponseImpl value,
+          $Res Function(_$SelfProfileResponseImpl) then) =
+      __$$SelfProfileResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int totalOutcomes,
+      double? overallSuccessRate,
+      List<SelfTypeStat> byTaskType,
+      List<SelfTypeStat> strengths,
+      List<SelfTypeStat> weaknesses,
+      Map<String, dynamic> traits});
+}
+
+/// @nodoc
+class __$$SelfProfileResponseImplCopyWithImpl<$Res>
+    extends _$SelfProfileResponseCopyWithImpl<$Res, _$SelfProfileResponseImpl>
+    implements _$$SelfProfileResponseImplCopyWith<$Res> {
+  __$$SelfProfileResponseImplCopyWithImpl(_$SelfProfileResponseImpl _value,
+      $Res Function(_$SelfProfileResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalOutcomes = null,
+    Object? overallSuccessRate = freezed,
+    Object? byTaskType = null,
+    Object? strengths = null,
+    Object? weaknesses = null,
+    Object? traits = null,
+  }) {
+    return _then(_$SelfProfileResponseImpl(
+      totalOutcomes: null == totalOutcomes
+          ? _value.totalOutcomes
+          : totalOutcomes // ignore: cast_nullable_to_non_nullable
+              as int,
+      overallSuccessRate: freezed == overallSuccessRate
+          ? _value.overallSuccessRate
+          : overallSuccessRate // ignore: cast_nullable_to_non_nullable
+              as double?,
+      byTaskType: null == byTaskType
+          ? _value._byTaskType
+          : byTaskType // ignore: cast_nullable_to_non_nullable
+              as List<SelfTypeStat>,
+      strengths: null == strengths
+          ? _value._strengths
+          : strengths // ignore: cast_nullable_to_non_nullable
+              as List<SelfTypeStat>,
+      weaknesses: null == weaknesses
+          ? _value._weaknesses
+          : weaknesses // ignore: cast_nullable_to_non_nullable
+              as List<SelfTypeStat>,
+      traits: null == traits
+          ? _value._traits
+          : traits // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfProfileResponseImpl implements _SelfProfileResponse {
+  const _$SelfProfileResponseImpl(
+      {required this.totalOutcomes,
+      required this.overallSuccessRate,
+      required final List<SelfTypeStat> byTaskType,
+      required final List<SelfTypeStat> strengths,
+      required final List<SelfTypeStat> weaknesses,
+      required final Map<String, dynamic> traits})
+      : _byTaskType = byTaskType,
+        _strengths = strengths,
+        _weaknesses = weaknesses,
+        _traits = traits;
+
+  factory _$SelfProfileResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfProfileResponseImplFromJson(json);
+
+  @override
+  final int totalOutcomes;
+  @override
+  final double? overallSuccessRate;
+  final List<SelfTypeStat> _byTaskType;
+  @override
+  List<SelfTypeStat> get byTaskType {
+    if (_byTaskType is EqualUnmodifiableListView) return _byTaskType;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_byTaskType);
+  }
+
+  final List<SelfTypeStat> _strengths;
+  @override
+  List<SelfTypeStat> get strengths {
+    if (_strengths is EqualUnmodifiableListView) return _strengths;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_strengths);
+  }
+
+  final List<SelfTypeStat> _weaknesses;
+  @override
+  List<SelfTypeStat> get weaknesses {
+    if (_weaknesses is EqualUnmodifiableListView) return _weaknesses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_weaknesses);
+  }
+
+  final Map<String, dynamic> _traits;
+  @override
+  Map<String, dynamic> get traits {
+    if (_traits is EqualUnmodifiableMapView) return _traits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_traits);
+  }
+
+  @override
+  String toString() {
+    return 'SelfProfileResponse(totalOutcomes: $totalOutcomes, overallSuccessRate: $overallSuccessRate, byTaskType: $byTaskType, strengths: $strengths, weaknesses: $weaknesses, traits: $traits)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfProfileResponseImpl &&
+            (identical(other.totalOutcomes, totalOutcomes) ||
+                other.totalOutcomes == totalOutcomes) &&
+            (identical(other.overallSuccessRate, overallSuccessRate) ||
+                other.overallSuccessRate == overallSuccessRate) &&
+            const DeepCollectionEquality()
+                .equals(other._byTaskType, _byTaskType) &&
+            const DeepCollectionEquality()
+                .equals(other._strengths, _strengths) &&
+            const DeepCollectionEquality()
+                .equals(other._weaknesses, _weaknesses) &&
+            const DeepCollectionEquality().equals(other._traits, _traits));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      totalOutcomes,
+      overallSuccessRate,
+      const DeepCollectionEquality().hash(_byTaskType),
+      const DeepCollectionEquality().hash(_strengths),
+      const DeepCollectionEquality().hash(_weaknesses),
+      const DeepCollectionEquality().hash(_traits));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfProfileResponseImplCopyWith<_$SelfProfileResponseImpl> get copyWith =>
+      __$$SelfProfileResponseImplCopyWithImpl<_$SelfProfileResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfProfileResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfProfileResponse implements SelfProfileResponse {
+  const factory _SelfProfileResponse(
+      {required final int totalOutcomes,
+      required final double? overallSuccessRate,
+      required final List<SelfTypeStat> byTaskType,
+      required final List<SelfTypeStat> strengths,
+      required final List<SelfTypeStat> weaknesses,
+      required final Map<String, dynamic> traits}) = _$SelfProfileResponseImpl;
+
+  factory _SelfProfileResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfProfileResponseImpl.fromJson;
+
+  @override
+  int get totalOutcomes;
+  @override
+  double? get overallSuccessRate;
+  @override
+  List<SelfTypeStat> get byTaskType;
+  @override
+  List<SelfTypeStat> get strengths;
+  @override
+  List<SelfTypeStat> get weaknesses;
+  @override
+  Map<String, dynamic> get traits;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfProfileResponseImplCopyWith<_$SelfProfileResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SelfTypeStat _$SelfTypeStatFromJson(Map<String, dynamic> json) {
+  return _SelfTypeStat.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfTypeStat {
+  String get taskType => throw _privateConstructorUsedError;
+  int get attempts => throw _privateConstructorUsedError;
+  double get successRate => throw _privateConstructorUsedError;
+  double get avgDuration => throw _privateConstructorUsedError;
+  double? get avgQuality => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfTypeStatCopyWith<SelfTypeStat> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfTypeStatCopyWith<$Res> {
+  factory $SelfTypeStatCopyWith(
+          SelfTypeStat value, $Res Function(SelfTypeStat) then) =
+      _$SelfTypeStatCopyWithImpl<$Res, SelfTypeStat>;
+  @useResult
+  $Res call(
+      {String taskType,
+      int attempts,
+      double successRate,
+      double avgDuration,
+      double? avgQuality});
+}
+
+/// @nodoc
+class _$SelfTypeStatCopyWithImpl<$Res, $Val extends SelfTypeStat>
+    implements $SelfTypeStatCopyWith<$Res> {
+  _$SelfTypeStatCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskType = null,
+    Object? attempts = null,
+    Object? successRate = null,
+    Object? avgDuration = null,
+    Object? avgQuality = freezed,
+  }) {
+    return _then(_value.copyWith(
+      taskType: null == taskType
+          ? _value.taskType
+          : taskType // ignore: cast_nullable_to_non_nullable
+              as String,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      successRate: null == successRate
+          ? _value.successRate
+          : successRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      avgDuration: null == avgDuration
+          ? _value.avgDuration
+          : avgDuration // ignore: cast_nullable_to_non_nullable
+              as double,
+      avgQuality: freezed == avgQuality
+          ? _value.avgQuality
+          : avgQuality // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfTypeStatImplCopyWith<$Res>
+    implements $SelfTypeStatCopyWith<$Res> {
+  factory _$$SelfTypeStatImplCopyWith(
+          _$SelfTypeStatImpl value, $Res Function(_$SelfTypeStatImpl) then) =
+      __$$SelfTypeStatImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String taskType,
+      int attempts,
+      double successRate,
+      double avgDuration,
+      double? avgQuality});
+}
+
+/// @nodoc
+class __$$SelfTypeStatImplCopyWithImpl<$Res>
+    extends _$SelfTypeStatCopyWithImpl<$Res, _$SelfTypeStatImpl>
+    implements _$$SelfTypeStatImplCopyWith<$Res> {
+  __$$SelfTypeStatImplCopyWithImpl(
+      _$SelfTypeStatImpl _value, $Res Function(_$SelfTypeStatImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskType = null,
+    Object? attempts = null,
+    Object? successRate = null,
+    Object? avgDuration = null,
+    Object? avgQuality = freezed,
+  }) {
+    return _then(_$SelfTypeStatImpl(
+      taskType: null == taskType
+          ? _value.taskType
+          : taskType // ignore: cast_nullable_to_non_nullable
+              as String,
+      attempts: null == attempts
+          ? _value.attempts
+          : attempts // ignore: cast_nullable_to_non_nullable
+              as int,
+      successRate: null == successRate
+          ? _value.successRate
+          : successRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      avgDuration: null == avgDuration
+          ? _value.avgDuration
+          : avgDuration // ignore: cast_nullable_to_non_nullable
+              as double,
+      avgQuality: freezed == avgQuality
+          ? _value.avgQuality
+          : avgQuality // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfTypeStatImpl implements _SelfTypeStat {
+  const _$SelfTypeStatImpl(
+      {required this.taskType,
+      required this.attempts,
+      required this.successRate,
+      required this.avgDuration,
+      this.avgQuality});
+
+  factory _$SelfTypeStatImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfTypeStatImplFromJson(json);
+
+  @override
+  final String taskType;
+  @override
+  final int attempts;
+  @override
+  final double successRate;
+  @override
+  final double avgDuration;
+  @override
+  final double? avgQuality;
+
+  @override
+  String toString() {
+    return 'SelfTypeStat(taskType: $taskType, attempts: $attempts, successRate: $successRate, avgDuration: $avgDuration, avgQuality: $avgQuality)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfTypeStatImpl &&
+            (identical(other.taskType, taskType) ||
+                other.taskType == taskType) &&
+            (identical(other.attempts, attempts) ||
+                other.attempts == attempts) &&
+            (identical(other.successRate, successRate) ||
+                other.successRate == successRate) &&
+            (identical(other.avgDuration, avgDuration) ||
+                other.avgDuration == avgDuration) &&
+            (identical(other.avgQuality, avgQuality) ||
+                other.avgQuality == avgQuality));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, taskType, attempts, successRate, avgDuration, avgQuality);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfTypeStatImplCopyWith<_$SelfTypeStatImpl> get copyWith =>
+      __$$SelfTypeStatImplCopyWithImpl<_$SelfTypeStatImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfTypeStatImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfTypeStat implements SelfTypeStat {
+  const factory _SelfTypeStat(
+      {required final String taskType,
+      required final int attempts,
+      required final double successRate,
+      required final double avgDuration,
+      final double? avgQuality}) = _$SelfTypeStatImpl;
+
+  factory _SelfTypeStat.fromJson(Map<String, dynamic> json) =
+      _$SelfTypeStatImpl.fromJson;
+
+  @override
+  String get taskType;
+  @override
+  int get attempts;
+  @override
+  double get successRate;
+  @override
+  double get avgDuration;
+  @override
+  double? get avgQuality;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfTypeStatImplCopyWith<_$SelfTypeStatImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SelfAssessResponse _$SelfAssessResponseFromJson(Map<String, dynamic> json) {
+  return _SelfAssessResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfAssessResponse {
+  String get taskType => throw _privateConstructorUsedError;
+  SelfTypeStat? get experience => throw _privateConstructorUsedError;
+  bool get novel => throw _privateConstructorUsedError;
+  bool get knownWeakness => throw _privateConstructorUsedError;
+  String get recommendation => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfAssessResponseCopyWith<SelfAssessResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfAssessResponseCopyWith<$Res> {
+  factory $SelfAssessResponseCopyWith(
+          SelfAssessResponse value, $Res Function(SelfAssessResponse) then) =
+      _$SelfAssessResponseCopyWithImpl<$Res, SelfAssessResponse>;
+  @useResult
+  $Res call(
+      {String taskType,
+      SelfTypeStat? experience,
+      bool novel,
+      bool knownWeakness,
+      String recommendation});
+
+  $SelfTypeStatCopyWith<$Res>? get experience;
+}
+
+/// @nodoc
+class _$SelfAssessResponseCopyWithImpl<$Res, $Val extends SelfAssessResponse>
+    implements $SelfAssessResponseCopyWith<$Res> {
+  _$SelfAssessResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskType = null,
+    Object? experience = freezed,
+    Object? novel = null,
+    Object? knownWeakness = null,
+    Object? recommendation = null,
+  }) {
+    return _then(_value.copyWith(
+      taskType: null == taskType
+          ? _value.taskType
+          : taskType // ignore: cast_nullable_to_non_nullable
+              as String,
+      experience: freezed == experience
+          ? _value.experience
+          : experience // ignore: cast_nullable_to_non_nullable
+              as SelfTypeStat?,
+      novel: null == novel
+          ? _value.novel
+          : novel // ignore: cast_nullable_to_non_nullable
+              as bool,
+      knownWeakness: null == knownWeakness
+          ? _value.knownWeakness
+          : knownWeakness // ignore: cast_nullable_to_non_nullable
+              as bool,
+      recommendation: null == recommendation
+          ? _value.recommendation
+          : recommendation // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $SelfTypeStatCopyWith<$Res>? get experience {
+    if (_value.experience == null) {
+      return null;
+    }
+
+    return $SelfTypeStatCopyWith<$Res>(_value.experience!, (value) {
+      return _then(_value.copyWith(experience: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfAssessResponseImplCopyWith<$Res>
+    implements $SelfAssessResponseCopyWith<$Res> {
+  factory _$$SelfAssessResponseImplCopyWith(_$SelfAssessResponseImpl value,
+          $Res Function(_$SelfAssessResponseImpl) then) =
+      __$$SelfAssessResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String taskType,
+      SelfTypeStat? experience,
+      bool novel,
+      bool knownWeakness,
+      String recommendation});
+
+  @override
+  $SelfTypeStatCopyWith<$Res>? get experience;
+}
+
+/// @nodoc
+class __$$SelfAssessResponseImplCopyWithImpl<$Res>
+    extends _$SelfAssessResponseCopyWithImpl<$Res, _$SelfAssessResponseImpl>
+    implements _$$SelfAssessResponseImplCopyWith<$Res> {
+  __$$SelfAssessResponseImplCopyWithImpl(_$SelfAssessResponseImpl _value,
+      $Res Function(_$SelfAssessResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? taskType = null,
+    Object? experience = freezed,
+    Object? novel = null,
+    Object? knownWeakness = null,
+    Object? recommendation = null,
+  }) {
+    return _then(_$SelfAssessResponseImpl(
+      taskType: null == taskType
+          ? _value.taskType
+          : taskType // ignore: cast_nullable_to_non_nullable
+              as String,
+      experience: freezed == experience
+          ? _value.experience
+          : experience // ignore: cast_nullable_to_non_nullable
+              as SelfTypeStat?,
+      novel: null == novel
+          ? _value.novel
+          : novel // ignore: cast_nullable_to_non_nullable
+              as bool,
+      knownWeakness: null == knownWeakness
+          ? _value.knownWeakness
+          : knownWeakness // ignore: cast_nullable_to_non_nullable
+              as bool,
+      recommendation: null == recommendation
+          ? _value.recommendation
+          : recommendation // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfAssessResponseImpl implements _SelfAssessResponse {
+  const _$SelfAssessResponseImpl(
+      {required this.taskType,
+      required this.experience,
+      required this.novel,
+      required this.knownWeakness,
+      required this.recommendation});
+
+  factory _$SelfAssessResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfAssessResponseImplFromJson(json);
+
+  @override
+  final String taskType;
+  @override
+  final SelfTypeStat? experience;
+  @override
+  final bool novel;
+  @override
+  final bool knownWeakness;
+  @override
+  final String recommendation;
+
+  @override
+  String toString() {
+    return 'SelfAssessResponse(taskType: $taskType, experience: $experience, novel: $novel, knownWeakness: $knownWeakness, recommendation: $recommendation)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfAssessResponseImpl &&
+            (identical(other.taskType, taskType) ||
+                other.taskType == taskType) &&
+            (identical(other.experience, experience) ||
+                other.experience == experience) &&
+            (identical(other.novel, novel) || other.novel == novel) &&
+            (identical(other.knownWeakness, knownWeakness) ||
+                other.knownWeakness == knownWeakness) &&
+            (identical(other.recommendation, recommendation) ||
+                other.recommendation == recommendation));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, taskType, experience, novel, knownWeakness, recommendation);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfAssessResponseImplCopyWith<_$SelfAssessResponseImpl> get copyWith =>
+      __$$SelfAssessResponseImplCopyWithImpl<_$SelfAssessResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfAssessResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfAssessResponse implements SelfAssessResponse {
+  const factory _SelfAssessResponse(
+      {required final String taskType,
+      required final SelfTypeStat? experience,
+      required final bool novel,
+      required final bool knownWeakness,
+      required final String recommendation}) = _$SelfAssessResponseImpl;
+
+  factory _SelfAssessResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfAssessResponseImpl.fromJson;
+
+  @override
+  String get taskType;
+  @override
+  SelfTypeStat? get experience;
+  @override
+  bool get novel;
+  @override
+  bool get knownWeakness;
+  @override
+  String get recommendation;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfAssessResponseImplCopyWith<_$SelfAssessResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SelfTraitResponse _$SelfTraitResponseFromJson(Map<String, dynamic> json) {
+  return _SelfTraitResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SelfTraitResponse {
+  bool get recorded => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SelfTraitResponseCopyWith<SelfTraitResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SelfTraitResponseCopyWith<$Res> {
+  factory $SelfTraitResponseCopyWith(
+          SelfTraitResponse value, $Res Function(SelfTraitResponse) then) =
+      _$SelfTraitResponseCopyWithImpl<$Res, SelfTraitResponse>;
+  @useResult
+  $Res call({bool recorded});
+}
+
+/// @nodoc
+class _$SelfTraitResponseCopyWithImpl<$Res, $Val extends SelfTraitResponse>
+    implements $SelfTraitResponseCopyWith<$Res> {
+  _$SelfTraitResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? recorded = null,
+  }) {
+    return _then(_value.copyWith(
+      recorded: null == recorded
+          ? _value.recorded
+          : recorded // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SelfTraitResponseImplCopyWith<$Res>
+    implements $SelfTraitResponseCopyWith<$Res> {
+  factory _$$SelfTraitResponseImplCopyWith(_$SelfTraitResponseImpl value,
+          $Res Function(_$SelfTraitResponseImpl) then) =
+      __$$SelfTraitResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool recorded});
+}
+
+/// @nodoc
+class __$$SelfTraitResponseImplCopyWithImpl<$Res>
+    extends _$SelfTraitResponseCopyWithImpl<$Res, _$SelfTraitResponseImpl>
+    implements _$$SelfTraitResponseImplCopyWith<$Res> {
+  __$$SelfTraitResponseImplCopyWithImpl(_$SelfTraitResponseImpl _value,
+      $Res Function(_$SelfTraitResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? recorded = null,
+  }) {
+    return _then(_$SelfTraitResponseImpl(
+      recorded: null == recorded
+          ? _value.recorded
+          : recorded // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SelfTraitResponseImpl implements _SelfTraitResponse {
+  const _$SelfTraitResponseImpl({required this.recorded});
+
+  factory _$SelfTraitResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SelfTraitResponseImplFromJson(json);
+
+  @override
+  final bool recorded;
+
+  @override
+  String toString() {
+    return 'SelfTraitResponse(recorded: $recorded)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelfTraitResponseImpl &&
+            (identical(other.recorded, recorded) ||
+                other.recorded == recorded));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, recorded);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelfTraitResponseImplCopyWith<_$SelfTraitResponseImpl> get copyWith =>
+      __$$SelfTraitResponseImplCopyWithImpl<_$SelfTraitResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SelfTraitResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SelfTraitResponse implements SelfTraitResponse {
+  const factory _SelfTraitResponse({required final bool recorded}) =
+      _$SelfTraitResponseImpl;
+
+  factory _SelfTraitResponse.fromJson(Map<String, dynamic> json) =
+      _$SelfTraitResponseImpl.fromJson;
+
+  @override
+  bool get recorded;
+  @override
+  @JsonKey(ignore: true)
+  _$$SelfTraitResponseImplCopyWith<_$SelfTraitResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 WorkingMemoryAddResponse _$WorkingMemoryAddResponseFromJson(
     Map<String, dynamic> json) {
   return _WorkingMemoryAddResponse.fromJson(json);
