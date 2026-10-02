@@ -204,6 +204,24 @@ class AppScreenMapping {
     'analyze image': 'vision',
     'ocr': 'vision',
     'extract text': 'vision',
+    'agent profiles': 'agent_profiles',
+    'agent profile': 'agent_profiles',
+    'my profiles': 'agent_profiles',
+    'income notifications': 'income_notifications',
+    'income alerts': 'income_notifications',
+    'proactive jobs': 'proactive_jobs',
+    'proactive job': 'proactive_jobs',
+    'scheduled jobs': 'proactive_jobs',
+    'background jobs': 'proactive_jobs',
+    'memory prefs': 'memory_prefs',
+    'memory preferences': 'memory_prefs',
+    'user preferences': 'memory_prefs',
+    'extended projects': 'extended_projects',
+    'extended project': 'extended_projects',
+    'memory projects': 'extended_projects',
+    'browser tools': 'browser_tools',
+    'web tools': 'browser_tools',
+    'browser': 'browser_tools',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -259,6 +277,12 @@ class AppScreenMapping {
     'plugins': 'Plugins',
     'vision': 'Vision AI',
     'communication': 'Communication Tools',
+    'agent_profiles': 'Agent Profiles',
+    'income_notifications': 'Income Notifications',
+    'proactive_jobs': 'Proactive Jobs',
+    'memory_prefs': 'Memory Preferences',
+    'extended_projects': 'Extended Projects',
+    'browser_tools': 'Browser Tools',
   };
 
   static String? resolveScreenRoute(String command) {

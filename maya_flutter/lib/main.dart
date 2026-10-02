@@ -243,6 +243,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
       } else {
         _orbState = MayaLogoState.idle;
         _pulseController.duration = const Duration(milliseconds: 1500);
+      });
         _pulseController.repeat(reverse: true);
       }
     }
@@ -261,13 +262,6 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
       switch (state) {
         case MayaLogoState.idle:
           _pulseController.duration = const Duration(milliseconds: 1500);
-          _pulseController.repeat(reverse: true);
-          _spinController.stop();
-          _waveController.stop();
-          break;
-        case MayaLogoState.listening:
-          _pulseController.duration = const Duration(milliseconds: 800);
-          _pulseController.repeat(reverse: true);
           _spinController.stop();
           _waveController.stop();
           break;
