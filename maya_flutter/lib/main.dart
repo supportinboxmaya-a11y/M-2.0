@@ -1249,11 +1249,13 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
       case 'docs': screen = const _DocsScreen(); break;
       case 'analytics': screen = const _AnalyticsScreen(); break;
       case 'logs': screen = const _LogsScreen(); break;
+      case 'projects': screen = const _ProjectsSchedulesScreen(); break;
       case 'plugins': screen = const _PluginsScreen(); break;
       case 'vision': screen = const _VisionScreen(); break;
       case 'provisioner': screen = const _ApiKeyProvisionerScreen(); break;
       case 'guarded_publish': screen = const _GuardedPublishScreen(); break;
       case 'approvals': screen = const _ApprovalsScreen(); break;
+      case 'communication': screen = const _CommunicationToolsScreen(); break;
       case 'chat': screen = const _ChatScreen(); break;
       case 'voice': screen = const _VoiceScreen(); break;
       case 'camera': screen = const _CameraScreen(); break;
@@ -2702,6 +2704,20 @@ class _AppDrawer extends ConsumerWidget {
                   onTap: () => Navigator.pop(context),
                 ),
                 _DrawerActionTile(
+                  icon: Icons.email_rounded,
+                  label: 'Communication Tools',
+                  subtitle: 'Email & Webhook messaging',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _CommunicationToolsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
                   icon: Icons.extension_rounded,
                   label: 'MCP Servers',
                   subtitle: 'Model Context Protocol',
@@ -2725,6 +2741,20 @@ class _AppDrawer extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const _SelfModelScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _DrawerActionTile(
+                  icon: Icons.folder_rounded,
+                  label: 'Projects & Schedules',
+                  subtitle: 'Project management & cron scheduling',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const _ProjectsSchedulesScreen(),
                       ),
                     );
                   },
@@ -20840,6 +20870,22 @@ final wmDecayProvider = FutureProvider<WMDecayResponse>((ref) async {
   return apiService.wmDecay();
 });
 
+// Projects & Schedules Providers
+final projectsProvider = FutureProvider<ProjectsListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjects();
+});
+
+final projectProgressProvider = FutureProvider.family<ProjectProgressResponse, String>((ref, scheduleId) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getProjectProgress(scheduleId);
+});
+
+final schedulesProvider = FutureProvider<SchedulesListResponse>((ref) async {
+  final apiService = ref.read(apiServiceProvider);
+  return apiService.getSchedules();
+});
+
 // Working Memory Models
 class _ApiKeyProvisionerScreen extends ConsumerStatefulWidget {
   const _ApiKeyProvisionerScreen();
@@ -33676,8 +33722,297 @@ class _LogsToolsTab extends ConsumerWidget {
 
 class _LogEntryCard extends StatelessWidget { final LogEntry log; const _LogEntryCard({required this.log}); @override Widget build(BuildContext context) { Color levelColor; switch (log.level.toLowerCase()) { case 'error': case 'critical': levelColor = MayaTheme.error; break; case 'warning': levelColor = MayaTheme.neonOrange; break; case 'info': levelColor = MayaTheme.neonCyan; break; default: levelColor = Colors.white54; } return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: levelColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)), child: Text(log.level.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: levelColor))), const Spacer(), Text(log.provider, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]), const SizedBox(height: 8), Text(log.message, style: MayaTheme.bodyMedium.copyWith(color: Colors.white70), maxLines: 3, overflow: TextOverflow.ellipsis), const SizedBox(height: 4), Text(log.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),],) } }
 
+// Projects & Schedules Screen
+class _ProjectsSchedulesScreen extends ConsumerStatefulWidget {
+  const _ProjectsSchedulesScreen();
+
+  @override
+  ConsumerState<_ProjectsSchedulesScreen> createState() => _ProjectsSchedulesScreenState();
+}
+
+class _ProjectsSchedulesScreenState extends ConsumerState<_ProjectsSchedulesScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MayaTheme.slate900,
+        appBar: AppBar(
+          title: const Text('Projects & Schedules', style: MayaTheme.headlineSmall),
+          backgroundColor: MayaTheme.slate900,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                ref.invalidate(projectsProvider);
+                ref.invalidate(schedulesProvider);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: MayaTheme.neonCyan,
+            labelColor: MayaTheme.neonCyan,
+            unselectedLabelColor: Colors.white54,
+            tabs: const [
+              Tab(icon: Icon(Icons.folder_rounded), text: 'Projects'),
+              Tab(icon: Icon(Icons.schedule_rounded), text: 'Schedules'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _ProjectsTab(),
+            _SchedulesTab(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProjectsTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final projectsAsync = ref.watch(projectsProvider);
+
+    return projectsAsync.when(
+      data: (data) => data.projects.isEmpty
+          ? _emptyState('No Projects', 'Create your first project to get started', Icons.folder_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Projects', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Manage your projects and track progress',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.projects.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final project = data.projects[index];
+                      return _ProjectCard(project: project);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading projects', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ProjectCard extends ConsumerWidget {
+  final Project project;
+
+  const _ProjectCard({required this.project});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(project.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.folder_rounded, color: _getStatusColor(project.status), size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(project.name, style: MayaTheme.titleMedium),
+                    Text(project.description, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(project.status).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _getStatusColor(project.status)),
+                ),
+                child: Text(project.status.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(project.status))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('ID: ${project.id}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+              const Spacer(),
+              Text('Created: ${project.createdAt.toString().substring(0, 10)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active': return MayaTheme.neonEmerald;
+      case 'completed': return MayaTheme.neonCyan;
+      case 'archived': return MayaTheme.neonOrange;
+      default: return Colors.white54;
+    }
+  }
+}
+
+class _SchedulesTab extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final schedulesAsync = ref.watch(schedulesProvider);
+
+    return schedulesAsync.when(
+      data: (data) => data.schedules.isEmpty
+          ? _emptyState('No Schedules', 'Create a schedule to automate recurring tasks', Icons.schedule_rounded)
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Schedules', style: MayaTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Manage recurring task schedules with cron expressions',
+                    style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.schedules.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final schedule = data.schedules[index];
+                      return _ScheduleCard(schedule: schedule);
+                    },
+                  ),
+                ],
+              ),
+            ),
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
+        const SizedBox(height: 16),
+        Text('Error loading schedules', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+        const SizedBox(height: 8),
+        Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+      ])),
+    );
+  }
+}
+
+class _ScheduleCard extends ConsumerWidget {
+  final Schedule schedule;
+
+  const _ScheduleCard({required this.schedule});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: schedule.enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.schedule_rounded, color: schedule.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(schedule.name, style: MayaTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: schedule.enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: schedule.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                          ),
+                          child: Text(
+                            schedule.enabled ? 'ENABLED' : 'DISABLED',
+                            style: MayaTheme.labelSmall.copyWith(color: schedule.enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                          ),
+                        ),
+                      const SizedBox(width: 8),
+                      Text(schedule.cron, style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Created: ${schedule.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // Plugins Screen
-class _PluginsScreen extends ConsumerStatefulWidget {
   const _PluginsScreen();
 
   @override

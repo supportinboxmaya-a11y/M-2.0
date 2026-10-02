@@ -176,6 +176,13 @@ class AppScreenMapping {
     'self-improve': 'self_improve',
     'self improvement': 'self_improve',
     'improve myself': 'self_improve',
+    'projects': 'projects',
+    'project': 'projects',
+    'projects list': 'projects',
+    'schedules': 'projects',
+    'schedule': 'projects',
+    'cron': 'projects',
+    'cron job': 'projects',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -217,6 +224,7 @@ class AppScreenMapping {
     'semantic_index': 'Semantic Index',
     'auto_resume': 'Auto-Resume',
     'self_improve': 'Self-Improvement',
+    'projects': 'Projects & Schedules',
   };
 
   static String? resolveScreenRoute(String command) {
