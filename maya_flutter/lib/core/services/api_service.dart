@@ -2030,6 +2030,23 @@ class ApiService {
     return VectorSearchStatsResponse.fromJson(response.data);
   }
 
+  // Auto-Resume (Phase 41)
+  Future<AutoResumeResponse> resumeIncompleteGoals({
+    bool? execute,
+    int maxGoals = 5,
+    bool planProposals = true,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.kernelResumeIncomplete,
+      data: {
+        if (execute != null) 'execute': execute,
+        'max_goals': maxGoals,
+        'plan_proposals': planProposals,
+      },
+    );
+    return AutoResumeResponse.fromJson(response.data);
+  }
+
   // MCP Client (Phase 38)
   Future<McpStatusResponse> getMcpStatus() async {
     final response = await _dio.get(AppConfig.mcpStatus);
@@ -3698,6 +3715,34 @@ class VectorSearchStatsResponse with _$VectorSearchStatsResponse {
 
   factory VectorSearchStatsResponse.fromJson(Map<String, dynamic> json) =>
       _$VectorSearchStatsResponseFromJson(json);
+}
+
+// Auto-Resume Models (Phase 41)
+@freezed
+class AutoResumeResponse with _$AutoResumeResponse {
+  const factory AutoResumeResponse({
+    required List<AutoResumeResult> results,
+  }) = _AutoResumeResponse;
+
+  factory AutoResumeResponse.fromJson(Map<String, dynamic> json) =>
+      _$AutoResumeResponseFromJson(json);
+}
+
+@freezed
+class AutoResumeResult with _$AutoResumeResult {
+  const factory AutoResumeResult({
+    required String goalId,
+    required bool success,
+    required bool autoExecuted,
+    required String priorStatus,
+    String? error,
+    String? description,
+    String? action,
+    String? detail,
+  }) = _AutoResumeResult;
+
+  factory AutoResumeResult.fromJson(Map<String, dynamic> json) =>
+      _$AutoResumeResultFromJson(json);
 }
 
 // MCP Client Models (Phase 38)

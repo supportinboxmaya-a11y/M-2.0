@@ -168,6 +168,10 @@ class AppScreenMapping {
     'vector search': 'semantic_index',
     'vector store': 'semantic_index',
     'embedding': 'semantic_index',
+    'auto resume': 'auto_resume',
+    'auto-resume': 'auto_resume',
+    'resume incomplete': 'auto_resume',
+    'resume incomplete goals': 'auto_resume',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -207,6 +211,7 @@ class AppScreenMapping {
     'mcp_client': 'MCP Servers',
     'self_model': 'Self Model',
     'semantic_index': 'Semantic Index',
+    'auto_resume': 'Auto-Resume',
   };
 
   static String? resolveScreenRoute(String command) {

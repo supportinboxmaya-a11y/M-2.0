@@ -3120,6 +3120,75 @@ Map<String, dynamic> _$$VectorSearchStatsResponseImplToJson(
       'dimensions': instance.dimensions,
     };
 
+_$AutoResumeResponseImpl _$$AutoResumeResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AutoResumeResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AutoResumeResponseImpl(
+          results: $checkedConvert(
+              'results',
+              (v) => (v as List<dynamic>)
+                  .map((e) => AutoResumeResult.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AutoResumeResponseImplToJson(
+        _$AutoResumeResponseImpl instance) =>
+    <String, dynamic>{
+      'results': instance.results,
+    };
+
+_$AutoResumeResultImpl _$$AutoResumeResultImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$AutoResumeResultImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AutoResumeResultImpl(
+          goalId: $checkedConvert('goal_id', (v) => v as String),
+          success: $checkedConvert('success', (v) => v as bool),
+          autoExecuted: $checkedConvert('auto_executed', (v) => v as bool),
+          priorStatus: $checkedConvert('prior_status', (v) => v as String),
+          error: $checkedConvert('error', (v) => v as String?),
+          description: $checkedConvert('description', (v) => v as String?),
+          action: $checkedConvert('action', (v) => v as String?),
+          detail: $checkedConvert('detail', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'goalId': 'goal_id',
+        'autoExecuted': 'auto_executed',
+        'priorStatus': 'prior_status'
+      },
+    );
+
+Map<String, dynamic> _$$AutoResumeResultImplToJson(
+    _$AutoResumeResultImpl instance) {
+  final val = <String, dynamic>{
+    'goal_id': instance.goalId,
+    'success': instance.success,
+    'auto_executed': instance.autoExecuted,
+    'prior_status': instance.priorStatus,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('error', instance.error);
+  writeNotNull('description', instance.description);
+  writeNotNull('action', instance.action);
+  writeNotNull('detail', instance.detail);
+  return val;
+}
+
 _$McpStatusResponseImpl _$$McpStatusResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$McpStatusResponseImpl',

@@ -15211,6 +15211,438 @@ abstract class _VectorSearchStatsResponse implements VectorSearchStatsResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+AutoResumeResponse _$AutoResumeResponseFromJson(Map<String, dynamic> json) {
+  return _AutoResumeResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AutoResumeResponse {
+  List<AutoResumeResult> get results => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AutoResumeResponseCopyWith<AutoResumeResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AutoResumeResponseCopyWith<$Res> {
+  factory $AutoResumeResponseCopyWith(
+          AutoResumeResponse value, $Res Function(AutoResumeResponse) then) =
+      _$AutoResumeResponseCopyWithImpl<$Res, AutoResumeResponse>;
+  @useResult
+  $Res call({List<AutoResumeResult> results});
+}
+
+/// @nodoc
+class _$AutoResumeResponseCopyWithImpl<$Res, $Val extends AutoResumeResponse>
+    implements $AutoResumeResponseCopyWith<$Res> {
+  _$AutoResumeResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? results = null,
+  }) {
+    return _then(_value.copyWith(
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<AutoResumeResult>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AutoResumeResponseImplCopyWith<$Res>
+    implements $AutoResumeResponseCopyWith<$Res> {
+  factory _$$AutoResumeResponseImplCopyWith(_$AutoResumeResponseImpl value,
+          $Res Function(_$AutoResumeResponseImpl) then) =
+      __$$AutoResumeResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AutoResumeResult> results});
+}
+
+/// @nodoc
+class __$$AutoResumeResponseImplCopyWithImpl<$Res>
+    extends _$AutoResumeResponseCopyWithImpl<$Res, _$AutoResumeResponseImpl>
+    implements _$$AutoResumeResponseImplCopyWith<$Res> {
+  __$$AutoResumeResponseImplCopyWithImpl(_$AutoResumeResponseImpl _value,
+      $Res Function(_$AutoResumeResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? results = null,
+  }) {
+    return _then(_$AutoResumeResponseImpl(
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<AutoResumeResult>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AutoResumeResponseImpl implements _AutoResumeResponse {
+  const _$AutoResumeResponseImpl(
+      {required final List<AutoResumeResult> results})
+      : _results = results;
+
+  factory _$AutoResumeResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AutoResumeResponseImplFromJson(json);
+
+  final List<AutoResumeResult> _results;
+  @override
+  List<AutoResumeResult> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  @override
+  String toString() {
+    return 'AutoResumeResponse(results: $results)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AutoResumeResponseImpl &&
+            const DeepCollectionEquality().equals(other._results, _results));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_results));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AutoResumeResponseImplCopyWith<_$AutoResumeResponseImpl> get copyWith =>
+      __$$AutoResumeResponseImplCopyWithImpl<_$AutoResumeResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AutoResumeResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AutoResumeResponse implements AutoResumeResponse {
+  const factory _AutoResumeResponse(
+          {required final List<AutoResumeResult> results}) =
+      _$AutoResumeResponseImpl;
+
+  factory _AutoResumeResponse.fromJson(Map<String, dynamic> json) =
+      _$AutoResumeResponseImpl.fromJson;
+
+  @override
+  List<AutoResumeResult> get results;
+  @override
+  @JsonKey(ignore: true)
+  _$$AutoResumeResponseImplCopyWith<_$AutoResumeResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AutoResumeResult _$AutoResumeResultFromJson(Map<String, dynamic> json) {
+  return _AutoResumeResult.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AutoResumeResult {
+  String get goalId => throw _privateConstructorUsedError;
+  bool get success => throw _privateConstructorUsedError;
+  bool get autoExecuted => throw _privateConstructorUsedError;
+  String get priorStatus => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  String? get action => throw _privateConstructorUsedError;
+  String? get detail => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AutoResumeResultCopyWith<AutoResumeResult> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AutoResumeResultCopyWith<$Res> {
+  factory $AutoResumeResultCopyWith(
+          AutoResumeResult value, $Res Function(AutoResumeResult) then) =
+      _$AutoResumeResultCopyWithImpl<$Res, AutoResumeResult>;
+  @useResult
+  $Res call(
+      {String goalId,
+      bool success,
+      bool autoExecuted,
+      String priorStatus,
+      String? error,
+      String? description,
+      String? action,
+      String? detail});
+}
+
+/// @nodoc
+class _$AutoResumeResultCopyWithImpl<$Res, $Val extends AutoResumeResult>
+    implements $AutoResumeResultCopyWith<$Res> {
+  _$AutoResumeResultCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goalId = null,
+    Object? success = null,
+    Object? autoExecuted = null,
+    Object? priorStatus = null,
+    Object? error = freezed,
+    Object? description = freezed,
+    Object? action = freezed,
+    Object? detail = freezed,
+  }) {
+    return _then(_value.copyWith(
+      goalId: null == goalId
+          ? _value.goalId
+          : goalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      autoExecuted: null == autoExecuted
+          ? _value.autoExecuted
+          : autoExecuted // ignore: cast_nullable_to_non_nullable
+              as bool,
+      priorStatus: null == priorStatus
+          ? _value.priorStatus
+          : priorStatus // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+      detail: freezed == detail
+          ? _value.detail
+          : detail // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AutoResumeResultImplCopyWith<$Res>
+    implements $AutoResumeResultCopyWith<$Res> {
+  factory _$$AutoResumeResultImplCopyWith(_$AutoResumeResultImpl value,
+          $Res Function(_$AutoResumeResultImpl) then) =
+      __$$AutoResumeResultImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String goalId,
+      bool success,
+      bool autoExecuted,
+      String priorStatus,
+      String? error,
+      String? description,
+      String? action,
+      String? detail});
+}
+
+/// @nodoc
+class __$$AutoResumeResultImplCopyWithImpl<$Res>
+    extends _$AutoResumeResultCopyWithImpl<$Res, _$AutoResumeResultImpl>
+    implements _$$AutoResumeResultImplCopyWith<$Res> {
+  __$$AutoResumeResultImplCopyWithImpl(_$AutoResumeResultImpl _value,
+      $Res Function(_$AutoResumeResultImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? goalId = null,
+    Object? success = null,
+    Object? autoExecuted = null,
+    Object? priorStatus = null,
+    Object? error = freezed,
+    Object? description = freezed,
+    Object? action = freezed,
+    Object? detail = freezed,
+  }) {
+    return _then(_$AutoResumeResultImpl(
+      goalId: null == goalId
+          ? _value.goalId
+          : goalId // ignore: cast_nullable_to_non_nullable
+              as String,
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      autoExecuted: null == autoExecuted
+          ? _value.autoExecuted
+          : autoExecuted // ignore: cast_nullable_to_non_nullable
+              as bool,
+      priorStatus: null == priorStatus
+          ? _value.priorStatus
+          : priorStatus // ignore: cast_nullable_to_non_nullable
+              as String,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+      detail: freezed == detail
+          ? _value.detail
+          : detail // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AutoResumeResultImpl implements _AutoResumeResult {
+  const _$AutoResumeResultImpl(
+      {required this.goalId,
+      required this.success,
+      required this.autoExecuted,
+      required this.priorStatus,
+      this.error,
+      this.description,
+      this.action,
+      this.detail});
+
+  factory _$AutoResumeResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AutoResumeResultImplFromJson(json);
+
+  @override
+  final String goalId;
+  @override
+  final bool success;
+  @override
+  final bool autoExecuted;
+  @override
+  final String priorStatus;
+  @override
+  final String? error;
+  @override
+  final String? description;
+  @override
+  final String? action;
+  @override
+  final String? detail;
+
+  @override
+  String toString() {
+    return 'AutoResumeResult(goalId: $goalId, success: $success, autoExecuted: $autoExecuted, priorStatus: $priorStatus, error: $error, description: $description, action: $action, detail: $detail)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AutoResumeResultImpl &&
+            (identical(other.goalId, goalId) || other.goalId == goalId) &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.autoExecuted, autoExecuted) ||
+                other.autoExecuted == autoExecuted) &&
+            (identical(other.priorStatus, priorStatus) ||
+                other.priorStatus == priorStatus) &&
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.detail, detail) || other.detail == detail));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, goalId, success, autoExecuted,
+      priorStatus, error, description, action, detail);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AutoResumeResultImplCopyWith<_$AutoResumeResultImpl> get copyWith =>
+      __$$AutoResumeResultImplCopyWithImpl<_$AutoResumeResultImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AutoResumeResultImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AutoResumeResult implements AutoResumeResult {
+  const factory _AutoResumeResult(
+      {required final String goalId,
+      required final bool success,
+      required final bool autoExecuted,
+      required final String priorStatus,
+      final String? error,
+      final String? description,
+      final String? action,
+      final String? detail}) = _$AutoResumeResultImpl;
+
+  factory _AutoResumeResult.fromJson(Map<String, dynamic> json) =
+      _$AutoResumeResultImpl.fromJson;
+
+  @override
+  String get goalId;
+  @override
+  bool get success;
+  @override
+  bool get autoExecuted;
+  @override
+  String get priorStatus;
+  @override
+  String? get error;
+  @override
+  String? get description;
+  @override
+  String? get action;
+  @override
+  String? get detail;
+  @override
+  @JsonKey(ignore: true)
+  _$$AutoResumeResultImplCopyWith<_$AutoResumeResultImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 McpStatusResponse _$McpStatusResponseFromJson(Map<String, dynamic> json) {
   return _McpStatusResponse.fromJson(json);
 }
