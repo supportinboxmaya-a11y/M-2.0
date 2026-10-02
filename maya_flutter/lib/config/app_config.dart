@@ -351,6 +351,12 @@ class AppConfig {
   static const String strategistReject = '/api/v1/income/strategist/plans/';
   static const String strategistRanked = '/api/v1/income/strategist/ranked-opportunities';
   static const String strategistConfig = '/api/v1/income/strategist/config';
+
+  // Agent Profiles
+  static const String agentProfilesList = '/api/v1/agent-profiles';
+  static const String agentProfilesDetail = '/api/v1/agent-profiles/';
+  static const String agentProfilesBuiltin = '/api/v1/agent-profiles/builtin/list';
+
   // Builder
   static const String builderProjects = '/api/v1/income/builder/projects';
   static const String builderProjectDetail = '/api/v1/income/builder/projects/';

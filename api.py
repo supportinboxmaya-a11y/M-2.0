@@ -857,6 +857,13 @@ from infrastructure.income_growth_portfolio_routes import router as growth_route
 app.include_router(growth_router)
 
 # ══════════════════════════════════════════════
+# AGENT PROFILES ROUTES
+# ═══════════════════════════════════════════════
+from infrastructure.backend_agent_profiles import router as agent_profiles_router
+
+app.include_router(agent_profiles_router)
+
+# ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
 # ══════════════════════════════════════════════
 # Pairing/list/revoke/history are human-facing (normal JWT auth, same as

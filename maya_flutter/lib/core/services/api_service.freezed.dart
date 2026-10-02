@@ -21004,6 +21004,1010 @@ abstract class _StrategistRankedResponse implements StrategistRankedResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+AgentProfilesListResponse _$AgentProfilesListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AgentProfilesListResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentProfilesListResponse {
+  List<AgentProfile> get profiles => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentProfilesListResponseCopyWith<AgentProfilesListResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentProfilesListResponseCopyWith<$Res> {
+  factory $AgentProfilesListResponseCopyWith(AgentProfilesListResponse value,
+          $Res Function(AgentProfilesListResponse) then) =
+      _$AgentProfilesListResponseCopyWithImpl<$Res, AgentProfilesListResponse>;
+  @useResult
+  $Res call({List<AgentProfile> profiles});
+}
+
+/// @nodoc
+class _$AgentProfilesListResponseCopyWithImpl<$Res,
+        $Val extends AgentProfilesListResponse>
+    implements $AgentProfilesListResponseCopyWith<$Res> {
+  _$AgentProfilesListResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? profiles = null,
+  }) {
+    return _then(_value.copyWith(
+      profiles: null == profiles
+          ? _value.profiles
+          : profiles // ignore: cast_nullable_to_non_nullable
+              as List<AgentProfile>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentProfilesListResponseImplCopyWith<$Res>
+    implements $AgentProfilesListResponseCopyWith<$Res> {
+  factory _$$AgentProfilesListResponseImplCopyWith(
+          _$AgentProfilesListResponseImpl value,
+          $Res Function(_$AgentProfilesListResponseImpl) then) =
+      __$$AgentProfilesListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<AgentProfile> profiles});
+}
+
+/// @nodoc
+class __$$AgentProfilesListResponseImplCopyWithImpl<$Res>
+    extends _$AgentProfilesListResponseCopyWithImpl<$Res,
+        _$AgentProfilesListResponseImpl>
+    implements _$$AgentProfilesListResponseImplCopyWith<$Res> {
+  __$$AgentProfilesListResponseImplCopyWithImpl(
+      _$AgentProfilesListResponseImpl _value,
+      $Res Function(_$AgentProfilesListResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? profiles = null,
+  }) {
+    return _then(_$AgentProfilesListResponseImpl(
+      profiles: null == profiles
+          ? _value._profiles
+          : profiles // ignore: cast_nullable_to_non_nullable
+              as List<AgentProfile>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentProfilesListResponseImpl implements _AgentProfilesListResponse {
+  const _$AgentProfilesListResponseImpl(
+      {required final List<AgentProfile> profiles})
+      : _profiles = profiles;
+
+  factory _$AgentProfilesListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentProfilesListResponseImplFromJson(json);
+
+  final List<AgentProfile> _profiles;
+  @override
+  List<AgentProfile> get profiles {
+    if (_profiles is EqualUnmodifiableListView) return _profiles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_profiles);
+  }
+
+  @override
+  String toString() {
+    return 'AgentProfilesListResponse(profiles: $profiles)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentProfilesListResponseImpl &&
+            const DeepCollectionEquality().equals(other._profiles, _profiles));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_profiles));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentProfilesListResponseImplCopyWith<_$AgentProfilesListResponseImpl>
+      get copyWith => __$$AgentProfilesListResponseImplCopyWithImpl<
+          _$AgentProfilesListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentProfilesListResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentProfilesListResponse implements AgentProfilesListResponse {
+  const factory _AgentProfilesListResponse(
+          {required final List<AgentProfile> profiles}) =
+      _$AgentProfilesListResponseImpl;
+
+  factory _AgentProfilesListResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentProfilesListResponseImpl.fromJson;
+
+  @override
+  List<AgentProfile> get profiles;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentProfilesListResponseImplCopyWith<_$AgentProfilesListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AgentProfileDetailResponse _$AgentProfileDetailResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AgentProfileDetailResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentProfileDetailResponse {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get systemPrompt => throw _privateConstructorUsedError;
+  String get icon => throw _privateConstructorUsedError;
+  List<String> get tags => throw _privateConstructorUsedError;
+  bool get builtin => throw _privateConstructorUsedError;
+  bool get active => throw _privateConstructorUsedError;
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  DateTime get updatedAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentProfileDetailResponseCopyWith<AgentProfileDetailResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentProfileDetailResponseCopyWith<$Res> {
+  factory $AgentProfileDetailResponseCopyWith(AgentProfileDetailResponse value,
+          $Res Function(AgentProfileDetailResponse) then) =
+      _$AgentProfileDetailResponseCopyWithImpl<$Res,
+          AgentProfileDetailResponse>;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String description,
+      String systemPrompt,
+      String icon,
+      List<String> tags,
+      bool builtin,
+      bool active,
+      DateTime createdAt,
+      DateTime updatedAt});
+}
+
+/// @nodoc
+class _$AgentProfileDetailResponseCopyWithImpl<$Res,
+        $Val extends AgentProfileDetailResponse>
+    implements $AgentProfileDetailResponseCopyWith<$Res> {
+  _$AgentProfileDetailResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? systemPrompt = null,
+    Object? icon = null,
+    Object? tags = null,
+    Object? builtin = null,
+    Object? active = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      systemPrompt: null == systemPrompt
+          ? _value.systemPrompt
+          : systemPrompt // ignore: cast_nullable_to_non_nullable
+              as String,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
+      tags: null == tags
+          ? _value.tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      builtin: null == builtin
+          ? _value.builtin
+          : builtin // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentProfileDetailResponseImplCopyWith<$Res>
+    implements $AgentProfileDetailResponseCopyWith<$Res> {
+  factory _$$AgentProfileDetailResponseImplCopyWith(
+          _$AgentProfileDetailResponseImpl value,
+          $Res Function(_$AgentProfileDetailResponseImpl) then) =
+      __$$AgentProfileDetailResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String description,
+      String systemPrompt,
+      String icon,
+      List<String> tags,
+      bool builtin,
+      bool active,
+      DateTime createdAt,
+      DateTime updatedAt});
+}
+
+/// @nodoc
+class __$$AgentProfileDetailResponseImplCopyWithImpl<$Res>
+    extends _$AgentProfileDetailResponseCopyWithImpl<$Res,
+        _$AgentProfileDetailResponseImpl>
+    implements _$$AgentProfileDetailResponseImplCopyWith<$Res> {
+  __$$AgentProfileDetailResponseImplCopyWithImpl(
+      _$AgentProfileDetailResponseImpl _value,
+      $Res Function(_$AgentProfileDetailResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? systemPrompt = null,
+    Object? icon = null,
+    Object? tags = null,
+    Object? builtin = null,
+    Object? active = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+  }) {
+    return _then(_$AgentProfileDetailResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      systemPrompt: null == systemPrompt
+          ? _value.systemPrompt
+          : systemPrompt // ignore: cast_nullable_to_non_nullable
+              as String,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
+      tags: null == tags
+          ? _value._tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      builtin: null == builtin
+          ? _value.builtin
+          : builtin // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentProfileDetailResponseImpl implements _AgentProfileDetailResponse {
+  const _$AgentProfileDetailResponseImpl(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.systemPrompt,
+      required this.icon,
+      required final List<String> tags,
+      required this.builtin,
+      required this.active,
+      required this.createdAt,
+      required this.updatedAt})
+      : _tags = tags;
+
+  factory _$AgentProfileDetailResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$AgentProfileDetailResponseImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String description;
+  @override
+  final String systemPrompt;
+  @override
+  final String icon;
+  final List<String> _tags;
+  @override
+  List<String> get tags {
+    if (_tags is EqualUnmodifiableListView) return _tags;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tags);
+  }
+
+  @override
+  final bool builtin;
+  @override
+  final bool active;
+  @override
+  final DateTime createdAt;
+  @override
+  final DateTime updatedAt;
+
+  @override
+  String toString() {
+    return 'AgentProfileDetailResponse(id: $id, name: $name, description: $description, systemPrompt: $systemPrompt, icon: $icon, tags: $tags, builtin: $builtin, active: $active, createdAt: $createdAt, updatedAt: $updatedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentProfileDetailResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.systemPrompt, systemPrompt) ||
+                other.systemPrompt == systemPrompt) &&
+            (identical(other.icon, icon) || other.icon == icon) &&
+            const DeepCollectionEquality().equals(other._tags, _tags) &&
+            (identical(other.builtin, builtin) || other.builtin == builtin) &&
+            (identical(other.active, active) || other.active == active) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      description,
+      systemPrompt,
+      icon,
+      const DeepCollectionEquality().hash(_tags),
+      builtin,
+      active,
+      createdAt,
+      updatedAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentProfileDetailResponseImplCopyWith<_$AgentProfileDetailResponseImpl>
+      get copyWith => __$$AgentProfileDetailResponseImplCopyWithImpl<
+          _$AgentProfileDetailResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentProfileDetailResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentProfileDetailResponse
+    implements AgentProfileDetailResponse {
+  const factory _AgentProfileDetailResponse(
+      {required final String id,
+      required final String name,
+      required final String description,
+      required final String systemPrompt,
+      required final String icon,
+      required final List<String> tags,
+      required final bool builtin,
+      required final bool active,
+      required final DateTime createdAt,
+      required final DateTime updatedAt}) = _$AgentProfileDetailResponseImpl;
+
+  factory _AgentProfileDetailResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentProfileDetailResponseImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  String get systemPrompt;
+  @override
+  String get icon;
+  @override
+  List<String> get tags;
+  @override
+  bool get builtin;
+  @override
+  bool get active;
+  @override
+  DateTime get createdAt;
+  @override
+  DateTime get updatedAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentProfileDetailResponseImplCopyWith<_$AgentProfileDetailResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AgentProfilesBuiltinResponse _$AgentProfilesBuiltinResponseFromJson(
+    Map<String, dynamic> json) {
+  return _AgentProfilesBuiltinResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentProfilesBuiltinResponse {
+  List<BuiltinAgentProfile> get profiles => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentProfilesBuiltinResponseCopyWith<AgentProfilesBuiltinResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentProfilesBuiltinResponseCopyWith<$Res> {
+  factory $AgentProfilesBuiltinResponseCopyWith(
+          AgentProfilesBuiltinResponse value,
+          $Res Function(AgentProfilesBuiltinResponse) then) =
+      _$AgentProfilesBuiltinResponseCopyWithImpl<$Res,
+          AgentProfilesBuiltinResponse>;
+  @useResult
+  $Res call({List<BuiltinAgentProfile> profiles});
+}
+
+/// @nodoc
+class _$AgentProfilesBuiltinResponseCopyWithImpl<$Res,
+        $Val extends AgentProfilesBuiltinResponse>
+    implements $AgentProfilesBuiltinResponseCopyWith<$Res> {
+  _$AgentProfilesBuiltinResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? profiles = null,
+  }) {
+    return _then(_value.copyWith(
+      profiles: null == profiles
+          ? _value.profiles
+          : profiles // ignore: cast_nullable_to_non_nullable
+              as List<BuiltinAgentProfile>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentProfilesBuiltinResponseImplCopyWith<$Res>
+    implements $AgentProfilesBuiltinResponseCopyWith<$Res> {
+  factory _$$AgentProfilesBuiltinResponseImplCopyWith(
+          _$AgentProfilesBuiltinResponseImpl value,
+          $Res Function(_$AgentProfilesBuiltinResponseImpl) then) =
+      __$$AgentProfilesBuiltinResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<BuiltinAgentProfile> profiles});
+}
+
+/// @nodoc
+class __$$AgentProfilesBuiltinResponseImplCopyWithImpl<$Res>
+    extends _$AgentProfilesBuiltinResponseCopyWithImpl<$Res,
+        _$AgentProfilesBuiltinResponseImpl>
+    implements _$$AgentProfilesBuiltinResponseImplCopyWith<$Res> {
+  __$$AgentProfilesBuiltinResponseImplCopyWithImpl(
+      _$AgentProfilesBuiltinResponseImpl _value,
+      $Res Function(_$AgentProfilesBuiltinResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? profiles = null,
+  }) {
+    return _then(_$AgentProfilesBuiltinResponseImpl(
+      profiles: null == profiles
+          ? _value._profiles
+          : profiles // ignore: cast_nullable_to_non_nullable
+              as List<BuiltinAgentProfile>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentProfilesBuiltinResponseImpl
+    implements _AgentProfilesBuiltinResponse {
+  const _$AgentProfilesBuiltinResponseImpl(
+      {required final List<BuiltinAgentProfile> profiles})
+      : _profiles = profiles;
+
+  factory _$AgentProfilesBuiltinResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$AgentProfilesBuiltinResponseImplFromJson(json);
+
+  final List<BuiltinAgentProfile> _profiles;
+  @override
+  List<BuiltinAgentProfile> get profiles {
+    if (_profiles is EqualUnmodifiableListView) return _profiles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_profiles);
+  }
+
+  @override
+  String toString() {
+    return 'AgentProfilesBuiltinResponse(profiles: $profiles)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentProfilesBuiltinResponseImpl &&
+            const DeepCollectionEquality().equals(other._profiles, _profiles));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_profiles));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentProfilesBuiltinResponseImplCopyWith<
+          _$AgentProfilesBuiltinResponseImpl>
+      get copyWith => __$$AgentProfilesBuiltinResponseImplCopyWithImpl<
+          _$AgentProfilesBuiltinResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentProfilesBuiltinResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentProfilesBuiltinResponse
+    implements AgentProfilesBuiltinResponse {
+  const factory _AgentProfilesBuiltinResponse(
+          {required final List<BuiltinAgentProfile> profiles}) =
+      _$AgentProfilesBuiltinResponseImpl;
+
+  factory _AgentProfilesBuiltinResponse.fromJson(Map<String, dynamic> json) =
+      _$AgentProfilesBuiltinResponseImpl.fromJson;
+
+  @override
+  List<BuiltinAgentProfile> get profiles;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentProfilesBuiltinResponseImplCopyWith<
+          _$AgentProfilesBuiltinResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+AgentProfile _$AgentProfileFromJson(Map<String, dynamic> json) {
+  return _AgentProfile.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AgentProfile {
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get systemPrompt => throw _privateConstructorUsedError;
+  String get icon => throw _privateConstructorUsedError;
+  List<String> get tags => throw _privateConstructorUsedError;
+  bool get builtin => throw _privateConstructorUsedError;
+  bool get active => throw _privateConstructorUsedError;
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  DateTime get updatedAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AgentProfileCopyWith<AgentProfile> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AgentProfileCopyWith<$Res> {
+  factory $AgentProfileCopyWith(
+          AgentProfile value, $Res Function(AgentProfile) then) =
+      _$AgentProfileCopyWithImpl<$Res, AgentProfile>;
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String description,
+      String systemPrompt,
+      String icon,
+      List<String> tags,
+      bool builtin,
+      bool active,
+      DateTime createdAt,
+      DateTime updatedAt});
+}
+
+/// @nodoc
+class _$AgentProfileCopyWithImpl<$Res, $Val extends AgentProfile>
+    implements $AgentProfileCopyWith<$Res> {
+  _$AgentProfileCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? systemPrompt = null,
+    Object? icon = null,
+    Object? tags = null,
+    Object? builtin = null,
+    Object? active = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      systemPrompt: null == systemPrompt
+          ? _value.systemPrompt
+          : systemPrompt // ignore: cast_nullable_to_non_nullable
+              as String,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
+      tags: null == tags
+          ? _value.tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      builtin: null == builtin
+          ? _value.builtin
+          : builtin // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AgentProfileImplCopyWith<$Res>
+    implements $AgentProfileCopyWith<$Res> {
+  factory _$$AgentProfileImplCopyWith(
+          _$AgentProfileImpl value, $Res Function(_$AgentProfileImpl) then) =
+      __$$AgentProfileImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String name,
+      String description,
+      String systemPrompt,
+      String icon,
+      List<String> tags,
+      bool builtin,
+      bool active,
+      DateTime createdAt,
+      DateTime updatedAt});
+}
+
+/// @nodoc
+class __$$AgentProfileImplCopyWithImpl<$Res>
+    extends _$AgentProfileCopyWithImpl<$Res, _$AgentProfileImpl>
+    implements _$$AgentProfileImplCopyWith<$Res> {
+  __$$AgentProfileImplCopyWithImpl(
+      _$AgentProfileImpl _value, $Res Function(_$AgentProfileImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? systemPrompt = null,
+    Object? icon = null,
+    Object? tags = null,
+    Object? builtin = null,
+    Object? active = null,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+  }) {
+    return _then(_$AgentProfileImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      systemPrompt: null == systemPrompt
+          ? _value.systemPrompt
+          : systemPrompt // ignore: cast_nullable_to_non_nullable
+              as String,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
+      tags: null == tags
+          ? _value._tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      builtin: null == builtin
+          ? _value.builtin
+          : builtin // ignore: cast_nullable_to_non_nullable
+              as bool,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AgentProfileImpl implements _AgentProfile {
+  const _$AgentProfileImpl(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.systemPrompt,
+      required this.icon,
+      required final List<String> tags,
+      required this.builtin,
+      required this.active,
+      required this.createdAt,
+      required this.updatedAt})
+      : _tags = tags;
+
+  factory _$AgentProfileImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AgentProfileImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+  @override
+  final String description;
+  @override
+  final String systemPrompt;
+  @override
+  final String icon;
+  final List<String> _tags;
+  @override
+  List<String> get tags {
+    if (_tags is EqualUnmodifiableListView) return _tags;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tags);
+  }
+
+  @override
+  final bool builtin;
+  @override
+  final bool active;
+  @override
+  final DateTime createdAt;
+  @override
+  final DateTime updatedAt;
+
+  @override
+  String toString() {
+    return 'AgentProfile(id: $id, name: $name, description: $description, systemPrompt: $systemPrompt, icon: $icon, tags: $tags, builtin: $builtin, active: $active, createdAt: $createdAt, updatedAt: $updatedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AgentProfileImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.systemPrompt, systemPrompt) ||
+                other.systemPrompt == systemPrompt) &&
+            (identical(other.icon, icon) || other.icon == icon) &&
+            const DeepCollectionEquality().equals(other._tags, _tags) &&
+            (identical(other.builtin, builtin) || other.builtin == builtin) &&
+            (identical(other.active, active) || other.active == active) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      description,
+      systemPrompt,
+      icon,
+      const DeepCollectionEquality().hash(_tags),
+      builtin,
+      active,
+      createdAt,
+      updatedAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AgentProfileImplCopyWith<_$AgentProfileImpl> get copyWith =>
+      __$$AgentProfileImplCopyWithImpl<_$AgentProfileImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AgentProfileImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AgentProfile implements AgentProfile {
+  const factory _AgentProfile(
+      {required final String id,
+      required final String name,
+      required final String description,
+      required final String systemPrompt,
+      required final String icon,
+      required final List<String> tags,
+      required final bool builtin,
+      required final bool active,
+      required final DateTime createdAt,
+      required final DateTime updatedAt}) = _$AgentProfileImpl;
+
+  factory _AgentProfile.fromJson(Map<String, dynamic> json) =
+      _$AgentProfileImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  String get systemPrompt;
+  @override
+  String get icon;
+  @override
+  List<String> get tags;
+  @override
+  bool get builtin;
+  @override
+  bool get active;
+  @override
+  DateTime get createdAt;
+  @override
+  DateTime get updatedAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$AgentProfileImplCopyWith<_$AgentProfileImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 StrategistConfigResponse _$StrategistConfigResponseFromJson(
     Map<String, dynamic> json) {
   return _StrategistConfigResponse.fromJson(json);

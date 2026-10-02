@@ -811,6 +811,32 @@ Map<String, dynamic> _$StrategistRankedOpportunityToJson(
       'reason': instance.reason,
     };
 
+BuiltinAgentProfile _$BuiltinAgentProfileFromJson(Map json) => $checkedCreate(
+      'BuiltinAgentProfile',
+      json,
+      ($checkedConvert) {
+        final val = BuiltinAgentProfile(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          icon: $checkedConvert('icon', (v) => v as String),
+          tags: $checkedConvert('tags',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$BuiltinAgentProfileToJson(
+        BuiltinAgentProfile instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'icon': instance.icon,
+      'tags': instance.tags,
+    };
+
 BuilderProject _$BuilderProjectFromJson(Map json) => $checkedCreate(
       'BuilderProject',
       json,
@@ -4983,6 +5009,141 @@ Map<String, dynamic> _$$StrategistRankedResponseImplToJson(
         _$StrategistRankedResponseImpl instance) =>
     <String, dynamic>{
       'opportunities': instance.opportunities,
+    };
+
+_$AgentProfilesListResponseImpl _$$AgentProfilesListResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AgentProfilesListResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentProfilesListResponseImpl(
+          profiles: $checkedConvert(
+              'profiles',
+              (v) => (v as List<dynamic>)
+                  .map((e) => AgentProfile.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentProfilesListResponseImplToJson(
+        _$AgentProfilesListResponseImpl instance) =>
+    <String, dynamic>{
+      'profiles': instance.profiles,
+    };
+
+_$AgentProfileDetailResponseImpl _$$AgentProfileDetailResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AgentProfileDetailResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentProfileDetailResponseImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          systemPrompt: $checkedConvert('system_prompt', (v) => v as String),
+          icon: $checkedConvert('icon', (v) => v as String),
+          tags: $checkedConvert('tags',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          builtin: $checkedConvert('builtin', (v) => v as bool),
+          active: $checkedConvert('active', (v) => v as bool),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'systemPrompt': 'system_prompt',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$$AgentProfileDetailResponseImplToJson(
+        _$AgentProfileDetailResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'system_prompt': instance.systemPrompt,
+      'icon': instance.icon,
+      'tags': instance.tags,
+      'builtin': instance.builtin,
+      'active': instance.active,
+      'created_at': instance.createdAt.toIso8601String(),
+      'updated_at': instance.updatedAt.toIso8601String(),
+    };
+
+_$AgentProfilesBuiltinResponseImpl _$$AgentProfilesBuiltinResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$AgentProfilesBuiltinResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentProfilesBuiltinResponseImpl(
+          profiles: $checkedConvert(
+              'profiles',
+              (v) => (v as List<dynamic>)
+                  .map((e) => BuiltinAgentProfile.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$AgentProfilesBuiltinResponseImplToJson(
+        _$AgentProfilesBuiltinResponseImpl instance) =>
+    <String, dynamic>{
+      'profiles': instance.profiles,
+    };
+
+_$AgentProfileImpl _$$AgentProfileImplFromJson(Map json) => $checkedCreate(
+      r'_$AgentProfileImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$AgentProfileImpl(
+          id: $checkedConvert('id', (v) => v as String),
+          name: $checkedConvert('name', (v) => v as String),
+          description: $checkedConvert('description', (v) => v as String),
+          systemPrompt: $checkedConvert('system_prompt', (v) => v as String),
+          icon: $checkedConvert('icon', (v) => v as String),
+          tags: $checkedConvert('tags',
+              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
+          builtin: $checkedConvert('builtin', (v) => v as bool),
+          active: $checkedConvert('active', (v) => v as bool),
+          createdAt:
+              $checkedConvert('created_at', (v) => DateTime.parse(v as String)),
+          updatedAt:
+              $checkedConvert('updated_at', (v) => DateTime.parse(v as String)),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'systemPrompt': 'system_prompt',
+        'createdAt': 'created_at',
+        'updatedAt': 'updated_at'
+      },
+    );
+
+Map<String, dynamic> _$$AgentProfileImplToJson(_$AgentProfileImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'system_prompt': instance.systemPrompt,
+      'icon': instance.icon,
+      'tags': instance.tags,
+      'builtin': instance.builtin,
+      'active': instance.active,
+      'created_at': instance.createdAt.toIso8601String(),
+      'updated_at': instance.updatedAt.toIso8601String(),
     };
 
 _$StrategistConfigResponseImpl _$$StrategistConfigResponseImplFromJson(

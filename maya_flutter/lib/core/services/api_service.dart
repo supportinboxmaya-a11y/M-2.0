@@ -2255,6 +2255,22 @@ class ApiService {
     return StrategistConfigResponse.fromJson(response.data);
   }
 
+  // Agent Profiles
+  Future<AgentProfilesListResponse> getAgentProfiles() async {
+    final response = await _dio.get(AppConfig.agentProfilesList);
+    return AgentProfilesListResponse.fromJson(response.data);
+  }
+
+  Future<AgentProfileDetailResponse> getAgentProfileDetail(String profileId) async {
+    final response = await _dio.get('${AppConfig.agentProfilesDetail}$profileId');
+    return AgentProfileDetailResponse.fromJson(response.data);
+  }
+
+  Future<AgentProfilesBuiltinResponse> getBuiltinAgentProfiles() async {
+    final response = await _dio.get(AppConfig.agentProfilesBuiltin);
+    return AgentProfilesBuiltinResponse.fromJson(response.data);
+  }
+
   // Income Engine - Builder
   Future<BuilderProjectsResponse> getBuilderProjects() async {
     final response = await _dio.get(AppConfig.builderProjects);
@@ -4951,6 +4967,86 @@ class StrategistRankedOpportunity {
       _$StrategistRankedOpportunityFromJson(json);
 
   Map<String, dynamic> toJson() => _$StrategistRankedOpportunityToJson(this);
+}
+
+@freezed
+class AgentProfilesListResponse with _$AgentProfilesListResponse {
+  const factory AgentProfilesListResponse({
+    required List<AgentProfile> profiles,
+  }) = _AgentProfilesListResponse;
+
+  factory AgentProfilesListResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentProfilesListResponseFromJson(json);
+}
+
+@freezed
+class AgentProfileDetailResponse with _$AgentProfileDetailResponse {
+  const factory AgentProfileDetailResponse({
+    required String id,
+    required String name,
+    required String description,
+    required String systemPrompt,
+    required String icon,
+    required List<String> tags,
+    required bool builtin,
+    required bool active,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _AgentProfileDetailResponse;
+
+  factory AgentProfileDetailResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentProfileDetailResponseFromJson(json);
+}
+
+@freezed
+class AgentProfilesBuiltinResponse with _$AgentProfilesBuiltinResponse {
+  const factory AgentProfilesBuiltinResponse({
+    required List<BuiltinAgentProfile> profiles,
+  }) = _AgentProfilesBuiltinResponse;
+
+  factory AgentProfilesBuiltinResponse.fromJson(Map<String, dynamic> json) =>
+      _$AgentProfilesBuiltinResponseFromJson(json);
+}
+
+@JsonSerializable()
+class BuiltinAgentProfile {
+  final String id;
+  final String name;
+  final String description;
+  final String icon;
+  final List<String> tags;
+
+  const BuiltinAgentProfile({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.icon,
+    required this.tags,
+  });
+
+  factory BuiltinAgentProfile.fromJson(Map<String, dynamic> json) =>
+      _$BuiltinAgentProfileFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BuiltinAgentProfileToJson(this);
+}
+
+@freezed
+class AgentProfile with _$AgentProfile {
+  const factory AgentProfile({
+    required String id,
+    required String name,
+    required String description,
+    required String systemPrompt,
+    required String icon,
+    required List<String> tags,
+    required bool builtin,
+    required bool active,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _AgentProfile;
+
+  factory AgentProfile.fromJson(Map<String, dynamic> json) =>
+      _$AgentProfileFromJson(json);
 }
 
 @freezed
