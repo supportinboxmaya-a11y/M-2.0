@@ -2008,6 +2008,28 @@ class ApiService {
     return BeliefsQueryResponse.fromJson(response.data);
   }
 
+  // Semantic Index / Vector Retrieval (Phase 40)
+  Future<VectorSearchResponse> vectorSearch({
+    required String query,
+    int limit = 10,
+    bool hybrid = true,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.vectorSearch,
+      data: {
+        'query': query,
+        'limit': limit,
+        'hybrid': hybrid,
+      },
+    );
+    return VectorSearchResponse.fromJson(response.data);
+  }
+
+  Future<VectorSearchStatsResponse> getVectorSearchStats() async {
+    final response = await _dio.get(AppConfig.vectorStats);
+    return VectorSearchStatsResponse.fromJson(response.data);
+  }
+
   // MCP Client (Phase 38)
   Future<McpStatusResponse> getMcpStatus() async {
     final response = await _dio.get(AppConfig.mcpStatus);
@@ -3633,6 +3655,49 @@ class BeliefsQueryResponse with _$BeliefsQueryResponse {
 
   factory BeliefsQueryResponse.fromJson(Map<String, dynamic> json) =>
       _$BeliefsQueryResponseFromJson(json);
+}
+
+// Semantic Index / Vector Retrieval Models (Phase 40)
+@freezed
+class VectorSearchResponse with _$VectorSearchResponse {
+  const factory VectorSearchResponse({
+    required List<VectorSearchResult> results,
+  }) = _VectorSearchResponse;
+
+  factory VectorSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$VectorSearchResponseFromJson(json);
+}
+
+@JsonSerializable()
+class VectorSearchResult {
+  final String id;
+  final String content;
+  final double score;
+  final Map<String, dynamic>? metadata;
+
+  const VectorSearchResult({
+    required this.id,
+    required this.content,
+    required this.score,
+    this.metadata,
+  });
+
+  factory VectorSearchResult.fromJson(Map<String, dynamic> json) =>
+      _$VectorSearchResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VectorSearchResultToJson(this);
+}
+
+@freezed
+class VectorSearchStatsResponse with _$VectorSearchStatsResponse {
+  const factory VectorSearchStatsResponse({
+    required int totalVectors,
+    required String retrievalEngine,
+    required int dimensions,
+  }) = _VectorSearchStatsResponse;
+
+  factory VectorSearchStatsResponse.fromJson(Map<String, dynamic> json) =>
+      _$VectorSearchStatsResponseFromJson(json);
 }
 
 // MCP Client Models (Phase 38)

@@ -164,6 +164,10 @@ class AppScreenMapping {
     'weaknesses': 'self_model',
     'self assess': 'self_model',
     'assess myself': 'self_model',
+    'semantic index': 'semantic_index',
+    'vector search': 'semantic_index',
+    'vector store': 'semantic_index',
+    'embedding': 'semantic_index',
   };
 
   static const Map<String, String> screenDisplayNames = {
@@ -202,6 +206,7 @@ class AppScreenMapping {
     'skill_generalization': 'Skill Generalization',
     'mcp_client': 'MCP Servers',
     'self_model': 'Self Model',
+    'semantic_index': 'Semantic Index',
   };
 
   static String? resolveScreenRoute(String command) {

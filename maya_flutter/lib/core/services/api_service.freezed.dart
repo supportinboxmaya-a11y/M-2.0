@@ -14878,6 +14878,339 @@ abstract class _BeliefsQueryResponse implements BeliefsQueryResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+VectorSearchResponse _$VectorSearchResponseFromJson(Map<String, dynamic> json) {
+  return _VectorSearchResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$VectorSearchResponse {
+  List<VectorSearchResult> get results => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $VectorSearchResponseCopyWith<VectorSearchResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $VectorSearchResponseCopyWith<$Res> {
+  factory $VectorSearchResponseCopyWith(VectorSearchResponse value,
+          $Res Function(VectorSearchResponse) then) =
+      _$VectorSearchResponseCopyWithImpl<$Res, VectorSearchResponse>;
+  @useResult
+  $Res call({List<VectorSearchResult> results});
+}
+
+/// @nodoc
+class _$VectorSearchResponseCopyWithImpl<$Res,
+        $Val extends VectorSearchResponse>
+    implements $VectorSearchResponseCopyWith<$Res> {
+  _$VectorSearchResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? results = null,
+  }) {
+    return _then(_value.copyWith(
+      results: null == results
+          ? _value.results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<VectorSearchResult>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$VectorSearchResponseImplCopyWith<$Res>
+    implements $VectorSearchResponseCopyWith<$Res> {
+  factory _$$VectorSearchResponseImplCopyWith(_$VectorSearchResponseImpl value,
+          $Res Function(_$VectorSearchResponseImpl) then) =
+      __$$VectorSearchResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<VectorSearchResult> results});
+}
+
+/// @nodoc
+class __$$VectorSearchResponseImplCopyWithImpl<$Res>
+    extends _$VectorSearchResponseCopyWithImpl<$Res, _$VectorSearchResponseImpl>
+    implements _$$VectorSearchResponseImplCopyWith<$Res> {
+  __$$VectorSearchResponseImplCopyWithImpl(_$VectorSearchResponseImpl _value,
+      $Res Function(_$VectorSearchResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? results = null,
+  }) {
+    return _then(_$VectorSearchResponseImpl(
+      results: null == results
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<VectorSearchResult>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$VectorSearchResponseImpl implements _VectorSearchResponse {
+  const _$VectorSearchResponseImpl(
+      {required final List<VectorSearchResult> results})
+      : _results = results;
+
+  factory _$VectorSearchResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$VectorSearchResponseImplFromJson(json);
+
+  final List<VectorSearchResult> _results;
+  @override
+  List<VectorSearchResult> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  @override
+  String toString() {
+    return 'VectorSearchResponse(results: $results)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VectorSearchResponseImpl &&
+            const DeepCollectionEquality().equals(other._results, _results));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_results));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$VectorSearchResponseImplCopyWith<_$VectorSearchResponseImpl>
+      get copyWith =>
+          __$$VectorSearchResponseImplCopyWithImpl<_$VectorSearchResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$VectorSearchResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _VectorSearchResponse implements VectorSearchResponse {
+  const factory _VectorSearchResponse(
+          {required final List<VectorSearchResult> results}) =
+      _$VectorSearchResponseImpl;
+
+  factory _VectorSearchResponse.fromJson(Map<String, dynamic> json) =
+      _$VectorSearchResponseImpl.fromJson;
+
+  @override
+  List<VectorSearchResult> get results;
+  @override
+  @JsonKey(ignore: true)
+  _$$VectorSearchResponseImplCopyWith<_$VectorSearchResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+VectorSearchStatsResponse _$VectorSearchStatsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _VectorSearchStatsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$VectorSearchStatsResponse {
+  int get totalVectors => throw _privateConstructorUsedError;
+  String get retrievalEngine => throw _privateConstructorUsedError;
+  int get dimensions => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $VectorSearchStatsResponseCopyWith<VectorSearchStatsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $VectorSearchStatsResponseCopyWith<$Res> {
+  factory $VectorSearchStatsResponseCopyWith(VectorSearchStatsResponse value,
+          $Res Function(VectorSearchStatsResponse) then) =
+      _$VectorSearchStatsResponseCopyWithImpl<$Res, VectorSearchStatsResponse>;
+  @useResult
+  $Res call({int totalVectors, String retrievalEngine, int dimensions});
+}
+
+/// @nodoc
+class _$VectorSearchStatsResponseCopyWithImpl<$Res,
+        $Val extends VectorSearchStatsResponse>
+    implements $VectorSearchStatsResponseCopyWith<$Res> {
+  _$VectorSearchStatsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalVectors = null,
+    Object? retrievalEngine = null,
+    Object? dimensions = null,
+  }) {
+    return _then(_value.copyWith(
+      totalVectors: null == totalVectors
+          ? _value.totalVectors
+          : totalVectors // ignore: cast_nullable_to_non_nullable
+              as int,
+      retrievalEngine: null == retrievalEngine
+          ? _value.retrievalEngine
+          : retrievalEngine // ignore: cast_nullable_to_non_nullable
+              as String,
+      dimensions: null == dimensions
+          ? _value.dimensions
+          : dimensions // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$VectorSearchStatsResponseImplCopyWith<$Res>
+    implements $VectorSearchStatsResponseCopyWith<$Res> {
+  factory _$$VectorSearchStatsResponseImplCopyWith(
+          _$VectorSearchStatsResponseImpl value,
+          $Res Function(_$VectorSearchStatsResponseImpl) then) =
+      __$$VectorSearchStatsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int totalVectors, String retrievalEngine, int dimensions});
+}
+
+/// @nodoc
+class __$$VectorSearchStatsResponseImplCopyWithImpl<$Res>
+    extends _$VectorSearchStatsResponseCopyWithImpl<$Res,
+        _$VectorSearchStatsResponseImpl>
+    implements _$$VectorSearchStatsResponseImplCopyWith<$Res> {
+  __$$VectorSearchStatsResponseImplCopyWithImpl(
+      _$VectorSearchStatsResponseImpl _value,
+      $Res Function(_$VectorSearchStatsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? totalVectors = null,
+    Object? retrievalEngine = null,
+    Object? dimensions = null,
+  }) {
+    return _then(_$VectorSearchStatsResponseImpl(
+      totalVectors: null == totalVectors
+          ? _value.totalVectors
+          : totalVectors // ignore: cast_nullable_to_non_nullable
+              as int,
+      retrievalEngine: null == retrievalEngine
+          ? _value.retrievalEngine
+          : retrievalEngine // ignore: cast_nullable_to_non_nullable
+              as String,
+      dimensions: null == dimensions
+          ? _value.dimensions
+          : dimensions // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$VectorSearchStatsResponseImpl implements _VectorSearchStatsResponse {
+  const _$VectorSearchStatsResponseImpl(
+      {required this.totalVectors,
+      required this.retrievalEngine,
+      required this.dimensions});
+
+  factory _$VectorSearchStatsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$VectorSearchStatsResponseImplFromJson(json);
+
+  @override
+  final int totalVectors;
+  @override
+  final String retrievalEngine;
+  @override
+  final int dimensions;
+
+  @override
+  String toString() {
+    return 'VectorSearchStatsResponse(totalVectors: $totalVectors, retrievalEngine: $retrievalEngine, dimensions: $dimensions)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VectorSearchStatsResponseImpl &&
+            (identical(other.totalVectors, totalVectors) ||
+                other.totalVectors == totalVectors) &&
+            (identical(other.retrievalEngine, retrievalEngine) ||
+                other.retrievalEngine == retrievalEngine) &&
+            (identical(other.dimensions, dimensions) ||
+                other.dimensions == dimensions));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, totalVectors, retrievalEngine, dimensions);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$VectorSearchStatsResponseImplCopyWith<_$VectorSearchStatsResponseImpl>
+      get copyWith => __$$VectorSearchStatsResponseImplCopyWithImpl<
+          _$VectorSearchStatsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$VectorSearchStatsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _VectorSearchStatsResponse implements VectorSearchStatsResponse {
+  const factory _VectorSearchStatsResponse(
+      {required final int totalVectors,
+      required final String retrievalEngine,
+      required final int dimensions}) = _$VectorSearchStatsResponseImpl;
+
+  factory _VectorSearchStatsResponse.fromJson(Map<String, dynamic> json) =
+      _$VectorSearchStatsResponseImpl.fromJson;
+
+  @override
+  int get totalVectors;
+  @override
+  String get retrievalEngine;
+  @override
+  int get dimensions;
+  @override
+  @JsonKey(ignore: true)
+  _$$VectorSearchStatsResponseImplCopyWith<_$VectorSearchStatsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 McpStatusResponse _$McpStatusResponseFromJson(Map<String, dynamic> json) {
   return _McpStatusResponse.fromJson(json);
 }

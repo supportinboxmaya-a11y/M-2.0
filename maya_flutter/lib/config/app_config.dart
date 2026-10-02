@@ -284,6 +284,11 @@ class AppConfig {
   static const String selfAssess = '/api/v1/cognitive/self/assess';
   static const String selfTraits = '/api/v1/cognitive/self/traits';
 
+  // Semantic Index / Vector Retrieval (Phase 40)
+  static const String vectorSearch = '/vector/search';
+  static const String vectorAdd = '/vector/add';
+  static const String vectorStats = '/vector/stats';
+
   // Working Memory
   static const String workingMemoryAdd = '/api/v1/cognitive/memory/working/add';
   static const String workingMemorySearch = '/api/v1/cognitive/memory/working/search';

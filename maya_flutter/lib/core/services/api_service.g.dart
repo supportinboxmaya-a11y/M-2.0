@@ -475,6 +475,41 @@ Map<String, dynamic> _$KnowledgeItemToJson(KnowledgeItem instance) {
   return val;
 }
 
+VectorSearchResult _$VectorSearchResultFromJson(Map json) => $checkedCreate(
+      'VectorSearchResult',
+      json,
+      ($checkedConvert) {
+        final val = VectorSearchResult(
+          id: $checkedConvert('id', (v) => v as String),
+          content: $checkedConvert('content', (v) => v as String),
+          score: $checkedConvert('score', (v) => (v as num).toDouble()),
+          metadata: $checkedConvert(
+              'metadata',
+              (v) => (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  )),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$VectorSearchResultToJson(VectorSearchResult instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'content': instance.content,
+    'score': instance.score,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('metadata', instance.metadata);
+  return val;
+}
+
 Belief _$BeliefFromJson(Map json) => $checkedCreate(
       'Belief',
       json,
@@ -3031,6 +3066,58 @@ Map<String, dynamic> _$$BeliefsQueryResponseImplToJson(
         _$BeliefsQueryResponseImpl instance) =>
     <String, dynamic>{
       'beliefs': instance.beliefs,
+    };
+
+_$VectorSearchResponseImpl _$$VectorSearchResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$VectorSearchResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$VectorSearchResponseImpl(
+          results: $checkedConvert(
+              'results',
+              (v) => (v as List<dynamic>)
+                  .map((e) => VectorSearchResult.fromJson(
+                      Map<String, dynamic>.from(e as Map)))
+                  .toList()),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$$VectorSearchResponseImplToJson(
+        _$VectorSearchResponseImpl instance) =>
+    <String, dynamic>{
+      'results': instance.results,
+    };
+
+_$VectorSearchStatsResponseImpl _$$VectorSearchStatsResponseImplFromJson(
+        Map json) =>
+    $checkedCreate(
+      r'_$VectorSearchStatsResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$VectorSearchStatsResponseImpl(
+          totalVectors:
+              $checkedConvert('total_vectors', (v) => (v as num).toInt()),
+          retrievalEngine:
+              $checkedConvert('retrieval_engine', (v) => v as String),
+          dimensions: $checkedConvert('dimensions', (v) => (v as num).toInt()),
+        );
+        return val;
+      },
+      fieldKeyMap: const {
+        'totalVectors': 'total_vectors',
+        'retrievalEngine': 'retrieval_engine'
+      },
+    );
+
+Map<String, dynamic> _$$VectorSearchStatsResponseImplToJson(
+        _$VectorSearchStatsResponseImpl instance) =>
+    <String, dynamic>{
+      'total_vectors': instance.totalVectors,
+      'retrieval_engine': instance.retrievalEngine,
+      'dimensions': instance.dimensions,
     };
 
 _$McpStatusResponseImpl _$$McpStatusResponseImplFromJson(Map json) =>
