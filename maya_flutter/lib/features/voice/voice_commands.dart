@@ -239,8 +239,6 @@ class AppScreenMapping {
     'income strategist': 'income_strategist',
     'strategist': 'income_strategist',
     'review plans': 'income_strategist',
-    'income notifications': 'income_notifications',
-    'income alerts': 'income_notifications',
     'sandbox tools': 'sandbox_tools',
     'sandbox': 'sandbox_tools',
     'execute code': 'sandbox_tools',
