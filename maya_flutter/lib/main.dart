@@ -34190,7 +34190,96 @@ class _VisionAnalyzeTabState extends ConsumerState<_VisionAnalyzeTab> {
     } catch (e) { setState(() => _isAnalyzing = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error)); }
   }
 
-  @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Image Analysis', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Analyze an image using AI vision', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _imagePathController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Image Path/URL *', hintText: '/path/to/image.jpg or https://example.com/image.png', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.image_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isAnalyzing ? null : _analyze, icon: _isAnalyzing ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.search_rounded), label: Text(_isAnalyzing ? 'Analyzing...' : 'Analyze Image'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],), const SizedBox(height: 24), if (_lastResult != null) ...[const Text('Analysis Result', style: MayaTheme.titleLarge), const SizedBox(height: 12), Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Description', style: MayaTheme.titleMedium), const SizedBox(height: 8), Text(_lastResult!.description, style: MayaTheme.bodyMedium), const SizedBox(height: 16), const Text('Objects Detected', style: MayaTheme.titleMedium), const SizedBox(height: 8), Wrap(spacing: 8, runSpacing: 8, children: _lastResult!.objects.map((o) => Chip(label: Text(o, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: BorderSide(color: Colors.white12))).toList(),), const SizedBox(height: 16), const Text('Text Extracted', style: MayaTheme.titleMedium), const SizedBox(height: 8), Container(width: double.infinity, padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: SelectableText(_lastResult!.text.isNotEmpty ? _lastResult!.text : 'No text detected', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'))),],),]),],); } }
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Image Analysis', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text('Analyze an image using AI vision', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _imagePathController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Image Path/URL *',
+                    hintText: '/path/to/image.jpg or https://example.com/image.png',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.image_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isAnalyzing ? null : _analyze,
+                    icon: _isAnalyzing
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.search_rounded),
+                    label: Text(_isAnalyzing ? 'Analyzing...' : 'Analyze Image'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_lastResult != null) ...[
+            const Text('Analysis Result', style: MayaTheme.titleLarge),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Description', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text(_lastResult!.description, style: MayaTheme.bodyMedium),
+                  const SizedBox(height: 16),
+                  const Text('Objects Detected', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _lastResult!.objects.map((o) => Chip(label: Text(o, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: BorderSide(color: Colors.white12))).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('Text Extracted', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)),
+                    child: SelectableText(_lastResult!.text.isNotEmpty ? _lastResult!.text : 'No text detected', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace')),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 
 class _VisionOCRTab extends ConsumerStatefulWidget { @override ConsumerState<_VisionOCRTab> createState() => _VisionOCRTabState(); }
 class _VisionOCRTabState extends ConsumerState<_VisionOCRTab> {
@@ -34208,7 +34297,80 @@ class _VisionOCRTabState extends ConsumerState<_VisionOCRTab> {
 
   @override void dispose() { _imagePathController.dispose(); super.dispose(); }
 
-  @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('OCR (Text Extraction)', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Extract text from an image', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _imagePathController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Image Path/URL *', hintText: '/path/to/image.jpg or https://example.com/image.png', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.image_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isProcessing ? null : _ocr, icon: _isProcessing ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.text_fields_rounded), label: Text(_isProcessing ? 'Processing...' : 'Extract Text'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],), const SizedBox(height: 24), if (_lastResult != null) ...[const Text('Extracted Text', style: MayaTheme.titleLarge), const SizedBox(height: 12), Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)), child: SelectableText(_lastResult!.text.isNotEmpty ? _lastResult!.text : 'No text detected', style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace'))), const SizedBox(height: 16), Row(children: [Expanded(child: _OCRStatCard(label: 'Confidence', value: '${(_lastResult!.confidence * 100).toStringAsFixed(1)}%', color: MayaTheme.neonEmerald)), const SizedBox(width: 12), Expanded(child: _OCRStatCard(label: 'Status', value: _lastResult!.text.isNotEmpty ? 'Success' : 'No Text', color: _lastResult!.text.isNotEmpty ? MayaTheme.neonEmerald : MayaTheme.neonOrange))],),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))]),); } }
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('OCR (Text Extraction)', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text('Extract text from an image', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _imagePathController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Image Path/URL *',
+                    hintText: '/path/to/image.jpg or https://example.com/image.png',
+                    labelStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.image_rounded, color: Colors.white54),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)),
+                    filled: true,
+                    fillColor: MayaTheme.slate800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isProcessing ? null : _ocr,
+                    icon: _isProcessing
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.text_fields_rounded),
+                    label: Text(_isProcessing ? 'Processing...' : 'Extract Text'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonCyan,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_lastResult != null) ...[
+            const Text('Extracted Text', style: MayaTheme.titleLarge),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: MayaTheme.slate800, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white12)),
+              child: SelectableText(_lastResult!.text.isNotEmpty ? _lastResult!.text : 'No text detected', style: MayaTheme.bodyMedium.copyWith(fontFamily: 'monospace')),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: _OCRStatCard(label: 'Confidence', value: '${(_lastResult!.confidence * 100).toStringAsFixed(1)}%', color: MayaTheme.neonEmerald)),
+                const SizedBox(width: 12),
+                Expanded(child: _OCRStatCard(label: 'Status', value: _lastResult!.text.isNotEmpty ? 'Success' : 'No Text', color: _lastResult!.text.isNotEmpty ? MayaTheme.neonEmerald : MayaTheme.neonOrange)),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 
 class _OCRStatCard extends StatelessWidget {
   final String label;
