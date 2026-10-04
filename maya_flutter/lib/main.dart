@@ -377,51 +377,51 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
             Expanded(
               child: Container(
                 color: MayaTheme.slate900,
-                child: messages.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            MayaLogo(
-                              size: 120,
-                              state: _orbState,
-                              showPulse: true,
-                              showGlow: true,
+                child: (
+                    messages.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                MayaLogo(
+                                  size: 120,
+                                  state: _orbState,
+                                  showPulse: true,
+                                  showGlow: true,
+                                ),
+                                const SizedBox(height: 24),
+                                const Text(
+                                  'Welcome to Maya Pro',
+                                  style: MayaTheme.headlineSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _isVoiceMode
+                                      ? 'Tap mic to speak or type a message'
+                                      : 'Type a message or tap mic to enable voice',
+                                  style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 24),
-                            const Text(
-                              'Welcome to Maya Pro',
-                              style: MayaTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _isVoiceMode
-                                  ? 'Tap mic to speak or type a message'
-                                  : 'Type a message or tap mic to enable voice',
-                              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(16),
-                        reverse: true,
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          final message = messages[messages.length - 1 - index];
-                          return _ChatBubble(
-                            text: message.text,
-                            isUser: message.isUser,
-                            time: message.time,
-                            isStreaming: message.isStreaming,
-                            isVoice: message.isVoice ?? false,
-                          ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
-                        },
-                      ),
-            ),
-
+                          )
+                        : ListView.builder(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.all(16),
+                            reverse: true,
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              final message = messages[messages.length - 1 - index];
+                              return _ChatBubble(
+                                text: message.text,
+                                isUser: message.isUser,
+                                time: message.time,
+                                isStreaming: message.isStreaming,
+                                isVoice: message.isVoice ?? false,
+                              ).animate().fadeIn(delay: (index * 50).ms).slideY(begin: 0.2);
+                            },
+                          ),
+                    ),
             // Input Bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -4983,8 +4983,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                 : _buildMemoryList(memoryListAsync),
           ),
         ],
-      ),
-    )
+    );
   }
 
   Widget _buildDocumentsTab() {
