@@ -33688,7 +33688,7 @@ class _PluginsScreenState extends ConsumerState<_PluginsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Plugins', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(pluginsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.extension_rounded), text: 'Installed'), Tab(icon: Icon(Icons.add_circle_rounded), text: 'Install')],)), body: TabBarView(controller: _tabController, children: [_PluginsListTab(), _PluginsInstallTab()],)))));
+    return SafeArea(child: Scaffold(backgroundColor: MayaTheme.slate900, appBar: AppBar(title: const Text('Plugins', style: MayaTheme.headlineSmall), backgroundColor: MayaTheme.slate900, elevation: 0, leading: IconButton(icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.pop(context)), actions: [IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: () { ref.invalidate(pluginsProvider); })], bottom: TabBar(controller: _tabController, indicatorColor: MayaTheme.neonCyan, labelColor: MayaTheme.neonCyan, unselectedLabelColor: Colors.white54, tabs: const [Tab(icon: Icon(Icons.extension_rounded), text: 'Installed'), Tab(icon: Icon(Icons.add_circle_rounded), text: 'Install')],)), body: TabBarView(controller: _tabController, children: [_PluginsListTab(), _PluginsInstallTab()],))))));
   }
 }
 
