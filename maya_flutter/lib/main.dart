@@ -17,6 +17,7 @@ import 'features/voice/voice_commands.dart';
 import 'features/voice/voice_providers.dart';
 import 'features/camera/camera_service.dart';
 import 'features/system/system_service.dart';
+import 'package:image_picker/image_picker.dart';
 import 'features/system/health_service.dart';
 
 void main() {
@@ -251,7 +252,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
         _pulseController.duration = const Duration(milliseconds: 1500);
         _pulseController.repeat(reverse: true);
       }
-    }
+    });
     // TODO: Start/stop STT
   }
 
@@ -302,7 +303,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
           _waveController.stop();
           break;
       }
-    }
+    });
   }
 
   @override
@@ -747,7 +748,6 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
                         ),
                     ],
                   ),
-                ),
 
                 const SizedBox(height: 24),
 
@@ -970,7 +970,6 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
                               ],
                             ),
                           ),
-                        ),
 
                         const SizedBox(height: 32),
 
@@ -1118,11 +1117,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    )
+    );
   }
 
   void _startListening() {
@@ -1775,7 +1770,7 @@ class _CameraScreenState extends ConsumerState<_CameraScreen> {
   Future<void> _pickFromGallery() async {
     if (_isProcessing) return;
     final cameraService = ref.read(cameraServiceProvider);
-    final photo = await cameraService._picker.pickImage(source: ImageSource.gallery);
+    final photo = await cameraService.picker.pickImage(source: ImageSource.gallery);
     if (photo != null) {
       _analyzePhoto(photo);
     }
@@ -2307,42 +2302,43 @@ class _HealthProbesWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final healthAsync = ref.watch(healthStreamProvider);
+    final healthAsync = ref.watch(extHealthProvider);
 
     return healthAsync.when(
-      data: (health) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: health.isHealthy
-              ? MayaTheme.neonEmerald.withValues(alpha: 0.15)
-              : health.ready
-                  ? MayaTheme.neonOrange.withValues(alpha: 0.15)
-                  : MayaTheme.error.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: health.statusColor.withValues(alpha: 0.5),
-            width: 1,
+      data: (health) {
+        final isHealthy = health.healthy;
+        final statusColor = isHealthy ? MayaTheme.neonEmerald : MayaTheme.error;
+        final statusText = isHealthy ? 'Healthy' : (health.message ?? 'Unhealthy');
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: statusColor.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: statusColor.withValues(alpha: 0.5),
+              width: 1,
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              health.live ? Icons.check_circle : Icons.error,
-              size: 14,
-              color: health.statusColor,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              health.statusText,
-              style: MayaTheme.labelSmall.copyWith(
-                color: health.statusColor,
-                fontWeight: FontWeight.w600,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isHealthy ? Icons.check_circle : Icons.error,
+                size: 14,
+                color: statusColor,
               ),
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(width: 4),
+              Text(
+                statusText,
+                style: MayaTheme.labelSmall.copyWith(
+                  color: statusColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
       loading: () => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(

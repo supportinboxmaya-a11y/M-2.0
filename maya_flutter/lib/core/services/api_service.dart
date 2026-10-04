@@ -7307,6 +7307,25 @@ class TaskStreamEvent with _$TaskStreamEvent {
       _$TaskStreamEventFromJson(json);
 }
 
+// Extension to provide convenience getters for ActivityEvent
+extension TaskStreamEventExtension on TaskStreamEvent {
+  /// Returns a detail message based on the event type and available fields
+  String? get detail {
+    switch (type) {
+      case 'skill_found':
+      case 'research_done':
+      case 'sandbox_test_done':
+      case 'learn_failed':
+        return message ?? toolResult ?? error;
+      default:
+        return message ?? toolResult ?? error;
+    }
+  }
+
+  /// Returns true if the event represents an error state
+  bool get isError => error != null && error!.isNotEmpty;
+}
+
 @freezed
 class AgentThinkResponse with _$AgentThinkResponse {
   const factory AgentThinkResponse({

@@ -97,6 +97,12 @@ class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
         _pulseController.repeat(reverse: true);
         _rotationController.stop();
         break;
+      case MayaLogoState.thinking:
+        _pulseController.duration = const Duration(milliseconds: 600);
+        _pulseController.repeat(reverse: true);
+        _rotationController.duration = const Duration(milliseconds: 1000);
+        _rotationController.repeat();
+        break;
       case MayaLogoState.error:
         _pulseController.duration = const Duration(milliseconds: 200);
         _pulseController.repeat(reverse: true);
@@ -124,6 +130,8 @@ class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
         return MayaTheme.neonViolet;
       case MayaLogoState.speaking:
         return MayaTheme.neonCyan;
+      case MayaLogoState.thinking:
+        return MayaTheme.neonViolet;
       case MayaLogoState.error:
         return MayaTheme.error;
     }

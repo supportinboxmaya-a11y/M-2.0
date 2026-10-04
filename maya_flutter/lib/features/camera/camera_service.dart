@@ -49,6 +49,7 @@ class CameraService {
   int get selectedCameraIndex => _selectedCameraIndex;
   bool get isInitialized => _isInitialized;
   bool get isProcessing => _isProcessing;
+  ImagePicker get picker => _picker;
 
   Future<void> initialize() async {
     await _requestPermissions();
