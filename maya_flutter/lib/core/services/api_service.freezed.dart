@@ -33984,6 +33984,196 @@ abstract class _DocsDetailResponse implements DocsDetailResponse {
       throw _privateConstructorUsedError;
 }
 
+DocCreateResponse _$DocCreateResponseFromJson(Map<String, dynamic> json) {
+  return _DocCreateResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DocCreateResponse {
+  bool get success => throw _privateConstructorUsedError;
+  String? get docId => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $DocCreateResponseCopyWith<DocCreateResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DocCreateResponseCopyWith<$Res> {
+  factory $DocCreateResponseCopyWith(
+          DocCreateResponse value, $Res Function(DocCreateResponse) then) =
+      _$DocCreateResponseCopyWithImpl<$Res, DocCreateResponse>;
+  @useResult
+  $Res call({bool success, String? docId, String? message, String? error});
+}
+
+/// @nodoc
+class _$DocCreateResponseCopyWithImpl<$Res, $Val extends DocCreateResponse>
+    implements $DocCreateResponseCopyWith<$Res> {
+  _$DocCreateResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? docId = freezed,
+    Object? message = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      docId: freezed == docId
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DocCreateResponseImplCopyWith<$Res>
+    implements $DocCreateResponseCopyWith<$Res> {
+  factory _$$DocCreateResponseImplCopyWith(_$DocCreateResponseImpl value,
+          $Res Function(_$DocCreateResponseImpl) then) =
+      __$$DocCreateResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, String? docId, String? message, String? error});
+}
+
+/// @nodoc
+class __$$DocCreateResponseImplCopyWithImpl<$Res>
+    extends _$DocCreateResponseCopyWithImpl<$Res, _$DocCreateResponseImpl>
+    implements _$$DocCreateResponseImplCopyWith<$Res> {
+  __$$DocCreateResponseImplCopyWithImpl(_$DocCreateResponseImpl _value,
+      $Res Function(_$DocCreateResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? docId = freezed,
+    Object? message = freezed,
+    Object? error = freezed,
+  }) {
+    return _then(_$DocCreateResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      docId: freezed == docId
+          ? _value.docId
+          : docId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DocCreateResponseImpl implements _DocCreateResponse {
+  const _$DocCreateResponseImpl(
+      {required this.success, this.docId, this.message, this.error});
+
+  factory _$DocCreateResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DocCreateResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final String? docId;
+  @override
+  final String? message;
+  @override
+  final String? error;
+
+  @override
+  String toString() {
+    return 'DocCreateResponse(success: $success, docId: $docId, message: $message, error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DocCreateResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.docId, docId) || other.docId == docId) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, docId, message, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DocCreateResponseImplCopyWith<_$DocCreateResponseImpl> get copyWith =>
+      __$$DocCreateResponseImplCopyWithImpl<_$DocCreateResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DocCreateResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DocCreateResponse implements DocCreateResponse {
+  const factory _DocCreateResponse(
+      {required final bool success,
+      final String? docId,
+      final String? message,
+      final String? error}) = _$DocCreateResponseImpl;
+
+  factory _DocCreateResponse.fromJson(Map<String, dynamic> json) =
+      _$DocCreateResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  String? get docId;
+  @override
+  String? get message;
+  @override
+  String? get error;
+  @override
+  @JsonKey(ignore: true)
+  _$$DocCreateResponseImplCopyWith<_$DocCreateResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 ProjectsListResponse _$ProjectsListResponseFromJson(Map<String, dynamic> json) {
   return _ProjectsListResponse.fromJson(json);
 }

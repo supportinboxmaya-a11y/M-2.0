@@ -7109,6 +7109,40 @@ Map<String, dynamic> _$$DocsDetailResponseImplToJson(
       'content': instance.content,
     };
 
+_$DocCreateResponseImpl _$$DocCreateResponseImplFromJson(Map json) =>
+    $checkedCreate(
+      r'_$DocCreateResponseImpl',
+      json,
+      ($checkedConvert) {
+        final val = _$DocCreateResponseImpl(
+          success: $checkedConvert('success', (v) => v as bool),
+          docId: $checkedConvert('doc_id', (v) => v as String?),
+          message: $checkedConvert('message', (v) => v as String?),
+          error: $checkedConvert('error', (v) => v as String?),
+        );
+        return val;
+      },
+      fieldKeyMap: const {'docId': 'doc_id'},
+    );
+
+Map<String, dynamic> _$$DocCreateResponseImplToJson(
+    _$DocCreateResponseImpl instance) {
+  final val = <String, dynamic>{
+    'success': instance.success,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('doc_id', instance.docId);
+  writeNotNull('message', instance.message);
+  writeNotNull('error', instance.error);
+  return val;
+}
+
 _$ProjectsListResponseImpl _$$ProjectsListResponseImplFromJson(Map json) =>
     $checkedCreate(
       r'_$ProjectsListResponseImpl',
