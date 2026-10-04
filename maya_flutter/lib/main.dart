@@ -288,6 +288,13 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
           _waveController.duration = const Duration(milliseconds: 800);
           _waveController.repeat(reverse: true);
           break;
+        case MayaLogoState.thinking:
+          _pulseController.duration = const Duration(milliseconds: 600);
+          _pulseController.repeat(reverse: true);
+          _spinController.stop();
+          _waveController.duration = const Duration(milliseconds: 1000);
+          _waveController.repeat(reverse: true);
+          break;
         case MayaLogoState.error:
           _pulseController.duration = const Duration(milliseconds: 200);
           _pulseController.repeat(reverse: true);
@@ -828,7 +835,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
                                       colors: [MayaTheme.error, MayaTheme.error.withValues(alpha: 0.7)],
                                     )
                                   : isProcessing
-                                      ? LinearGradient(
+                                      ? const LinearGradient(
                                           colors: [MayaTheme.neonOrange, MayaTheme.neonViolet],
                                         )
                                       : const LinearGradient(
@@ -1115,7 +1122,7 @@ class _VoiceScreenState extends ConsumerState<_VoiceScreen> {
           ],
         ),
       ),
-    );
+    )
   }
 
   void _startListening() {
@@ -1594,7 +1601,7 @@ class _CameraScreenState extends ConsumerState<_CameraScreen> {
                         children: [
                           const Icon(Icons.psychology_rounded, color: MayaTheme.neonCyan, size: 24),
                           const SizedBox(width: 12),
-                          Text('Analysis Result', style: MayaTheme.titleMedium),
+                          const Text('Analysis Result', style: MayaTheme.titleMedium),
                           const Spacer(),
                           IconButton(
                             icon: const Icon(Icons.close_rounded, color: Colors.white54),
@@ -1640,7 +1647,7 @@ class _CameraScreenState extends ConsumerState<_CameraScreen> {
                               onPressed: () {
                                 Clipboard.setData(ClipboardData(text: _ocrResult!.text));
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: const Text('Copied to clipboard'), backgroundColor: MayaTheme.neonEmerald),
+                                  const SnackBar(content: Text('Copied to clipboard'), backgroundColor: MayaTheme.neonEmerald),
                                 );
                               },
                             ),
@@ -1799,7 +1806,7 @@ class _CameraScreenState extends ConsumerState<_CameraScreen> {
     final cameraService = ref.read(cameraServiceProvider);
     // This would need the last photo - for now just show a message
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Recapture image to analyze'), backgroundColor: MayaTheme.neonOrange),
+      const SnackBar(content: Text('Recapture image to analyze'), backgroundColor: MayaTheme.neonOrange),
     );
   }
 
@@ -1807,7 +1814,7 @@ class _CameraScreenState extends ConsumerState<_CameraScreen> {
     if (_isProcessing) return;
     // OCR on last captured image - would need to store last photo
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Recapture image for OCR'), backgroundColor: MayaTheme.neonOrange),
+      const SnackBar(content: Text('Recapture image for OCR'), backgroundColor: MayaTheme.neonOrange),
     );
   }
 
@@ -3200,7 +3207,7 @@ class _ChatScreenState extends ConsumerState<_ChatScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                             height: 10,
                             child: CircularProgressIndicator(
@@ -3431,7 +3438,7 @@ class _ActivityPanel extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.bolt_rounded, size: 16, color: MayaTheme.neonCyan),
+                const Icon(Icons.bolt_rounded, size: 16, color: MayaTheme.neonCyan),
                 const SizedBox(width: 8),
                 Text('Live Activity', style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan)),
                 const Spacer(),
@@ -3823,7 +3830,7 @@ class _TaskQueueScreenState extends ConsumerState<_TaskQueueScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.queue_rounded,
+                          const Icon(Icons.queue_rounded,
                               size: 64, color: Colors.white24),
                           const SizedBox(height: 16),
                           Text('No tasks in queue',
@@ -4056,7 +4063,7 @@ class _TaskQueueTileState extends ConsumerState<_TaskQueueTile> {
                   _DetailRow(label: 'Worker', value: workerId),
                 if (payload.isNotEmpty) ...[
                   const SizedBox(height: 8),
-                  Text('Payload:', style: MayaTheme.labelMedium),
+                  const Text('Payload:', style: MayaTheme.labelMedium),
                   const SizedBox(height: 4),
                   Container(
                     width: double.infinity,
@@ -4506,9 +4513,9 @@ class _MetricsScreenState extends ConsumerState<_MetricsScreen> {
           // Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MayaTheme.slate800,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -4530,7 +4537,7 @@ class _MetricsScreenState extends ConsumerState<_MetricsScreen> {
             final p95Ms = (stats['p95_ms'] as num?)?.toDouble() ?? 0.0;
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: MayaTheme.glassWhite10)),
               ),
               child: Row(
@@ -4654,7 +4661,7 @@ class _FlagsScreenState extends ConsumerState<_FlagsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.flag_rounded, size: 64, color: Colors.white24),
+                    const Icon(Icons.flag_rounded, size: 64, color: Colors.white24),
                     const SizedBox(height: 16),
                     Text('No feature flags configured',
                         style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
@@ -4699,6 +4706,7 @@ class _FlagsScreenState extends ConsumerState<_FlagsScreen> {
 }
 
 class _FlagTile extends StatelessWidget {
+  @override
   final String key;
   final bool value;
 
@@ -4980,7 +4988,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
           ),
         ],
       ),
-    );
+    )
   }
 
   Widget _buildDocumentsTab() {
@@ -5090,7 +5098,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                       ref.invalidate(ragDocumentsProvider);
                       ref.invalidate(ragStatsProvider);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Document deleted'), backgroundColor: MayaTheme.neonEmerald),
+                        const SnackBar(content: Text('Document deleted'), backgroundColor: MayaTheme.neonEmerald),
                       );
                     }
                   });
@@ -5162,7 +5170,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: 'hybrid',
+                        initialValue: 'hybrid',
                         dropdownColor: MayaTheme.slate800,
                         style: MayaTheme.bodyMedium,
                         decoration: InputDecoration(
@@ -5186,7 +5194,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<int>(
-                        value: 5,
+                        initialValue: 5,
                         dropdownColor: MayaTheme.slate800,
                         style: MayaTheme.bodyMedium,
                         decoration: InputDecoration(
@@ -5333,7 +5341,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<int>(
-                        value: 5,
+                        initialValue: 5,
                         dropdownColor: MayaTheme.slate800,
                         style: MayaTheme.bodyMedium,
                         decoration: InputDecoration(
@@ -5357,7 +5365,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<int>(
-                        value: 6000,
+                        initialValue: 6000,
                         dropdownColor: MayaTheme.slate800,
                         style: MayaTheme.bodyMedium,
                         decoration: InputDecoration(
@@ -5470,7 +5478,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.memory_rounded, size: 64, color: Colors.white24),
+                const Icon(Icons.memory_rounded, size: 64, color: Colors.white24),
                 const SizedBox(height: 16),
                 Text('No memories yet',
                     style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
@@ -5520,7 +5528,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.search_off_rounded, size: 64, color: Colors.white24),
+                const Icon(Icons.search_off_rounded, size: 64, color: Colors.white24),
                 const SizedBox(height: 16),
                 Text('No results for "$_searchQuery"',
                     style: MayaTheme.bodyMedium.copyWith(color: Colors.white38)),
@@ -5603,8 +5611,8 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                   ref.invalidate(memoryStatsProvider);
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Memory added'),
+                      const SnackBar(
+                        content: Text('Memory added'),
                         backgroundColor: MayaTheme.neonEmerald,
                       ),
                     );
@@ -5737,8 +5745,8 @@ class _MemoryItemTile extends ConsumerWidget {
               await Clipboard.setData(ClipboardData(text: item.content));
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Copied to clipboard'),
+                  const SnackBar(
+                    content: Text('Copied to clipboard'),
                     backgroundColor: MayaTheme.neonEmerald,
                   ),
                 );
@@ -5747,8 +5755,8 @@ class _MemoryItemTile extends ConsumerWidget {
               // TODO: Implement delete when backend supports it
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Delete not yet implemented'),
+                  const SnackBar(
+                    content: Text('Delete not yet implemented'),
                     backgroundColor: MayaTheme.neonOrange,
                   ),
                 );
@@ -5808,7 +5816,7 @@ final memoryStatsProvider = FutureProvider<MemoryStatsResponse>((ref) async {
 final memorySearchProvider = FutureProvider<MemorySearchResponse>((ref) async {
   final query = ref.watch(memorySearchTriggerProvider);
   if (query.isEmpty) {
-    return MemorySearchResponse(results: [], query: '', count: 0);
+    return const MemorySearchResponse(results: [], query: '', count: 0);
   }
   final apiService = ref.read(apiServiceProvider);
   return apiService.searchMemory(query: query);
@@ -6505,7 +6513,7 @@ class _ProviderTile extends ConsumerWidget {
           ),
           Switch(
             value: provider.enabled,
-            activeColor: MayaTheme.neonCyan,
+            activeThumbColor: MayaTheme.neonCyan,
             onChanged: (value) => onToggle(value),
           ),
         ],
@@ -6709,8 +6717,8 @@ class _BrainEngineScreenState extends ConsumerState<_BrainEngineScreen> {
       await apiService.buildGraph(steps);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Graph built from analysis'),
+          const SnackBar(
+            content: Text('Graph built from analysis'),
             backgroundColor: MayaTheme.neonEmerald,
           ),
         );
@@ -6774,19 +6782,19 @@ class _BrainEngineScreenState extends ConsumerState<_BrainEngineScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: MayaTheme.glassCard(),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Enter a goal above and tap "Analyze Goal" to see the task graph visualization.',
                     style: MayaTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
+                  SizedBox(height: 16),
+                  Text(
                     'The graph will show:',
                     style: MayaTheme.labelMedium,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   _GraphFeatureRow(icon: Icons.circle_rounded, text: 'Nodes = steps/tasks', color: MayaTheme.neonCyan),
                   _GraphFeatureRow(icon: Icons.arrow_forward_rounded, text: 'Edges = dependencies', color: MayaTheme.neonViolet),
                   _GraphFeatureRow(icon: Icons.color_lens_rounded, text: 'Colors = state (pending/running/done/failed)', color: MayaTheme.neonEmerald),
@@ -6818,9 +6826,9 @@ class _AnalysisResultCard extends StatelessWidget {
           // Header
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MayaTheme.slate800,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -7141,7 +7149,7 @@ class _AgentsScreenState extends ConsumerState<_AgentsScreen>
 
   Widget _buildOrchestrationTab() {
     final agentsAsync = ref.watch(agentsListProvider);
-    final _goalController = TextEditingController(text: 'Build a todo app with Flutter');
+    final goalController = TextEditingController(text: 'Build a todo app with Flutter');
 
     return agentsAsync.when(
       data: (response) {
@@ -7160,7 +7168,7 @@ class _AgentsScreenState extends ConsumerState<_AgentsScreen>
                     const Text('Orchestrate Goal', style: MayaTheme.titleMedium),
                     const SizedBox(height: 12),
                     TextField(
-                      controller: _goalController,
+                      controller: goalController,
                       style: MayaTheme.bodyMedium,
                       maxLines: 3,
                       decoration: InputDecoration(
@@ -7178,7 +7186,7 @@ class _AgentsScreenState extends ConsumerState<_AgentsScreen>
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () => _orchestrateGoal(_goalController.text.trim()),
+                        onPressed: () => _orchestrateGoal(goalController.text.trim()),
                         icon: const Icon(Icons.psychology_rounded),
                         label: const Text('Plan & Assign'),
                         style: ElevatedButton.styleFrom(
@@ -7505,9 +7513,9 @@ class _OrchestrationResultCard extends StatelessWidget {
           // Header
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MayaTheme.slate800,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -7530,7 +7538,7 @@ class _OrchestrationResultCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Orchestration Plan', style: MayaTheme.titleMedium),
+                          const Text('Orchestration Plan', style: MayaTheme.titleMedium),
                           const SizedBox(height: 4),
                           Text(
                             'Goal: ${analysis.goal}',
@@ -7634,24 +7642,23 @@ class _OrchestrationResultCard extends StatelessWidget {
                                   agentName.isNotEmpty ? agentName : 'Unassigned',
                                   style: MayaTheme.titleSmall,
                                 ),
-                                if (node != null)
-                                  Text(
-                                    node.description,
-                                    style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                Text(
+                                  node.description,
+                                  style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
-                          if (node?.tool != null)
+                          if (node.tool != null)
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: MayaTheme.neonViolet.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Text(node!.tool!, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
+                              child: Text(node.tool!, style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet)),
                             ),
                         ],
                       ),
@@ -7692,7 +7699,7 @@ class _OrchestrationResultCard extends StatelessWidget {
                       LinearProgressIndicator(
                         value: graph.progress.percent / 100,
                         backgroundColor: MayaTheme.slate900,
-                        valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
+                        valueColor: const AlwaysStoppedAnimation(MayaTheme.neonCyan),
                         minHeight: 8,
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -8253,14 +8260,14 @@ class _WorkflowRunTile extends ConsumerWidget {
         ref.invalidate(workflowsRunsProvider);
         ref.invalidate(workflowRunProvider(runId));
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Workflow cancelled'),
             backgroundColor: MayaTheme.neonEmerald,
           ),
         );
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Cancel failed'),
             backgroundColor: MayaTheme.error,
           ),
@@ -8446,9 +8453,9 @@ class _WorkflowPlanCard extends StatelessWidget {
           // Header
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MayaTheme.slate800,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -8474,7 +8481,7 @@ class _WorkflowPlanCard extends StatelessWidget {
                         children: [
                           _AnalysisChip(label: '${nodes.length} steps', color: MayaTheme.neonViolet),
                           const SizedBox(width: 8),
-                          _AnalysisChip(label: 'Planned', color: MayaTheme.neonEmerald),
+                          const _AnalysisChip(label: 'Planned', color: MayaTheme.neonEmerald),
                         ],
                       ),
                     ],
@@ -8783,12 +8790,12 @@ class _AutonomousModeScreenState extends ConsumerState<_AutonomousModeScreen> {
 
               return Switch(
                 value: isEnabled,
-                activeColor: MayaTheme.neonCyan,
+                activeThumbColor: MayaTheme.neonCyan,
                 activeTrackColor: MayaTheme.neonCyan.withValues(alpha: 0.3),
                 inactiveThumbColor: Colors.white38,
                 inactiveTrackColor: Colors.white12,
-                thumbIcon: MaterialStateProperty.resolveWith<Icon?>((states) {
-                  if (states.contains(MaterialState.selected)) {
+                thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {
+                  if (states.contains(WidgetState.selected)) {
                     return const Icon(Icons.check_rounded, color: MayaTheme.slate900, size: 18);
                   }
                   return const Icon(Icons.close_rounded, color: Colors.white38, size: 18);
@@ -9004,7 +9011,7 @@ class _AutonomousModeScreenState extends ConsumerState<_AutonomousModeScreen> {
   }
 
   Widget _buildRunSection() {
-    final _goalController = TextEditingController(text: 'Build a REST API with FastAPI');
+    final goalController = TextEditingController(text: 'Build a REST API with FastAPI');
 
     return Container(
       width: double.infinity,
@@ -9016,7 +9023,7 @@ class _AutonomousModeScreenState extends ConsumerState<_AutonomousModeScreen> {
           const Text('Run Autonomous Goal', style: MayaTheme.titleMedium),
           const SizedBox(height: 12),
           TextField(
-            controller: _goalController,
+            controller: goalController,
             style: MayaTheme.bodyMedium,
             maxLines: 3,
             decoration: InputDecoration(
@@ -9035,7 +9042,7 @@ class _AutonomousModeScreenState extends ConsumerState<_AutonomousModeScreen> {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => _runAutonomous(_goalController.text.trim()),
+                  onPressed: () => _runAutonomous(goalController.text.trim()),
                   icon: const Icon(Icons.rocket_launch_rounded),
                   label: const Text('Run Autonomously'),
                   style: ElevatedButton.styleFrom(
@@ -9048,7 +9055,7 @@ class _AutonomousModeScreenState extends ConsumerState<_AutonomousModeScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => _runAutonomous(_goalController.text.trim(), approveDangerous: true),
+                  onPressed: () => _runAutonomous(goalController.text.trim(), approveDangerous: true),
                   icon: const Icon(Icons.warning_amber_rounded),
                   label: const Text('Run (Dangerous)'),
                   style: OutlinedButton.styleFrom(
@@ -9378,9 +9385,9 @@ class _RouterScreenState extends ConsumerState<_RouterScreen>
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MayaTheme.slate800,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
@@ -9398,7 +9405,7 @@ class _RouterScreenState extends ConsumerState<_RouterScreen>
             final quality = entry.value['quality'] ?? 0.0;
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: MayaTheme.glassWhite10)),
               ),
               child: Row(
@@ -9435,7 +9442,7 @@ class _RouterScreenState extends ConsumerState<_RouterScreen>
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _selectedStrategy,
+                  initialValue: _selectedStrategy,
                   dropdownColor: MayaTheme.slate800,
                   style: MayaTheme.bodyMedium,
                   decoration: InputDecoration(
@@ -9582,11 +9589,11 @@ class _RouterScreenState extends ConsumerState<_RouterScreen>
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: MayaTheme.glassCard(),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Strategy Details', style: MayaTheme.titleMedium),
-                const SizedBox(height: 12),
+                Text('Strategy Details', style: MayaTheme.titleMedium),
+                SizedBox(height: 12),
                 _StrategyInfoRow(
                   title: 'Balanced',
                   desc: 'Optimizes quality per dollar, tempered by observed latency. Best for general use.',
@@ -9687,7 +9694,7 @@ class _ProviderTile extends ConsumerWidget {
           ),
           Switch(
             value: provider.enabled,
-            activeColor: MayaTheme.neonCyan,
+            activeThumbColor: MayaTheme.neonCyan,
             onChanged: (value) => onToggle(value),
           ),
         ],
@@ -9840,7 +9847,7 @@ class _StrategyInfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 80,
             child: Text(title, style: MayaTheme.labelMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
           ),
@@ -10090,7 +10097,7 @@ class _EnterpriseScreenState extends ConsumerState<_EnterpriseScreen>
                   ref.invalidate(adminOrgsProvider);
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Organization created'), backgroundColor: MayaTheme.neonEmerald),
+                      const SnackBar(content: Text('Organization created'), backgroundColor: MayaTheme.neonEmerald),
                     );
                   }
                 } catch (e) {
@@ -10133,7 +10140,7 @@ class _EnterpriseScreenState extends ConsumerState<_EnterpriseScreen>
                     if (success && mounted) {
                       ref.invalidate(adminApiKeysProvider);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Key revoked'), backgroundColor: MayaTheme.neonEmerald),
+                        const SnackBar(content: Text('Key revoked'), backgroundColor: MayaTheme.neonEmerald),
                       );
                     }
                   });
@@ -10218,11 +10225,11 @@ class _EnterpriseScreenState extends ConsumerState<_EnterpriseScreen>
                       context: context,
                       builder: (context) => AlertDialog(
                         backgroundColor: MayaTheme.slate800,
-                        title: Row(
+                        title: const Row(
                           children: [
                             Icon(Icons.key_rounded, color: MayaTheme.neonEmerald),
-                            const SizedBox(width: 8),
-                            const Text('API Key Created', style: MayaTheme.headlineSmall),
+                            SizedBox(width: 8),
+                            Text('API Key Created', style: MayaTheme.headlineSmall),
                           ],
                         ),
                         content: Column(
@@ -10533,7 +10540,7 @@ class _OrgTile extends ConsumerWidget {
                 if (success && mounted) {
                   ref.invalidate(adminOrgsProvider);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Organization deleted'), backgroundColor: MayaTheme.neonEmerald),
+                    const SnackBar(content: Text('Organization deleted'), backgroundColor: MayaTheme.neonEmerald),
                   );
                 }
               }
@@ -10618,6 +10625,7 @@ class _OrgMemberTile extends StatelessWidget {
 }
 
 class _ApiKeyTile extends StatelessWidget {
+  @override
   final AdminApiKey key;
   final VoidCallback onRevoke;
 
@@ -11133,7 +11141,7 @@ class _LearningScreenState extends ConsumerState<_LearningScreen>
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: 'chat',
+                        initialValue: 'chat',
                         dropdownColor: MayaTheme.slate800,
                         style: MayaTheme.bodyMedium,
                         decoration: InputDecoration(
@@ -11160,7 +11168,7 @@ class _LearningScreenState extends ConsumerState<_LearningScreen>
                         title: const Text('Dry Run'),
                         subtitle: const Text('Preview only, no changes'),
                         value: true,
-                        activeColor: MayaTheme.neonCyan,
+                        activeThumbColor: MayaTheme.neonCyan,
                         onChanged: (value) {},
                       ),
                     ),
@@ -11176,7 +11184,7 @@ class _LearningScreenState extends ConsumerState<_LearningScreen>
                           final result = await apiService.compressMemory(dryRun: true, memoryType: 'chat');
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Compression dry-run complete'), backgroundColor: MayaTheme.neonEmerald),
+                              const SnackBar(content: Text('Compression dry-run complete'), backgroundColor: MayaTheme.neonEmerald),
                             );
                           }
                         },
@@ -11210,7 +11218,7 @@ class _LearningScreenState extends ConsumerState<_LearningScreen>
                             final result = await apiService.compressMemory(dryRun: false, memoryType: 'chat');
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Compression executed'), backgroundColor: MayaTheme.neonEmerald),
+                                const SnackBar(content: Text('Compression executed'), backgroundColor: MayaTheme.neonEmerald),
                               );
                             }
                           }
@@ -11376,7 +11384,7 @@ class _FeedbackFormState extends ConsumerState<_FeedbackForm> {
       widget.onSubmit();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Feedback submitted'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Feedback submitted'), backgroundColor: MayaTheme.neonEmerald),
         );
       }
     } catch (e) {
@@ -11801,7 +11809,7 @@ class _IngestDocumentFormState extends ConsumerState<_IngestDocumentForm> {
           title: const Text('Use workspace file path'),
           subtitle: const Text('Instead of inline text'),
           value: _usePath,
-          activeColor: MayaTheme.neonCyan,
+          activeThumbColor: MayaTheme.neonCyan,
           onChanged: (value) => setState(() => _usePath = value),
         ),
         const SizedBox(height: 12),
@@ -12130,12 +12138,12 @@ class _InstanceScreen extends ConsumerStatefulWidget {
 }
 
 class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
-  Timer? _refreshTimer;
+  Timer? refreshTimer;
 
   @override
   void initState() {
     super.initState();
-    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (mounted) {
         ref.invalidate(instancesListProvider);
       }
@@ -12144,7 +12152,7 @@ class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
+    refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -12170,7 +12178,7 @@ class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.add_rounded),
-              onPressed: _showCreateInstanceDialog,
+              onPressed: showCreateInstanceDialog,
             ),
           ],
         ),
@@ -12221,7 +12229,7 @@ class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
     );
   }
 
-  void _showCreateInstanceDialog() {
+  void showCreateInstanceDialog() {
     final nameController = TextEditingController();
     final personaController = TextEditingController();
     final skillsController = TextEditingController();
@@ -12284,7 +12292,7 @@ class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: budgetController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 style: MayaTheme.bodyMedium,
                 decoration: InputDecoration(
                   labelText: 'Budget (USD)',
@@ -12330,7 +12338,7 @@ class _InstanceScreenState extends ConsumerState<_InstanceScreen> {
                 if (mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: const Text('Instance created'), backgroundColor: MayaTheme.neonEmerald),
+                    const SnackBar(content: Text('Instance created'), backgroundColor: MayaTheme.neonEmerald),
                   );
                 }
               } catch (e) {
@@ -12379,14 +12387,14 @@ class _InstanceTile extends ConsumerWidget {
               child: Row(
                 children: [
                   Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text('Delete', style: TextStyle(color: MayaTheme.error)),
                 ],
               ),
             ),
           ],
           onSelected: (value) {
-            if (value == 'delete') _deleteInstance(context, instance.id);
+            if (value == 'delete') deleteInstance(context, instance.id);
           },
         ),
         children: [
@@ -12438,7 +12446,7 @@ class _InstanceTile extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () => _deleteInstance(context, instance.id),
+                        onPressed: () => deleteInstance(context, instance.id),
                         icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
                         label: const Text('Delete', style: TextStyle(color: MayaTheme.error)),
                         style: OutlinedButton.styleFrom(
@@ -12457,7 +12465,7 @@ class _InstanceTile extends ConsumerWidget {
     );
   }
 
-  void _deleteInstance(BuildContext context, String instanceId) {
+  void deleteInstance(BuildContext context, String instanceId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -12475,19 +12483,19 @@ class _InstanceTile extends ConsumerWidget {
       ),
     ).then((confirmed) {
       if (confirmed == true) {
-        _deleteInstanceConfirmed(instance.id);
+        deleteInstanceConfirmed(instance.id);
       }
     );
   }
 
-  void _deleteInstanceConfirmed(String instanceId) async {
+  void deleteInstanceConfirmed(String instanceId) async {
     try {
       final apiService = ref.read(apiServiceProvider);
       final success = await ref.read(apiServiceProvider).deleteInstance(instance.id);
       if (success && mounted) {
         ref.invalidate(instancesListProvider);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Instance deleted'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Instance deleted'), backgroundColor: MayaTheme.neonEmerald),
         );
       }
     } catch (e) {
@@ -12515,16 +12523,16 @@ class _PhoneControlScreen extends ConsumerStatefulWidget {
 
 class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  Timer? _refreshTimer;
-  String _pairingCode = '';
-  String _deviceName = 'My computer';
+  late TabController tabController;
+  Timer? refreshTimer;
+  String pairingCode = '';
+  String deviceName = 'My computer';
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+    tabController = TabController(length: 3, vsync: this);
+    refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       if (mounted) {
         ref.invalidate(deviceListProvider);
       }
@@ -12533,8 +12541,8 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _refreshTimer?.cancel();
+    tabController.dispose();
+    refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -12558,7 +12566,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
             ),
           ],
           bottom: TabBar(
-            controller: _tabController,
+            controller: tabController,
             indicatorColor: MayaTheme.neonCyan,
             labelColor: MayaTheme.neonCyan,
             unselectedLabelColor: Colors.white54,
@@ -12571,18 +12579,18 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
           ),
         ),
         body: TabBarView(
-          controller: _tabController,
+          controller: tabController,
           children: [
-            _buildDevicesTab(),
-            _buildPairTab(),
-            _buildHistoryTab(),
+            buildDevicesTab(),
+            buildPairTab(),
+            buildHistoryTab(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDevicesTab() {
+  Widget buildDevicesTab() {
     final devicesAsync = ref.watch(deviceListProvider);
 
     return devicesAsync.when(
@@ -12610,8 +12618,8 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
             final device = response.devices[index];
             return _DeviceTile(
               device: device,
-              onSendCommand: (action, params) => _sendCommand(device.id, action, params),
-              onRevoke: () => _revokeDevice(device.id),
+              onSendCommand: (action, params) => sendCommand(device.id, action, params),
+              onRevoke: () => revokeDevice(device.id),
             );
           },
         );
@@ -12634,7 +12642,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
     );
   }
 
-  Widget _buildPairTab() {
+  Widget buildPairTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -12644,12 +12652,12 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: MayaTheme.glassCard(),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Pair a New Device', style: MayaTheme.titleMedium),
-                const SizedBox(height: 8),
-                const Text(
+                Text('Pair a New Device', style: MayaTheme.titleMedium),
+                SizedBox(height: 8),
+                Text(
                   'Run the Maya Bridge Agent on your computer, then enter the pairing code shown here.',
                   style: MayaTheme.bodyMedium,
                 ),
@@ -12667,7 +12675,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
-                  controller: TextEditingController(text: _deviceName),
+                  controller: TextEditingController(text: deviceName),
                   style: MayaTheme.bodyMedium,
                   decoration: InputDecoration(
                     labelText: 'Device Name',
@@ -12679,13 +12687,13 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  onChanged: (v) => _deviceName = v,
+                  onChanged: (v) => deviceName = v,
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _startPairing,
+                    onPressed: startPairing,
                     icon: const Icon(Icons.qr_code_rounded),
                     label: const Text('Generate Pairing Code'),
                     style: ElevatedButton.styleFrom(
@@ -12695,7 +12703,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
                     ),
                   ),
                 ),
-                if (_pairingCode.isNotEmpty) ...[
+                if (pairingCode.isNotEmpty) ...[
                   const SizedBox(height: 24),
                   const Text('Pairing Code (expires in 10 min):', style: MayaTheme.labelMedium),
                   const SizedBox(height: 8),
@@ -12710,7 +12718,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
                     child: Column(
                       children: [
                         Text(
-                          _pairingCode,
+                          pairingCode,
                           style: MayaTheme.headlineMedium.copyWith(
                             color: MayaTheme.neonCyan,
                             fontWeight: FontWeight.w600,
@@ -12724,9 +12732,9 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
                             IconButton(
                               icon: const Icon(Icons.copy_rounded, color: MayaTheme.neonCyan),
                               onPressed: () {
-                                Clipboard.setData(ClipboardData(text: _pairingCode));
+                                Clipboard.setData(ClipboardData(text: pairingCode));
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: const Text('Code copied!'), backgroundColor: MayaTheme.neonEmerald),
+                                  const SnackBar(content: Text('Code copied!'), backgroundColor: MayaTheme.neonEmerald),
                                 );
                               },
                             ),
@@ -12766,7 +12774,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
     );
   }
 
-  Widget _buildHistoryTab() {
+  Widget buildHistoryTab() {
     return Consumer(
       builder: (context, ref, _) {
         final devicesAsync = ref.watch(deviceListProvider);
@@ -12791,14 +12799,14 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
     );
   }
 
-  Future<void> _startPairing() async {
+  Future<void> startPairing() async {
     try {
       final apiService = ref.read(apiServiceProvider);
-      final result = await apiService.startDevicePairing(name: _deviceName);
+      final result = await apiService.startDevicePairing(name: deviceName);
       if (mounted) {
-        setState(() => _pairingCode = result.pairingCode);
+        setState(() => pairingCode = result.pairingCode);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Pairing code generated'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Pairing code generated'), backgroundColor: MayaTheme.neonEmerald),
         );
       }
     } catch (e) {
@@ -12810,7 +12818,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
     }
   }
 
-  Future<void> _revokeDevice(String deviceId) async {
+  Future<void> revokeDevice(String deviceId) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -12834,7 +12842,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
         if (success && mounted) {
           ref.invalidate(deviceListProvider);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: const Text('Device revoked'), backgroundColor: MayaTheme.neonEmerald),
+            const SnackBar(content: Text('Device revoked'), backgroundColor: MayaTheme.neonEmerald),
           );
         }
       } catch (e) {
@@ -12847,7 +12855,7 @@ class _PhoneControlScreenState extends ConsumerState<_PhoneControlScreen>
     }
   }
 
-  Future<void> _sendCommand(String deviceId, String action, Map<String, dynamic> params) async {
+  Future<void> sendCommand(String deviceId, String action, Map<String, dynamic> params) async {
     try {
       final apiService = ref.read(apiServiceProvider);
       final result = await apiService.sendDeviceCommand(deviceId: deviceId, action: action, params: params);
@@ -12930,10 +12938,10 @@ class _DeviceTile extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _ActionChip(icon: Icons.mouse_rounded, label: 'Move Mouse', onTap: () => _showMoveMouseDialog(context, onSendCommand)),
-                    _ActionChip(icon: Icons.touch_app_rounded, label: 'Click', onTap: () => _showClickDialog(context, onSendCommand)),
-                    _ActionChip(icon: Icons.keyboard_rounded, label: 'Type Text', onTap: () => _showTypeTextDialog(context, onSendCommand)),
-                    _ActionChip(icon: Icons.keyboard_rounded, label: 'Press Key', onTap: () => _showPressKeyDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.mouse_rounded, label: 'Move Mouse', onTap: () => showMoveMouseDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.touch_app_rounded, label: 'Click', onTap: () => showClickDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.keyboard_rounded, label: 'Type Text', onTap: () => showTypeTextDialog(context, onSendCommand)),
+                    _ActionChip(icon: Icons.keyboard_rounded, label: 'Press Key', onTap: () => showPressKeyDialog(context, onSendCommand)),
                     _ActionChip(icon: Icons.screenshot_rounded, label: 'Screenshot', onTap: () => onSendCommand('screenshot', {})),
                   ],
                 ),
@@ -12945,7 +12953,7 @@ class _DeviceTile extends StatelessWidget {
     );
   }
 
-  void _showMoveMouseDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+  void showMoveMouseDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
     final xController = TextEditingController();
     final yController = TextEditingController();
     showDialog(
@@ -13002,7 +13010,7 @@ class _DeviceTile extends StatelessWidget {
     );
   }
 
-  void _showClickDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+  void showClickDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
     final xController = TextEditingController();
     final yController = TextEditingController();
     showDialog(
@@ -13060,7 +13068,7 @@ class _DeviceTile extends StatelessWidget {
     );
   }
 
-  void _showTypeTextDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+  void showTypeTextDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -13097,7 +13105,7 @@ class _DeviceTile extends StatelessWidget {
     );
   }
 
-  void _showPressKeyDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
+  void showPressKeyDialog(BuildContext context, Future<void> Function(String, Map<String, dynamic>) onSendCommand) {
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -13364,14 +13372,14 @@ class _HostingScreen extends ConsumerStatefulWidget {
 
 class _HostingScreenState extends ConsumerState<_HostingScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  Timer? _refreshTimer;
+  late TabController tabController;
+  Timer? refreshTimer;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    tabController = TabController(length: 3, vsync: this);
+    refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (mounted) {
         ref.invalidate(hostingAppsProvider);
       }
@@ -13380,8 +13388,8 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _refreshTimer?.cancel();
+    tabController.dispose();
+    refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -13409,7 +13417,7 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
             ),
           ],
           bottom: TabBar(
-            controller: _tabController,
+            controller: tabController,
             indicatorColor: MayaTheme.neonCyan,
             labelColor: MayaTheme.neonCyan,
             unselectedLabelColor: Colors.white54,
@@ -13422,18 +13430,18 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
           ),
         ),
         body: TabBarView(
-          controller: _tabController,
+          controller: tabController,
           children: [
-            _buildAppsTab(),
-            _buildDeployTab(),
-            _buildMyAppsTab(),
+            buildAppsTab(),
+            buildDeployTab(),
+            buildMyAppsTab(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAppsTab() {
+  Widget buildAppsTab() {
     final appsAsync = ref.watch(hostingAppsProvider);
 
     return appsAsync.when(
@@ -13481,7 +13489,7 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
     );
   }
 
-  Widget _buildDeployTab() {
+  Widget buildDeployTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -13512,7 +13520,7 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: 'python-asgi',
+                  initialValue: 'python-asgi',
                   dropdownColor: MayaTheme.slate800,
                   style: MayaTheme.bodyMedium,
                   decoration: InputDecoration(
@@ -13588,7 +13596,7 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<bool>(
-                        value: true,
+                        initialValue: true,
                         dropdownColor: MayaTheme.slate800,
                         style: MayaTheme.bodyMedium,
                         decoration: InputDecoration(
@@ -13616,13 +13624,13 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
                   subtitle: const Text('Create public HTTPS tunnel'),
                   value: false,
                   onChanged: (value) {},
-                  activeColor: MayaTheme.neonCyan,
+                  activeThumbColor: MayaTheme.neonCyan,
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _deployApp,
+                    onPressed: deployApp,
                     icon: const Icon(Icons.rocket_launch_rounded),
                     label: const Text('Deploy'),
                     style: ElevatedButton.styleFrom(
@@ -13650,7 +13658,7 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
                     children: [
                       const Text('Quick Actions', style: MayaTheme.titleMedium),
                       const SizedBox(height: 12),
-                      ...response.apps.map((app) => _QuickActionTile(app: app)).toList(),
+                      ...response.apps.map((app) => _QuickActionTile(app: app)),
                     ],
                   );
                 },
@@ -13664,13 +13672,13 @@ class _HostingScreenState extends ConsumerState<_HostingScreen>
     );
   }
 
-  Future<void> _deployApp() async {
+  Future<void> deployApp() async {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Deploy functionality coming soon'), backgroundColor: MayaTheme.neonCyan),
+      const SnackBar(content: Text('Deploy functionality coming soon'), backgroundColor: MayaTheme.neonCyan),
     );
   }
 
-  Widget _buildMyAppsTab() {
+  Widget buildMyAppsTab() {
     final appsAsync = ref.watch(hostingAppsProvider);
 
     return appsAsync.when(
@@ -14166,13 +14174,13 @@ class _RemoteVpsScreen extends ConsumerStatefulWidget {
 }
 
 class _RemoteVpsScreenState extends ConsumerState<_RemoteVpsScreen> {
-  Timer? _refreshTimer;
-  String _selectedApp = '';
+  Timer? refreshTimer;
+  String selectedApp = '';
 
   @override
   void initState() {
     super.initState();
-    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+    refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       if (mounted) {
         ref.invalidate(remoteConfigProvider);
         ref.invalidate(remoteContainersProvider);
@@ -14182,7 +14190,7 @@ class _RemoteVpsScreenState extends ConsumerState<_RemoteVpsScreen> {
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
+    refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -14371,7 +14379,7 @@ class _RemoteVpsScreenState extends ConsumerState<_RemoteVpsScreen> {
           ),
         ),
       ),
-    );
+    )
   }
 }
 
@@ -14410,19 +14418,19 @@ class _DeployForm extends ConsumerStatefulWidget {
 }
 
 class _DeployFormState extends ConsumerState<_DeployForm> {
-  final _appController = TextEditingController();
-  final _imageController = TextEditingController();
-  final _dockerfileController = TextEditingController();
-  final _portsController = TextEditingController();
-  final _envController = TextEditingController();
+  final appController = TextEditingController();
+  final imageController = TextEditingController();
+  final dockerfileController = TextEditingController();
+  final portsController = TextEditingController();
+  final envController = TextEditingController();
 
   @override
   void dispose() {
-    _appController.dispose();
-    _imageController.dispose();
-    _dockerfileController.dispose();
-    _portsController.dispose();
-    _envController.dispose();
+    appController.dispose();
+    imageController.dispose();
+    dockerfileController.dispose();
+    portsController.dispose();
+    envController.dispose();
     super.dispose();
   }
 
@@ -14432,7 +14440,7 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
-          controller: _appController,
+          controller: appController,
           style: MayaTheme.bodyMedium,
           decoration: InputDecoration(
             labelText: 'Container Name',
@@ -14444,7 +14452,7 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
         ),
         const SizedBox(height: 12),
         TextField(
-          controller: _imageController,
+          controller: imageController,
           style: MayaTheme.bodyMedium,
           decoration: InputDecoration(
             labelText: 'Docker Image',
@@ -14456,7 +14464,7 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
         ),
         const SizedBox(height: 12),
         TextField(
-          controller: _dockerfileController,
+          controller: dockerfileController,
           style: MayaTheme.bodyMedium,
           decoration: InputDecoration(
             labelText: 'Dockerfile Directory (optional)',
@@ -14468,7 +14476,7 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
         ),
         const SizedBox(height: 12),
         TextField(
-          controller: _portsController,
+          controller: portsController,
           style: MayaTheme.bodyMedium,
           decoration: InputDecoration(
             labelText: 'Ports (host:container, e.g., 8080:80)',
@@ -14480,7 +14488,7 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
         ),
         const SizedBox(height: 12),
         TextField(
-          controller: _envController,
+          controller: envController,
           style: MayaTheme.bodyMedium,
           maxLines: 3,
           decoration: InputDecoration(
@@ -14495,7 +14503,7 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _submit,
+            onPressed: submit,
             style: ElevatedButton.styleFrom(
               backgroundColor: MayaTheme.neonCyan,
               foregroundColor: MayaTheme.slate900,
@@ -14508,28 +14516,28 @@ class _DeployFormState extends ConsumerState<_DeployForm> {
     );
   }
 
-  void _submit() async {
-    if (_appController.text.trim().isEmpty || _imageController.text.trim().isEmpty) return;
+  void submit() async {
+    if (appController.text.trim().isEmpty || imageController.text.trim().isEmpty) return;
 
     try {
       final apiService = ref.read(apiServiceProvider);
-      final ports = _portsController.text.trim().isNotEmpty
-          ? Map.fromEntries(_portsController.text.split(',').map((e) {
+      final ports = portsController.text.trim().isNotEmpty
+          ? Map.fromEntries(portsController.text.split(',').map((e) {
               final parts = e.split(':');
               return MapEntry(parts[0].trim(), parts.length > 1 ? parts[1].trim() : parts[0].trim());
             }))
           : <String, String>{};
-      final env = _envController.text.trim().isNotEmpty
-          ? Map.fromEntries(_envController.text.split('\n').map((e) {
+      final env = envController.text.trim().isNotEmpty
+          ? Map.fromEntries(envController.text.split('\n').map((e) {
               final parts = e.split('=');
               return MapEntry(parts[0].trim(), parts.length > 1 ? parts[1].trim() : '');
             }))
           : <String, String>{};
 
       final result = await apiService.deployRemote(
-        app: _appController.text.trim(),
-        image: _imageController.text.trim(),
-        dockerfileDir: _dockerfileController.text.trim().isNotEmpty ? _dockerfileController.text.trim() : null,
+        app: appController.text.trim(),
+        image: imageController.text.trim(),
+        dockerfileDir: dockerfileController.text.trim().isNotEmpty ? dockerfileController.text.trim() : null,
         ports: ports.isNotEmpty ? ports : null,
         env: env.isNotEmpty ? env : null,
       );
@@ -14701,13 +14709,13 @@ class _AppRegistryScreen extends ConsumerStatefulWidget {
 }
 
 class _AppRegistryScreenState extends ConsumerState<_AppRegistryScreen> {
-  Timer? _refreshTimer;
-  String _selectedApp = '';
+  Timer? refreshTimer;
+  String selectedApp = '';
 
   @override
   void initState() {
     super.initState();
-    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (mounted) {
         ref.invalidate(registryListProvider);
         ref.invalidate(registryCheckAllProvider);
@@ -14717,7 +14725,7 @@ class _AppRegistryScreenState extends ConsumerState<_AppRegistryScreen> {
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
+    refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -14798,8 +14806,8 @@ class _AppRegistryScreenState extends ConsumerState<_AppRegistryScreen> {
                         app: app,
                         checkAllAsync: checkAllAsync,
                         onSelect: () {
-                          setState(() => _selectedApp = app.name);
-                          _showAppDetail(app);
+                          setState(() => selectedApp = app.name);
+                          showAppDetail(app);
                         },
                       );
                     },
@@ -14825,10 +14833,10 @@ class _AppRegistryScreenState extends ConsumerState<_AppRegistryScreen> {
           ),
         ),
       ),
-    );
+    )
   }
 
-  void _showAppDetail(RegistryApp app) {
+  void showAppDetail(RegistryApp app) {
     showModalBottomSheet(
       context: context,
       backgroundColor: MayaTheme.slate800,
@@ -14879,10 +14887,10 @@ class _AppDetailSheet extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(app.status).withValues(alpha: 0.2),
+                      color: getStatusColor(app.status).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_getStatusIcon(app.status), color: _getStatusColor(app.status), size: 28),
+                    child: Icon(getStatusIcon(app.status), color: getStatusColor(app.status), size: 28),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -14898,12 +14906,12 @@ class _AppDetailSheet extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(app.status).withValues(alpha: 0.2),
+                      color: getStatusColor(app.status).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       app.status.toUpperCase(),
-                      style: MayaTheme.labelSmall.copyWith(color: _getStatusColor(app.status)),
+                      style: MayaTheme.labelSmall.copyWith(color: getStatusColor(app.status)),
                     ),
                   ),
                 ],
@@ -14914,7 +14922,7 @@ class _AppDetailSheet extends ConsumerWidget {
               _DetailRow(label: 'Container ID', value: app.containerId.isEmpty ? 'N/A' : app.containerId),
               _DetailRow(label: 'Image', value: app.image),
               _DetailRow(label: 'Host', value: app.host.isEmpty ? 'Default VPS' : app.host),
-              _DetailRow(label: 'Status', value: app.status, valueColor: _getStatusColor(app.status)),
+              _DetailRow(label: 'Status', value: app.status, valueColor: getStatusColor(app.status)),
               _DetailRow(label: 'Monitoring', value: app.monitor ? 'Enabled' : 'Disabled'),
               if (app.deployedAt != null)
                 _DetailRow(label: 'Deployed', value: DateTime.fromMillisecondsSinceEpoch((app.deployedAt! * 1000).round()).toString().substring(0, 19)),
@@ -14941,7 +14949,7 @@ class _AppDetailSheet extends ConsumerWidget {
                       label: Text(app.monitor ? 'Disable Monitoring' : 'Enable Monitoring'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: MayaTheme.neonCyan,
-                        side: BorderSide(color: MayaTheme.neonCyan),
+                        side: const BorderSide(color: MayaTheme.neonCyan),
                       ),
                     ),
                   ),
@@ -14955,7 +14963,7 @@ class _AppDetailSheet extends ConsumerWidget {
                           await apiService.restartRegistryApp(app.name);
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: const Text('Restart triggered'), backgroundColor: MayaTheme.neonEmerald),
+                              const SnackBar(content: Text('Restart triggered'), backgroundColor: MayaTheme.neonEmerald),
                             );
                           }
                         } catch (e) {
@@ -14986,7 +14994,7 @@ class _AppDetailSheet extends ConsumerWidget {
                       final apiService = ref.read(apiServiceProvider);
                       final result = await apiService.getRegistryLogs(app.name, lines: 100);
                       if (mounted) {
-                        _showLogsSheet(context, app.name, result.logs);
+                        showLogsSheet(context, app.name, result.logs);
                       }
                     } catch (e) {
                       if (mounted) {
@@ -15000,7 +15008,7 @@ class _AppDetailSheet extends ConsumerWidget {
                   label: const Text('View Logs'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: MayaTheme.neonCyan,
-                    side: BorderSide(color: MayaTheme.neonCyan),
+                    side: const BorderSide(color: MayaTheme.neonCyan),
                   ),
                 ),
               ),
@@ -15010,13 +15018,13 @@ class _AppDetailSheet extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    _showDeleteConfirmation(context, app);
+                    showDeleteConfirmation(context, app);
                   },
                   icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
                   label: const Text('Unregister', style: TextStyle(color: MayaTheme.error)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: MayaTheme.error,
-                    side: BorderSide(color: MayaTheme.error),
+                    side: const BorderSide(color: MayaTheme.error),
                   ),
                 ),
               ),
@@ -15026,7 +15034,7 @@ class _AppDetailSheet extends ConsumerWidget {
       );
     }
 
-    void _showLogsSheet(BuildContext context, String appName, String logs) {
+    void showLogsSheet(BuildContext context, String appName, String logs) {
       showModalBottomSheet(
         context: context,
         backgroundColor: MayaTheme.slate800,
@@ -15075,7 +15083,7 @@ class _AppDetailSheet extends ConsumerWidget {
       );
     }
 
-    void _showDeleteConfirmation(BuildContext context, RegistryApp app) {
+    void showDeleteConfirmation(BuildContext context, RegistryApp app) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -15116,7 +15124,7 @@ class _AppDetailSheet extends ConsumerWidget {
       );
     }
 
-    Color _getStatusColor(String status) {
+    Color getStatusColor(String status) {
       switch (status.toLowerCase()) {
         case 'running':
           return MayaTheme.neonEmerald;
@@ -15129,7 +15137,7 @@ class _AppDetailSheet extends ConsumerWidget {
       }
     }
 
-    IconData _getStatusIcon(String status) {
+    IconData getStatusIcon(String status) {
       switch (status.toLowerCase()) {
         case 'running':
           return Icons.check_circle_rounded;
@@ -15376,8 +15384,7 @@ class _DetailRow extends StatelessWidget {
   const _DetailRow({
     required this.label,
     required this.value,
-    this.valueColor,
-  });
+  }) : valueColor = null;
 
   @override
   Widget build(BuildContext context) {
@@ -15400,7 +15407,7 @@ class _DetailRow extends StatelessWidget {
 }
 
 // Cognition Loop Screen (Phase 17)
-  const _CognitionLoopScreen();
+  _CognitionLoopScreen();
 
   @override
   ConsumerState<_CognitionLoopScreen> createState() => _CognitionLoopScreenState();
@@ -15610,12 +15617,12 @@ class _CognitionLoopScreenState extends ConsumerState<_CognitionLoopScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: MayaTheme.glassCard(),
-                      child: Column(
+                      child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Cycle History', style: MayaTheme.titleMedium),
-                          const SizedBox(height: 12),
-                          const Text(
+                          Text('Cycle History', style: MayaTheme.titleMedium),
+                          SizedBox(height: 12),
+                          Text(
                             'Cycle history would be displayed here with a dedicated endpoint.',
                             style: MayaTheme.bodyMedium,
                           ),
@@ -15644,7 +15651,7 @@ class _CognitionLoopScreenState extends ConsumerState<_CognitionLoopScreen> {
           ),
         ),
       ),
-    );
+    )
   }
 
   Future<void> _triggerCycle() async {
@@ -15675,7 +15682,7 @@ class _CognitionLoopScreenState extends ConsumerState<_CognitionLoopScreen> {
       ref.invalidate(cognitiveStatusProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Cognition loop paused'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Cognition loop paused'), backgroundColor: MayaTheme.neonEmerald),
         );
       }
     } catch (e) {
@@ -15694,7 +15701,7 @@ class _CognitionLoopScreenState extends ConsumerState<_CognitionLoopScreen> {
       ref.invalidate(cognitiveStatusProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Cognition loop resumed'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Cognition loop resumed'), backgroundColor: MayaTheme.neonEmerald),
         );
       }
     } catch (e) {
@@ -15871,12 +15878,12 @@ class _SynthesizerTab extends ConsumerWidget {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(Icons.access_time_rounded, size: 14, color: Colors.white38),
+                            const Icon(Icons.access_time_rounded, size: 14, color: Colors.white38),
                             const SizedBox(width: 4),
                             Text('Created: ${item.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
                             const SizedBox(width: 16),
                             if (item.completedAt != null) ...[
-                              Icon(Icons.check_circle_rounded, size: 14, color: Colors.white38),
+                              const Icon(Icons.check_circle_rounded, size: 14, color: Colors.white38),
                               const SizedBox(width: 4),
                               Text('Completed: ${item.completedAt!.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
                             ],
@@ -16005,7 +16012,7 @@ class _SocietyTab extends ConsumerWidget {
                                 color: MayaTheme.neonViolet.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(Icons.psychology_rounded, color: MayaTheme.neonViolet, size: 24),
+                              child: const Icon(Icons.psychology_rounded, color: MayaTheme.neonViolet, size: 24),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -16981,7 +16988,7 @@ class _WorkingMemoryAddFormState extends ConsumerState<_WorkingMemoryAddForm> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Added to working memory'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Added to working memory'), backgroundColor: MayaTheme.neonEmerald),
         );
         _contentController.clear();
       }
@@ -17147,7 +17154,7 @@ class _BrowserActionFormState extends ConsumerState<_BrowserActionForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DropdownButtonFormField<String>(
-            value: _selectedAction,
+            initialValue: _selectedAction,
             decoration: InputDecoration(
               labelText: 'Action',
               filled: true,
@@ -17343,7 +17350,7 @@ class _SandboxExecuteFormState extends ConsumerState<_SandboxExecuteForm> {
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _selectedLanguage,
+                  initialValue: _selectedLanguage,
                   decoration: InputDecoration(
                     labelText: 'Language',
                     filled: true,
@@ -17610,7 +17617,7 @@ class _MissionCard extends ConsumerWidget {
                   color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.business_rounded, color: MayaTheme.neonEmerald, size: 24),
+                child: const Icon(Icons.business_rounded, color: MayaTheme.neonEmerald, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -17693,7 +17700,7 @@ class _MissionReportsList extends ConsumerWidget {
                               color: MayaTheme.neonCyan.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 20),
+                            child: const Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 20),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -17707,7 +17714,7 @@ class _MissionReportsList extends ConsumerWidget {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.arrow_forward_ios_rounded, color: MayaTheme.neonCyan, size: 18),
+                            icon: const Icon(Icons.arrow_forward_ios_rounded, color: MayaTheme.neonCyan, size: 18),
                             onPressed: () => _showReportDetail(context, ref, missionId, report.id),
                           ),
                         ],
@@ -17824,7 +17831,7 @@ class _AnalysisFormState extends ConsumerState<_AnalysisForm> {
               const Text('Select Mission', style: MayaTheme.labelMedium),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedMissionId,
+                initialValue: _selectedMissionId,
                 decoration: InputDecoration(
                   hintText: 'Choose a business mission',
                   filled: true,
@@ -17892,7 +17899,7 @@ class _AnalysisResultCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.check_circle_rounded, color: MayaTheme.neonEmerald, size: 24),
+              const Icon(Icons.check_circle_rounded, color: MayaTheme.neonEmerald, size: 24),
               const SizedBox(width: 8),
               Text('Analysis Complete', style: MayaTheme.titleMedium.copyWith(color: MayaTheme.neonEmerald)),
             ],
@@ -17947,7 +17954,7 @@ class _ReportDetailTab extends ConsumerWidget {
             decoration: MayaTheme.glassCard(),
             child: Column(
               children: [
-                Icon(Icons.description_rounded, size: 48, color: Colors.white38),
+                const Icon(Icons.description_rounded, size: 48, color: Colors.white38),
                 const SizedBox(height: 16),
                 const Text('Select a report from the Missions & Reports tab', style: MayaTheme.bodyMedium),
                 const SizedBox(height: 8),
@@ -17997,7 +18004,7 @@ class _ReportDetailView extends ConsumerWidget {
                         color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.description_rounded, color: MayaTheme.neonEmerald, size: 28),
+                      child: const Icon(Icons.description_rounded, color: MayaTheme.neonEmerald, size: 28),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -18502,7 +18509,7 @@ class _PublishProposalCard extends ConsumerWidget {
                   label: const Text('More Info'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: MayaTheme.neonCyan,
-                    side: BorderSide(color: MayaTheme.neonCyan),
+                    side: const BorderSide(color: MayaTheme.neonCyan),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
@@ -18718,14 +18725,14 @@ class _PublishRequestFormState extends ConsumerState<_PublishRequestForm> {
   Future<void> _submit() async {
     if (_siteNameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Site name is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Site name is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
 
     if (_files.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('At least one file is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('At least one file is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -18739,7 +18746,7 @@ class _PublishRequestFormState extends ConsumerState<_PublishRequestForm> {
 
     if (files.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('At least one file with a path is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('At least one file with a path is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -18842,7 +18849,7 @@ class _PublishRequestFormState extends ConsumerState<_PublishRequestForm> {
                       ),
                       const SizedBox(width: 8),
                       IconButton(
-                        icon: Icon(Icons.delete_rounded, color: MayaTheme.error),
+                        icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
                         onPressed: () => _removeFile(index),
                       ),
                     ],
@@ -18882,7 +18889,7 @@ class _PublishRequestFormState extends ConsumerState<_PublishRequestForm> {
                   label: const Text('Add File'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: MayaTheme.neonCyan,
-                    side: BorderSide(color: MayaTheme.neonCyan),
+                    side: const BorderSide(color: MayaTheme.neonCyan),
                   ),
                 ),
               ),
@@ -18988,7 +18995,7 @@ class _ApprovalsScreenState extends ConsumerState<_ApprovalsScreen>
                           top: 8,
                           child: Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: MayaTheme.error,
                               shape: BoxShape.circle,
                             ),
@@ -19058,7 +19065,7 @@ class _ApprovalsScreenState extends ConsumerState<_ApprovalsScreen>
         ),
         body: TabBarView(
           controller: _tabController,
-          children: [
+          children: const [
             _ApprovalsListTab(status: 'pending'),
             _ApprovalsListTab(status: 'approved'),
             _ApprovalsListTab(status: 'rejected'),
@@ -19351,7 +19358,7 @@ class _ApprovalCard extends ConsumerWidget {
                     label: const Text('Ask More'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: MayaTheme.neonCyan,
-                      side: BorderSide(color: MayaTheme.neonCyan),
+                      side: const BorderSide(color: MayaTheme.neonCyan),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
@@ -19381,6 +19388,23 @@ class _ApprovalCard extends ConsumerWidget {
         title: Text(approve ? 'Approve Approval?' : 'Reject Approval?', style: MayaTheme.titleLarge),
         content: SizedBox(
           width: double.maxFinite,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _executeDecision(ref, approvalId, approve);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.error,
+              foregroundColor: approve ? MayaTheme.slate900 : Colors.white,
+            ),
+            child: Text(approve ? 'Confirm Approve' : 'Confirm Reject'),
+          ),
+        ],
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -19402,29 +19426,12 @@ class _ApprovalCard extends ConsumerWidget {
               ],
             ),
           ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _executeDecision(ref, approvalId, approve);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: approve ? MayaTheme.neonEmerald : MayaTheme.error,
-              foregroundColor: approve ? MayaTheme.slate900 : Colors.white,
-            ),
-            child: Text(approve ? 'Confirm Approve' : 'Confirm Reject'),
-          ),
-        ],
       ),
     );
   }
 
   Future<void> _showAskInfoDialog(BuildContext context, WidgetRef ref, ApprovalItem approval) async {
-    final _questionController = TextEditingController();
+    final questionController = TextEditingController();
     
     await showDialog(
       context: context,
@@ -19440,7 +19447,7 @@ class _ApprovalCard extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: _questionController,
+              controller: questionController,
               style: MayaTheme.bodyMedium,
               maxLines: 3,
               decoration: InputDecoration(
@@ -19466,7 +19473,7 @@ class _ApprovalCard extends ConsumerWidget {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Question sent: ${_questionController.text}'),
+                    content: Text('Question sent: ${questionController.text}'),
                     backgroundColor: MayaTheme.neonCyan,
                   ),
                 );
@@ -20829,8 +20836,8 @@ class _ProvisionKeyFormState extends ConsumerState<_ProvisionKeyForm> {
   Future<void> _provisionKey() async {
     if (_providerController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Provider is required'),
+        const SnackBar(
+          content: Text('Provider is required'),
           backgroundColor: MayaTheme.error,
         ),
       );
@@ -20879,7 +20886,7 @@ class _ProvisionKeyFormState extends ConsumerState<_ProvisionKeyForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DropdownButtonFormField<String>(
-            value: _providerController.text.isEmpty ? null : _providerController.text,
+            initialValue: _providerController.text.isEmpty ? null : _providerController.text,
             decoration: InputDecoration(
               labelText: 'Provider',
               labelStyle: const TextStyle(color: Colors.white54),
@@ -21298,7 +21305,7 @@ class _EmailSendFormState extends ConsumerState<_EmailSendForm> {
   Future<void> _sendEmail() async {
     if (_toController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Recipient email required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Recipient email required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -21537,7 +21544,7 @@ class _WebhookSendFormState extends ConsumerState<_WebhookSendForm> {
   Future<void> _sendWebhook() async {
     if (_messageController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Message required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Message required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -21585,7 +21592,7 @@ class _WebhookSendFormState extends ConsumerState<_WebhookSendForm> {
           const Text('Send Webhook', style: MayaTheme.titleMedium),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            value: _channelController.text,
+            initialValue: _channelController.text,
             decoration: InputDecoration(
               labelText: 'Channel',
               labelStyle: const TextStyle(color: Colors.white54),
@@ -22191,7 +22198,7 @@ class _UnifiedLoopHistoryTab extends ConsumerWidget {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Cycle #\${entry.cycleId} • \${entry.phase.toUpperCase()}', style: MayaTheme.titleMedium),
+                                      const Text('Cycle #\${entry.cycleId} • \${entry.phase.toUpperCase()}', style: MayaTheme.titleMedium),
                                       Text('Duration: \${entry.durationMs}ms', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
                                     ],
                                   ),
@@ -22387,14 +22394,14 @@ class _IntervalSliderState extends ConsumerState<_IntervalSlider> {
                   await apiService.startUnifiedLoop(interval: _interval);
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Loop started (\${_interval.toInt()}s interval)'), backgroundColor: MayaTheme.neonEmerald),
+                      const SnackBar(content: Text('Loop started (\${_interval.toInt()}s interval)'), backgroundColor: MayaTheme.neonEmerald),
                     );
                     ref.invalidate(unifiedLoopStatusProvider);
                   }
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to start: \$e'), backgroundColor: MayaTheme.error),
+                      const SnackBar(content: Text('Failed to start: \$e'), backgroundColor: MayaTheme.error),
                     );
                   }
                 }
@@ -22436,14 +22443,14 @@ class _LoopControlButtons extends ConsumerWidget {
                     await apiService.startUnifiedLoop();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: const Text('Loop started'), backgroundColor: MayaTheme.neonEmerald),
+                        const SnackBar(content: Text('Loop started'), backgroundColor: MayaTheme.neonEmerald),
                       );
                       ref.invalidate(unifiedLoopStatusProvider);
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to start: \$e'), backgroundColor: MayaTheme.error),
+                        const SnackBar(content: Text('Failed to start: \$e'), backgroundColor: MayaTheme.error),
                       );
                     }
                   }
@@ -22466,14 +22473,14 @@ class _LoopControlButtons extends ConsumerWidget {
                     await apiService.pauseUnifiedLoop();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: const Text('Loop paused'), backgroundColor: MayaTheme.neonOrange),
+                        const SnackBar(content: Text('Loop paused'), backgroundColor: MayaTheme.neonOrange),
                       );
                       ref.invalidate(unifiedLoopStatusProvider);
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to pause: \$e'), backgroundColor: MayaTheme.error),
+                        const SnackBar(content: Text('Failed to pause: \$e'), backgroundColor: MayaTheme.error),
                       );
                     }
                   }
@@ -22500,14 +22507,14 @@ class _LoopControlButtons extends ConsumerWidget {
                     await apiService.resumeUnifiedLoop();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: const Text('Loop resumed'), backgroundColor: MayaTheme.neonEmerald),
+                        const SnackBar(content: Text('Loop resumed'), backgroundColor: MayaTheme.neonEmerald),
                       );
                       ref.invalidate(unifiedLoopStatusProvider);
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to resume: \$e'), backgroundColor: MayaTheme.error),
+                        const SnackBar(content: Text('Failed to resume: \$e'), backgroundColor: MayaTheme.error),
                       );
                     }
                   }
@@ -22530,14 +22537,14 @@ class _LoopControlButtons extends ConsumerWidget {
                     await apiService.stopUnifiedLoop();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: const Text('Loop stopped'), backgroundColor: MayaTheme.error),
+                        const SnackBar(content: Text('Loop stopped'), backgroundColor: MayaTheme.error),
                       );
                       ref.invalidate(unifiedLoopStatusProvider);
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to stop: \$e'), backgroundColor: MayaTheme.error),
+                        const SnackBar(content: Text('Failed to stop: \$e'), backgroundColor: MayaTheme.error),
                       );
                     }
                   }
@@ -22735,7 +22742,7 @@ class _IncompleteGoalsTab extends ConsumerWidget {
       await apiService.updateGoal(goalId: goalId, updates: {'status': 'suspended'});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Goal paused'), backgroundColor: MayaTheme.neonOrange),
+          const SnackBar(content: Text('Goal paused'), backgroundColor: MayaTheme.neonOrange),
         );
         ref.invalidate(incompleteGoalsProvider);
       }
@@ -22754,7 +22761,7 @@ class _IncompleteGoalsTab extends ConsumerWidget {
       await apiService.updateGoal(goalId: goalId, updates: {'status': 'abandoned'});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Goal cancelled'), backgroundColor: MayaTheme.error),
+          const SnackBar(content: Text('Goal cancelled'), backgroundColor: MayaTheme.error),
         );
         ref.invalidate(incompleteGoalsProvider);
       }
@@ -22855,7 +22862,7 @@ class _AllGoalsTab extends ConsumerWidget {
       await apiService.updateGoal(goalId: goalId, updates: {'status': 'suspended'});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Goal paused'), backgroundColor: MayaTheme.neonOrange),
+          const SnackBar(content: Text('Goal paused'), backgroundColor: MayaTheme.neonOrange),
         );
         ref.invalidate(goalsListProvider(null));
       }
@@ -22874,7 +22881,7 @@ class _AllGoalsTab extends ConsumerWidget {
       await apiService.updateGoal(goalId: goalId, updates: {'status': 'abandoned'});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Goal cancelled'), backgroundColor: MayaTheme.error),
+          const SnackBar(content: Text('Goal cancelled'), backgroundColor: MayaTheme.error),
         );
         ref.invalidate(goalsListProvider(null));
       }
@@ -22913,7 +22920,7 @@ class _CreateGoalTabState extends ConsumerState<_CreateGoalTab> {
   Future<void> _createGoal() async {
     if (_descriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Description is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Description is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -23256,8 +23263,9 @@ class _GoalsStatsTab extends ConsumerWidget {
       'Low (0-49)': 0,
     };
     for (final g in goals) {
-      if (g.priority >= 80) ranges['High (80-100)'] = ranges['High (80-100)']! + 1;
-      else if (g.priority >= 50) ranges['Medium (50-79)'] = ranges['Medium (50-79)']! + 1;
+      if (g.priority >= 80) {
+        ranges['High (80-100)'] = ranges['High (80-100)']! + 1;
+      } else if (g.priority >= 50) ranges['Medium (50-79)'] = ranges['Medium (50-79)']! + 1;
       else ranges['Low (0-49)'] = ranges['Low (0-49)']! + 1;
     }
     return ranges;
@@ -23342,7 +23350,7 @@ class _GoalCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Colors.white38),
+                const Icon(Icons.chevron_right_rounded, color: Colors.white38),
               ],
             ),
             const SizedBox(height: 12),
@@ -23540,7 +23548,7 @@ class _GoalDetailSheet extends ConsumerWidget {
                         children: detail.constraints!.map((c) => Chip(
                           label: Text(c, style: MayaTheme.bodySmall),
                           backgroundColor: MayaTheme.slate800,
-                          side: BorderSide(color: Colors.white12),
+                          side: const BorderSide(color: Colors.white12),
                         )).toList(),
                       ),
                     ],
@@ -23554,7 +23562,7 @@ class _GoalDetailSheet extends ConsumerWidget {
                         children: detail.requiredCapabilities!.map((c) => Chip(
                           label: Text(c, style: MayaTheme.bodySmall),
                           backgroundColor: MayaTheme.slate800,
-                          side: BorderSide(color: Colors.white12),
+                          side: const BorderSide(color: Colors.white12),
                         )).toList(),
                       ),
                     ],
@@ -23606,11 +23614,11 @@ class _GoalDetailSheet extends ConsumerWidget {
           ],
         ),
       ),
-      loading: () => Container(
+      loading: () => SizedBox(
         height: MediaQuery.of(context).size.height * 0.5,
         child: const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
       ),
-      error: (err, _) => Container(
+      error: (err, _) => SizedBox(
         height: MediaQuery.of(context).size.height * 0.5,
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
@@ -23964,16 +23972,16 @@ class _KnowledgeResultCard extends StatelessWidget {
               _InfoChip(label: 'Confidence', value: '${(item.confidence * 100).toStringAsFixed(1)}%', color: MayaTheme.neonOrange),
             ],
           ),
-          if (item.evidence != null && item.evidence!.isNotEmpty) ...[
+          if (item.evidence.isNotEmpty) ...[
             const SizedBox(height: 12),
             const Text('Evidence:', style: MayaTheme.labelMedium),
             const SizedBox(height: 4),
             Wrap(
               spacing: 4,
-              children: item.evidence!.map((e) => Chip(
+              children: item.evidence.map((e) => Chip(
                 label: Text(e, style: MayaTheme.bodySmall),
                 backgroundColor: MayaTheme.slate800,
-                side: BorderSide(color: Colors.white12),
+                side: const BorderSide(color: Colors.white12),
               )).toList(),
             ),
           ],
@@ -24009,7 +24017,7 @@ class _KnowledgeLearnTabState extends ConsumerState<_KnowledgeLearnTab> {
   Future<void> _teachKnowledge() async {
     if (_propositionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Proposition is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Proposition is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -24394,12 +24402,12 @@ class _BeliefCard extends StatelessWidget {
                         Chip(
                           label: Text(belief.domain, style: MayaTheme.labelSmall),
                           backgroundColor: MayaTheme.neonViolet.withValues(alpha: 0.2),
-                          side: BorderSide(color: MayaTheme.neonViolet),
+                          side: const BorderSide(color: MayaTheme.neonViolet),
                         ),
                         Chip(
                           label: Text(belief.source, style: MayaTheme.labelSmall),
                           backgroundColor: MayaTheme.neonEmerald.withValues(alpha: 0.2),
-                          side: BorderSide(color: MayaTheme.neonEmerald),
+                          side: const BorderSide(color: MayaTheme.neonEmerald),
                         ),
                         Chip(
                           label: Text('${(belief.confidence * 100).toStringAsFixed(0)}%', style: MayaTheme.labelSmall),
@@ -24422,7 +24430,7 @@ class _BeliefCard extends StatelessWidget {
               children: belief.evidence!.map((e) => Chip(
                 label: Text(e, style: MayaTheme.bodySmall),
                 backgroundColor: MayaTheme.slate800,
-                side: BorderSide(color: Colors.white12),
+                side: const BorderSide(color: Colors.white12),
               )).toList(),
             ),
           ],
@@ -24841,7 +24849,7 @@ class _SkillResultCard extends StatelessWidget {
               children: skill.applicableGoals.map((g) => Chip(
                 label: Text(g, style: MayaTheme.bodySmall),
                 backgroundColor: MayaTheme.slate800,
-                side: BorderSide(color: Colors.white12),
+                side: const BorderSide(color: Colors.white12),
               )).toList(),
             ),
           ],
@@ -24873,13 +24881,13 @@ class _SkillComposeTabState extends ConsumerState<_SkillComposeTab> {
   Future<void> _composeSkills() async {
     if (_selectedSkillIds.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Select at least 2 skills to compose'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Select at least 2 skills to compose'), backgroundColor: MayaTheme.error),
       );
       return;
     }
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Name is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Name is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -25498,7 +25506,7 @@ class _McpServerCard extends StatelessWidget {
               children: server.tools.map((tool) => Chip(
                 label: Text(tool, style: MayaTheme.bodySmall),
                 backgroundColor: MayaTheme.slate800,
-                side: BorderSide(color: Colors.white12),
+                side: const BorderSide(color: Colors.white12),
               )).toList(),
             ),
           ] else ...[
@@ -25547,7 +25555,7 @@ class _McpServerCard extends StatelessWidget {
                 await apiService.disconnectMcpServer();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: const Text('All MCP servers disconnected'), backgroundColor: MayaTheme.neonEmerald),
+                    const SnackBar(content: Text('All MCP servers disconnected'), backgroundColor: MayaTheme.neonEmerald),
                   );
                   context.read(mcpStatusProvider).invalidate();
                 }
@@ -25559,7 +25567,7 @@ class _McpServerCard extends StatelessWidget {
                 }
               }
             },
-            child: Text('Disconnect All', style: TextStyle(color: MayaTheme.error)),
+            child: const Text('Disconnect All', style: TextStyle(color: MayaTheme.error)),
           ),
         ],
       ),
@@ -25594,13 +25602,13 @@ class _McpConnectTabState extends ConsumerState<_McpConnectTab> {
   Future<void> _connectServer() async {
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Server name is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Server name is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
     if (_commandController.text.trim().isEmpty && _urlController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Either command or URL is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Either command or URL is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -25877,7 +25885,7 @@ class _McpCallTabState extends ConsumerState<_McpCallTab> {
   Future<void> _callTool() async {
     if (_serverController.text.trim().isEmpty || _toolController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Server and tool name required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Server and tool name required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -25896,7 +25904,7 @@ class _McpCallTabState extends ConsumerState<_McpCallTab> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Tool called successfully'), backgroundColor: MayaTheme.neonEmerald),
+          const SnackBar(content: Text('Tool called successfully'), backgroundColor: MayaTheme.neonEmerald),
         );
       }
     } catch (e) {
@@ -26173,7 +26181,7 @@ class _CapabilityMapTab extends ConsumerWidget {
                         const SizedBox(width: 12),
                         Expanded(child: _CapabilityStatCard(
                           label: 'Traits',
-                          value: (profile.traits?.length ?? 0).toString(),
+                          value: (profile.traits.length ?? 0).toString(),
                           color: MayaTheme.neonOrange,
                           icon: Icons.psychology_rounded,
                         )),
@@ -26930,10 +26938,10 @@ class _VectorStoreTab extends ConsumerWidget {
             // Integration Status
             const Text('Integration Status', style: MayaTheme.titleMedium),
             const SizedBox(height: 12),
-            _IntegrationCard(title: 'Procedural Memory', subtitle: 'Skills search via semantic index', status: 'Active', color: MayaTheme.neonEmerald),
-            _IntegrationCard(title: 'Knowledge Engine', subtitle: 'Belief grounding & query via semantic index', status: 'Active', color: MayaTheme.neonCyan),
-            _IntegrationCard(title: 'Kernel Goal Grounding', subtitle: 'Belief retrieval for planning', status: 'Active', color: MayaTheme.neonViolet),
-            _IntegrationCard(title: 'Learn/Dedup', subtitle: 'Cosine similarity + token-overlap confirmation', status: 'Active', color: MayaTheme.neonOrange),
+            const _IntegrationCard(title: 'Procedural Memory', subtitle: 'Skills search via semantic index', status: 'Active', color: MayaTheme.neonEmerald),
+            const _IntegrationCard(title: 'Knowledge Engine', subtitle: 'Belief grounding & query via semantic index', status: 'Active', color: MayaTheme.neonCyan),
+            const _IntegrationCard(title: 'Kernel Goal Grounding', subtitle: 'Belief retrieval for planning', status: 'Active', color: MayaTheme.neonViolet),
+            const _IntegrationCard(title: 'Learn/Dedup', subtitle: 'Cosine similarity + token-overlap confirmation', status: 'Active', color: MayaTheme.neonOrange),
           ],
         ),
       ),
@@ -27055,11 +27063,11 @@ class _VectorSearchTabState extends ConsumerState<_VectorSearchTab> {
                 ),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: Text('Hybrid Search', style: MayaTheme.bodyMedium),
+                  title: const Text('Hybrid Search', style: MayaTheme.bodyMedium),
                   subtitle: Text('Combine vector + keyword search', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
                   value: _hybrid,
                   onChanged: (v) => setState(() => _hybrid = v),
-                  activeColor: MayaTheme.neonCyan,
+                  activeThumbColor: MayaTheme.neonCyan,
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
@@ -27159,7 +27167,7 @@ class _VectorSearchResultCard extends StatelessWidget {
               children: result.metadata!.entries.map((e) => Chip(
                 label: Text('${e.key}: ${e.value}', style: MayaTheme.bodySmall),
                 backgroundColor: MayaTheme.slate800,
-                side: BorderSide(color: Colors.white12),
+                side: const BorderSide(color: Colors.white12),
               )).toList(),
             ),
           ],
@@ -27198,13 +27206,13 @@ class _VectorConfigTab extends ConsumerWidget {
                   style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
                 ),
                 const SizedBox(height: 16),
-                _ConfigRow(
+                const _ConfigRow(
                   label: 'TF-IDF Cosine',
                   value: 'Always available (fallback)',
                   status: 'Active',
                   statusColor: MayaTheme.neonEmerald,
                 ),
-                _ConfigRow(
+                const _ConfigRow(
                   label: 'ONNX MiniLM Embeddings',
                   value: 'Requires SEMANTIC_EMBEDDINGS=true',
                   status: 'Disabled',
@@ -27228,19 +27236,19 @@ class _VectorConfigTab extends ConsumerWidget {
                   style: MayaTheme.bodySmall.copyWith(color: Colors.white54),
                 ),
                 const SizedBox(height: 16),
-                _ConfigRow(
+                const _ConfigRow(
                   label: 'Vector Similarity Threshold',
                   value: '>= 0.85 (with real embeddings)',
                   status: 'Conservative',
                   statusColor: MayaTheme.neonCyan,
                 ),
-                _ConfigRow(
+                const _ConfigRow(
                   label: 'Token Overlap Confirmation',
                   value: '>= 0.8 (fallback mode)',
                   status: 'Required',
                   statusColor: MayaTheme.neonViolet,
                 ),
-                _ConfigRow(
+                const _ConfigRow(
                   label: 'Conflict Resolution',
                   value: 'Belief revision (odds-form Bayesian)',
                   status: 'Active',
@@ -27259,7 +27267,7 @@ class _VectorConfigTab extends ConsumerWidget {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: const Text('Rebuild index not implemented yet'), backgroundColor: MayaTheme.neonOrange),
+                      const SnackBar(content: Text('Rebuild index not implemented yet'), backgroundColor: MayaTheme.neonOrange),
                     );
                   },
                   icon: const Icon(Icons.refresh_rounded),
@@ -27277,7 +27285,7 @@ class _VectorConfigTab extends ConsumerWidget {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: const Text('Clear index not implemented yet'), backgroundColor: MayaTheme.neonOrange),
+                      const SnackBar(content: Text('Clear index not implemented yet'), backgroundColor: MayaTheme.neonOrange),
                     );
                   },
                   icon: const Icon(Icons.delete_rounded),
@@ -27594,19 +27602,19 @@ class _ResumeNowFormState extends ConsumerState<_ResumeNowForm> {
           const Text('Execution Mode', style: MayaTheme.titleMedium),
           const SizedBox(height: 12),
           SwitchListTile(
-            title: Text('Execute (not just propose)', style: MayaTheme.bodyMedium),
+            title: const Text('Execute (not just propose)', style: MayaTheme.bodyMedium),
             subtitle: Text('When ON, actually re-executes ACTIVE goals through the gated pipeline. Requires RBAC execute.', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
             value: _execute,
             onChanged: (v) => setState(() => _execute = v),
-            activeColor: MayaTheme.neonEmerald,
+            activeThumbColor: MayaTheme.neonEmerald,
           ),
           const Divider(color: Colors.white12),
           SwitchListTile(
-            title: Text('Plan Proposals', style: MayaTheme.bodyMedium),
+            title: const Text('Plan Proposals', style: MayaTheme.bodyMedium),
             subtitle: Text('When OFF, performs cheap policy scan without LLM calls (scan-only mode).', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
             value: _planProposals,
             onChanged: (v) => setState(() => _planProposals = v),
-            activeColor: MayaTheme.neonCyan,
+            activeThumbColor: MayaTheme.neonCyan,
           ),
           const Divider(color: Colors.white12),
           Row(
@@ -27802,23 +27810,23 @@ class _AutoResumeConfigTab extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: MayaTheme.glassCard(),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Environment Variables', style: MayaTheme.titleMedium),
-                const SizedBox(height: 12),
+                Text('Environment Variables', style: MayaTheme.titleMedium),
+                SizedBox(height: 12),
                 _ConfigItem(
                   name: 'MAYA_AUTO_RESUME',
                   description: 'Enable automatic resume of ACTIVE goals on boot. When "true", previously-ACTIVE goals are re-executed through the gated pipeline. SUSPENDED/BLOCKED goals stay propose-only.',
                   defaultValue: 'false',
-                  currentValue: const String.fromEnvironment('MAYA_AUTO_RESUME', defaultValue: 'false'),
+                  currentValue: String.fromEnvironment('MAYA_AUTO_RESUME', defaultValue: 'false'),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _ConfigItem(
                   name: 'MAYA_UNIFIED_LOOP',
                   description: 'Route maya.run() through the CognitiveKernel. Required for auto-resume to work through the unified loop.',
                   defaultValue: 'false',
-                  currentValue: const String.fromEnvironment('MAYA_UNIFIED_LOOP', defaultValue: 'false'),
+                  currentValue: String.fromEnvironment('MAYA_UNIFIED_LOOP', defaultValue: 'false'),
                 ),
               ],
             ),
@@ -27827,32 +27835,32 @@ class _AutoResumeConfigTab extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: MayaTheme.glassCard(),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Behavior Policy', style: MayaTheme.titleMedium),
-                const SizedBox(height: 12),
+                Text('Behavior Policy', style: MayaTheme.titleMedium),
+                SizedBox(height: 12),
                 _PolicyRow(
                   label: 'ACTIVE goals',
                   description: 'Re-driven through registered executor when execute=true (default from MAYA_AUTO_RESUME). Already authorized through all pipeline gates.',
                   status: 'Auto-execute',
                   statusColor: MayaTheme.neonEmerald,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _PolicyRow(
                   label: 'SUSPENDED / BLOCKED goals',
                   description: 'Never auto-executed. Receive propose-only plans and stay awaiting explicit operator resume.',
                   status: 'Propose-only',
                   statusColor: MayaTheme.neonOrange,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _PolicyRow(
                   label: 'plan_proposals=false',
                   description: 'Cheap policy scan of WHOLE backlog with zero LLM calls. Useful for large backlogs / dry audits.',
                   status: 'Scan-only',
                   statusColor: MayaTheme.neonCyan,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _PolicyRow(
                   label: 'max_goals',
                   description: 'Limits how many goals to process per batch. Default 5. Higher values process more goals per restart.',
@@ -28124,12 +28132,12 @@ class _SelfImproveStatusTab extends ConsumerWidget {
                     decoration: MayaTheme.glassCard(),
                     child: Row(
                       children: [
-                        Icon(Icons.cancel_rounded, color: MayaTheme.error, size: 28),
+                        const Icon(Icons.cancel_rounded, color: MayaTheme.error, size: 28),
                         const SizedBox(width: 12),
                         Expanded(child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Rejected', style: MayaTheme.bodyMedium),
+                            const Text('Rejected', style: MayaTheme.bodyMedium),
                             Text(status.rejectedProposals.toString(), style: MayaTheme.headlineMedium.copyWith(color: MayaTheme.error)),
                           ],
                         )),
@@ -28381,8 +28389,9 @@ class _ProposalCard extends ConsumerWidget {
     final isPending = proposal.status == 'pending';
 
     Color statusColor;
-    if (isApproved) statusColor = MayaTheme.neonEmerald;
-    else if (isRejected) statusColor = MayaTheme.error;
+    if (isApproved) {
+      statusColor = MayaTheme.neonEmerald;
+    } else if (isRejected) statusColor = MayaTheme.error;
     else if (isExecuted) statusColor = MayaTheme.neonViolet;
     else statusColor = MayaTheme.neonOrange;
 
@@ -28657,23 +28666,23 @@ class _SelfImproveConfigTab extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: MayaTheme.glassCard(),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Environment Variables', style: MayaTheme.titleMedium),
-                const SizedBox(height: 12),
+                Text('Environment Variables', style: MayaTheme.titleMedium),
+                SizedBox(height: 12),
                 _ImproveConfigItem(
                   name: 'SELF_IMPROVE_ENABLED',
                   description: 'Master switch for the self-improvement engine. When true, engine runs on each cycle and analyzes gaps.',
                   defaultValue: 'false',
-                  currentValue: const String.fromEnvironment('SELF_IMPROVE_ENABLED', defaultValue: 'false'),
+                  currentValue: String.fromEnvironment('SELF_IMPROVE_ENABLED', defaultValue: 'false'),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _ImproveConfigItem(
                   name: 'MAYA_UNIFIED_LOOP',
                   description: 'Must be true for self-improvement to work through the unified cognitive loop.',
                   defaultValue: 'false',
-                  currentValue: const String.fromEnvironment('MAYA_UNIFIED_LOOP', defaultValue: 'false'),
+                  currentValue: String.fromEnvironment('MAYA_UNIFIED_LOOP', defaultValue: 'false'),
                 ),
               ],
             ),
@@ -28682,29 +28691,29 @@ class _SelfImproveConfigTab extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: MayaTheme.glassCard(),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('How It Works', style: MayaTheme.titleMedium),
-                const SizedBox(height: 12),
+                Text('How It Works', style: MayaTheme.titleMedium),
+                SizedBox(height: 12),
                 _HowItWorksStep(
                   step: '1',
                   title: 'Gap Analysis',
                   description: 'Engine ranks task types from SelfModel.weaknesses() by priority = attempts × failure-rate. +1 if no skill covers the type.',
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _HowItWorksStep(
                   step: '2',
                   title: 'Propose',
                   description: 'Top gap gets a proposal (skill distillation or tool creation). Tool proposals get LLM code draft at propose time. Nothing executes yet.',
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _HowItWorksStep(
                   step: '3',
                   title: 'Approve/Reject',
                   description: 'Owner reviews proposals via /decide endpoint. Only approved proposals can execute.',
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _HowItWorksStep(
                   step: '4',
                   title: 'Execute',
@@ -29162,7 +29171,7 @@ class _ScoutSignalsTab extends ConsumerWidget {
                                     color: MayaTheme.neonCyan.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Icon(Icons.signal_cellular_alt_rounded, color: MayaTheme.neonCyan, size: 20),
+                                  child: const Icon(Icons.signal_cellular_alt_rounded, color: MayaTheme.neonCyan, size: 20),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -29250,7 +29259,7 @@ class _ScoutOpportunitiesTab extends ConsumerWidget {
                                     color: MayaTheme.neonEmerald.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: Icon(Icons.flag_rounded, color: MayaTheme.neonEmerald, size: 24),
+                                  child: const Icon(Icons.flag_rounded, color: MayaTheme.neonEmerald, size: 24),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -29331,11 +29340,11 @@ class _ScoutConfigTab extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: MayaTheme.glassCard(),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Monitored Sources', style: MayaTheme.titleMedium),
-                  const SizedBox(height: 12),
+                  Text('Monitored Sources', style: MayaTheme.titleMedium),
+                  SizedBox(height: 12),
                   _SourceToggle(source: 'Reddit', enabled: true),
                   _SourceToggle(source: 'Hacker News', enabled: true),
                   _SourceToggle(source: 'Indie Hackers', enabled: true),
@@ -29396,7 +29405,7 @@ class _SourceToggle extends StatelessWidget {
             onChanged: (v) {
               // TODO: Implement config update
             },
-            activeColor: MayaTheme.neonEmerald,
+            activeThumbColor: MayaTheme.neonEmerald,
             inactiveThumbColor: MayaTheme.neonOrange,
             inactiveTrackColor: MayaTheme.neonOrange.withValues(alpha: 0.3),
           ),
@@ -29539,7 +29548,7 @@ class _StrategistReviewsTab extends ConsumerWidget {
                                 color: MayaTheme.neonViolet.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(Icons.rate_review_rounded, color: MayaTheme.neonViolet, size: 24),
+                              child: const Icon(Icons.rate_review_rounded, color: MayaTheme.neonViolet, size: 24),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -29638,7 +29647,7 @@ class _StrategistPlanCard extends ConsumerWidget {
                   color: MayaTheme.neonViolet.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.assignment_rounded, color: MayaTheme.neonViolet, size: 24),
+                child: const Icon(Icons.assignment_rounded, color: MayaTheme.neonViolet, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -30021,7 +30030,7 @@ class _BuilderFromPlanTabState extends ConsumerState<_BuilderFromPlanTab> {
   Future<void> _buildFromPlan() async {
     if (_planIdController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Plan ID is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Plan ID is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -30815,7 +30824,7 @@ class _GrowthProposalCard extends ConsumerWidget {
                   color: MayaTheme.neonViolet.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.lightbulb_rounded, color: MayaTheme.neonViolet, size: 24),
+                child: const Icon(Icons.lightbulb_rounded, color: MayaTheme.neonViolet, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -30899,7 +30908,7 @@ class _GrowthMetricsTab extends ConsumerWidget {
                                 color: MayaTheme.neonCyan.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(Icons.trending_up_rounded, color: MayaTheme.neonCyan, size: 24),
+                              child: const Icon(Icons.trending_up_rounded, color: MayaTheme.neonCyan, size: 24),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -30979,7 +30988,7 @@ class _GrowthRecommendationsTab extends ConsumerWidget {
                                     color: MayaTheme.neonViolet.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  child: Icon(Icons.recommend_rounded, color: MayaTheme.neonViolet, size: 24),
+                                  child: const Icon(Icons.recommend_rounded, color: MayaTheme.neonViolet, size: 24),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -31282,7 +31291,7 @@ class _NotifTemplateCard extends StatelessWidget {
                   color: MayaTheme.neonCyan.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.campaign_rounded, color: MayaTheme.neonCyan, size: 24),
+                child: const Icon(Icons.campaign_rounded, color: MayaTheme.neonCyan, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -31639,7 +31648,7 @@ class _ExtCreateTaskTabState extends ConsumerState<_ExtCreateTaskTab> {
   Future<void> _createTask() async {
     if (_descriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Description is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Description is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -31845,7 +31854,7 @@ class _ExtCreateTaskTabState extends ConsumerState<_ExtCreateTaskTab> {
   Future<void> _createTask() async {
     if (_descriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Description is required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Description is required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -32144,7 +32153,7 @@ class _ProactiveCreateJobTabState extends ConsumerState<_ProactiveCreateJobTab> 
   Future<void> _createJob() async {
     if (_nameController.text.trim().isEmpty || _cronController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Name and cron are required'), backgroundColor: MayaTheme.error),
+        const SnackBar(content: Text('Name and cron are required'), backgroundColor: MayaTheme.error),
       );
       return;
     }
@@ -32247,11 +32256,11 @@ class _ProactiveCreateJobTabState extends ConsumerState<_ProactiveCreateJobTab> 
                 ),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: Text('Enabled', style: MayaTheme.bodyMedium),
+                  title: const Text('Enabled', style: MayaTheme.bodyMedium),
                   subtitle: Text('Job will run on schedule', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
                   value: true,
                   onChanged: (v) => setState(() => _enabled = v),
-                  activeColor: MayaTheme.neonEmerald,
+                  activeThumbColor: MayaTheme.neonEmerald,
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -32435,6 +32444,7 @@ class _MemPrefsTabState extends ConsumerState<_MemPrefsTab> {
 }
 
 class _PrefCard extends StatelessWidget {
+  @override
   final String key;
   final String value;
 
@@ -32450,7 +32460,7 @@ class _PrefCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(color: MayaTheme.neonViolet.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
-            child: Icon(Icons.key_rounded, color: MayaTheme.neonViolet, size: 24),
+            child: const Icon(Icons.key_rounded, color: MayaTheme.neonViolet, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -32496,7 +32506,7 @@ class _MemFactsTabState extends ConsumerState<_MemFactsTab> {
 
   Future<void> _addFact() async {
     if (_factController.text.trim().isEmpty || _sourceController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Fact and source required'), backgroundColor: MayaTheme.error));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fact and source required'), backgroundColor: MayaTheme.error));
       return;
     }
     try {
@@ -32658,7 +32668,7 @@ class _ExtCreateProjectTabState extends ConsumerState<_ExtCreateProjectTab> {
 
   Future<void> _createProject() async {
     if (_nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Name is required'), backgroundColor: MayaTheme.error));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name is required'), backgroundColor: MayaTheme.error));
       return;
     }
     setState(() => _isCreating = true);
@@ -32800,7 +32810,7 @@ class _BrowserActionsTabState extends ConsumerState<_BrowserActionsTab> {
 
   Future<void> _executeAction() async {
     if (_actionController.text.trim().isEmpty || (_actionController.text != 'navigate' && _urlController.text.trim().isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Action and URL required for navigate'), backgroundColor: MayaTheme.error));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Action and URL required for navigate'), backgroundColor: MayaTheme.error));
       return;
     }
 
@@ -32835,7 +32845,7 @@ class _BrowserActionsTabState extends ConsumerState<_BrowserActionsTab> {
         const SizedBox(height: 24),
         Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           DropdownButtonFormField<String>(
-            value: _actionController.text,
+            initialValue: _actionController.text,
             decoration: InputDecoration(labelText: 'Action', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.play_arrow_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800),
             items: const [
               DropdownMenuItem(value: 'navigate', child: Text('Navigate')),
@@ -33253,13 +33263,13 @@ class _WebhooksScreenState extends ConsumerState<_WebhooksScreen>
 class _WebhooksListTab extends ConsumerWidget {
   @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(webhooksProvider); return async.when(data: (data) => data.webhooks.isEmpty ? _emptyState('No Webhooks', 'Register webhooks to receive events', Icons.webhook_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Webhooks', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Configured webhook endpoints', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.webhooks.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final w = data.webhooks[index]; return _WebhookCard(webhook: w); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading webhooks', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
 
-class _WebhookCard extends StatelessWidget { final Webhook webhook; const _WebhookCard({required this.webhook}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: webhook.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(webhook.active ? Icons.cloud_done_rounded : Icons.cloud_off_rounded, color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(webhook.name, style: MayaTheme.titleMedium), Text(webhook.url, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),])), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: webhook.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange)), child: Text(webhook.active ? 'ACTIVE' : 'INACTIVE', style: MayaTheme.labelSmall.copyWith(color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange))),],), const SizedBox(height: 12), Wrap(spacing: 6, children: webhook.events.map((e) => Chip(label: Text(e, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: BorderSide(color: Colors.white12))).toList(),), const SizedBox(height: 8), Text('Created: ${webhook.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),]) }) }
+class _WebhookCard extends StatelessWidget { final Webhook webhook; const _WebhookCard({required this.webhook}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: webhook.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(webhook.active ? Icons.cloud_done_rounded : Icons.cloud_off_rounded, color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(webhook.name, style: MayaTheme.titleMedium), Text(webhook.url, style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 1, overflow: TextOverflow.ellipsis),])), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: webhook.active ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange)), child: Text(webhook.active ? 'ACTIVE' : 'INACTIVE', style: MayaTheme.labelSmall.copyWith(color: webhook.active ? MayaTheme.neonEmerald : MayaTheme.neonOrange))),],), const SizedBox(height: 12), Wrap(spacing: 6, children: webhook.events.map((e) => Chip(label: Text(e, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: const BorderSide(color: Colors.white12))).toList(),), const SizedBox(height: 8), Text('Created: ${webhook.createdAt.toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),]) }) }
 
 class _WebhookCreateTab extends ConsumerStatefulWidget { @override ConsumerState<_WebhookCreateTab> createState() => _WebhookCreateTabState(); }
 class _WebhookCreateTabState extends ConsumerState<_WebhookCreateTab> {
   final _nameController = TextEditingController(); final _urlController = TextEditingController(); final _eventsController = TextEditingController(); bool _isCreating = false;
   @override void dispose() { _nameController.dispose(); _urlController.dispose(); _eventsController.dispose(); super.dispose(); }
-  Future<void> _create() async { if (_nameController.text.trim().isEmpty || _urlController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Name and URL required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isCreating = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.createWebhook({
+  Future<void> _create() async { if (_nameController.text.trim().isEmpty || _urlController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name and URL required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isCreating = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.createWebhook({
           "name": _nameController.text.trim(),
           "url": _urlController.text.trim(),
           "events": _eventsController.text.trim().split(',').map((e) => e.trim()).toList(),
@@ -33296,11 +33306,11 @@ class _DocsScreenState extends ConsumerState<_DocsScreen>
 class _DocsListTab extends ConsumerWidget {
   @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(docsProvider); return async.when(data: (data) => data.docs.isEmpty ? _emptyState('No Documents', 'Create your first document', Icons.list_alt_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Documents', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Project documentation and guides', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.docs.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final doc = data.docs[index]; return _DocCard(doc: doc); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading docs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))]),); } }
 
-class _DocCard extends StatelessWidget { final Doc doc; const _DocCard({required this.doc}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: MayaTheme.neonCyan.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(doc.title, style: MayaTheme.titleMedium), Text(doc.category, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]),]),],),]) }) }
+class _DocCard extends StatelessWidget { final Doc doc; const _DocCard({required this.doc}); @override Widget build(BuildContext context) { return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: MayaTheme.neonCyan.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.description_rounded, color: MayaTheme.neonCyan, size: 24)), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(doc.title, style: MayaTheme.titleMedium), Text(doc.category, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]),]),],),]) }) }
 }
 
 class _DocsCreateTab extends ConsumerStatefulWidget { @override ConsumerState<_DocsCreateTab> createState() => _DocsCreateTabState(); }
-class _DocsCreateTabState extends ConsumerState<_DocsCreateTab> { final _nameController = TextEditingController(); final _titleController = TextEditingController(); final _categoryController = TextEditingController(); final _contentController = TextEditingController(); bool _isCreating = false; @override void dispose() { _nameController.dispose(); _titleController.dispose(); _categoryController.dispose(); _contentController.dispose(); super.dispose(); } Future<void> _create() async { if (_nameController.text.trim().isEmpty || _titleController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Name and title required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isCreating = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.createDoc(name: _nameController.text.trim(), title: _titleController.text.trim(), category: _categoryController.text.trim(), content: _contentController.text.trim()); setState(() => _isCreating = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Doc created: ${result.docId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); _titleController.clear(); _categoryController.clear(); _contentController.clear(); } } } catch (e) { setState(() => _isCreating = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error)); } } @override void dispose() { _nameController.dispose(); _titleController.dispose(); _categoryController.dispose(); _contentController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Create Document', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Create a new documentation page', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Name *', hintText: 'e.g., getting_started', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _titleController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Title *', hintText: 'Document title', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.title_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _categoryController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Category', hintText: 'e.g., guide, reference, tutorial', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.category_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _contentController, style: const TextStyle(color: Colors.white), maxLines: 10, decoration: InputDecoration(labelText: 'Content', hintText: 'Markdown content...', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 100), child: Icon(Icons.description_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isCreating ? null : () { setState(() => _isCreating = true); _create(); }, icon: _isCreating ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.description_rounded), label: Text(_isCreating ? 'Creating...' : 'Create Document'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
+class _DocsCreateTabState extends ConsumerState<_DocsCreateTab> { final _nameController = TextEditingController(); final _titleController = TextEditingController(); final _categoryController = TextEditingController(); final _contentController = TextEditingController(); bool _isCreating = false; @override void dispose() { _nameController.dispose(); _titleController.dispose(); _categoryController.dispose(); _contentController.dispose(); super.dispose(); } Future<void> _create() async { if (_nameController.text.trim().isEmpty || _titleController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name and title required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isCreating = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.createDoc(name: _nameController.text.trim(), title: _titleController.text.trim(), category: _categoryController.text.trim(), content: _contentController.text.trim()); setState(() => _isCreating = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Doc created: ${result.docId}' : 'Failed: ${result.error}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); _titleController.clear(); _categoryController.clear(); _contentController.clear(); } } } catch (e) { setState(() => _isCreating = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Create failed: $e'), backgroundColor: MayaTheme.error)); } } @override void dispose() { _nameController.dispose(); _titleController.dispose(); _categoryController.dispose(); _contentController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Create Document', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Create a new documentation page', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Name *', hintText: 'e.g., getting_started', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.label_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _titleController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Title *', hintText: 'Document title', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.title_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _categoryController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Category', hintText: 'e.g., guide, reference, tutorial', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.category_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 16), TextField(controller: _contentController, style: const TextStyle(color: Colors.white), maxLines: 10, decoration: InputDecoration(labelText: 'Content', hintText: 'Markdown content...', labelStyle: const TextStyle(color: Colors.white54), alignLabelWithHint: true, prefixIcon: const Padding(padding: EdgeInsets.only(bottom: 100), child: Icon(Icons.description_rounded, color: Colors.white54)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isCreating ? null : () { setState(() => _isCreating = true); _create(); }, icon: _isCreating ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.description_rounded), label: Text(_isCreating ? 'Creating...' : 'Create Document'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonCyan, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
 
 // Analytics Screen
 class _AnalyticsScreen extends ConsumerStatefulWidget {
@@ -33378,7 +33388,6 @@ class _LogsLLMTab extends ConsumerWidget {
 
 class _LogsToolsTab extends ConsumerWidget {
   @override Widget build(BuildContext context, WidgetRef ref) { final async = ref.watch(logsToolsProvider); return async.when(data: (data) => data.logs.isEmpty ? _emptyState('No Tool Logs', 'Tool execution logs will appear here', Icons.build_rounded) : SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Tool Logs', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Recent tool execution logs', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 16), ListView.separated(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: data.logs.length, separatorBuilder: (_, __) => const SizedBox(height: 8), itemBuilder: (_, index) { final log = data.logs[index]; return _LogEntryCard(log: log); },),],)), loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))), error: (err, _) => Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error), const SizedBox(height: 16), Text('Error loading tool logs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)), const SizedBox(height: 8), Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38))])),); } }
-}
 
 class _LogEntryCard extends StatelessWidget { final LogEntry log; const _LogEntryCard({required this.log}); @override Widget build(BuildContext context) { Color levelColor; switch (log.level.toLowerCase()) { case 'error': case 'critical': levelColor = MayaTheme.error; break; case 'warning': levelColor = MayaTheme.neonOrange; break; case 'info': levelColor = MayaTheme.neonCyan; break; default: levelColor = Colors.white54; } return Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: levelColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)), child: Text(log.level.toUpperCase(), style: MayaTheme.labelSmall.copyWith(color: levelColor))), const Spacer(), Text(log.provider, style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),]), const SizedBox(height: 8), Text(log.message, style: MayaTheme.bodyMedium.copyWith(color: Colors.white70), maxLines: 3, overflow: TextOverflow.ellipsis), const SizedBox(height: 4), Text(log.timestamp.toString().substring(0, 19), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),],) }) }
 
@@ -33706,7 +33715,7 @@ class _PluginCard extends StatelessWidget { final Plugin plugin; const _PluginCa
 }
 
 class _PluginsInstallTab extends ConsumerStatefulWidget { @override ConsumerState<_PluginsInstallTab> createState() => _PluginsInstallTabState(); }
-class _PluginsInstallTabState extends ConsumerState<_PluginsInstallTab> { final _nameController = TextEditingController(); bool _isInstalling = false; @override void dispose() { _nameController.dispose(); super.dispose(); } Future<void> _install() async { if (_nameController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Plugin name required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isInstalling = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.installPlugin({"name": _nameController.text.trim()}); setState(() => _isInstalling = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Plugin installed: ${_nameController.text.trim()}' : 'Failed: ${result.message}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); ref.invalidate(pluginsProvider); } } } catch (e) { setState(() => _isInstalling = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Install failed: $e'), backgroundColor: MayaTheme.error)); } } @override void dispose() { _nameController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Install Plugin', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Install a new plugin by name', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Plugin Name *', hintText: 'e.g., maya-plugin-github', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.extension_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isInstalling ? null : () { setState(() => _isInstalling = true); _install(); }, icon: _isInstalling ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.extension_rounded), label: Text(_isInstalling ? 'Installing...' : 'Install Plugin'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonViolet, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
+class _PluginsInstallTabState extends ConsumerState<_PluginsInstallTab> { final _nameController = TextEditingController(); bool _isInstalling = false; @override void dispose() { _nameController.dispose(); super.dispose(); } Future<void> _install() async { if (_nameController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plugin name required'), backgroundColor: MayaTheme.error)); return; } setState(() => _isInstalling = true); try { final apiService = ref.read(apiServiceProvider); final result = await apiService.installPlugin({"name": _nameController.text.trim()}); setState(() => _isInstalling = false); if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.success ? 'Plugin installed: ${_nameController.text.trim()}' : 'Failed: ${result.message}'), backgroundColor: result.success ? MayaTheme.neonEmerald : MayaTheme.error)); if (result.success) { _nameController.clear(); ref.invalidate(pluginsProvider); } } } catch (e) { setState(() => _isInstalling = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Install failed: $e'), backgroundColor: MayaTheme.error)); } } @override void dispose() { _nameController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { return SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Install Plugin', style: MayaTheme.titleLarge), const SizedBox(height: 8), Text('Install a new plugin by name', style: MayaTheme.bodyMedium.copyWith(color: Colors.white54)), const SizedBox(height: 24), Container(padding: const EdgeInsets.all(16), decoration: MayaTheme.glassCard(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [TextField(controller: _nameController, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: 'Plugin Name *', hintText: 'e.g., maya-plugin-github', labelStyle: const TextStyle(color: Colors.white54), prefixIcon: const Icon(Icons.extension_rounded, color: Colors.white54), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: MayaTheme.neonCyan)), filled: true, fillColor: MayaTheme.slate800)), const SizedBox(height: 24), SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: _isInstalling ? null : () { setState(() => _isInstalling = true); _install(); }, icon: _isInstalling ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white))) : const Icon(Icons.extension_rounded), label: Text(_isInstalling ? 'Installing...' : 'Install Plugin'), style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.neonViolet, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)))),],) )); } }
 
 // Vision Screen
 class _VisionScreen extends ConsumerStatefulWidget {
@@ -33745,7 +33754,7 @@ class _VisionAnalyzeTabState extends ConsumerState<_VisionAnalyzeTab> {
 
   Future<void> _analyze() async {
     if (_imagePathController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Image path or URL required'), backgroundColor: MayaTheme.error));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Image path or URL required'), backgroundColor: MayaTheme.error));
       return;
     }
     setState(() => _isAnalyzing = true);
@@ -33827,7 +33836,7 @@ class _VisionAnalyzeTabState extends ConsumerState<_VisionAnalyzeTab> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _lastResult!.objects.map((o) => Chip(label: Text(o, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: BorderSide(color: Colors.white12))).toList(),
+                    children: _lastResult!.objects.map((o) => Chip(label: Text(o, style: MayaTheme.bodySmall), backgroundColor: MayaTheme.slate800, side: const BorderSide(color: Colors.white12))).toList(),
                   ),
                   const SizedBox(height: 16),
                   const Text('Text Extracted', style: MayaTheme.titleMedium),
@@ -33858,7 +33867,7 @@ class _VisionOCRTabState extends ConsumerState<_VisionOCRTab> {
   @override void dispose() { _imagePathController.dispose(); super.dispose(); }
 
   Future<void> _ocr() async {
-    if (_imagePathController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Image path or URL required'), backgroundColor: MayaTheme.error)); return; }
+    if (_imagePathController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Image path or URL required'), backgroundColor: MayaTheme.error)); return; }
     setState(() { _isProcessing = true; _error = null; });
     try {
       final apiService = ref.read(apiServiceProvider);
@@ -33963,7 +33972,7 @@ class _OCRStatCard extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _OCRStatCard({super.key, required this.label, required this.value, required this.color});
+  const _OCRStatCard({required this.label, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) {
