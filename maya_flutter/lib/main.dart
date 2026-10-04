@@ -33838,16 +33838,22 @@ class _VisionOCRTabState extends ConsumerState<_VisionOCRTab> {
   final _imagePathController = TextEditingController();
   VisionOCRResponse? _lastResult;
   bool _isProcessing = false;
+  String? _error;
 
   @override void dispose() { _imagePathController.dispose(); super.dispose(); }
 
   Future<void> _ocr() async {
     if (_imagePathController.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Image path or URL required'), backgroundColor: MayaTheme.error)); return; }
-    setState(() => _isProcessing = true);
-    try { final apiService = ref.read(apiServiceProvider); final result = await apiService.ocrVision({'image_path': _imagePathController.text.trim()}); setState(() { _lastResult = result; _isProcessing = false; }); } catch (e) { setState(() => _isProcessing = false); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error)); }
+    setState(() { _isProcessing = true; _error = null; });
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final result = await apiService.ocrVision({'image_path': _imagePathController.text.trim()});
+      setState(() { _lastResult = result; _isProcessing = false; });
+    } catch (e) {
+      setState(() { _isProcessing = false; _error = e.toString(); });
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e'), backgroundColor: MayaTheme.error));
+    }
   }
-
-  @override void dispose() { _imagePathController.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
@@ -33900,6 +33906,19 @@ class _VisionOCRTabState extends ConsumerState<_VisionOCRTab> {
               ],
             ),
           ),
+          if (_isProcessing) ...[
+            const SizedBox(height: 24),
+            const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+          ],
+          if (_error != null) ...[
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: MayaTheme.error.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: MayaTheme.error)),
+              child: Text(_error!, style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            ),
+          ],
           const SizedBox(height: 24),
           if (_lastResult != null) ...[
             const Text('Extracted Text', style: MayaTheme.titleLarge),
