@@ -245,7 +245,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
         _pulseController.duration = const Duration(milliseconds: 1500);
         _pulseController.repeat(reverse: true);
       }
-    });
+    }
     // TODO: Start/stop STT
   }
 
