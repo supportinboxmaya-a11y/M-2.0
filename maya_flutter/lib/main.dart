@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart'
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -263,6 +263,11 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
           _pulseController.duration = const Duration(milliseconds: 1500);
           _spinController.stop();
           _waveController.stop();
+          break;
+        case MayaLogoState.listening:
+          _pulseController.duration = const Duration(milliseconds: 800);
+          _pulseController.repeat(reverse: true);
+          _rotationController.repeat(reverse: false);
           break;
         case MayaLogoState.processing:
           _pulseController.stop();
