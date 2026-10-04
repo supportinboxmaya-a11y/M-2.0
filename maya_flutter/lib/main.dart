@@ -10539,7 +10539,6 @@ class _OrgTile extends ConsumerWidget {
                   );
                 }
               }
-},
           },
         ),
         children: [
