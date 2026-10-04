@@ -33,7 +33,7 @@ class MayaLogo extends StatefulWidget {
   State<MayaLogo> createState() => _MayaLogoState();
 }
 
-enum MayaLogoState { idle, listening, processing, speaking, error }
+enum MayaLogoState { idle, listening, processing, speaking, thinking, error }
 
 class _MayaLogoState extends State<MayaLogo> with TickerProviderStateMixin {
   late AnimationController _pulseController;

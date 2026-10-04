@@ -188,6 +188,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
   late AnimationController _pulseController;
   late AnimationController _spinController;
   late AnimationController _waveController;
+  late AnimationController _rotationController;
 
   @override
   void initState() {
@@ -204,6 +205,10 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
+    _rotationController = AnimationController(
+      duration: const Duration(seconds: 10),
+      vsync: this,
+    );
   }
 
   @override
@@ -213,6 +218,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> with TickerProvider
     _pulseController.dispose();
     _spinController.dispose();
     _waveController.dispose();
+    _rotationController.dispose();
     super.dispose();
   }
 
@@ -2436,7 +2442,7 @@ class _AppDrawer extends ConsumerWidget {
                   },
                 ),
                 _DrawerActionTile(
-                  icon: Icons.robot_rounded,
+                  icon: Icons.smart_toy_rounded,
                   label: 'Autonomous Mode',
                   subtitle: 'End-to-end autonomous execution',
                   onTap: () {
@@ -2948,7 +2954,7 @@ class _AppDrawer extends ConsumerWidget {
                   },
                 ),
                 _DrawerActionTile(
-                  icon: Icons.deployed_code_rounded,
+                  icon: Icons.code_rounded,
                   label: 'Hosting Manager',
                   subtitle: 'Deploy & manage hosted apps',
                   onTap: () {
@@ -2976,7 +2982,7 @@ class _AppDrawer extends ConsumerWidget {
                   },
                 ),
                 _DrawerActionTile(
-                  icon: Icons.deployed_code_rounded,
+                  icon: Icons.code_rounded,
                   label: 'Hosting Manager',
                   subtitle: 'Deploy & manage hosted apps',
                   onTap: () {
@@ -4833,7 +4839,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
               Tab(icon: Icon(Icons.memory_rounded), text: 'Memories'),
               Tab(icon: Icon(Icons.description_rounded), text: 'Documents'),
               Tab(icon: Icon(Icons.search_rounded), text: 'RAG Search'),
-              Tab(icon: Icon(Icons.context_rounded), text: 'RAG Context'),
+              Tab(icon: Icon(Icons.settings_rounded), text: 'RAG Context'),
             ],
           ),
         ),
@@ -5382,7 +5388,7 @@ class _MemoryScreenState extends ConsumerState<_MemoryScreen>
                     onPressed: () {
                       ref.invalidate(ragContextProvider(_searchController.text));
                     },
-                    icon: const Icon(Icons.context_rounded),
+                    icon: const Icon(Icons.settings_rounded),
                     label: const Text('Get Context'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: MayaTheme.neonCyan,
@@ -16763,7 +16769,7 @@ class _WorkingMemoryTab extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(child: _CoreStatCard(label: 'Total Slots', value: capacity.totalSlots.toString(), color: MayaTheme.neonCyan, icon: Icons.slots_rounded)),
+                    Expanded(child: _CoreStatCard(label: 'Total Slots', value: capacity.totalSlots.toString(), color: MayaTheme.neonCyan, icon: Icons.casino_rounded)),
                     const SizedBox(width: 12),
                     Expanded(child: _CoreStatCard(label: 'Used', value: capacity.usedSlots.toString(), color: MayaTheme.neonOrange, icon: Icons.memory_rounded)),
                     const SizedBox(width: 12),
@@ -29476,7 +29482,7 @@ class _IncomeStrategistScreenState extends ConsumerState<_IncomeStrategistScreen
             labelColor: MayaTheme.neonCyan,
             unselectedLabelColor: Colors.white54,
             tabs: const [
-              Tab(icon: Icon(Icons.review_rounded), text: 'Reviews'),
+              Tab(icon: Icon(Icons.rate_review_rounded), text: 'Reviews'),
               Tab(icon: Icon(Icons.assignment_rounded), text: 'Plans'),
               Tab(icon: Icon(Icons.leaderboard_rounded), text: 'Ranked'),
             ],
@@ -29502,7 +29508,7 @@ class _StrategistReviewsTab extends ConsumerWidget {
 
     return historyAsync.when(
       data: (data) => data.reviews.isEmpty
-          ? _emptyState('No Reviews', 'Run a strategist review to see history', Icons.review_rounded)
+          ? _emptyState('No Reviews', 'Run a strategist review to see history', Icons.rate_review_rounded)
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -29533,7 +29539,7 @@ class _StrategistReviewsTab extends ConsumerWidget {
                                 color: MayaTheme.neonViolet.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(Icons.review_rounded, color: MayaTheme.neonViolet, size: 24),
+                              child: Icon(Icons.rate_review_rounded, color: MayaTheme.neonViolet, size: 24),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -33667,6 +33673,7 @@ class _ScheduleCard extends ConsumerWidget {
 }
 
 // Plugins Screen
+class _PluginsScreen extends ConsumerStatefulWidget {
   const _PluginsScreen();
 
   @override
