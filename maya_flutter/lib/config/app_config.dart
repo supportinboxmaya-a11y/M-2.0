@@ -462,6 +462,7 @@ class AppConfig {
   // Docs
   static const String docsList = '/api/v1/docs';
   static const String docsDetail = '/api/v1/docs/';
+  static const String docsCreate = '/api/v1/docs';
 
   // Analytics
   static const String analyticsSummary = '/api/v1/analytics/summary';

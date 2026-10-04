@@ -2725,6 +2725,21 @@ class ApiService {
     return DocsDetailResponse.fromJson(response.data);
   }
 
+  Future<DocCreateResponse> createDoc({
+    required String name,
+    required String title,
+    required String category,
+    required String content,
+  }) async {
+    final response = await _dio.post(AppConfig.docsCreate, data: {
+      "name": name,
+      "title": title,
+      "category": category,
+      "content": content,
+    });
+    return DocCreateResponse.fromJson(response.data);
+  }
+
   // Projects & Schedules
   Future<ProjectsListResponse> getProjects() async {
     final response = await _dio.get(AppConfig.projectsList);
@@ -6294,6 +6309,19 @@ class DocsDetailResponse with _$DocsDetailResponse {
 
   factory DocsDetailResponse.fromJson(Map<String, dynamic> json) =>
       _$DocsDetailResponseFromJson(json);
+}
+
+@freezed
+class DocCreateResponse with _$DocCreateResponse {
+  const factory DocCreateResponse({
+    required bool success,
+    String? docId,
+    String? message,
+    String? error,
+  }) = _DocCreateResponse;
+
+  factory DocCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$DocCreateResponseFromJson(json);
 }
 
 // Projects & Schedules Models
