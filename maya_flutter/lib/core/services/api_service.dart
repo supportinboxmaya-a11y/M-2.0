@@ -50,6 +50,7 @@ ApiService apiService(Ref ref) {
 
 class ApiService {
   late final Dio _dio;
+  Dio get dio => _dio;
   final _wsController = StreamController<Map<String, dynamic>>.broadcast();
   WebSocketChannel? _wsChannel;
   Timer? _reconnectTimer;
