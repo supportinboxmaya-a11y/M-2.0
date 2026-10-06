@@ -89,3 +89,6 @@ captures/
 # Cache directories
 .cache/
 .npm/
+
+# Maya Flutter lib
+!/maya_flutter/lib/
