@@ -7,6 +7,7 @@ import '../metrics/metrics_screen.dart';
 import '../flags/flags_screen.dart';
 import '../router/router_screen.dart';
 import '../instance/instance_screen.dart';
+import '../memory/memory_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -66,5 +67,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Core',
     icon: Icons.dns_rounded,
     builder: (context) => const InstanceScreen(),
+  ),
+  ScreenEntry(
+    id: 'memory',
+    title: 'Memory',
+    group: 'Memory and knowledge',
+    icon: Icons.memory_rounded,
+    builder: (context) => const MemoryScreen(),
   ),
 ];
