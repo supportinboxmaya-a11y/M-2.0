@@ -11,6 +11,7 @@ import '../memory/memory_screen.dart';
 import '../memory_preferences/memory_preferences_screen.dart';
 import '../semantic_index/semantic_index_screen.dart';
 import '../knowledge_engine/knowledge_engine_screen.dart';
+import '../learning/learning_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -98,5 +99,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Memory and knowledge',
     icon: Icons.psychology_rounded,
     builder: (context) => const KnowledgeEngineScreen(),
+  ),
+  ScreenEntry(
+    id: 'learning',
+    title: 'Learning',
+    group: 'Memory and knowledge',
+    icon: Icons.school_rounded,
+    builder: (context) => const LearningScreen(),
   ),
 ];
