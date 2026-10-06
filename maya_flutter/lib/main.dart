@@ -10,6 +10,7 @@ import 'core/services/api_service.dart';
 import 'features/voice/voice_service.dart';
 import 'features/camera/camera_service.dart';
 import 'features/system/system_service.dart';
+import 'features/shell/all_screens_screen.dart';
 import 'config/app_config.dart';
 
 final voiceServiceProvider = Provider((ref) => VoiceService(ref.read(apiServiceProvider)));
@@ -1009,6 +1010,7 @@ class _AppDrawer extends ConsumerWidget {
               title: 'Agent Selector & Management',
               icon: Icons.psychology_rounded,
               children: [
+                _DrawerActionTile(icon: Icons.apps_rounded, label: 'All Screens', subtitle: 'Browse every screen', onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (_) => const AllScreensScreen())); }),
                 _DrawerActionTile(
                   icon: Icons.psychology_rounded,
                   label: 'Select Agent',
