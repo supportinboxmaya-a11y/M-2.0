@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../settings/settings_screen.dart';
+
 class ScreenEntry {
   final String id;
   final String title;
@@ -8,7 +10,7 @@ class ScreenEntry {
   final IconData icon;
   final Widget Function(BuildContext) builder;
 
-  const ScreenEntry({
+  ScreenEntry({
     required this.id,
     required this.title,
     required this.group,
@@ -17,4 +19,12 @@ class ScreenEntry {
   });
 }
 
-final List<ScreenEntry> kScreens = <ScreenEntry>[];
+final List<ScreenEntry> kScreens = <ScreenEntry>[
+  ScreenEntry(
+    id: 'settings',
+    title: 'Settings',
+    group: 'Core',
+    icon: Icons.settings_rounded,
+    builder: (context) => const SettingsScreen(),
+  ),
+];
