@@ -5,6 +5,7 @@ import '../settings/settings_screen.dart';
 import '../logs/logs_screen.dart';
 import '../metrics/metrics_screen.dart';
 import '../flags/flags_screen.dart';
+import '../router/router_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -50,5 +51,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Core',
     icon: Icons.flag_rounded,
     builder: (context) => const FlagsScreen(),
+  ),
+  ScreenEntry(
+    id: 'router',
+    title: 'Router',
+    group: 'Core',
+    icon: Icons.router_rounded,
+    builder: (context) => const RouterScreen(),
   ),
 ];
