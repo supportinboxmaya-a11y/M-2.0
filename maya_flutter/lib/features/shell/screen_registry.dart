@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../settings/settings_screen.dart';
+import '../logs/logs_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -26,5 +27,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Core',
     icon: Icons.settings_rounded,
     builder: (context) => const SettingsScreen(),
+  ),
+  ScreenEntry(
+    id: 'logs',
+    title: 'Logs',
+    group: 'Core',
+    icon: Icons.article_rounded,
+    builder: (context) => const LogsScreen(),
   ),
 ];
