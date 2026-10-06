@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import '../settings/settings_screen.dart';
 import '../logs/logs_screen.dart';
 import '../metrics/metrics_screen.dart';
+import '../flags/flags_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -42,5 +43,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Core',
     icon: Icons.analytics_rounded,
     builder: (context) => const MetricsScreen(),
+  ),
+  ScreenEntry(
+    id: 'flags',
+    title: 'Flags',
+    group: 'Core',
+    icon: Icons.flag_rounded,
+    builder: (context) => const FlagsScreen(),
   ),
 ];
