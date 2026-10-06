@@ -8,6 +8,7 @@ import '../flags/flags_screen.dart';
 import '../router/router_screen.dart';
 import '../instance/instance_screen.dart';
 import '../memory/memory_screen.dart';
+import '../memory_preferences/memory_preferences_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -74,5 +75,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Memory and knowledge',
     icon: Icons.memory_rounded,
     builder: (context) => const MemoryScreen(),
+  ),
+  ScreenEntry(
+    id: 'memory_preferences',
+    title: 'Memory Preferences',
+    group: 'Memory and knowledge',
+    icon: Icons.tune_rounded,
+    builder: (context) => const MemoryPreferencesScreen(),
   ),
 ];
