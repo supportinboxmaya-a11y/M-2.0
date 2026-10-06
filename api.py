@@ -424,31 +424,7 @@ async def agent_chat(req: ChatRequest, user: dict = Depends(get_current_user)):
         supabase_store.add_chat_message(user["uid"], req.chat_id, "assistant", response)
         supabase_store.add_budget_usage(user["uid"], CHAT_MESSAGE_FLAT_COST_USD)
 
-    return {"result": result, "depth": req.depth}
-
-@app.post("/api/v1/agent/learn-complete")
-async def agent_learn_complete(req: AgentRunRequest, user=Depends(get_current_user)):
-    """
-    Learn & Complete: Handle unknown tasks by researching, testing, and completing.
-    
-    Body:
-      - goal: The task to complete
-      - max_retries: Max retries (default 3)
-      - task_id: Optional task ID
-      - scope: Optional memory scope
-    """
-    if not maya_instance:
-        raise HTTPException(status_code=503, detail="Maya not initialized")
-    check_budget(user)
-    
-    result = await asyncio.get_event_loop().run_in_executor(
-        None, lambda: maya_instance.learn_and_complete(
-            goal=req.goal,
-            max_retries=req.max_retries or 3,
-            task_id=req.instance_id,
-        )
-    )
-    return result
+    return {"reply": response, "timestamp": datetime.utcnow().isoformat()}
 
 @app.post("/api/v1/agent/think")
 async def agent_think(req: ThinkRequest, user: dict = Depends(get_current_user)):
@@ -789,17 +765,10 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
 
 # ═══════════════════════════════════════════════
 # VOICE ROUTES (Local faster-whisper STT)
-# ════════════════════════════════════════════════
+# ═══════════════════════════════════════════════
 from infrastructure.voice_routes import router as voice_router
 
 app.include_router(voice_router)
-
-# ═══════════════════════════════════════════════
-# CHAT EXPORT ROUTES
-# ═══════════════════════════════════════════════
-from infrastructure.backend_chat_export import router as chat_export_router
-
-app.include_router(chat_export_router)
 
 # ═══════════════════════════════════════════════
 # MULTIMODAL ROUTES (Files, Camera, Images, Search, Code, Browser)
@@ -862,13 +831,6 @@ app.include_router(launcher_router)
 from infrastructure.income_growth_portfolio_routes import router as growth_router
 
 app.include_router(growth_router)
-
-# ══════════════════════════════════════════════
-# AGENT PROFILES ROUTES
-# ═══════════════════════════════════════════════
-from infrastructure.backend_agent_profiles import router as agent_profiles_router
-
-app.include_router(agent_profiles_router)
 
 # ══════════════════════════════════════════════
 # DEVICE BRIDGE ROUTES
@@ -4073,22 +4035,7 @@ try:
             raise HTTPException(status_code=404, detail="Proposal not found")
         return proposal
 
-    @app.post("/api/v1/publish/{proposal_id}/decide")
-    async def _p21_publish_decide(
-        proposal_id: str, 
-        decision: str,  # "approve" or "reject"
-        user=Depends(get_current_user),
-    ):
-        """Decide on a publish proposal (approve or reject)."""
-        _p21_check_execute(user)
-        if decision not in ("approve", "reject"):
-            raise HTTPException(status_code=400, detail="Decision must be 'approve' or 'reject'")
-        result = _p21_engine.decide(proposal_id, decision, user)
-        if "error" in result:
-            raise HTTPException(status_code=403 if "rejected" in result.get("error", "") else 500, detail=result["error"])
-        return result
-
-    print("Phase 21 active: guarded publish (risk-based approval + permanent audit)")
+    print("Phase 21 active: guarded publish (hard approval + permanent audit)")
 except Exception as _p21_err:
     print(f"WARNING: Phase 21 publish engine not loaded: {_p21_err}")
 # ══════════════ End Phase 21 integration ══════════════

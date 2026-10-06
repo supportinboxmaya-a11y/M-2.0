@@ -99,7 +99,6 @@ OpenAIProvider = _load("OpenAI", "openai", "OpenAIProvider", "openai")
 AnthropicProvider = _load("Anthropic", "claude", "ClaudeProvider", "anthropic")
 DeepSeekProvider = _load("DeepSeek", "deepseek", "DeepSeekProvider", "openai")
 NvidiaNimProvider = _load("NVIDIA NIM", "nvidia_nim", "NvidiaNimProvider", "openai")
-JinaProvider = _load("Jina", "jina", "JinaProvider", "requests")
 LocalLLMProvider = _load("Local LLM", "local_llm", "LocalLLMProvider", "requests")
 LocalFastLLMProvider = _load("Local LLM (Fast)", "local_llm_fast", "LocalFastLLMProvider", "requests")
 

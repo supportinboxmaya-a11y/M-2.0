@@ -6,36 +6,21 @@ part of 'system_service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SystemStateImpl _$$SystemStateImplFromJson(Map json) => $checkedCreate(
-      r'_$SystemStateImpl',
-      json,
-      ($checkedConvert) {
-        final val = _$SystemStateImpl(
-          status: $checkedConvert('status', (v) => v as String),
-          maya: $checkedConvert('maya', (v) => v as String),
-          version: $checkedConvert('version', (v) => v as String?),
-          uptime: $checkedConvert('uptime', (v) => (v as num?)?.toInt()),
-        );
-        return val;
-      },
+_$SystemStateImpl _$$SystemStateImplFromJson(Map<String, dynamic> json) =>
+    _$SystemStateImpl(
+      status: json['status'] as String,
+      maya: json['maya'] as String,
+      version: json['version'] as String?,
+      uptime: (json['uptime'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$SystemStateImplToJson(_$SystemStateImpl instance) {
-  final val = <String, dynamic>{
-    'status': instance.status,
-    'maya': instance.maya,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('version', instance.version);
-  writeNotNull('uptime', instance.uptime);
-  return val;
-}
+Map<String, dynamic> _$$SystemStateImplToJson(_$SystemStateImpl instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'maya': instance.maya,
+      'version': instance.version,
+      'uptime': instance.uptime,
+    };
 
 // **************************************************************************
 // RiverpodGenerator

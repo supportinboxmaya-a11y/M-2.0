@@ -34,7 +34,7 @@ def _is_placeholder(value: str) -> bool:
         "your_service_role_key", "your-project", "your_cse_id",
         "omniroute-local-key", "your_nvidia_nim_key", "your_gemini_key",
         "your_openai_key", "your_anthropic_key", "your_deepseek_key",
-        "your_google_key", "your_groq_key", "your_jina_key"
+        "your_google_key", "your_groq_key"
     }
     return any(p in value_lower for p in placeholders)
 
@@ -75,7 +75,6 @@ GEMINI_KEY = env_first("GEMINI_API_KEY", "GEMINI_KEY")
 OPENAI_KEY = env_first("OPENAI_API_KEY", "OPENAI_KEY")
 ANTHROPIC_KEY = env_first("ANTHROPIC_API_KEY", "ANTHROPIC_KEY")
 DEEPSEEK_KEY = env_first("DEEPSEEK_API_KEY", "DEEPSEEK_KEY")
-JINA_API_KEY = env_first("JINA_API_KEY", "JINA_API_KEY")
 OPENROUTER_KEY = env_first("OPENROUTER_API_KEY", "OPENROUTER_KEY")
 CEREBRAS_KEY = env_first("CEREBRAS_API_KEY", "CEREBRAS_KEY")
 NVIDIA_NIM_KEY = _m1_fetch_key("nim", env_first("NVIDIA_NIM_API_KEY", "NVIDIA_NIM_KEY"))

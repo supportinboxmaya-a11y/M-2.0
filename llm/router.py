@@ -13,7 +13,7 @@ import uuid
 from typing import List, Dict, Optional
 from config.settings import (
     GROQ_KEY, GEMINI_KEY, OPENAI_KEY, ANTHROPIC_KEY, 
-    DEEPSEEK_KEY, OPENROUTER_KEY, CEREBRAS_KEY, NVIDIA_NIM_KEY, JINA_API_KEY, env_first
+    DEEPSEEK_KEY, OPENROUTER_KEY, CEREBRAS_KEY, NVIDIA_NIM_KEY, env_first
 )
 
 from llm.providers import (
@@ -21,12 +21,11 @@ from llm.providers import (
     GroqProvider, CerebrasProvider, OpenRouterProvider, 
     GeminiProvider, OpenAIProvider, AnthropicProvider, 
     DeepSeekProvider, NvidiaNimProvider, LocalLLMProvider,
-    JinaProvider,
     PROVIDER_INFO, PROVIDER_CLASSES, PROVIDER_STATE_FILE
 )
 
 class LLMRouter:
-    DEFAULT_PRIORITY = ["groq", "cerebras", "openrouter", "gemini", "deepseek", "jina", "local", "local_fast", "nvidia_nim", "openai", "claude"]
+    DEFAULT_PRIORITY = ["groq", "cerebras", "openrouter", "gemini", "deepseek", "local", "local_fast", "nvidia_nim", "openai", "claude"]
 
     # Seconds after which a provider disabled by repeated errors gets a
     # second chance (free tiers throttle in bursts; without cooldown
@@ -42,10 +41,9 @@ class LLMRouter:
             "cerebras": CerebrasProvider(),
             "openrouter": OpenRouterProvider(),
             "gemini": GeminiProvider(),
-            "deepseek": DeepSeekProvider(),
-            "jina": JinaProvider(),
             "openai": OpenAIProvider(),
             "claude": AnthropicProvider(),
+            "deepseek": DeepSeekProvider(),
             "local": LocalLLMProvider(),
         }
 
@@ -275,14 +273,14 @@ class LLMRouter:
     def _select_best_provider(self, task_type: str = "general") -> Optional[str]:
         """Selects optimal healthy provider based on task routing mapping preferences."""
         preferences = {
-            "planning": ["groq", "cerebras", "openrouter", "gemini", "jina", "local_fast", "local"],
-            "reasoning": ["groq", "cerebras", "openrouter", "gemini", "jina", "local", "local_fast"],
+            "planning": ["groq", "cerebras", "openrouter", "gemini", "local_fast", "local"],
+            "reasoning": ["groq", "cerebras", "openrouter", "gemini", "local", "local_fast"],
             "tool_use": ["groq", "cerebras", "local", "local_fast"],
-            "coding": ["groq", "cerebras", "openrouter", "jina", "local"],
-            "fast": ["groq", "cerebras", "jina", "local_fast"],
+            "coding": ["groq", "cerebras", "openrouter", "local"],
+            "fast": ["groq", "cerebras", "local_fast"],
             "analysis": ["groq", "cerebras", "local", "local_fast"],
             "creative": ["groq", "cerebras", "local", "local_fast"],
-            "general": ["groq", "cerebras", "openrouter", "gemini", "jina", "local", "local_fast", "nvidia_nim"]
+            "general": ["groq", "cerebras", "openrouter", "gemini", "local", "local_fast", "nvidia_nim"]
         }
         priority = preferences.get(task_type, self.DEFAULT_PRIORITY)
         for p in priority:

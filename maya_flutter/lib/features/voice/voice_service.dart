@@ -11,7 +11,6 @@ import 'package:record/record.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_sound/flutter_sound.dart' hide AudioSource;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 import '../../core/services/api_service.dart';
@@ -30,7 +29,6 @@ class VoiceService {
   final AudioPlayer _player = AudioPlayer();
   final FlutterSoundRecorder _flutterRecorder = FlutterSoundRecorder();
   final stt.SpeechToText _speechToText = stt.SpeechToText();
-  final FlutterTts _flutterTts = FlutterTts();
 
   StreamController<VoiceState>? _stateController;
   StreamController<String>? _transcriptController;
@@ -68,16 +66,6 @@ class VoiceService {
     await _flutterRecorder.openRecorder();
     await _speechToText.initialize();
 
-    // Configure flutter_tts
-    await _flutterTts.setLanguage('en-US');
-    await _flutterTts.setSpeechRate(0.5);
-    await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.0);
-
-    // Configure speech_to_text for Bangla + English
-    final locales = await _speechToText.locales();
-    debugPrint('Available STT locales: ${locales.map((l) => l.localeId).toList()}');
-
     if (kIsWeb) {
       await JustAudioBackground.init(
         androidNotificationChannelId: 'com.maya.voice',
@@ -109,7 +97,7 @@ class VoiceService {
       },
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
-      localeId: 'bn_BD',
+      localeId: 'en_US',
       cancelOnError: true,
       listenMode: stt.ListenMode.confirmation,
     );
@@ -236,46 +224,8 @@ class VoiceService {
 
   Future<void> stopSpeaking() async {
     await _player.stop();
-    await _flutterTts.stop();
     _isSpeaking = false;
     _stateController?.add(VoiceState.idle());
-  }
-
-  /// Speak text using local flutter_tts (supports Bangla and English)
-  Future<void> speakLocal(String text, {String locale = 'en-US'}) async {
-    if (_isSpeaking) return;
-
-    _isSpeaking = true;
-    _stateController?.add(VoiceState.speaking());
-
-    await _flutterTts.setLanguage(locale);
-    await _flutterTts.setSpeechRate(0.5);
-    await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.0);
-
-    await _flutterTts.speak(text);
-
-    // Wait for completion
-    _flutterTts.setCompletionHandler(() {
-      _isSpeaking = false;
-      _stateController?.add(VoiceState.idle());
-    });
-  }
-
-  /// Switch STT locale between Bangla and English
-  Future<void> setSttLocale(String localeId) async {
-    await _speechToText.stop();
-    await _speechToText.listen(
-      onResult: (result) {
-        _currentTranscript = result.recognizedWords;
-        _transcriptController?.add(_currentTranscript);
-      },
-      listenFor: const Duration(seconds: 30),
-      pauseFor: const Duration(seconds: 3),
-      localeId: localeId,
-      cancelOnError: true,
-      listenMode: stt.ListenMode.confirmation,
-    );
   }
 
   Future<void> connectVoiceGateway() async {
@@ -292,7 +242,6 @@ class VoiceService {
     _player.dispose();
     _flutterRecorder.closeRecorder();
     _speechToText.stop();
-    _flutterTts.stop();
   }
 }
 

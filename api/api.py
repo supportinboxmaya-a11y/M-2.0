@@ -6038,39 +6038,3 @@ async def enhanced_status(user=Depends(get_current_user)):
 # SPA fallback: serve index.html for any non-API path ──────────
 import os as _fe_os
 import pathlib as _fe_path
-
-# ─── DOCS CREATE ───
-class DocCreateRequest(BaseModel):
-    name: str
-    title: str
-    category: str = ""
-    content: str = ""
-
-@app.post("/api/v1/docs")
-async def docs_create(req: DocCreateRequest, user=Depends(get_current_user)):
-    import os
-    # Validate name
-    if not req.name or not req.name.strip():
-        raise HTTPException(status_code=400, detail="Name is required")
-    if not req.name.endswith(".md"):
-        req.name = req.name + ".md"
-    if "/" in req.name or ".." in req.name:
-        raise HTTPException(status_code=400, detail="Invalid document name")
-    
-    os.makedirs("docs", exist_ok=True)
-    path = os.path.join("docs", req.name)
-    
-    if os.path.exists(path):
-        raise HTTPException(status_code=409, detail="Document already exists")
-    
-    # Build content with title and category
-    content = f"# {req.title}\n\n"
-    if req.category:
-        content += f"Category: {req.category}\n\n"
-    content += req.content
-    
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
-    
-    return {"success": True, "docId": req.name, "message": "Document created"}
-
