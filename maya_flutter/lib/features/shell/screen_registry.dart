@@ -9,6 +9,7 @@ import '../router/router_screen.dart';
 import '../instance/instance_screen.dart';
 import '../memory/memory_screen.dart';
 import '../memory_preferences/memory_preferences_screen.dart';
+import '../semantic_index/semantic_index_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -82,5 +83,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Memory and knowledge',
     icon: Icons.tune_rounded,
     builder: (context) => const MemoryPreferencesScreen(),
+  ),
+  ScreenEntry(
+    id: 'semantic_index',
+    title: 'Semantic Index',
+    group: 'Memory and knowledge',
+    icon: Icons.search_rounded,
+    builder: (context) => const SemanticIndexScreen(),
   ),
 ];
