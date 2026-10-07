@@ -15,6 +15,12 @@ import '../learning/learning_screen.dart';
 import '../skill_generalization/skill_generalization_screen.dart';
 import '../extended_projects/extended_projects_screen.dart';
 import '../extended_tasks/extended_tasks_screen.dart';
+import '../maya_cognitive_core/maya_cognitive_core_screen.dart';
+import '../unified_cognitive_loop/unified_cognitive_loop_screen.dart';
+import '../self_improve/self_improve_screen.dart';
+import '../self_model/self_model_screen.dart';
+import '../brain_engine/brain_engine_screen.dart';
+import '../agi_architecture/agi_architecture_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -130,5 +136,47 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Goals and tasks',
     icon: Icons.task_alt_rounded,
     builder: (context) => const ExtendedTasksScreen(),
+  ),
+  ScreenEntry(
+    id: 'maya_cognitive_core',
+    title: 'Maya Cognitive Core',
+    group: 'Brain',
+    icon: Icons.psychology_rounded,
+    builder: (context) => const MayaCognitiveCoreScreen(),
+  ),
+  ScreenEntry(
+    id: 'unified_cognitive_loop',
+    title: 'Unified Cognitive Loop',
+    group: 'Brain',
+    icon: Icons.sync_rounded,
+    builder: (context) => const UnifiedCognitiveLoopScreen(),
+  ),
+  ScreenEntry(
+    id: 'self_improve',
+    title: 'Self-Improvement',
+    group: 'Brain',
+    icon: Icons.auto_awesome_rounded,
+    builder: (context) => const SelfImproveScreen(),
+  ),
+  ScreenEntry(
+    id: 'self_model',
+    title: 'Self Model',
+    group: 'Brain',
+    icon: Icons.person_search_rounded,
+    builder: (context) => const SelfModelScreen(),
+  ),
+  ScreenEntry(
+    id: 'brain_engine',
+    title: 'Brain Engine',
+    group: 'Brain',
+    icon: Icons.memory_rounded,
+    builder: (context) => const BrainEngineScreen(),
+  ),
+  ScreenEntry(
+    id: 'agi_architecture',
+    title: 'AGI Architecture',
+    group: 'Brain',
+    icon: Icons.architecture_rounded,
+    builder: (context) => const AGIArchitectureScreen(),
   ),
 ];
