@@ -21,6 +21,12 @@ import '../self_improve/self_improve_screen.dart';
 import '../self_model/self_model_screen.dart';
 import '../brain_engine/brain_engine_screen.dart';
 import '../agi_architecture/agi_architecture_screen.dart';
+import '../autonomous_mode/autonomous_mode_screen.dart';
+import '../auto_resume/auto_resume_screen.dart';
+import '../approvals/approvals_screen.dart';
+import '../workflow_engine/workflow_engine_screen.dart';
+import '../agents/agents_screen.dart';
+import '../capabilities/capabilities_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -178,5 +184,47 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Brain',
     icon: Icons.architecture_rounded,
     builder: (context) => const AGIArchitectureScreen(),
+  ),
+  ScreenEntry(
+    id: 'autonomous_mode',
+    title: 'Autonomous Mode',
+    group: 'Autonomy',
+    icon: Icons.rocket_launch_rounded,
+    builder: (context) => const AutonomousModeScreen(),
+  ),
+  ScreenEntry(
+    id: 'auto_resume',
+    title: 'Auto-Resume',
+    group: 'Autonomy',
+    icon: Icons.replay_rounded,
+    builder: (context) => const AutoResumeScreen(),
+  ),
+  ScreenEntry(
+    id: 'approvals',
+    title: 'Approvals Center',
+    group: 'Autonomy',
+    icon: Icons.rule_rounded,
+    builder: (context) => const ApprovalsScreen(),
+  ),
+  ScreenEntry(
+    id: 'workflow_engine',
+    title: 'Workflow Engine',
+    group: 'Autonomy',
+    icon: Icons.account_tree_rounded,
+    builder: (context) => const WorkflowEngineScreen(),
+  ),
+  ScreenEntry(
+    id: 'agents',
+    title: 'Multi-Agent System',
+    group: 'Autonomy',
+    icon: Icons.people_rounded,
+    builder: (context) => const AgentsScreen(),
+  ),
+  ScreenEntry(
+    id: 'capabilities',
+    title: 'Capabilities',
+    group: 'Autonomy',
+    icon: Icons.list_alt_rounded,
+    builder: (context) => const CapabilitiesScreen(),
   ),
 ];
