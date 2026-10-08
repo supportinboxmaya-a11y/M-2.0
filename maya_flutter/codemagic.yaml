@@ -1,12 +1,11 @@
 workflows:
   android-workflow:
     name: Android Build
-    max_build_duration: 120
-    instance_type: mac_mini_m1
+    max_build_duration: 30
+    instance_type: linux_x86_64
     environment:
       flutter: stable
-      xcode: latest
-      cocoapods: default
+      java: 17
     scripts:
       - name: Get dependencies
         script: flutter pub get
@@ -22,4 +21,3 @@ workflows:
           - supportinboxmaya-a11y@users.noreply.github.com
         notify:
           success: true
-          failure: true
