@@ -32,6 +32,7 @@ import '../sandbox_tools/sandbox_tools_screen.dart';
 import '../communication_tools/communication_tools_screen.dart';
 import '../tools_providers/tools_providers_screen.dart';
 import '../mcp_client/mcp_client_screen.dart';
+import '../phone_control/phone_control_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -266,5 +267,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Tools',
     icon: Icons.extension_rounded,
     builder: (context) => const McpClientScreen(),
+  ),
+  ScreenEntry(
+    id: 'phone_control',
+    title: 'Phone / Device Control',
+    group: 'Tools',
+    icon: Icons.devices_rounded,
+    builder: (context) => const PhoneControlScreen(),
   ),
 ];
