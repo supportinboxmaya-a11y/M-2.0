@@ -49,6 +49,8 @@ import '../business_analysis/business_analysis_screen.dart';
 import '../guarded_publish/guarded_publish_screen.dart';
 import '../enterprise/enterprise_screen.dart';
 import '../docs/docs_screen.dart';
+import '../analytics/analytics_screen.dart';
+import '../api_key_provisioner/api_key_provisioner_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -402,5 +404,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Business',
     icon: Icons.description_rounded,
     builder: (context) => const DocsScreen(),
+  ),
+  ScreenEntry(
+    id: 'analytics',
+    title: 'Analytics',
+    group: 'Business',
+    icon: Icons.analytics_rounded,
+    builder: (context) => const AnalyticsScreen(),
+  ),
+  ScreenEntry(
+    id: 'api_key_provisioner',
+    title: 'API Key Provisioner',
+    group: 'Business',
+    icon: Icons.vpn_key_rounded,
+    builder: (context) => const ApiKeyProvisionerScreen(),
   ),
 ];
