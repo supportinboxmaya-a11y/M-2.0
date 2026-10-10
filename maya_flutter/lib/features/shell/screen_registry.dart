@@ -41,6 +41,8 @@ import '../hosting/hosting_screen.dart';
 import '../remote_vps/remote_vps_screen.dart';
 import '../income_builder/income_builder_screen.dart';
 import '../income_growth/income_growth_screen.dart';
+import '../income_launcher/income_launcher_screen.dart';
+import '../income_notifications/income_notifications_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -338,5 +340,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Income',
     icon: Icons.trending_up_rounded,
     builder: (context) => const IncomeGrowthScreen(),
+  ),
+  ScreenEntry(
+    id: 'income_launcher',
+    title: 'Income Launcher',
+    group: 'Income',
+    icon: Icons.rocket_launch_rounded,
+    builder: (context) => const IncomeLauncherScreen(),
+  ),
+  ScreenEntry(
+    id: 'income_notifications',
+    title: 'Income Notifications',
+    group: 'Income',
+    icon: Icons.notifications_rounded,
+    builder: (context) => const IncomeNotificationsScreen(),
   ),
 ];
