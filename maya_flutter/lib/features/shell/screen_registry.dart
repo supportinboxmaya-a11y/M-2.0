@@ -27,6 +27,7 @@ import '../approvals/approvals_screen.dart';
 import '../workflow_engine/workflow_engine_screen.dart';
 import '../agents/agents_screen.dart';
 import '../capabilities/capabilities_screen.dart';
+import '../browser_tools/browser_tools_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -226,5 +227,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Autonomy',
     icon: Icons.list_alt_rounded,
     builder: (context) => const CapabilitiesScreen(),
+  ),
+  ScreenEntry(
+    id: 'browser_tools',
+    title: 'Browser Tools',
+    group: 'Tools',
+    icon: Icons.web_rounded,
+    builder: (context) => const BrowserToolsScreen(),
   ),
 ];
