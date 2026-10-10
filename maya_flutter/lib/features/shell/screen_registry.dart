@@ -28,6 +28,7 @@ import '../workflow_engine/workflow_engine_screen.dart';
 import '../agents/agents_screen.dart';
 import '../capabilities/capabilities_screen.dart';
 import '../browser_tools/browser_tools_screen.dart';
+import '../sandbox_tools/sandbox_tools_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -234,5 +235,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Tools',
     icon: Icons.web_rounded,
     builder: (context) => const BrowserToolsScreen(),
+  ),
+  ScreenEntry(
+    id: 'sandbox_tools',
+    title: 'Sandbox Tools',
+    group: 'Tools',
+    icon: Icons.code_rounded,
+    builder: (context) => const SandboxToolsScreen(),
   ),
 ];
