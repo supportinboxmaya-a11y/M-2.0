@@ -30,6 +30,7 @@ import '../capabilities/capabilities_screen.dart';
 import '../browser_tools/browser_tools_screen.dart';
 import '../sandbox_tools/sandbox_tools_screen.dart';
 import '../communication_tools/communication_tools_screen.dart';
+import '../tools_providers/tools_providers_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -250,5 +251,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Tools',
     icon: Icons.email_rounded,
     builder: (context) => const CommunicationToolsScreen(),
+  ),
+  ScreenEntry(
+    id: 'tools_providers',
+    title: 'Tools & Providers',
+    group: 'Tools',
+    icon: Icons.build_rounded,
+    builder: (context) => const ToolsProvidersScreen(),
   ),
 ];
