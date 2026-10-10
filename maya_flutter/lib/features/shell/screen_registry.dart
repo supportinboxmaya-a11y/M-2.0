@@ -27,6 +27,8 @@ import '../approvals/approvals_screen.dart';
 import '../workflow_engine/workflow_engine_screen.dart';
 import '../agents/agents_screen.dart';
 import '../capabilities/capabilities_screen.dart';
+import '../plugins/plugins_screen.dart';
+import '../vision/vision_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -226,5 +228,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Autonomy',
     icon: Icons.list_alt_rounded,
     builder: (context) => const CapabilitiesScreen(),
+  ),
+  ScreenEntry(
+    id: 'plugins',
+    title: 'Plugins',
+    group: 'Platform',
+    icon: Icons.extension_rounded,
+    builder: (context) => const PluginsScreen(),
+  ),
+  ScreenEntry(
+    id: 'vision',
+    title: 'Vision AI',
+    group: 'Platform',
+    icon: Icons.visibility_rounded,
+    builder: (context) => const VisionScreen(),
   ),
 ];
