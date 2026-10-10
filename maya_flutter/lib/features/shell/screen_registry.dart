@@ -29,6 +29,7 @@ import '../agents/agents_screen.dart';
 import '../capabilities/capabilities_screen.dart';
 import '../browser_tools/browser_tools_screen.dart';
 import '../sandbox_tools/sandbox_tools_screen.dart';
+import '../communication_tools/communication_tools_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -242,5 +243,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Tools',
     icon: Icons.code_rounded,
     builder: (context) => const SandboxToolsScreen(),
+  ),
+  ScreenEntry(
+    id: 'communication_tools',
+    title: 'Communication Tools',
+    group: 'Tools',
+    icon: Icons.email_rounded,
+    builder: (context) => const CommunicationToolsScreen(),
   ),
 ];
