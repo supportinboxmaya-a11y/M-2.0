@@ -47,6 +47,8 @@ import '../income_scout/income_scout_screen.dart';
 import '../income_strategist/income_strategist_screen.dart';
 import '../business_analysis/business_analysis_screen.dart';
 import '../guarded_publish/guarded_publish_screen.dart';
+import '../enterprise/enterprise_screen.dart';
+import '../docs/docs_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -386,5 +388,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Business',
     icon: Icons.verified_rounded,
     builder: (context) => const GuardedPublishScreen(),
+  ),
+  ScreenEntry(
+    id: 'enterprise',
+    title: 'Enterprise Layer',
+    group: 'Business',
+    icon: Icons.apartment_rounded,
+    builder: (context) => const EnterpriseScreen(),
+  ),
+  ScreenEntry(
+    id: 'docs',
+    title: 'Documentation',
+    group: 'Business',
+    icon: Icons.description_rounded,
+    builder: (context) => const DocsScreen(),
   ),
 ];
