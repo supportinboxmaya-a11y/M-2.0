@@ -31,6 +31,7 @@ import '../browser_tools/browser_tools_screen.dart';
 import '../sandbox_tools/sandbox_tools_screen.dart';
 import '../communication_tools/communication_tools_screen.dart';
 import '../tools_providers/tools_providers_screen.dart';
+import '../mcp_client/mcp_client_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -258,5 +259,12 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Tools',
     icon: Icons.build_rounded,
     builder: (context) => const ToolsProvidersScreen(),
+  ),
+  ScreenEntry(
+    id: 'mcp_client',
+    title: 'MCP Client',
+    group: 'Tools',
+    icon: Icons.extension_rounded,
+    builder: (context) => const McpClientScreen(),
   ),
 ];
