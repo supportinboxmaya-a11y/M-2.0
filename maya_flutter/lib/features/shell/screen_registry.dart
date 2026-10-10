@@ -45,6 +45,8 @@ import '../income_launcher/income_launcher_screen.dart';
 import '../income_notifications/income_notifications_screen.dart';
 import '../income_scout/income_scout_screen.dart';
 import '../income_strategist/income_strategist_screen.dart';
+import '../business_analysis/business_analysis_screen.dart';
+import '../guarded_publish/guarded_publish_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -370,5 +372,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Income',
     icon: Icons.psychology_rounded,
     builder: (context) => const IncomeStrategistScreen(),
+  ),
+  ScreenEntry(
+    id: 'business_analysis',
+    title: 'Business Analysis',
+    group: 'Business',
+    icon: Icons.business_rounded,
+    builder: (context) => const BusinessAnalysisScreen(),
+  ),
+  ScreenEntry(
+    id: 'guarded_publish',
+    title: 'Guarded Publish',
+    group: 'Business',
+    icon: Icons.verified_rounded,
+    builder: (context) => const GuardedPublishScreen(),
   ),
 ];
