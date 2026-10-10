@@ -43,6 +43,8 @@ import '../income_builder/income_builder_screen.dart';
 import '../income_growth/income_growth_screen.dart';
 import '../income_launcher/income_launcher_screen.dart';
 import '../income_notifications/income_notifications_screen.dart';
+import '../income_scout/income_scout_screen.dart';
+import '../income_strategist/income_strategist_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -354,5 +356,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Income',
     icon: Icons.notifications_rounded,
     builder: (context) => const IncomeNotificationsScreen(),
+  ),
+  ScreenEntry(
+    id: 'income_scout',
+    title: 'Income Scout',
+    group: 'Income',
+    icon: Icons.radar_rounded,
+    builder: (context) => const IncomeScoutScreen(),
+  ),
+  ScreenEntry(
+    id: 'income_strategist',
+    title: 'Income Strategist',
+    group: 'Income',
+    icon: Icons.psychology_rounded,
+    builder: (context) => const IncomeStrategistScreen(),
   ),
 ];
