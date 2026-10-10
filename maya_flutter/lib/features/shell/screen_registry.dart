@@ -248,6 +248,8 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Platform',
     icon: Icons.visibility_rounded,
     builder: (context) => const VisionScreen(),
+  ),
+  ScreenEntry(
     id: 'browser_tools',
     title: 'Browser Tools',
     group: 'Tools',
