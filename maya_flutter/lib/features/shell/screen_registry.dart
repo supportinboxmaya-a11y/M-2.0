@@ -35,6 +35,8 @@ import '../communication_tools/communication_tools_screen.dart';
 import '../tools_providers/tools_providers_screen.dart';
 import '../mcp_client/mcp_client_screen.dart';
 import '../phone_control/phone_control_screen.dart';
+import '../webhooks/webhooks_screen.dart';
+import '../app_registry/app_registry_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -290,5 +292,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Tools',
     icon: Icons.devices_rounded,
     builder: (context) => const PhoneControlScreen(),
+  ),
+  ScreenEntry(
+    id: 'webhooks',
+    title: 'Webhooks',
+    group: 'Platform',
+    icon: Icons.webhook_rounded,
+    builder: (context) => const WebhooksScreen(),
+  ),
+  ScreenEntry(
+    id: 'app_registry',
+    title: 'App Registry & Monitoring',
+    group: 'Platform',
+    icon: Icons.apps_rounded,
+    builder: (context) => const AppRegistryScreen(),
   ),
 ];
