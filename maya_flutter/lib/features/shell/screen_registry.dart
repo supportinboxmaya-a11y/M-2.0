@@ -39,6 +39,8 @@ import '../webhooks/webhooks_screen.dart';
 import '../app_registry/app_registry_screen.dart';
 import '../hosting/hosting_screen.dart';
 import '../remote_vps/remote_vps_screen.dart';
+import '../income_builder/income_builder_screen.dart';
+import '../income_growth/income_growth_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -322,5 +324,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Platform',
     icon: Icons.dns_rounded,
     builder: (context) => const RemoteVpsScreen(),
+  ),
+  ScreenEntry(
+    id: 'income_builder',
+    title: 'Income Builder',
+    group: 'Income',
+    icon: Icons.construction_rounded,
+    builder: (context) => const IncomeBuilderScreen(),
+  ),
+  ScreenEntry(
+    id: 'income_growth',
+    title: 'Growth Portfolio',
+    group: 'Income',
+    icon: Icons.trending_up_rounded,
+    builder: (context) => const IncomeGrowthScreen(),
   ),
 ];
