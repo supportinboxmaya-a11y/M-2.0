@@ -29,6 +29,12 @@ import '../agents/agents_screen.dart';
 import '../capabilities/capabilities_screen.dart';
 import '../plugins/plugins_screen.dart';
 import '../vision/vision_screen.dart';
+import '../browser_tools/browser_tools_screen.dart';
+import '../sandbox_tools/sandbox_tools_screen.dart';
+import '../communication_tools/communication_tools_screen.dart';
+import '../tools_providers/tools_providers_screen.dart';
+import '../mcp_client/mcp_client_screen.dart';
+import '../phone_control/phone_control_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -242,5 +248,45 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Platform',
     icon: Icons.visibility_rounded,
     builder: (context) => const VisionScreen(),
+    id: 'browser_tools',
+    title: 'Browser Tools',
+    group: 'Tools',
+    icon: Icons.web_rounded,
+    builder: (context) => const BrowserToolsScreen(),
+  ),
+  ScreenEntry(
+    id: 'sandbox_tools',
+    title: 'Sandbox Tools',
+    group: 'Tools',
+    icon: Icons.code_rounded,
+    builder: (context) => const SandboxToolsScreen(),
+  ),
+  ScreenEntry(
+    id: 'communication_tools',
+    title: 'Communication Tools',
+    group: 'Tools',
+    icon: Icons.email_rounded,
+    builder: (context) => const CommunicationToolsScreen(),
+  ),
+  ScreenEntry(
+    id: 'tools_providers',
+    title: 'Tools & Providers',
+    group: 'Tools',
+    icon: Icons.build_rounded,
+    builder: (context) => const ToolsProvidersScreen(),
+  ),
+  ScreenEntry(
+    id: 'mcp_client',
+    title: 'MCP Client',
+    group: 'Tools',
+    icon: Icons.extension_rounded,
+    builder: (context) => const McpClientScreen(),
+  ),
+  ScreenEntry(
+    id: 'phone_control',
+    title: 'Phone / Device Control',
+    group: 'Tools',
+    icon: Icons.devices_rounded,
+    builder: (context) => const PhoneControlScreen(),
   ),
 ];
