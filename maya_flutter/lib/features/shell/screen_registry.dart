@@ -37,6 +37,8 @@ import '../mcp_client/mcp_client_screen.dart';
 import '../phone_control/phone_control_screen.dart';
 import '../webhooks/webhooks_screen.dart';
 import '../app_registry/app_registry_screen.dart';
+import '../hosting/hosting_screen.dart';
+import '../remote_vps/remote_vps_screen.dart';
 
 class ScreenEntry {
   final String id;
@@ -306,5 +308,19 @@ final List<ScreenEntry> kScreens = <ScreenEntry>[
     group: 'Platform',
     icon: Icons.apps_rounded,
     builder: (context) => const AppRegistryScreen(),
+  ),
+  ScreenEntry(
+    id: 'hosting',
+    title: 'Hosting Manager',
+    group: 'Platform',
+    icon: Icons.cloud_rounded,
+    builder: (context) => const HostingScreen(),
+  ),
+  ScreenEntry(
+    id: 'remote_vps',
+    title: 'Remote VPS Deploy',
+    group: 'Platform',
+    icon: Icons.dns_rounded,
+    builder: (context) => const RemoteVpsScreen(),
   ),
 ];
