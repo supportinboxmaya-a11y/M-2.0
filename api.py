@@ -759,11 +759,30 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
             None, lambda: VisionTool().analyze(image, prompt))
     except (ValueError, PermissionError, FileNotFoundError) as e:
         raise HTTPException(status_code=400, detail=str(e))
-    if not result.get("success"):
+if not result.get("success"):
         return {"result": "", "message": result.get("error", "Vision failed")}
     return {"result": result["result"], "provider": result.get("provider", "")}
 
+# ══════════════════════════════════════════════
+# VISION OCR ENDPOINT
 # ═══════════════════════════════════════════════
+@app.post("/api/v1/vision/ocr")
+async def vision_ocr(body: dict, user=Depends(get_current_user)):
+    """Extract text from an image using OCR (local pytesseract or vision LLM fallback)."""
+    image = body.get("image", "")
+    if not image:
+        raise HTTPException(status_code=400, detail="No image provided")
+    from tools.media.vision_tool import VisionTool
+    try:
+        result = await asyncio.get_event_loop().run_in_executor(
+            None, lambda: VisionTool().ocr(image))
+    except (ValueError, PermissionError, FileNotFoundError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    if not result.get("success"):
+        return {"result": "", "message": result.get("error", "OCR failed")}
+    return {"result": result["text"], "provider": result.get("provider", "")}
+
+# ══════════════════════════════════════════════
 # VOICE ROUTES (Local faster-whisper STT)
 # ═══════════════════════════════════════════════
 from infrastructure.voice_routes import router as voice_router
@@ -979,6 +998,172 @@ async def delete_backup(backup_id: str, user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Backup not found")
     backups_db = [b for b in backups_db if b["id"] != backup_id]
     return {"id": backup_id, "deleted": True}
+
+# ══════════════════════════════════════════════
+# HOSTING API ENDPOINTS
+# ═══════════════════════════════════════════════
+from infrastructure.hosting_manager import hosting_manager
+
+class HostingDeployRequest(BaseModel):
+    name: str
+    kind: str  # python-asgi, python, node, static, command
+    entry: str = ""
+    path: str = ""
+    command: str = ""
+    port: Optional[int] = None
+    env: Optional[Dict[str, str]] = None
+    owner: str = "system"
+    autostart: bool = True
+    tunnel: bool = False
+
+class HostingStartRequest(BaseModel):
+    name: str
+
+class HostingTunnelRequest(BaseModel):
+    name: str
+
+@app.get("/api/v1/hosting/apps")
+async def list_hosted_apps(owner: Optional[str] = None, user=Depends(get_current_user)):
+    """List all hosted apps, optionally filtered by owner."""
+    apps = hosting_manager.list(owner=owner)
+    return {"apps": apps}
+
+@app.get("/api/v1/hosting/apps/{name}")
+async def get_hosted_app(name: str, user=Depends(get_current_user)):
+    """Get status of a specific hosted app."""
+    result = hosting_manager.status(name)
+    if not result.get("ok"):
+        raise HTTPException(status_code=404, detail=result.get("error", "App not found"))
+    return result
+
+@app.post("/api/v1/hosting/apps")
+async def deploy_app(req: HostingDeployRequest, user=Depends(get_current_user)):
+    """Deploy a new hosted app."""
+    result = hosting_manager.deploy(
+        name=req.name,
+        kind=req.kind,
+        entry=req.entry,
+        path=req.path,
+        command=req.command,
+        port=req.port,
+        env=req.env,
+        owner=req.owner,
+        autostart=req.autostart,
+        tunnel=req.tunnel,
+    )
+    if not result.get("ok"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Deployment failed"))
+    return result
+
+@app.post("/api/v1/hosting/apps/{name}/start")
+async def start_hosted_app(name: str, user=Depends(get_current_user)):
+    """Start a hosted app."""
+    result = hosting_manager.start(name)
+    if not result.get("ok"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Start failed"))
+    return result
+
+@app.post("/api/v1/hosting/apps/{name}/stop")
+async def stop_hosted_app(name: str, user=Depends(get_current_user)):
+    """Stop a hosted app."""
+    result = hosting_manager.stop(name)
+    if not result.get("ok"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Stop failed"))
+    return result
+
+@app.post("/api/v1/hosting/apps/{name}/restart")
+async def restart_hosted_app(name: str, user=Depends(get_current_user)):
+    """Restart a hosted app."""
+    result = hosting_manager.restart(name)
+    if not result.get("ok"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Restart failed"))
+    return result
+
+@app.delete("/api/v1/hosting/apps/{name}")
+async def remove_hosted_app(name: str, user=Depends(get_current_user)):
+    """Remove a hosted app permanently."""
+    result = hosting_manager.remove(name)
+    if not result.get("ok"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Remove failed"))
+    return result
+
+@app.get("/api/v1/hosting/apps/{name}/logs")
+async def get_hosted_app_logs(name: str, lines: int = 100, user=Depends(get_current_user)):
+    """Get logs for a hosted app."""
+    result = hosting_manager.logs(name, lines)
+    if not result.get("ok"):
+        raise HTTPException(status_code=404, detail=result.get("error", "App not found"))
+    return result
+
+@app.post("/api/v1/hosting/apps/{name}/tunnel")
+async def open_hosting_tunnel(name: str, user=Depends(get_current_user)):
+    """Open a Cloudflare tunnel for a hosted app."""
+    result = hosting_manager.open_tunnel(name)
+    if not result.get("ok"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Tunnel failed"))
+    return result
+
+@app.post("/api/v1/hosting/supervise")
+async def supervise_hosting(auto_restart: bool = True, max_restarts: int = 5, user=Depends(get_current_user)):
+    """Check all hosted apps and restart dead ones that should be running."""
+    result = hosting_manager.supervise(auto_restart=auto_restart, max_restarts=max_restarts)
+    return result
+
+# ══════════════════════════════════════════════
+# REMOTE VPS ENDPOINTS
+# ═══════════════════════════════════════════════
+from infrastructure.remote_deploy import remote_deploy_manager
+
+class VPSConfigRequest(BaseModel):
+    host: str
+    port: int = 22
+    user: str
+    ssh_key: Optional[str] = None
+    password: Optional[str] = None
+
+class VPSDeployRequest(BaseModel):
+    app_name: str
+    image: str
+    dockerfile_path: Optional[str] = None
+    ports: List[int] = []
+    env: Optional[Dict[str, str]] = None
+    auto_start: bool = True
+
+@app.get("/api/v1/remote-vps/config")
+async def get_vps_config(user=Depends(get_current_user)):
+    """Get current VPS configuration status."""
+    # This would need to be implemented in remote_deploy_manager
+    return {"configured": False, "message": "VPS config not yet implemented"}
+
+@app.post("/api/v1/remote-vps/config")
+async def set_vps_config(req: VPSConfigRequest, user=Depends(get_current_user)):
+    """Configure VPS connection settings."""
+    # This would need to be implemented in remote_deploy_manager
+    return {"ok": True, "message": "VPS config saved (stub)"}
+
+@app.get("/api/v1/remote-vps/containers")
+async def list_vps_containers(user=Depends(get_current_user)):
+    """List containers running on the remote VPS."""
+    # This would need to be implemented in remote_deploy_manager
+    return {"containers": [], "message": "VPS container listing not yet implemented"}
+
+@app.post("/api/v1/remote-vps/deploy")
+async def deploy_to_vps(req: VPSDeployRequest, user=Depends(get_current_user)):
+    """Deploy a container to the remote VPS."""
+    # This would need to be implemented in remote_deploy_manager
+    return {"ok": True, "message": "Deployment started (stub)", "container_id": "stub"}
+
+@app.post("/api/v1/remote-vps/containers/{container_id}/action")
+async def vps_container_action(container_id: str, action: str, user=Depends(get_current_user)):
+    """Perform action on a VPS container (start, stop, restart, logs)."""
+    # This would need to be implemented in remote_deploy_manager
+    return {"ok": True, "message": f"Action '{action}' on container {container_id} (stub)"}
+
+@app.get("/api/v1/remote-vps/containers/{container_id}/logs")
+async def get_vps_container_logs(container_id: str, lines: int = 100, user=Depends(get_current_user)):
+    """Get logs for a VPS container."""
+    # This would need to be implemented in remote_deploy_manager
+    return {"logs": [], "message": "VPS container logs not yet implemented"}
 
 # ══════════════════════════════════════════════
 # SECURITY ROUTES
