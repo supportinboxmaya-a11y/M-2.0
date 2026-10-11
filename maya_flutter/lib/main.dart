@@ -275,7 +275,48 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              // Camera Quick-Access Button (secondary to Voice orb)
+              const SizedBox(height: 20),
+              Center(
+                child: Tooltip(
+                  message: 'Vision AI Camera',
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const _CameraScreen()),
+                      ),
+                      borderRadius: BorderRadius.circular(28),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: MayaTheme.neonViolet.withValues(alpha: 0.15),
+                          border: Border.all(
+                            color: MayaTheme.neonViolet.withValues(alpha: 0.3),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                              blurRadius: 12,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.camera_alt_rounded,
+                          color: MayaTheme.neonViolet,
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
 
               // Quick Actions
               const Text('Quick Actions', style: MayaTheme.titleMedium),
