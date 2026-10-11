@@ -33,6 +33,16 @@ final voiceStateStreamProvider = StreamProvider<VoiceState>((ref) {
   return service.stateStream;
 });
 
+// Settings StateProviders
+final voiceActivationProvider = StateProvider<bool>((ref) => true);
+final autoAnalyzePhotosProvider = StateProvider<bool>((ref) => true);
+final flashlightControlProvider = StateProvider<bool>((ref) => true);
+final volumeControlProvider = StateProvider<bool>((ref) => true);
+final appLaunchingProvider = StateProvider<bool>((ref) => false);
+final ocrLanguageProvider = StateProvider<String>((ref) => 'eng');
+final voiceSelectionProvider = StateProvider<String>((ref) => 'en-US-AriaNeural');
+final voiceSpeedProvider = StateProvider<double>((ref) => 1.0);
+
 void main() {
   runApp(const ProviderScope(child: MayaApp()));
 }
@@ -199,7 +209,7 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
         key: _scaffoldKey,
         backgroundColor: Colors.transparent,
         drawer: _AppDrawer(),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,37 +280,24 @@ class _HomeScreenState extends ConsumerState<MayaHomeScreen> {
               // Quick Actions
               const Text('Quick Actions', style: MayaTheme.titleMedium),
               const SizedBox(height: 16),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
+              Row(
                 children: [
-                  _ActionCard(
-                    icon: Icons.mic_rounded,
-                    label: 'Voice Chat',
-                    color: MayaTheme.neonCyan,
-                    onTap: () {},
+                  Expanded(
+                    child: _ActionCard(
+                      icon: Icons.mic_rounded,
+                      label: 'Voice Chat',
+                      color: MayaTheme.neonCyan,
+                      onTap: () {},
+                    ),
                   ),
-                  _ActionCard(
-                    icon: Icons.camera_alt_rounded,
-                    label: 'Vision AI',
-                    color: MayaTheme.neonViolet,
-                    onTap: () {},
-                  ),
-                  _ActionCard(
-                    icon: Icons.chat_bubble_rounded,
-                    label: 'Chat',
-                    color: MayaTheme.neonEmerald,
-                    onTap: () {},
-                  ),
-                  _ActionCard(
-                    icon: Icons.settings_rounded,
-                    label: 'System',
-                    color: MayaTheme.neonOrange,
-                    onTap: () {},
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _ActionCard(
+                      icon: Icons.chat_bubble_rounded,
+                      label: 'Chat',
+                      color: MayaTheme.neonEmerald,
+                      onTap: () {},
+                    ),
                   ),
                 ],
               ),
@@ -983,8 +980,8 @@ class _AppDrawer extends ConsumerWidget {
       width: 300,
       backgroundColor: MayaTheme.slate900,
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
             // Header
             Padding(
@@ -1055,6 +1052,18 @@ class _AppDrawer extends ConsumerWidget {
                   subtitle: 'Model Context Protocol',
                   onTap: () => Navigator.pop(context),
                 ),
+                _DrawerActionTile(
+                  icon: Icons.camera_alt_rounded,
+                  label: 'Vision AI',
+                  subtitle: 'Image analysis & OCR',
+                  onTap: () => Navigator.pop(context),
+                ),
+                _DrawerActionTile(
+                  icon: Icons.settings_rounded,
+                  label: 'System Controls',
+                  subtitle: 'Flashlight, Volume, Apps',
+                  onTap: () => Navigator.pop(context),
+                ),
               ],
             ),
 
@@ -1098,7 +1107,7 @@ class _AppDrawer extends ConsumerWidget {
               ],
             ),
 
-            const Spacer(),
+            const SizedBox(height: 16),
 
             // Footer
             Padding(
@@ -1494,6 +1503,15 @@ class _SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final voiceActivation = ref.watch(voiceActivationProvider);
+    final voiceSpeed = ref.watch(voiceSpeedProvider);
+    final voiceSelection = ref.watch(voiceSelectionProvider);
+    final autoAnalyzePhotos = ref.watch(autoAnalyzePhotosProvider);
+    final ocrLanguage = ref.watch(ocrLanguageProvider);
+    final flashlightControl = ref.watch(flashlightControlProvider);
+    final volumeControl = ref.watch(volumeControlProvider);
+    final appLaunching = ref.watch(appLaunchingProvider);
+
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(24),
@@ -1506,19 +1524,27 @@ class _SettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 title: 'Voice Activation',
                 subtitle: 'Enable "Hey Maya" wake word',
-                trailing: Switch(value: true, onChanged: (v) {}),
+                trailing: Switch(
+                  value: voiceActivation,
+                  onChanged: (v) => ref.read(voiceActivationProvider.notifier).state = v,
+                ),
               ),
               _SettingsTile(
                 title: 'Voice Speed',
                 subtitle: 'Adjust speech rate',
                 trailing:
-                    Slider(value: 1.0, onChanged: (v) {}, min: 0.5, max: 2.0),
+                    Slider(
+                      value: voiceSpeed,
+                      onChanged: (v) => ref.read(voiceSpeedProvider.notifier).state = v,
+                      min: 0.5,
+                      max: 2.0,
+                    ),
               ),
               _SettingsTile(
                 title: 'Voice Selection',
                 subtitle: 'Choose TTS voice',
                 trailing: DropdownButton<String>(
-                  value: 'en-US-AriaNeural',
+                  value: voiceSelection,
                   items: [
                     'en-US-AriaNeural',
                     'en-US-GuyNeural',
@@ -1526,7 +1552,7 @@ class _SettingsScreen extends ConsumerWidget {
                   ]
                       .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                       .toList(),
-                  onChanged: (v) {},
+                  onChanged: (v) => ref.read(voiceSelectionProvider.notifier).state = v!,
                 ),
               ),
             ],
@@ -1538,17 +1564,20 @@ class _SettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 title: 'Auto-analyze Photos',
                 subtitle: 'Automatically analyze captured images',
-                trailing: Switch(value: true, onChanged: (v) {}),
+                trailing: Switch(
+                  value: autoAnalyzePhotos,
+                  onChanged: (v) => ref.read(autoAnalyzePhotosProvider.notifier).state = v,
+                ),
               ),
               _SettingsTile(
                 title: 'OCR Language',
                 subtitle: 'Text recognition language',
                 trailing: DropdownButton<String>(
-                  value: 'eng',
+                  value: ocrLanguage,
                   items: ['eng', 'spa', 'fra', 'deu', 'chi_sim']
                       .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                       .toList(),
-                  onChanged: (v) {},
+                  onChanged: (v) => ref.read(ocrLanguageProvider.notifier).state = v!,
                 ),
               ),
             ],
@@ -1560,17 +1589,26 @@ class _SettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 title: 'Flashlight Control',
                 subtitle: 'Allow Maya to control flashlight',
-                trailing: Switch(value: true, onChanged: (v) {}),
+                trailing: Switch(
+                  value: flashlightControl,
+                  onChanged: (v) => ref.read(flashlightControlProvider.notifier).state = v,
+                ),
               ),
               _SettingsTile(
                 title: 'Volume Control',
                 subtitle: 'Allow Maya to adjust volume',
-                trailing: Switch(value: true, onChanged: (v) {}),
+                trailing: Switch(
+                  value: volumeControl,
+                  onChanged: (v) => ref.read(volumeControlProvider.notifier).state = v,
+                ),
               ),
               _SettingsTile(
                 title: 'App Launching',
                 subtitle: 'Allow Maya to open apps',
-                trailing: Switch(value: false, onChanged: (v) {}),
+                trailing: Switch(
+                  value: appLaunching,
+                  onChanged: (v) => ref.read(appLaunchingProvider.notifier).state = v,
+                ),
               ),
             ],
           ),
