@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/maya_api.dart';
-import '../../../core/theme/maya_theme.dart'
-    show MayaTheme;
+import '../../../core/theme/maya_theme.dart';
 import '../../../shared/widgets/maya_empty_state.dart';
 
 final sandboxExecuteProvider = FutureProvider.family<Map<String, dynamic>, Map<String, dynamic>>((ref, params) async {
@@ -132,8 +131,52 @@ class _SandboxExecuteTabState extends ConsumerState<_SandboxExecuteTab> {
     }
   }
 
+  Widget _buildResultWidget(Map<String, dynamic> result) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        const Text('Result', style: MayaTheme.titleMedium),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: MayaTheme.glassCard(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    result['success'] == true ? Icons.check_circle_rounded : Icons.error_rounded,
+                    color: result['success'] == true ? MayaTheme.neonEmerald : MayaTheme.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    result['success'] == true ? 'Success' : 'Error',
+                    style: MayaTheme.titleSmall.copyWith(
+                      color: result['success'] == true ? MayaTheme.neonEmerald : MayaTheme.error,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (result['stdout'] != null && result['stdout'].toString().isNotEmpty)
+                Text('stdout:\n${result['stdout']}', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace', color: Colors.white70)),
+              if (result['stderr'] != null && result['stderr'].toString().isNotEmpty)
+                Text('stderr:\n${result['stderr']}', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace', color: MayaTheme.error)),
+              if (result['output'] != null)
+                Text('Output: ${result['output']}', style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final resultWidget = _lastResult != null ? _buildResultWidget(_lastResult!) : const SizedBox.shrink();
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -182,59 +225,24 @@ class _SandboxExecuteTabState extends ConsumerState<_SandboxExecuteTab> {
                 ),
               ),
             ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isExecuting ? null : _executeCode,
-                icon: _isExecuting
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: MayaTheme.slate900))
-                    : const Icon(Icons.play_arrow_rounded),
-                label: Text(_isExecuting ? 'Executing...' : 'Execute Code'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: MayaTheme.neonCyan,
-                  foregroundColor: MayaTheme.slate900,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-              ),
-            if (_lastResult != null) ...[
-              const SizedBox(height: 24),
-              const Text('Result', style: MayaTheme.titleMedium),
-              const SizedBox(height: 12),
-              Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        _lastResult!['success'] == true ? Icons.check_circle_rounded : Icons.error_rounded,
-                        color: _lastResult!['success'] == true ? MayaTheme.neonEmerald : MayaTheme.error,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _lastResult!['success'] == true ? 'Success' : 'Error',
-                        style: MayaTheme.titleSmall.copyWith(
-                          color: _lastResult!['success'] == true ? MayaTheme.neonEmerald : MayaTheme.error,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  if (_lastResult!['stdout'] != null && _lastResult!['stdout'].toString().isNotEmpty)
-                    Text('stdout:\n${_lastResult!['stdout']}', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace', color: Colors.white70)),
-                  if (_lastResult!['stderr'] != null && _lastResult!['stderr'].toString().isNotEmpty)
-                    Text('stderr:\n${_lastResult!['stderr']}', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace', color: MayaTheme.error)),
-                  if (_lastResult!['output'] != null)
-                    Text('Output: ${_lastResult!['output']}', style: MayaTheme.bodySmall.copyWith(color: Colors.white70)),
-                ],
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isExecuting ? null : _executeCode,
+              icon: _isExecuting
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: MayaTheme.slate900))
+                  : const Icon(Icons.play_arrow_rounded),
+              label: Text(_isExecuting ? 'Executing...' : 'Execute Code'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MayaTheme.neonCyan,
+                foregroundColor: MayaTheme.slate900,
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),
-          ],
+          ),
+          resultWidget,
         ],
       ),
     );

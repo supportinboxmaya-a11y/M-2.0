@@ -162,6 +162,50 @@ class _DevicesTab extends ConsumerWidget {
   }
 }
 
+  Widget _buildHistoryItem(Map<String, dynamic> cmd) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: MayaTheme.glassCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.terminal_rounded, color: MayaTheme.neonCyan, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(cmd['action'] ?? 'Unknown', style: MayaTheme.titleSmall),
+                    Text('Device: ${cmd['deviceId']?.toString().substring(0, 12) ?? ''}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+                  ],
+                ),
+              ),
+              Text(cmd['timestamp']?.toString().substring(0, 19) ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text('Status: ${cmd['status'] ?? 'pending'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+              const Spacer(),
+              if (cmd['result'] != null)
+                Text('Completed', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonEmerald)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 class _PairTab extends ConsumerStatefulWidget {
   const _PairTab();
 
@@ -298,50 +342,7 @@ class _HistoryTab extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           itemCount: commands.length,
           separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemBuilder: (_, index) {
-            final cmd = commands[index];
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonCyan.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.terminal_rounded, color: MayaTheme.neonCyan, size: 20),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(cmd['action'] ?? 'Unknown', style: MayaTheme.titleSmall),
-                            Text('Device: ${cmd['deviceId']?.toString().substring(0, 12) ?? ''}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
-                          ],
-                        ),
-                      ),
-                      Text(cmd['timestamp']?.toString().substring(0, 19) ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text('Status: ${cmd['status'] ?? 'pending'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
-                      const Spacer(),
-                      if (cmd['result'] != null)
-                        Text('Completed', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonEmerald)),
-                    ],
-                  ),
-                ],
-              );
-            );
-            },
+itemBuilder: (_, index) => _buildHistoryItem(commands[index]),
           );
         },
       loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
