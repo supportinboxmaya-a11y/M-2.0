@@ -670,4 +670,291 @@ class MayaApi {
     final response = await _dio.get('/api/v1/income/strategist/config');
     return response.data as Map<String, dynamic>;
   }
+
+  // ─── Business: Business Analysis ───────────────────────────────────
+  Future<Map<String, dynamic>> businessListMissions({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/missions',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> businessGetMission(String missionId) async {
+    final response = await _dio.get('/api/v1/business/missions/$missionId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> businessRunAnalysis({
+    required String missionId,
+    Map<String, dynamic>? parameters,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/missions/$missionId/analyze',
+      data: parameters ?? {},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> businessGetReport(String reportId) async {
+    final response = await _dio.get('/api/v1/business/reports/$reportId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> businessListReports({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/reports',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Business: Guarded Publish ─────────────────────────────────────
+  Future<Map<String, dynamic>> guardedListPending({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/guarded/pending',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> guardedListHistory({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/guarded/history',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> guardedCreateRequest({
+    required String title,
+    required String description,
+    required String targetEnvironment,
+    Map<String, dynamic>? payload,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/guarded/requests',
+      data: {
+        'title': title,
+        'description': description,
+        'target_environment': targetEnvironment,
+        'payload': payload ?? {},
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> guardedGetRequest(String requestId) async {
+    final response = await _dio.get('/api/v1/business/guarded/requests/$requestId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> guardedApproveRequest(String requestId) async {
+    final response = await _dio.post('/api/v1/business/guarded/requests/$requestId/approve');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> guardedRejectRequest(String requestId, {String reason = ''}) async {
+    final response = await _dio.post(
+      '/api/v1/business/guarded/requests/$requestId/reject',
+      data: {'reason': reason},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Business: Enterprise ──────────────────────────────────────────
+  Future<Map<String, dynamic>> enterpriseListRoles({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/enterprise/roles',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseCreateRole({
+    required String name,
+    required List<String> permissions,
+    String? description,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/enterprise/roles',
+      data: {
+        'name': name,
+        'permissions': permissions,
+        if (description != null) 'description': description,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseListOrgs({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/enterprise/organizations',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseCreateOrg({
+    required String name,
+    String? domain,
+    String? settings,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/enterprise/organizations',
+      data: {
+        'name': name,
+        if (domain != null) 'domain': domain,
+        if (settings != null) 'settings': settings,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseListApiKeys({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/enterprise/api-keys',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseCreateApiKey({
+    required String name,
+    required List<String> scopes,
+    int? expiresInDays,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/enterprise/api-keys',
+      data: {
+        'name': name,
+        'scopes': scopes,
+        if (expiresInDays != null) 'expires_in_days': expiresInDays,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseGetAuditLog({int limit = 100}) async {
+    final response = await _dio.get(
+      '/api/v1/business/enterprise/audit-log',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> enterpriseGetDashboard() async {
+    final response = await _dio.get('/api/v1/business/enterprise/dashboard');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Business: Documentation ───────────────────────────────────────
+  Future<Map<String, dynamic>> docsListDocuments({int limit = 50}) async {
+    final response = await _dio.get(
+      '/api/v1/business/docs/documents',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> docsGetDocument(String docId) async {
+    final response = await _dio.get('/api/v1/business/docs/documents/$docId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> docsCreateDocument({
+    required String title,
+    required String content,
+    String? category,
+    Map<String, dynamic>? metadata,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/docs/documents',
+      data: {
+        'title': title,
+        'content': content,
+        if (category != null) 'category': category,
+        if (metadata != null) 'metadata': metadata,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> docsUpdateDocument(
+    String docId, {
+    String? title,
+    String? content,
+    String? category,
+    Map<String, dynamic>? metadata,
+  }) async {
+    final response = await _dio.patch(
+      '/api/v1/business/docs/documents/$docId',
+      data: {
+        if (title != null) 'title': title,
+        if (content != null) 'content': content,
+        if (category != null) 'category': category,
+        if (metadata != null) 'metadata': metadata,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> docsDeleteDocument(String docId) async {
+    final response = await _dio.delete('/api/v1/business/docs/documents/$docId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Business: Analytics ───────────────────────────────────────────
+  Future<Map<String, dynamic>> analyticsGetSummary() async {
+    final response = await _dio.get('/api/v1/business/analytics/summary');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> analyticsGetDaily({int days = 30}) async {
+    final response = await _dio.get(
+      '/api/v1/business/analytics/daily',
+      queryParameters: {'days': days},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> analyticsGetProviders() async {
+    final response = await _dio.get('/api/v1/business/analytics/providers');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> analyticsGetTools() async {
+    final response = await _dio.get('/api/v1/business/analytics/tools');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Business: API Key Provisioner ─────────────────────────────────
+  Future<Map<String, dynamic>> provisionerScanFreeApis() async {
+    final response = await _dio.get('/api/v1/business/provisioner/scan');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> provisionerProvisionKey({
+    required String apiName,
+    required String tier,
+    Map<String, dynamic>? config,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/business/provisioner/provision',
+      data: {
+        'api_name': apiName,
+        'tier': tier,
+        'config': config ?? {},
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> provisionerGetAuditLog({int limit = 100}) async {
+    final response = await _dio.get(
+      '/api/v1/business/provisioner/audit-log',
+      queryParameters: {'limit': limit},
+    );
+    return response.data as Map<String, dynamic>;
+  }
 }
