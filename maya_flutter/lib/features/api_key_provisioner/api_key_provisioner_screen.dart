@@ -88,15 +88,15 @@ class _ApiKeyProvisionerScreenState extends ConsumerState<ApiKeyProvisionerScree
 }
 
 class _ScanFreeApisTab extends ConsumerWidget {
-  const _ScanFreeApisTab();
+  const _ScanFreeApisTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scanAsync = ref.watch(provisionerScanProvider);
 
-    return scanAsync.map(
+    return scanAsync.when(
       data: (data) {
-        final apis = data.value['apis'] as List? ?? [];
+        final apis = data['apis'] as List? ?? [];
         return Column(
           children: [
             Padding(
@@ -139,8 +139,8 @@ class _ScanFreeApisTab extends ConsumerWidget {
           ],
         );
       },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -148,7 +148,7 @@ class _ScanFreeApisTab extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('Error scanning APIs', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
@@ -287,7 +287,7 @@ class _ProvisionKeyTabState extends ConsumerState<_ProvisionKeyTab> {
     try {
       final config = _configController.text.isNotEmpty
           ? {'custom_config': _configController.text.trim()}
-          : {};
+          : <String, dynamic>{};
       final result = await ref.read(mayaApiProvider).provisionerProvisionKey(
         apiName: _apiNameController.text.trim(),
         tier: _tier,
@@ -410,15 +410,15 @@ class _ProvisionKeyTabState extends ConsumerState<_ProvisionKeyTab> {
 }
 
 class _AuditTab extends ConsumerWidget {
-  const _AuditTab();
+  const _AuditTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auditAsync = ref.watch(provisionerAuditProvider);
 
-    return auditAsync.map(
+    return auditAsync.when(
       data: (data) {
-        final logs = data.value['auditLog'] as List? ?? [];
+        final logs = data['auditLog'] as List? ?? [];
         if (logs.isEmpty) {
           return const MayaEmptyState(
             'No Audit Logs',
@@ -469,12 +469,12 @@ class _AuditTab extends ConsumerWidget {
                     ],
                   ),
                 ],
-              );
+              ));
             },
           );
         },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -482,7 +482,7 @@ class _AuditTab extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('Error loading audit log', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),

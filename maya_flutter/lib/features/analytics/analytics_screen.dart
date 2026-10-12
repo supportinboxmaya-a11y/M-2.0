@@ -5,22 +5,26 @@ import '../../../core/services/maya_api.dart';
 import '../../../core/theme/maya_theme.dart';
 import '../../../shared/widgets/maya_empty_state.dart';
 
-final analyticsSummaryProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final analyticsSummaryProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(mayaApiProvider);
   return api.analyticsGetSummary();
 });
 
-final analyticsDailyProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final analyticsDailyProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(mayaApiProvider);
   return api.analyticsGetDaily();
 });
 
-final analyticsProvidersProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final analyticsProvidersProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(mayaApiProvider);
   return api.analyticsGetProviders();
 });
 
-final analyticsToolsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final analyticsToolsProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(mayaApiProvider);
   return api.analyticsGetTools();
 });
@@ -101,76 +105,111 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen>
 }
 
 class _SummaryTab extends ConsumerWidget {
-  const _SummaryTab();
+  const _SummaryTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(analyticsSummaryProvider);
 
-    return summaryAsync.map(
-      data: (data) {
-        final summary = data.value;
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Analytics Summary', style: MayaTheme.titleLarge),
-              const SizedBox(height: 8),
-              Text(
-                'High-level overview of system metrics.',
-                style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(child: _StatCard(label: 'Total Requests', value: summary['totalRequests']?.toString() ?? '0', color: MayaTheme.neonCyan, icon: Icons.dashboard_rounded)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _StatCard(label: 'Success Rate', value: '${(summary['successRate'] ?? 0.0).toStringAsFixed(1)}%', color: MayaTheme.neonEmerald, icon: Icons.check_circle_rounded)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _StatCard(label: 'Avg Latency', value: '${summary['avgLatencyMs']?.toString() ?? '0'}ms', color: MayaTheme.neonOrange, icon: Icons.speed_rounded)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _StatCard(label: 'Error Rate', value: '${(summary['errorRate'] ?? 0.0).toStringAsFixed(2)}%', color: MayaTheme.error, icon: Icons.error_rounded)),
-                ],
-              ),
-              const SizedBox(height: 24),
-              const Text('Top Endpoints', style: MayaTheme.titleMedium),
-              const SizedBox(height: 12),
-              ...(summary['topEndpoints'] as List? ?? []).map((ep) => Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.all(12),
-                decoration: MayaTheme.glassCard(),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: MayaTheme.neonCyan.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: MayaTheme.neonCyan),
+    return summaryAsync.when(
+      data: (summary) => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Analytics Summary', style: MayaTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'High-level overview of system metrics.',
+              style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                    child: _StatCard(
+                        label: 'Total Requests',
+                        value: summary['totalRequests']?.toString() ?? '0',
+                        color: MayaTheme.neonCyan,
+                        icon: Icons.dashboard_rounded)),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: _StatCard(
+                        label: 'Success Rate',
+                        value:
+                            '${(summary['successRate'] ?? 0.0).toStringAsFixed(1)}%',
+                        color: MayaTheme.neonEmerald,
+                        icon: Icons.check_circle_rounded)),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: _StatCard(
+                        label: 'Avg Latency',
+                        value:
+                            '${summary['avgLatencyMs']?.toString() ?? '0'}ms',
+                        color: MayaTheme.neonOrange,
+                        icon: Icons.speed_rounded)),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: _StatCard(
+                        label: 'Error Rate',
+                        value:
+                            '${(summary['errorRate'] ?? 0.0).toStringAsFixed(2)}%',
+                        color: MayaTheme.error,
+                        icon: Icons.error_rounded)),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const Text('Top Endpoints', style: MayaTheme.titleMedium),
+            const SizedBox(height: 12),
+            ...(summary['topEndpoints'] as List? ?? [])
+                .map((ep) => Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: MayaTheme.glassCard(),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: MayaTheme.neonCyan.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: MayaTheme.neonCyan),
+                            ),
+                            child: Text(ep['method'] ?? 'GET',
+                                style: MayaTheme.labelSmall.copyWith(
+                                    color: MayaTheme.neonCyan,
+                                    fontFamily: 'monospace')),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: Text(ep['path'] ?? '',
+                                  style: MayaTheme.bodySmall
+                                      .copyWith(fontFamily: 'monospace'))),
+                          Text('${ep['count'] ?? 0} calls',
+                              style: MayaTheme.bodySmall
+                                  .copyWith(color: Colors.white54)),
+                        ],
                       ),
-                      child: Text(ep['method'] ?? 'GET', style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonCyan, fontFamily: 'monospace')),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(child: Text(ep['path'] ?? '', style: MayaTheme.bodySmall.copyWith(fontFamily: 'monospace'))),
-                    Text('${ep['count'] ?? 0} calls', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
-                  ],
-                ),
-              )).toList(),
-            ],
-          ),
-        );
-      },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+                    ))
+                .toList(),
+          ],
+        ),
+      ),
+      loading: () => const Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
             const SizedBox(height: 16),
-            Text('Error loading summary', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            Text('Error loading summary',
+                style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
@@ -179,15 +218,15 @@ class _SummaryTab extends ConsumerWidget {
 }
 
 class _DailyTab extends ConsumerWidget {
-  const _DailyTab();
+  const _DailyTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dailyAsync = ref.watch(analyticsDailyProvider);
 
-    return dailyAsync.map(
+    return dailyAsync.when(
       data: (data) {
-        final daily = data.value['daily'] as List? ?? [];
+        final daily = data['daily'] as List? ?? [];
         if (daily.isEmpty) {
           return const MayaEmptyState(
             'No Daily Data',
@@ -201,55 +240,85 @@ class _DailyTab extends ConsumerWidget {
           itemBuilder: (_, index) {
             final day = daily[index];
             return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(day['date'] ?? '', style: MayaTheme.titleMedium),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: day['successRate'] != null && day['successRate'] > 95
-                              ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
-                              : MayaTheme.neonOrange.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: day['successRate'] != null && day['successRate'] > 95 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(day['date'] ?? '', style: MayaTheme.titleMedium),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: day['successRate'] != null &&
+                                    day['successRate'] > 95
+                                ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                                : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: day['successRate'] != null &&
+                                        day['successRate'] > 95
+                                    ? MayaTheme.neonEmerald
+                                    : MayaTheme.neonOrange),
+                          ),
+                          child: Text(
+                            '${day['successRate']?.toStringAsFixed(1) ?? '0.0'}% success',
+                            style: MayaTheme.labelSmall.copyWith(
+                                color: day['successRate'] != null &&
+                                        day['successRate'] > 95
+                                    ? MayaTheme.neonEmerald
+                                    : MayaTheme.neonOrange),
+                          ),
                         ),
-                        child: Text(
-                          '${day['successRate']?.toStringAsFixed(1) ?? '0.0'}% success',
-                          style: MayaTheme.labelSmall.copyWith(color: day['successRate'] != null && day['successRate'] > 95 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(child: _MiniStat(label: 'Requests', value: day['requestCount']?.toString() ?? '0', color: MayaTheme.neonCyan)),
-                      Expanded(child: _MiniStat(label: 'Avg Latency', value: '${day['avgLatencyMs'] ?? '0'}ms', color: MayaTheme.neonViolet)),
-                      Expanded(child: _MiniStat(label: 'Errors', value: day['errorCount']?.toString() ?? '0', color: MayaTheme.error)),
-                      Expanded(child: _MiniStat(label: 'Unique Users', value: day['uniqueUsers']?.toString() ?? '0', color: MayaTheme.neonEmerald)),
-                    ],
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Requests',
+                                value: day['requestCount']?.toString() ?? '0',
+                                color: MayaTheme.neonCyan)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Avg Latency',
+                                value: '${day['avgLatencyMs'] ?? '0'}ms',
+                                color: MayaTheme.neonViolet)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Errors',
+                                value: day['errorCount']?.toString() ?? '0',
+                                color: MayaTheme.error)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Unique Users',
+                                value: day['uniqueUsers']?.toString() ?? '0',
+                                color: MayaTheme.neonEmerald)),
+                      ],
+                    ),
+                  ],
+                ));
+          },
+        );
+      },
+      loading: () => const Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
             const SizedBox(height: 16),
-            Text('Error loading daily data', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            Text('Error loading daily data',
+                style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
@@ -258,15 +327,15 @@ class _DailyTab extends ConsumerWidget {
 }
 
 class _ProvidersTab extends ConsumerWidget {
-  const _ProvidersTab();
+  const _ProvidersTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final providersAsync = ref.watch(analyticsProvidersProvider);
 
-    return providersAsync.map(
+    return providersAsync.when(
       data: (data) {
-        final providers = data.value['providers'] as List? ?? [];
+        final providers = data['providers'] as List? ?? [];
         if (providers.isEmpty) {
           return const MayaEmptyState(
             'No Provider Data',
@@ -280,69 +349,98 @@ class _ProvidersTab extends ConsumerWidget {
           itemBuilder: (_, index) {
             final provider = providers[index];
             return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonViolet.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10),
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.memory_rounded,
+                              color: MayaTheme.neonViolet, size: 24),
                         ),
-                        child: const Icon(Icons.memory_rounded, color: MayaTheme.neonViolet, size: 24),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(provider['name'] ?? 'Unknown Provider', style: MayaTheme.titleMedium),
-                            Text('Type: ${provider['type'] ?? 'N/A'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
-                          ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(provider['name'] ?? 'Unknown Provider',
+                                  style: MayaTheme.titleMedium),
+                              Text('Type: ${provider['type'] ?? 'N/A'}',
+                                  style: MayaTheme.bodySmall
+                                      .copyWith(color: Colors.white54)),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonViolet.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: MayaTheme.neonViolet),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: MayaTheme.neonViolet),
+                          ),
+                          child: Text(
+                            provider['status']?.toUpperCase() ?? 'ACTIVE',
+                            style: MayaTheme.labelSmall
+                                .copyWith(color: MayaTheme.neonViolet),
+                          ),
                         ),
-                        child: Text(
-                          provider['status']?.toUpperCase() ?? 'ACTIVE',
-                          style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(child: _MiniStat(label: 'Requests', value: provider['requestCount']?.toString() ?? '0', color: MayaTheme.neonCyan)),
-                      Expanded(child: _MiniStat(label: 'Avg Latency', value: '${provider['avgLatencyMs'] ?? '0'}ms', color: MayaTheme.neonViolet)),
-                      Expanded(child: _MiniStat(label: 'Error Rate', value: '${(provider['errorRate'] ?? 0.0).toStringAsFixed(2)}%', color: MayaTheme.error)),
-                      Expanded(child: _MiniStat(label: 'Uptime', value: '${(provider['uptime'] ?? 100.0).toStringAsFixed(1)}%', color: MayaTheme.neonEmerald)),
-                    ],
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Requests',
+                                value:
+                                    provider['requestCount']?.toString() ?? '0',
+                                color: MayaTheme.neonCyan)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Avg Latency',
+                                value: '${provider['avgLatencyMs'] ?? '0'}ms',
+                                color: MayaTheme.neonViolet)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Error Rate',
+                                value:
+                                    '${(provider['errorRate'] ?? 0.0).toStringAsFixed(2)}%',
+                                color: MayaTheme.error)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Uptime',
+                                value:
+                                    '${(provider['uptime'] ?? 100.0).toStringAsFixed(1)}%',
+                                color: MayaTheme.neonEmerald)),
+                      ],
+                    ),
+                  ],
+                ));
+          },
+        );
+      },
+      loading: () => const Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
             const SizedBox(height: 16),
-            Text('Error loading providers', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            Text('Error loading providers',
+                style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
@@ -351,15 +449,15 @@ class _ProvidersTab extends ConsumerWidget {
 }
 
 class _ToolsTab extends ConsumerWidget {
-  const _ToolsTab();
+  const _ToolsTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final toolsAsync = ref.watch(analyticsToolsProvider);
 
-    return toolsAsync.map(
+    return toolsAsync.when(
       data: (data) {
-        final tools = data.value['tools'] as List? ?? [];
+        final tools = data['tools'] as List? ?? [];
         if (tools.isEmpty) {
           return const MayaEmptyState(
             'No Tool Data',
@@ -373,69 +471,98 @@ class _ToolsTab extends ConsumerWidget {
           itemBuilder: (_, index) {
             final tool = tools[index];
             return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonOrange.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10),
+                padding: const EdgeInsets.all(16),
+                decoration: MayaTheme.glassCard(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MayaTheme.neonOrange.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.build_rounded,
+                              color: MayaTheme.neonOrange, size: 24),
                         ),
-                        child: const Icon(Icons.build_rounded, color: MayaTheme.neonOrange, size: 24),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(tool['name'] ?? 'Unknown Tool', style: MayaTheme.titleMedium),
-                            Text('Category: ${tool['category'] ?? 'N/A'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
-                          ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(tool['name'] ?? 'Unknown Tool',
+                                  style: MayaTheme.titleMedium),
+                              Text('Category: ${tool['category'] ?? 'N/A'}',
+                                  style: MayaTheme.bodySmall
+                                      .copyWith(color: Colors.white54)),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonOrange.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: MayaTheme.neonOrange),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: MayaTheme.neonOrange.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: MayaTheme.neonOrange),
+                          ),
+                          child: Text(
+                            tool['status']?.toUpperCase() ?? 'ENABLED',
+                            style: MayaTheme.labelSmall
+                                .copyWith(color: MayaTheme.neonOrange),
+                          ),
                         ),
-                        child: Text(
-                          tool['status']?.toUpperCase() ?? 'ENABLED',
-                          style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonOrange),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(child: _MiniStat(label: 'Invocations', value: tool['invocationCount']?.toString() ?? '0', color: MayaTheme.neonCyan)),
-                      Expanded(child: _MiniStat(label: 'Avg Duration', value: '${tool['avgDurationMs'] ?? '0'}ms', color: MayaTheme.neonViolet)),
-                      Expanded(child: _MiniStat(label: 'Success Rate', value: '${(tool['successRate'] ?? 0.0).toStringAsFixed(1)}%', color: MayaTheme.neonEmerald)),
-                      Expanded(child: _MiniStat(label: 'Cost', value: '\$${(tool['cost'] ?? 0.0).toStringAsFixed(4)}', color: MayaTheme.neonOrange)),
-                    ],
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Invocations',
+                                value:
+                                    tool['invocationCount']?.toString() ?? '0',
+                                color: MayaTheme.neonCyan)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Avg Duration',
+                                value: '${tool['avgDurationMs'] ?? '0'}ms',
+                                color: MayaTheme.neonViolet)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Success Rate',
+                                value:
+                                    '${(tool['successRate'] ?? 0.0).toStringAsFixed(1)}%',
+                                color: MayaTheme.neonEmerald)),
+                        Expanded(
+                            child: _MiniStat(
+                                label: 'Cost',
+                                value:
+                                    '\$${(tool['cost'] ?? 0.0).toStringAsFixed(4)}',
+                                color: MayaTheme.neonOrange)),
+                      ],
+                    ),
+                  ],
+                ));
+          },
+        );
+      },
+      loading: () => const Center(
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
             const SizedBox(height: 16),
-            Text('Error loading tools', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
+            Text('Error loading tools',
+                style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(),
+                style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
@@ -468,7 +595,8 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(value, style: MayaTheme.headlineMedium.copyWith(color: color)),
           const SizedBox(height: 4),
-          Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+          Text(label,
+              style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
         ],
       ),
     );
@@ -491,9 +619,12 @@ class _MiniStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(value, style: MayaTheme.titleSmall.copyWith(color: color, fontWeight: FontWeight.bold)),
+        Text(value,
+            style: MayaTheme.titleSmall
+                .copyWith(color: color, fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
-        Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
+        Text(label,
+            style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
       ],
     );
   }

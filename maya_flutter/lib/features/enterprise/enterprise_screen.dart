@@ -170,9 +170,9 @@ class _RBTabState extends ConsumerState<_RBTab> {
             style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
           ),
           const SizedBox(height: 24),
-          rolesAsync.map(
+          rolesAsync.when(
             data: (data) {
-              final roles = data.value['roles'] as List? ?? [];
+              final roles = data['roles'] as List? ?? [];
               if (roles.isEmpty) {
                 return const MayaEmptyState(
                   'No roles found',
@@ -224,8 +224,8 @@ class _RBTabState extends ConsumerState<_RBTab> {
                 },
               );
             },
-            loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-            error: (err) => Center(
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -233,7 +233,7 @@ class _RBTabState extends ConsumerState<_RBTab> {
                   const SizedBox(height: 16),
                   Text('Error loading roles', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
                   const SizedBox(height: 8),
-                  Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                  Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
                 ],
               ),
             ),
@@ -337,9 +337,9 @@ class _OrgsTabState extends ConsumerState<_OrgsTab> {
             style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
           ),
           const SizedBox(height: 24),
-          orgsAsync.map(
+          orgsAsync.when(
             data: (data) {
-              final orgs = data.value['organizations'] as List? ?? [];
+              final orgs = data['organizations'] as List? ?? [];
               if (orgs.isEmpty) {
                 return const MayaEmptyState(
                   'No organizations',
@@ -383,8 +383,8 @@ class _OrgsTabState extends ConsumerState<_OrgsTab> {
                 },
               );
             },
-            loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-            error: (err) => Center(
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -392,7 +392,7 @@ class _OrgsTabState extends ConsumerState<_OrgsTab> {
                   const SizedBox(height: 16),
                   Text('Error loading organizations', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
                   const SizedBox(height: 8),
-                  Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                  Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
                 ],
               ),
             ),
@@ -496,9 +496,9 @@ class _ApiKeysTabState extends ConsumerState<_ApiKeysTab> {
             style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
           ),
           const SizedBox(height: 24),
-          keysAsync.map(
+          keysAsync.when(
             data: (data) {
-              final keys = data.value['apiKeys'] as List? ?? [];
+              final keys = data['apiKeys'] as List? ?? [];
               if (keys.isEmpty) {
                 return const MayaEmptyState(
                   'No API keys yet',
@@ -552,8 +552,8 @@ class _ApiKeysTabState extends ConsumerState<_ApiKeysTab> {
                 },
               );
             },
-            loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-            error: (err) => Center(
+            loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err, _) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -561,7 +561,7 @@ class _ApiKeysTabState extends ConsumerState<_ApiKeysTab> {
                   const SizedBox(height: 16),
                   Text('Error loading API keys', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
                   const SizedBox(height: 8),
-                  Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                  Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
                 ],
               ),
             ),
@@ -610,15 +610,15 @@ class _ApiKeysTabState extends ConsumerState<_ApiKeysTab> {
 }
 
 class _AuditTab extends ConsumerWidget {
-  const _AuditTab();
+  const _AuditTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auditAsync = ref.watch(enterpriseAuditLogProvider);
 
-    return auditAsync.map(
+    return auditAsync.when(
       data: (data) {
-        final logs = data.value['auditLog'] as List? ?? [];
+        final logs = data['auditLog'] as List? ?? [];
         if (logs.isEmpty) {
           return const MayaEmptyState(
             'No Audit Logs',
@@ -669,12 +669,12 @@ class _AuditTab extends ConsumerWidget {
                     ],
                   ),
                 ],
-              );
+              ));
             },
           );
         },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -682,7 +682,7 @@ class _AuditTab extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('Error loading audit log', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
@@ -691,15 +691,14 @@ class _AuditTab extends ConsumerWidget {
 }
 
 class _DashboardTab extends ConsumerWidget {
-  const _DashboardTab();
+  const _DashboardTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardAsync = ref.watch(enterpriseDashboardProvider);
 
-    return dashboardAsync.map(
-      data: (data) {
-        final dashboard = data.value;
+    return dashboardAsync.when(
+      data: (dashboard) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -740,11 +739,10 @@ class _DashboardTab extends ConsumerWidget {
                 ),
               )).toList(),
             ],
-          ),
-        );
-      },
-      loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
-      error: (err) => Center(
+          ));
+        },
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -752,7 +750,7 @@ class _DashboardTab extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('Error loading dashboard', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
