@@ -955,4 +955,139 @@ class MayaApi {
     );
     return response.data as Map<String, dynamic>;
   }
+
+  // ─── B6 Tools: Browser, Sandbox, Communication, MCP ───────────────────
+  Future<Map<String, dynamic>> browserGetHistory() async {
+    final response = await _dio.get('/api/v1/browser/history');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> sandboxExecute({
+    required String code,
+    String language = 'python',
+    int timeout = 30,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/sandbox/execute',
+      data: {
+        'code': code,
+        'language': language,
+        'timeout': timeout,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> sandboxGetHistory() async {
+    final response = await _dio.get('/api/v1/sandbox/history');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> communicationSendEmail({
+    required List<String> to,
+    required String subject,
+    String? text,
+    String? html,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/communication/email/send',
+      data: {
+        'to': to,
+        'subject': subject,
+        if (text != null) 'text': text,
+        if (html != null) 'html': html,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> communicationSendWebhook({
+    required String url,
+    required String message,
+    String platform = 'generic',
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/communication/webhook/send',
+      data: {
+        'url': url,
+        'message': message,
+        'platform': platform,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> mcpListServers() async {
+    final response = await _dio.get('/api/v1/mcp/servers');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> mcpConnectServer({
+    required String name,
+    required List<String> command,
+    Map<String, String>? env,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/mcp/servers/connect',
+      data: {
+        'name': name,
+        'command': command,
+        if (env != null) 'env': env,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> mcpDisconnectServer(String serverName) async {
+    final response = await _dio.delete('/api/v1/mcp/servers/$serverName');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> mcpCallTool({
+    required String serverName,
+    required String toolName,
+    Map<String, dynamic>? arguments,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/mcp/tools/call',
+      data: {
+        'server_name': serverName,
+        'tool_name': toolName,
+        'arguments': arguments ?? {},
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Device Bridge (Phone Control) ────────────────────────────────────
+  Future<Map<String, dynamic>> devicePairStart({String? name}) async {
+    final response = await _dio.post(
+      '/api/v1/device/pair/start',
+      data: {'name': name ?? 'My Computer'},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> devicePairComplete(String code) async {
+    final response = await _dio.post(
+      '/api/v1/device/pair/complete',
+      data: {'code': code},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> deviceListDevices() async {
+    final response = await _dio.get('/api/v1/device/list');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> deviceRevoke(String deviceId) async {
+    final response = await _dio.delete('/api/v1/device/$deviceId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> deviceGetCommandHistory({required String deviceId}) async {
+    final response = await _dio.get('/api/v1/device/$deviceId/commands');
+    return response.data as Map<String, dynamic>;
+  }
 }

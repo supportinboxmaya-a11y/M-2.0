@@ -742,7 +742,145 @@ async def delete_plugin(plugin_id: str, user=Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Plugin not found")
     return {"id": plugin_id, "deleted": True}
 
-# ══════════════════════════════════════════════
+# ═══════════════════════════════════════════════
+# B6 TOOLS: BROWSER, SANDBOX, COMMUNICATION, MCP
+# ═══════════════════════════════════════════════
+
+# Browser Tools - use the existing multimodal router's /browser/action endpoint
+# These are simple wrappers for the frontend
+@app.get("/api/v1/browser/history")
+async def browser_history(user=Depends(get_current_user)):
+    """Get browser action history."""
+    # In a real implementation, this would query a database
+    return {"history": []}
+
+# Sandbox Tools - Code execution
+@app.post("/api/v1/sandbox/execute")
+async def sandbox_execute(body: dict, user=Depends(get_current_user)):
+    """Execute code in a sandbox environment."""
+    from tools.code.code_execution import CodeExecutionTool
+    
+    code = body.get("code", "")
+    language = body.get("language", "python")
+    timeout = body.get("timeout", 30)
+    
+    if not code:
+        raise HTTPException(status_code=400, detail="No code provided")
+    
+    tool = CodeExecutionTool()
+    try:
+        result = await tool.execute(code, language, timeout)
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await tool.cleanup()
+
+@app.get("/api/v1/sandbox/history")
+async def sandbox_history(user=Depends(get_current_user)):
+    """Get sandbox execution history."""
+    return {"history": []}
+
+# Communication Tools - Email
+@app.post("/api/v1/communication/email/send")
+async def communication_email_send(body: dict, user=Depends(get_current_user)):
+    """Send an email via SMTP."""
+    from tools.communication.email_tool import EmailTool
+    
+    to = body.get("to", [])
+    subject = body.get("subject", "")
+    text = body.get("text", "")
+    html = body.get("html", "")
+    
+    if not to or not subject or (not text and not html):
+        raise HTTPException(status_code=400, detail="Missing required fields: to, subject, and text/html")
+    
+    tool = EmailTool()
+    try:
+        result = await tool.send(to=to, subject=subject, text=text, html=html)
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Communication Tools - Webhook
+@app.post("/api/v1/communication/webhook/send")
+async def communication_webhook_send(body: dict, user=Depends(get_current_user)):
+    """Send a webhook message (Slack, Discord, or generic)."""
+    from tools.communication.webhook_tool import WebhookTool
+    
+    url = body.get("url", "")
+    message = body.get("message", "")
+    platform = body.get("platform", "generic")  # slack, discord, generic
+    
+    if not url or not message:
+        raise HTTPException(status_code=400, detail="Missing required fields: url, message")
+    
+    tool = WebhookTool()
+    try:
+        result = await tool.send(url=url, message=message, platform=platform)
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# MCP Client - Server management
+@app.get("/api/v1/mcp/servers")
+async def mcp_list_servers(user=Depends(get_current_user)):
+    """List connected MCP servers."""
+    if not maya_instance or not hasattr(maya_instance, "mcp_manager"):
+        return {"servers": []}
+    return {"servers": maya_instance.mcp_manager.list_servers()}
+
+@app.post("/api/v1/mcp/servers/connect")
+async def mcp_connect_server(body: dict, user=Depends(get_current_user)):
+    """Connect to an MCP server."""
+    if not maya_instance or not hasattr(maya_instance, "mcp_manager"):
+        raise HTTPException(status_code=503, detail="MCP not initialized")
+    
+    name = body.get("name", "")
+    command = body.get("command", [])
+    env = body.get("env", {})
+    
+    if not name or not command:
+        raise HTTPException(status_code=400, detail="Missing required fields: name, command")
+    
+    try:
+        result = await maya_instance.mcp_manager.connect(name, command, env)
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/v1/mcp/servers/{server_name}")
+async def mcp_disconnect_server(server_name: str, user=Depends(get_current_user)):
+    """Disconnect from an MCP server."""
+    if not maya_instance or not hasattr(maya_instance, "mcp_manager"):
+        raise HTTPException(status_code=503, detail="MCP not initialized")
+    
+    try:
+        result = await maya_instance.mcp_manager.disconnect(server_name)
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/mcp/tools/call")
+async def mcp_call_tool(body: dict, user=Depends(get_current_user)):
+    """Call an MCP tool."""
+    if not maya_instance or not hasattr(maya_instance, "mcp_manager"):
+        raise HTTPException(status_code=503, detail="MCP not initialized")
+    
+    server_name = body.get("server_name", "")
+    tool_name = body.get("tool_name", "")
+    arguments = body.get("arguments", {})
+    
+    if not server_name or not tool_name:
+        raise HTTPException(status_code=400, detail="Missing required fields: server_name, tool_name")
+    
+    try:
+        result = await maya_instance.mcp_manager.call_tool(server_name, tool_name, arguments)
+        return {"result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ═══════════════════════════════════════════════
 # VISION ROUTES
 # ══════════════════════════════════════════════
 @app.post("/api/v1/vision/analyze")
@@ -759,7 +897,7 @@ async def vision_analyze(body: dict, user=Depends(get_current_user)):
             None, lambda: VisionTool().analyze(image, prompt))
     except (ValueError, PermissionError, FileNotFoundError) as e:
         raise HTTPException(status_code=400, detail=str(e))
-if not result.get("success"):
+    if not result.get("success"):
         return {"result": "", "message": result.get("error", "Vision failed")}
     return {"result": result["result"], "provider": result.get("provider", "")}
 
