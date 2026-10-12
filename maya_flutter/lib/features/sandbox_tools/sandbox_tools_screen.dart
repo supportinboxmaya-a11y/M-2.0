@@ -182,6 +182,7 @@ class _SandboxExecuteTabState extends ConsumerState<_SandboxExecuteTab> {
                 ),
               ),
             ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -197,7 +198,6 @@ class _SandboxExecuteTabState extends ConsumerState<_SandboxExecuteTab> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
               ),
-            ),
             if (_lastResult != null) ...[
               const SizedBox(height: 24),
               const Text('Result', style: MayaTheme.titleMedium),

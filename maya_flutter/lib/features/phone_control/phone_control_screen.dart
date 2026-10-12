@@ -140,9 +140,10 @@ class _DevicesTab extends ConsumerWidget {
                     },
                   ),
                 ],
-              );
-            },
-          );
+              ),
+            );
+          },
+        );
         },
       loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
       error: (err, _) => Center(
@@ -339,6 +340,7 @@ class _HistoryTab extends ConsumerWidget {
                   ),
                 ],
               );
+            );
             },
           );
         },

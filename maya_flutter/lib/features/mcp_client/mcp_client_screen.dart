@@ -132,10 +132,11 @@ class _McpServersTab extends ConsumerWidget {
                     },
                   ),
                 ],
-              );
-            },
-          );
-        },
+              ),
+            );
+          },
+        );
+      },
       loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
       error: (err, _) => Center(
         child: Column(
