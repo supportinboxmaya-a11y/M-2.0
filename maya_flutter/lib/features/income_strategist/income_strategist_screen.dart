@@ -135,6 +135,7 @@ class _ReviewsTab extends ConsumerWidget {
 
 Widget _buildReviewsTab(Map<String, dynamic> data, WidgetRef ref) {
   final historyAsync = ref.watch(strategistReviewHistoryProvider);
+  final reviewAsync = ref.watch(strategistReviewProvider);
 
   return SingleChildScrollView(
     padding: const EdgeInsets.all(16),
@@ -148,9 +149,64 @@ Widget _buildReviewsTab(Map<String, dynamic> data, WidgetRef ref) {
           style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
         ),
         const SizedBox(height: 24),
-        const MayaEmptyState(
-          'Endpoint not connected',
-          icon: Icons.rate_review_rounded,
+        reviewAsync.map(
+          data: (data) {
+            final result = data.value;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => ref.invalidate(strategistReviewProvider),
+                  icon: const Icon(Icons.rate_review_rounded),
+                  label: const Text('Run Review'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MayaTheme.neonCyan,
+                    foregroundColor: MayaTheme.slate900,
+                    minimumSize: const Size(double.infinity, 48),
+                  ),
+                ),
+                if (result['reviewId'] != null) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: MayaTheme.glassCard(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Review Complete', style: MayaTheme.titleMedium.copyWith(color: MayaTheme.neonEmerald)),
+                        const SizedBox(height: 8),
+                        Text('Review ID: ${result['reviewId']}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+                        Text('Opportunities Reviewed: ${result['opportunitiesReviewed'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                        Text('Plans Created: ${result['plansCreated'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                        if (result['timestamp'] != null)
+                          Text('Timestamp: ${result['timestamp'].toString().substring(0, 19)}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+          loading: (_) => const Center(
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+          ),
+          error: (err) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => ref.invalidate(strategistReviewProvider),
+                icon: const Icon(Icons.rate_review_rounded),
+                label: const Text('Run Review'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MayaTheme.neonCyan,
+                  foregroundColor: MayaTheme.slate900,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text('Error: ${err.error}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+            ],
+          ),
         ),
         const SizedBox(height: 24),
         const Text('Review History', style: MayaTheme.titleMedium),
