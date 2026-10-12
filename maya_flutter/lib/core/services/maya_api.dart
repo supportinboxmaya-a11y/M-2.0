@@ -956,6 +956,25 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
+  // ─── Plugins ──────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> listPlugins() async {
+    final response = await _dio.get('/api/v1/plugins');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updatePlugin(String pluginId, Map<String, dynamic> data) async {
+    final response = await _dio.put(
+      '/api/v1/plugins/$pluginId',
+      data: data,
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> installPlugin(String pluginId) async {
+    final response = await _dio.post('/api/v1/plugins/$pluginId/install');
+    return response.data as Map<String, dynamic>;
+  }
+
   // ─── B6 Tools: Browser, Sandbox, Communication, MCP ───────────────────
   Future<Map<String, dynamic>> browserGetHistory() async {
     final response = await _dio.get('/api/v1/browser/history');

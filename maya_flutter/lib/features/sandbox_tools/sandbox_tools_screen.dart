@@ -198,11 +198,11 @@ class _SandboxExecuteTabState extends ConsumerState<_SandboxExecuteTab> {
                 ),
               ),
             ),
-          if (_lastResult != null) ...[
-            const SizedBox(height: 24),
-            const Text('Result', style: MayaTheme.titleMedium),
-            const SizedBox(height: 12),
-            Container(
+            if (_lastResult != null) ...[
+              const SizedBox(height: 24),
+              const Text('Result', style: MayaTheme.titleMedium),
+              const SizedBox(height: 12),
+              Container(
               padding: const EdgeInsets.all(16),
               decoration: MayaTheme.glassCard(),
               child: Column(
