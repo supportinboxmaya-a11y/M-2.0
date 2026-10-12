@@ -135,6 +135,21 @@ class _LaunchCard extends ConsumerWidget {
 
   const _LaunchCard({required this.launch});
 
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'launched':
+        return MayaTheme.neonEmerald;
+      case 'ready':
+        return MayaTheme.neonCyan;
+      case 'draft':
+        return MayaTheme.neonOrange;
+      case 'failed':
+        return MayaTheme.error;
+      default:
+        return Colors.white54;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
@@ -189,22 +204,7 @@ class _LaunchCard extends ConsumerWidget {
           ),
         ],
       ),
-    }
-
-    Color _getStatusColor(String? status) {
-      switch (status?.toLowerCase()) {
-        case 'launched':
-          return MayaTheme.neonEmerald;
-        case 'ready':
-          return MayaTheme.neonCyan;
-        case 'draft':
-          return MayaTheme.neonOrange;
-        case 'failed':
-          return MayaTheme.error;
-        default:
-          return Colors.white54;
-      }
-    }
+    );
   }
 }
 
@@ -303,7 +303,7 @@ class _LauncherStatCard extends StatelessWidget {
     required this.value,
     required this.color,
     required this.icon,
-  });
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -319,6 +319,6 @@ class _LauncherStatCard extends StatelessWidget {
           Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
         ],
       ),
-    }
+    );
   }
 }

@@ -222,7 +222,8 @@ class _ScanTab extends ConsumerWidget {
                     ),
                   );
                 },
-              ),
+              );
+            },
             loading: () => const Center(
               child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
             ),
@@ -313,10 +314,10 @@ class _SignalsTab extends ConsumerWidget {
                   ),
                 ],
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
       loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
       error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
     );
@@ -424,19 +425,19 @@ class _OpportunityCard extends ConsumerWidget {
           ),
         ],
       ),
-    }
+    );
+  }
 
-    Color _getStatusColor(String? status) {
-      switch (status?.toLowerCase()) {
-        case 'approved':
-          return MayaTheme.neonEmerald;
-        case 'pending':
-          return MayaTheme.neonOrange;
-        case 'rejected':
-          return MayaTheme.error;
-        default:
-          return Colors.white54;
-      }
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return MayaTheme.neonEmerald;
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'rejected':
+        return MayaTheme.error;
+      default:
+        return Colors.white54;
     }
   }
 }
@@ -464,6 +465,7 @@ class _ScoutStatCard extends StatelessWidget {
     required this.value,
     required this.color,
     required this.icon,
+    super.key,
   });
 
   @override
@@ -480,6 +482,6 @@ class _ScoutStatCard extends StatelessWidget {
           Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
         ],
       ),
-    }
+    );
   }
 }

@@ -278,8 +278,7 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> launcherApproveContent(
-    String contentId, bool approved, {String feedback = ''},
-  ) async {
+    String contentId, bool approved, {String feedback = ''}) async {
     final response = await _dio.post(
       '/api/v1/income/launcher/content/approve',
       data: {
@@ -565,8 +564,7 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> scoutRecordDecision(
-    String opportunityId, bool approved, {String feedback = ''},
-  ) async {
+    String opportunityId, bool approved, {String feedback = ''}) async {
     final response = await _dio.post(
       '/api/v1/income/scout/opportunities/$opportunityId/decision',
       data: {'approved': approved, 'feedback': feedback},

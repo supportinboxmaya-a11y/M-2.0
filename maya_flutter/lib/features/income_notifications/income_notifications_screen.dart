@@ -145,13 +145,32 @@ class _ApprovalsTab extends ConsumerWidget {
   }
 }
 
-class _ApprovalCard extends ConsumerWidget {
+class _ApprovalCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> approval;
 
-  const _ApprovalCard({required this.approval});
+  const _ApprovalCard({required this.approval, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ApprovalCard> createState() => _ApprovalCardState();
+}
+
+class _ApprovalCardState extends ConsumerState<_ApprovalCard> {
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return MayaTheme.neonEmerald;
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'rejected':
+        return MayaTheme.error;
+      default:
+        return Colors.white54;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final approval = widget.approval;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: MayaTheme.glassCard(),
@@ -241,6 +260,7 @@ class _ApprovalCard extends ConsumerWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton.icon(
@@ -274,23 +294,9 @@ class _ApprovalCard extends ConsumerWidget {
                 ),
               ],
             ),
-          ],
-        ),
-      );
-    }
-
-    Color _getStatusColor(String? status) {
-      switch (status?.toLowerCase()) {
-        case 'approved':
-          return MayaTheme.neonEmerald;
-        case 'pending':
-          return MayaTheme.neonOrange;
-        case 'rejected':
-          return MayaTheme.error;
-        default:
-          return Colors.white54;
-      }
-    }
+        ],
+      ),
+    );
   }
 }
 
@@ -343,7 +349,7 @@ class _TemplatesTab extends ConsumerWidget {
 class _TemplateCard extends ConsumerWidget {
   final Map<String, dynamic> template;
 
-  const _TemplateCard({required this.template});
+  const _TemplateCard({required this.template, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -475,11 +481,11 @@ class _StatsTab extends ConsumerWidget {
                   Text('${t['count'] ?? 0}', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonCyan, fontWeight: FontWeight.w600)),
                 ],
               ),
-            )).toList(),
+            )).toList()),
             const SizedBox(height: 24),
             const Text('By Priority', style: MayaTheme.titleMedium),
             const SizedBox(height: 12),
-            ...(stats['by_priority'] as List? ?? []).map((p) => Container(
+            ...((stats['by_priority'] as List? ?? []).map((p) => Container(
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(16),
               decoration: MayaTheme.glassCard(),
@@ -490,7 +496,7 @@ class _StatsTab extends ConsumerWidget {
                   Text('${p['count'] ?? 0}', style: MayaTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
-            )).toList(),
+            )).toList()),
           ],
         ),
       ),
@@ -524,6 +530,7 @@ class _NotifStatCard extends StatelessWidget {
     required this.value,
     required this.color,
     required this.icon,
+    super.key,
   });
 
   @override
@@ -540,6 +547,6 @@ class _NotifStatCard extends StatelessWidget {
           Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
         ],
       ),
-    }
+    );
   }
 }
