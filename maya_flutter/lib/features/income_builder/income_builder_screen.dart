@@ -154,7 +154,7 @@ class _ProjectsTab extends ConsumerWidget {
                   valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan),
                 ),
               ),
-              error: (err, _) => Row(
+              error: (err, stackTrace) => Row(
                 children: [
                   const Icon(Icons.error_rounded, size: 28, color: MayaTheme.error),
                   const SizedBox(width: 12),
@@ -172,7 +172,6 @@ class _ProjectsTab extends ConsumerWidget {
                 if (projects.isEmpty) {
                   return const MayaEmptyState(
                     'No Projects',
-                    message: 'Build a project from a plan to get started',
                     icon: Icons.folder_rounded,
                   );
                 }
@@ -185,11 +184,12 @@ class _ProjectsTab extends ConsumerWidget {
                     final project = projects[index];
                     return _BuilderProjectCard(project: project);
                   },
-                ),
+                );
+              },
               loading: () => const Center(
                 child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
               ),
-              error: (err, _) => Center(
+              error: (err, stackTrace) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -202,12 +202,12 @@ class _ProjectsTab extends ConsumerWidget {
                 ),
               ),
             ),
-          ],
+],
         ),
-      );
+      ),
+);
     }
   }
-}
 
 class _BuilderStatCard extends StatelessWidget {
   final String label;
@@ -240,13 +240,36 @@ class _BuilderStatCard extends StatelessWidget {
   }
 }
 
-class _BuilderProjectCard extends ConsumerWidget {
+class _BuilderProjectCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> project;
 
-  const _BuilderProjectCard({required this.project});
+  const _BuilderProjectCard({required this.project, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_BuilderProjectCard> createState() => _BuilderProjectCardState();
+}
+
+class _BuilderProjectCardState extends ConsumerState<_BuilderProjectCard> {
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'completed':
+        return MayaTheme.neonEmerald;
+      case 'building':
+        return MayaTheme.neonCyan;
+      case 'testing':
+        return MayaTheme.neonViolet;
+      case 'deploying':
+        return MayaTheme.neonOrange;
+      case 'failed':
+        return MayaTheme.error;
+      default:
+        return Colors.white54;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final project = widget.project;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: MayaTheme.glassCard(),
@@ -353,29 +376,12 @@ class _BuilderProjectCard extends ConsumerWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
-
-    Color _getStatusColor(String? status) {
-      switch (status?.toLowerCase()) {
-        case 'completed':
-          return MayaTheme.neonEmerald;
-        case 'building':
-          return MayaTheme.neonCyan;
-        case 'testing':
-          return MayaTheme.neonViolet;
-        case 'deploying':
-          return MayaTheme.neonOrange;
-        case 'failed':
-          return MayaTheme.error;
-        default:
-          return Colors.white54;
-      }
-    }
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -388,6 +394,7 @@ class _BuildFromPlanTab extends ConsumerStatefulWidget {
 
 class _BuildFromPlanTabState extends ConsumerState<_BuildFromPlanTab> {
   final _planIdController = TextEditingController();
+  bool _isExecuting = false;
 
   @override
   void dispose() {
@@ -403,7 +410,7 @@ class _BuildFromPlanTabState extends ConsumerState<_BuildFromPlanTab> {
       return;
     }
 
-    setState(() {});
+    setState(() => _isExecuting = true);
     try {
       final api = ref.read(mayaApiProvider);
       final result = await api.builderBuildFromPlan(_planIdController.text.trim());
@@ -423,6 +430,8 @@ class _BuildFromPlanTabState extends ConsumerState<_BuildFromPlanTab> {
           SnackBar(content: Text('Build failed: $e'), backgroundColor: MayaTheme.error),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isExecuting = false);
     }
   }
 

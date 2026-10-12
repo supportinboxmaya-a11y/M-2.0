@@ -113,6 +113,7 @@ class _ScanTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(scoutScanHistoryProvider);
     final statsAsync = ref.watch(scoutStatsProvider);
+    final scanAsync = ref.watch(scoutScanProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -134,9 +135,51 @@ class _ScanTab extends ConsumerWidget {
                   style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
                 ),
                 const SizedBox(height: 16),
-                const MayaEmptyState(
-                  'Endpoint not connected',
-                  icon: Icons.radar_rounded,
+                scanAsync.map(
+                  data: (data) {
+                    final result = data.value;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => ref.invalidate(scoutScanProvider),
+                          icon: const Icon(Icons.radar_rounded),
+                          label: const Text('Trigger Scan'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: MayaTheme.neonCyan,
+                            foregroundColor: MayaTheme.slate900,
+                            minimumSize: const Size(double.infinity, 48),
+                          ),
+                        ),
+                        if (result['scanId'] != null) ...[
+                          const SizedBox(height: 12),
+                          Text('Last Scan: ${result['scanId']}', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.neonEmerald)),
+                          Text('Signals Found: ${result['signalsFound'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                          Text('Opportunities: ${result['opportunitiesFound'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                        ],
+                      ],
+                    );
+                  },
+                  loading: (_) => const Center(
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
+                  ),
+                  error: (err) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () => ref.invalidate(scoutScanProvider),
+                        icon: const Icon(Icons.radar_rounded),
+                        label: const Text('Trigger Scan'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MayaTheme.neonCyan,
+                          foregroundColor: MayaTheme.slate900,
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text('Error: ${err.error}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -222,7 +265,8 @@ class _ScanTab extends ConsumerWidget {
                     ),
                   );
                 },
-              ),
+              );
+            },
             loading: () => const Center(
               child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
             ),
@@ -313,10 +357,10 @@ class _SignalsTab extends ConsumerWidget {
                   ),
                 ],
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
       loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
       error: (err, _) => Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
     );
@@ -424,31 +468,205 @@ class _OpportunityCard extends ConsumerWidget {
           ),
         ],
       ),
-    }
+    );
+  }
 
-    Color _getStatusColor(String? status) {
-      switch (status?.toLowerCase()) {
-        case 'approved':
-          return MayaTheme.neonEmerald;
-        case 'pending':
-          return MayaTheme.neonOrange;
-        case 'rejected':
-          return MayaTheme.error;
-        default:
-          return Colors.white54;
-      }
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return MayaTheme.neonEmerald;
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'rejected':
+        return MayaTheme.error;
+      default:
+        return Colors.white54;
     }
   }
 }
 
-class _ConfigTab extends ConsumerWidget {
-  const _ConfigTab();
+final scoutPreferencesProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final api = ref.watch(mayaApiProvider);
+  return api.scoutGetPreferences();
+});
+
+class _ConfigTab extends ConsumerStatefulWidget {
+  const _ConfigTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const MayaEmptyState(
-      'Endpoint not connected',
-      icon: Icons.settings_rounded,
+  ConsumerState<_ConfigTab> createState() => _ConfigTabState();
+}
+
+class _ConfigTabState extends ConsumerState<_ConfigTab> {
+  final _categoryController = TextEditingController();
+  final _preferenceController = TextEditingController();
+  final _confidenceController = TextEditingController(text: '0.7');
+  final _notesController = TextEditingController();
+
+  @override
+  void dispose() {
+    _categoryController.dispose();
+    _preferenceController.dispose();
+    _confidenceController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefsAsync = ref.watch(scoutPreferencesProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Scout Preferences', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Configure which categories to watch and your preferences for each.',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          prefsAsync.map(
+            data: (data) {
+              final prefs = data.value['preferences'] as List? ?? [];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Current Preferences', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  if (prefs.isEmpty)
+                    const MayaEmptyState(
+                      'No preferences set',
+                      icon: Icons.settings_rounded,
+                    )
+                  else
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: prefs.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (_, index) {
+                        final pref = prefs[index];
+                        return Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: MayaTheme.glassCard(),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.category_rounded, color: MayaTheme.neonViolet, size: 24),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(pref['category'] ?? '', style: MayaTheme.titleMedium),
+                                    Text('Preference: ${pref['preference'] ?? ''}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                                    Text('Confidence: ${(pref['confidence'] ?? 0.7) * 100}%', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete_rounded, color: MayaTheme.error),
+                                onPressed: () async {
+                                  await ref.read(mayaApiProvider).scoutDeletePreference(pref['category']);
+                                  ref.invalidate(scoutPreferencesProvider);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  const SizedBox(height: 24),
+                  const Text('Add Preference', style: MayaTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _categoryController,
+                    decoration: const InputDecoration(
+                      labelText: 'Category',
+                      hintText: 'e.g., ai, saas, fintech',
+                    ),
+                    style: MayaTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _preferenceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Preference',
+                      hintText: 'e.g., track, ignore, prioritize',
+                    ),
+                    style: MayaTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _confidenceController,
+                    decoration: const InputDecoration(
+                      labelText: 'Confidence (0.0 - 1.0)',
+                    ),
+                    keyboardType: TextInputType.number,
+                    style: MayaTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _notesController,
+                    decoration: const InputDecoration(
+                      labelText: 'Notes (optional)',
+                    ),
+                    style: MayaTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final category = _categoryController.text.trim();
+                        final preference = _preferenceController.text.trim();
+                        final confidence = double.tryParse(_confidenceController.text) ?? 0.7;
+                        final notes = _notesController.text.trim();
+                        if (category.isEmpty || preference.isEmpty) return;
+                        await ref.read(mayaApiProvider).scoutSetPreference(
+                          category: category,
+                          preference: preference,
+                          confidence: confidence,
+                          notes: notes,
+                        );
+                        _categoryController.clear();
+                        _preferenceController.clear();
+                        _confidenceController.text = '0.7';
+                        _notesController.clear();
+                        ref.invalidate(scoutPreferencesProvider);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MayaTheme.neonCyan,
+                        foregroundColor: MayaTheme.slate900,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Save Preference'),
+                    ),
+                  ),
+                ],
+              );
+            },
+            loading: (_) => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+            error: (err) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Error loading preferences', style: MayaTheme.titleMedium),
+                const SizedBox(height: 8),
+                Text('${err.error}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -464,6 +682,7 @@ class _ScoutStatCard extends StatelessWidget {
     required this.value,
     required this.color,
     required this.icon,
+    super.key,
   });
 
   @override
@@ -480,6 +699,6 @@ class _ScoutStatCard extends StatelessWidget {
           Text(label, style: MayaTheme.labelSmall.copyWith(color: Colors.white54)),
         ],
       ),
-    }
+    );
   }
 }

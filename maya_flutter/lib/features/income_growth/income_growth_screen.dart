@@ -10,11 +10,6 @@ final growthProposalsProvider = FutureProvider<Map<String, dynamic>>((ref) async
   return api.growthListProposals(limit: 50);
 });
 
-final growthMetricsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
-  final api = ref.watch(mayaApiProvider);
-  return api.growthGetMetrics(limit: 30);
-});
-
 final growthRecommendationsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(mayaApiProvider);
   return api.growthGetRecommendations(limit: 50);
@@ -61,7 +56,6 @@ class _IncomeGrowthScreenState extends ConsumerState<IncomeGrowthScreen>
               icon: const Icon(Icons.refresh_rounded),
               onPressed: () {
                 ref.invalidate(growthProposalsProvider);
-                ref.invalidate(growthMetricsProvider);
                 ref.invalidate(growthRecommendationsProvider);
               },
             ),
@@ -105,7 +99,6 @@ class _ProposalsTab extends ConsumerWidget {
         if (proposals.isEmpty) {
           return const MayaEmptyState(
             'No Proposals',
-            message: 'Submit a growth proposal to get started',
             icon: Icons.lightbulb_rounded,
           );
         }
@@ -142,7 +135,22 @@ class _ProposalsTab extends ConsumerWidget {
 class _ProposalCard extends ConsumerWidget {
   final Map<String, dynamic> proposal;
 
-  const _ProposalCard({required this.proposal});
+  const _ProposalCard({required this.proposal, super.key});
+
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return MayaTheme.neonEmerald;
+      case 'pending':
+        return MayaTheme.neonOrange;
+      case 'rejected':
+        return MayaTheme.error;
+      case 'implemented':
+        return MayaTheme.neonCyan;
+      default:
+        return Colors.white54;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -195,74 +203,141 @@ class _ProposalCard extends ConsumerWidget {
             ],
           ),
         ],
-      );
-    }
-
-    Color _getStatusColor(String? status) {
-      switch (status?.toLowerCase()) {
-        case 'approved':
-          return MayaTheme.neonEmerald;
-        case 'pending':
-          return MayaTheme.neonOrange;
-        case 'rejected':
-          return MayaTheme.error;
-        case 'implemented':
-          return MayaTheme.neonCyan;
-        default:
-          return Colors.white54;
-      }
-    }
-  }
-}
-
-class _MetricsTab extends ConsumerWidget {
-  const _MetricsTab();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final metricsAsync = ref.watch(growthMetricsProvider);
-
-    return metricsAsync.when(
-      data: (data) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Growth Metrics', style: MayaTheme.titleLarge),
-              const SizedBox(height: 8),
-              Text(
-                'Portfolio performance metrics across all projects',
-                style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
-              ),
-              const SizedBox(height: 24),
-              // Stats cards would go here
-              const MayaEmptyState(
-                'Endpoint not connected',
-                icon: Icons.trending_up_rounded,
-              ),
-            ],
-          ),
-        );
-      },
-      loading: () => const Center(
-        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
-      ),
-      error: (err, _) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_rounded, size: 48, color: MayaTheme.error),
-            const SizedBox(height: 16),
-            Text('Error loading metrics', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
-            const SizedBox(height: 8),
-            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
-          ],
-        ),
       ),
     );
   }
 }
+
+class _MetricsTab extends ConsumerStatefulWidget {
+  const _MetricsTab();
+
+  @override
+  ConsumerState<_MetricsTab> createState() => _MetricsTabState();
+}
+
+class _MetricsTabState extends ConsumerState<_MetricsTab> {
+  String? _selectedProjectId;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Growth Metrics', style: MayaTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            'Portfolio performance metrics across all projects',
+            style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
+          ),
+          const SizedBox(height: 24),
+          if (_selectedProjectId == null)
+            const MayaEmptyState(
+              'Select a project to view metrics',
+              icon: Icons.trending_up_rounded,
+            )
+          else
+            _ProjectMetricsWidget(projectId: _selectedProjectId!, onClear: () => setState(() => _selectedProjectId = null)),
+          const SizedBox(height: 24),
+          const Text('Available Projects', style: MayaTheme.titleMedium),
+          const SizedBox(height: 12),
+          _ProjectSelector(onSelect: (id) => setState(() => _selectedProjectId = id)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProjectSelector extends ConsumerWidget {
+  final Function(String) onSelect;
+
+  const _ProjectSelector({required this.onSelect, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final proposalsAsync = ref.watch(growthProposalsProvider);
+
+    return proposalsAsync.when(
+      data: (data) {
+        final proposals = data['proposals'] as List? ?? [];
+        final projectIds = proposals.map((p) => p['projectId'] as String?).whereType<String>().toSet().toList();
+        if (projectIds.isEmpty) {
+          return const MayaEmptyState('No projects available', icon: Icons.folder_rounded);
+        }
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: projectIds.map((id) => FilterChip(
+            label: Text(id, style: const TextStyle(color: Colors.white)),
+            selected: false,
+            onSelected: (_) => onSelect(id),
+            backgroundColor: MayaTheme.slate800,
+            side: const BorderSide(color: Colors.white24),
+          )).toList(),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Text('Error: $err', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.error)),
+    );
+  }
+}
+
+class _ProjectMetricsWidget extends ConsumerWidget {
+  final String projectId;
+  final VoidCallback onClear;
+
+  const _ProjectMetricsWidget({required this.projectId, required this.onClear, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final metricsAsync = ref.watch(_growthMetricsProvider(projectId));
+
+    return metricsAsync.when(
+      data: (data) {
+        final metrics = data['metrics'] as List? ?? [];
+        if (metrics.isEmpty) {
+          return const MayaEmptyState('No metrics for this project', icon: Icons.trending_up_rounded);
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text('Metrics for $projectId', style: MayaTheme.titleMedium),
+                const Spacer(),
+                IconButton(icon: const Icon(Icons.clear, color: Colors.white54), onPressed: onClear),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ...metrics.map((m) => Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: MayaTheme.glassCard(),
+              child: Row(
+                children: [
+                  Expanded(child: Text(m['date'] ?? '', style: MayaTheme.bodyMedium)),
+                  Text('Visitors: ${m['visitors'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonCyan)),
+                  const SizedBox(width: 16),
+                  Text('Signups: ${m['signups'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonEmerald)),
+                  const SizedBox(width: 16),
+                  Text('Revenue: \$${m['revenue'] ?? 0}', style: MayaTheme.bodySmall.copyWith(color: MayaTheme.neonOrange)),
+                ],
+              ),
+            )).toList(),
+          ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan))),
+      error: (err, _) => Center(child: Text('Error: $err', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error))),
+    );
+  }
+}
+
+final _growthMetricsProvider = FutureProvider.family<Map<String, dynamic>, String>((ref, projectId) async {
+  final api = ref.watch(mayaApiProvider);
+  return api.growthGetMetrics(projectId, limit: 30);
+});
 
 class _RecommendationsTab extends ConsumerWidget {
   const _RecommendationsTab();
@@ -271,96 +346,12 @@ class _RecommendationsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final recsAsync = ref.watch(growthRecommendationsProvider);
 
-    return recsAsync.when(
-      data: (data) {
-        final recs = data['recommendations'] as List? ?? [];
-        if (recs.isEmpty) {
-          return const MayaEmptyState(
-            'No Recommendations',
-            message: 'Run a portfolio review to generate recommendations',
-            icon: Icons.recommend_rounded,
-          );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemCount: recs.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (_, index) {
-            final rec = recs[index];
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: MayaTheme.glassCard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonViolet.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(Icons.recommend_rounded, color: MayaTheme.neonViolet, size: 24),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(rec['action']?.toString() ?? '', style: MayaTheme.titleMedium),
-                            Text(rec['rationale'] ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: rec['confidence'] != null && rec['confidence'] > 0.8
-                              ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
-                              : MayaTheme.neonOrange.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: rec['confidence'] != null && rec['confidence'] > 0.8 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
-                        ),
-                        child: Text(
-                          'Confidence: ${(rec['confidence'] != null ? (rec['confidence'] * 100).toStringAsFixed(1) : 'N/A')}%',
-                          style: MayaTheme.labelSmall.copyWith(color: rec['confidence'] != null && rec['confidence'] > 0.8 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(rec['description'] ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text('Project: ${rec['projectId'] ?? ''}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: MayaTheme.neonViolet.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: MayaTheme.neonViolet),
-                        ),
-                        child: Text(
-                          'Confidence: ${rec['confidence'] != null ? (rec['confidence'] * 100).toStringAsFixed(1) : 'N/A'}%',
-                          style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-      loading: () => const Center(
+    return recsAsync.map(
+      data: (data) => _buildRecommendationsList(data.value),
+      loading: (_) => const Center(
         child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(MayaTheme.neonCyan)),
       ),
-      error: (err, _) => Center(
+      error: (err) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -368,10 +359,95 @@ class _RecommendationsTab extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('Error loading recommendations', style: MayaTheme.bodyMedium.copyWith(color: MayaTheme.error)),
             const SizedBox(height: 8),
-            Text(err.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
+            Text(err.error.toString(), style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildRecommendationsList(Map<String, dynamic> data) {
+  final recs = data['recommendations'] as List? ?? [];
+  if (recs.isEmpty) {
+    return const MayaEmptyState(
+      'No Recommendations',
+      icon: Icons.recommend_rounded,
+    );
+  }
+
+  return ListView.separated(
+    padding: const EdgeInsets.all(16),
+    itemCount: recs.length,
+    separatorBuilder: (_, __) => const SizedBox(height: 12),
+    itemBuilder: (_, index) {
+      final rec = recs[index];
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: MayaTheme.glassCard(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.recommend_rounded, color: MayaTheme.neonViolet, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(rec['action']?.toString() ?? '', style: MayaTheme.titleMedium),
+                      Text(rec['rationale'] ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: rec['confidence'] != null && rec['confidence'] > 0.8
+                        ? MayaTheme.neonEmerald.withValues(alpha: 0.2)
+                        : MayaTheme.neonOrange.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: rec['confidence'] != null && rec['confidence'] > 0.8 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                  ),
+                  child: Text(
+                    'Confidence: ${(rec['confidence'] != null ? (rec['confidence'] * 100).toStringAsFixed(1) : 'N/A')}%',
+                    style: MayaTheme.labelSmall.copyWith(color: rec['confidence'] != null && rec['confidence'] > 0.8 ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(rec['description'] ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text('Project: ${rec['projectId'] ?? ''}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54, fontFamily: 'monospace')),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: MayaTheme.neonViolet.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: MayaTheme.neonViolet),
+                  ),
+                  child: Text(
+                    'Confidence: ${rec['confidence'] != null ? (rec['confidence'] * 100).toStringAsFixed(1) : 'N/A'}%',
+                    style: MayaTheme.labelSmall.copyWith(color: MayaTheme.neonViolet),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
