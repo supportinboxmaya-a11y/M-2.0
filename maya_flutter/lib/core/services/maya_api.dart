@@ -93,12 +93,14 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> builderGetProject(String projectId) async {
-    final response = await _dio.get('/api/v1/income/builder/projects/$projectId');
+    final response =
+        await _dio.get('/api/v1/income/builder/projects/$projectId');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> builderUpdateProjectStatus(
-    String projectId, String status,
+    String projectId,
+    String status,
   ) async {
     final response = await _dio.post(
       '/api/v1/income/builder/projects/$projectId/status',
@@ -108,12 +110,14 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> builderGetProjectSteps(String projectId) async {
-    final response = await _dio.get('/api/v1/income/builder/projects/$projectId/steps');
+    final response =
+        await _dio.get('/api/v1/income/builder/projects/$projectId/steps');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> builderExecuteStep(
-    String projectId, String stepId,
+    String projectId,
+    String stepId,
   ) async {
     final response = await _dio.post(
       '/api/v1/income/builder/projects/$projectId/steps/$stepId/execute',
@@ -152,12 +156,14 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> growthGetProposal(String proposalId) async {
-    final response = await _dio.get('/api/v1/income/growth/proposals/$proposalId');
+    final response =
+        await _dio.get('/api/v1/income/growth/proposals/$proposalId');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> growthDecideProposal(
-    String proposalId, bool approved,
+    String proposalId,
+    bool approved,
   ) async {
     final response = await _dio.post(
       '/api/v1/income/growth/proposals/$proposalId/decide',
@@ -198,7 +204,8 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> growthGetMetrics(String projectId, {int limit = 30}) async {
+  Future<Map<String, dynamic>> growthGetMetrics(String projectId,
+      {int limit = 30}) async {
     final response = await _dio.get(
       '/api/v1/income/growth/metrics/$projectId',
       queryParameters: {'limit': limit},
@@ -245,7 +252,8 @@ class MayaApi {
   }
 
   // ─── Income Engine: Launcher ─────────────────────────────────────
-  Future<Map<String, dynamic>> launcherCreateLaunch(String buildProjectId) async {
+  Future<Map<String, dynamic>> launcherCreateLaunch(
+      String buildProjectId) async {
     final response = await _dio.post(
       '/api/v1/income/launcher/launches',
       data: {'build_project_id': buildProjectId},
@@ -268,17 +276,20 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> launcherGetLaunch(String launchId) async {
-    final response = await _dio.get('/api/v1/income/launcher/launches/$launchId');
+    final response =
+        await _dio.get('/api/v1/income/launcher/launches/$launchId');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> launcherGetContent(String launchId) async {
-    final response = await _dio.get('/api/v1/income/launcher/launches/$launchId/content');
+    final response =
+        await _dio.get('/api/v1/income/launcher/launches/$launchId/content');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> launcherApproveContent(
-    String contentId, bool approved, {String feedback = ''}) async {
+      String contentId, bool approved,
+      {String feedback = ''}) async {
     final response = await _dio.post(
       '/api/v1/income/launcher/content/approve',
       data: {
@@ -290,7 +301,8 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> launcherUpdateContent(String contentId, String content) async {
+  Future<Map<String, dynamic>> launcherUpdateContent(
+      String contentId, String content) async {
     final response = await _dio.post(
       '/api/v1/income/launcher/content/update',
       data: {'content_id': contentId, 'content': content},
@@ -300,10 +312,10 @@ class MayaApi {
 
   Future<Map<String, dynamic>> launcherConfigureLaunch(
     String launchId, {
-      String? subdomain,
-      String? customDomain,
-      double? launchDate,
-    }) async {
+    String? subdomain,
+    String? customDomain,
+    double? launchDate,
+  }) async {
     final response = await _dio.post(
       '/api/v1/income/launcher/launches/$launchId/config',
       data: {
@@ -316,12 +328,14 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> launcherStartLaunch(String launchId) async {
-    final response = await _dio.post('/api/v1/income/launcher/launches/$launchId/start');
+    final response =
+        await _dio.post('/api/v1/income/launcher/launches/$launchId/start');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> launcherRetryLaunch(String launchId) async {
-    final response = await _dio.post('/api/v1/income/launcher/launches/$launchId/retry');
+    final response =
+        await _dio.post('/api/v1/income/launcher/launches/$launchId/retry');
     return response.data as Map<String, dynamic>;
   }
 
@@ -395,16 +409,19 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> notificationGetApproval(String approvalId) async {
-    final response = await _dio.get('/api/v1/income/notifications/approvals/$approvalId');
+  Future<Map<String, dynamic>> notificationGetApproval(
+      String approvalId) async {
+    final response =
+        await _dio.get('/api/v1/income/notifications/approvals/$approvalId');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> notificationDecideApproval(
-    String approvalId, bool approved, {
-      String decidedBy = '',
-      String reason = '',
-    }) async {
+    String approvalId,
+    bool approved, {
+    String decidedBy = '',
+    String reason = '',
+  }) async {
     final response = await _dio.post(
       '/api/v1/income/notifications/approvals/$approvalId/decide',
       data: {
@@ -493,7 +510,8 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> notificationDeleteTemplate(String name) async {
-    final response = await _dio.delete('/api/v1/income/notifications/templates/$name');
+    final response =
+        await _dio.delete('/api/v1/income/notifications/templates/$name');
     return response.data as Map<String, dynamic>;
   }
 
@@ -559,12 +577,14 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> scoutGetOpportunity(String oppId) async {
-    final response = await _dio.get('/api/v1/income/scout/opportunities/$oppId');
+    final response =
+        await _dio.get('/api/v1/income/scout/opportunities/$oppId');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> scoutRecordDecision(
-    String opportunityId, bool approved, {String feedback = ''}) async {
+      String opportunityId, bool approved,
+      {String feedback = ''}) async {
     final response = await _dio.post(
       '/api/v1/income/scout/opportunities/$opportunityId/decision',
       data: {'approved': approved, 'feedback': feedback},
@@ -573,7 +593,8 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> scoutRejectOpportunity(String oppId) async {
-    final response = await _dio.delete('/api/v1/income/scout/opportunities/$oppId');
+    final response =
+        await _dio.delete('/api/v1/income/scout/opportunities/$oppId');
     return response.data as Map<String, dynamic>;
   }
 
@@ -601,7 +622,8 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> scoutDeletePreference(String category) async {
-    final response = await _dio.delete('/api/v1/income/scout/preferences/$category');
+    final response =
+        await _dio.delete('/api/v1/income/scout/preferences/$category');
     return response.data as Map<String, dynamic>;
   }
 
@@ -616,7 +638,8 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> strategistGetReviewHistory({int limit = 20}) async {
+  Future<Map<String, dynamic>> strategistGetReviewHistory(
+      {int limit = 20}) async {
     final response = await _dio.get(
       '/api/v1/income/strategist/review/history',
       queryParameters: {'limit': limit},
@@ -644,11 +667,13 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> strategistApprovePlan(String planId) async {
-    final response = await _dio.post('/api/v1/income/strategist/plans/$planId/approve');
+    final response =
+        await _dio.post('/api/v1/income/strategist/plans/$planId/approve');
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> strategistRejectPlan(String planId, {String reason = ''}) async {
+  Future<Map<String, dynamic>> strategistRejectPlan(String planId,
+      {String reason = ''}) async {
     final response = await _dio.post(
       '/api/v1/income/strategist/plans/$planId/reject',
       data: {'reason': reason},
@@ -656,7 +681,8 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> strategistGetRankedOpportunities({int limit = 20}) async {
+  Future<Map<String, dynamic>> strategistGetRankedOpportunities(
+      {int limit = 20}) async {
     final response = await _dio.get(
       '/api/v1/income/strategist/ranked-opportunities',
       queryParameters: {'limit': limit},
@@ -743,16 +769,19 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> guardedGetRequest(String requestId) async {
-    final response = await _dio.get('/api/v1/business/guarded/requests/$requestId');
+    final response =
+        await _dio.get('/api/v1/business/guarded/requests/$requestId');
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> guardedApproveRequest(String requestId) async {
-    final response = await _dio.post('/api/v1/business/guarded/requests/$requestId/approve');
+    final response =
+        await _dio.post('/api/v1/business/guarded/requests/$requestId/approve');
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> guardedRejectRequest(String requestId, {String reason = ''}) async {
+  Future<Map<String, dynamic>> guardedRejectRequest(String requestId,
+      {String reason = ''}) async {
     final response = await _dio.post(
       '/api/v1/business/guarded/requests/$requestId/reject',
       data: {'reason': reason},
@@ -898,7 +927,8 @@ class MayaApi {
   }
 
   Future<Map<String, dynamic>> docsDeleteDocument(String docId) async {
-    final response = await _dio.delete('/api/v1/business/docs/documents/$docId');
+    final response =
+        await _dio.delete('/api/v1/business/docs/documents/$docId');
     return response.data as Map<String, dynamic>;
   }
 
@@ -962,7 +992,8 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> updatePlugin(String pluginId, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> updatePlugin(
+      String pluginId, Map<String, dynamic> data) async {
     final response = await _dio.put(
       '/api/v1/plugins/$pluginId',
       data: data,
@@ -1105,8 +1136,69 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> deviceGetCommandHistory({required String deviceId}) async {
+  Future<Map<String, dynamic>> deviceGetCommandHistory(
+      {required String deviceId}) async {
     final response = await _dio.get('/api/v1/device/$deviceId/commands');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── WAHA (WhatsApp) ───────────────────────────────────────────────────
+  Future<Map<String, dynamic>> wahaGetStatus() async {
+    final response = await _dio.get('/api/v1/waha/status');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> wahaStartSession() async {
+    final response = await _dio.post('/api/v1/waha/session/start');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> wahaLogout(String sessionId) async {
+    final response = await _dio.post(
+      '/api/v1/waha/session/logout',
+      data: {'session_id': sessionId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> wahaListConversations(
+      {required String sessionId}) async {
+    final response = await _dio.get(
+      '/api/v1/waha/conversations',
+      queryParameters: {'session_id': sessionId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> wahaGetMessages(
+      {required String sessionId, required String chatId}) async {
+    final response = await _dio.get(
+      '/api/v1/waha/messages',
+      queryParameters: {'session_id': sessionId, 'chat_id': chatId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> wahaSendMessage({
+    required String sessionId,
+    required String chatId,
+    required String text,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/waha/send',
+      data: {'session_id': sessionId, 'chat_id': chatId, 'text': text},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> wahaSetAutoReply({
+    required String sessionId,
+    required bool enabled,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/waha/autoreply',
+      data: {'session_id': sessionId, 'enabled': enabled},
+    );
     return response.data as Map<String, dynamic>;
   }
 }

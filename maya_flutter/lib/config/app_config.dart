@@ -49,6 +49,15 @@ class AppConfig {
   static const String deviceCommand = '/api/v1/device/command';
   static const String deviceHistory = '/api/v1/device/history';
 
+  // WAHA (WhatsApp)
+  static const String wahaStatus = '/api/v1/waha/status';
+  static const String wahaStartSession = '/api/v1/waha/session/start';
+  static const String wahaLogout = '/api/v1/waha/session/logout';
+  static const String wahaListConversations = '/api/v1/waha/conversations';
+  static const String wahaGetMessages = '/api/v1/waha/messages';
+  static const String wahaSendMessage = '/api/v1/waha/send';
+  static const String wahaSetAutoReply = '/api/v1/waha/autoreply';
+
   // WebSocket
   static const String wsEvents = '/api/v1/events';
   static const String wsAgentStream = '/ws/stream/';

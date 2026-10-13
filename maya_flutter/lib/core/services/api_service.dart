@@ -411,6 +411,66 @@ class ApiService {
     return response.data as List<dynamic>;
   }
 
+  // WAHA (WhatsApp)
+  Future<Map<String, dynamic>> getWahaStatus() async {
+    final response = await _dio.get(AppConfig.wahaStatus);
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> startWahaSession() async {
+    final response = await _dio.post(AppConfig.wahaStartSession);
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> logoutWahaSession(String sessionId) async {
+    final response = await _dio.post(
+      AppConfig.wahaLogout,
+      data: {'session_id': sessionId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> listWahaConversations(
+      {required String sessionId}) async {
+    final response = await _dio.get(
+      AppConfig.wahaListConversations,
+      queryParameters: {'session_id': sessionId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> getWahaMessages(
+      {required String sessionId, required String chatId}) async {
+    final response = await _dio.get(
+      AppConfig.wahaGetMessages,
+      queryParameters: {'session_id': sessionId, 'chat_id': chatId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> sendWahaMessage({
+    required String sessionId,
+    required String chatId,
+    required String text,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.wahaSendMessage,
+      data: {'session_id': sessionId, 'chat_id': chatId, 'text': text},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> setWahaAutoReply({
+    required String sessionId,
+    required bool enabled,
+  }) async {
+    final response = await _dio.post(
+      AppConfig.wahaSetAutoReply,
+      data: {'session_id': sessionId, 'enabled': enabled},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
