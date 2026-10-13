@@ -32,6 +32,23 @@ class AppConfig {
   static const String systemStatus = '/api/v1/system/status';
   static const String systemStats = '/api/v1/tools/system_stats/run';
 
+  // Tools
+  static const String toolsList = '/api/v1/tools';
+  static const String toolsRun = '/api/v1/tools/run';
+
+  // MCP
+  static const String mcpStatus = '/api/v1/mcp/status';
+  static const String mcpConnect = '/api/v1/mcp/connect';
+  static const String mcpDisconnect = '/api/v1/mcp/disconnect';
+  static const String mcpCall = '/api/v1/mcp/call';
+
+  // Device/Phone
+  static const String deviceList = '/api/v1/device/list';
+  static const String devicePairStart = '/api/v1/device/pair/start';
+  static const String devicePairComplete = '/api/v1/device/pair/complete';
+  static const String deviceCommand = '/api/v1/device/command';
+  static const String deviceHistory = '/api/v1/device/history';
+
   // WebSocket
   static const String wsEvents = '/api/v1/events';
   static const String wsAgentStream = '/ws/stream/';

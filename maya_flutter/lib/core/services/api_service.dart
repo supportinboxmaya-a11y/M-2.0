@@ -332,6 +332,85 @@ class ApiService {
     return SystemStats.fromJson(response.data);
   }
 
+  // Tools
+  Future<List<dynamic>> listTools() async {
+    final response = await _dio.get(AppConfig.toolsList);
+    return response.data as List<dynamic>;
+  }
+
+  Future<Map<String, dynamic>> runTool(
+      String toolName, Map<String, dynamic> input) async {
+    final response = await _dio.post(
+      '${AppConfig.toolsRun}/$toolName',
+      data: {'input': input},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // MCP
+  Future<Map<String, dynamic>> getMcpStatus() async {
+    final response = await _dio.get(AppConfig.mcpStatus);
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> connectMcp(String serverId) async {
+    final response = await _dio.post(
+      AppConfig.mcpConnect,
+      data: {'server_id': serverId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> disconnectMcp(String serverId) async {
+    final response = await _dio.post(
+      AppConfig.mcpDisconnect,
+      data: {'server_id': serverId},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> callMcp(
+      String server, String tool, Map<String, dynamic> params) async {
+    final response = await _dio.post(
+      '${AppConfig.mcpCall}/$server/$tool',
+      data: params,
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // Device/Phone
+  Future<List<dynamic>> listDevices() async {
+    final response = await _dio.get(AppConfig.deviceList);
+    return response.data as List<dynamic>;
+  }
+
+  Future<Map<String, dynamic>> pairDeviceStart() async {
+    final response = await _dio.post(AppConfig.devicePairStart);
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> pairDeviceComplete(String code) async {
+    final response = await _dio.post(
+      AppConfig.devicePairComplete,
+      data: {'code': code},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> sendDeviceCommand(
+      String deviceId, String command, Map<String, dynamic> params) async {
+    final response = await _dio.post(
+      AppConfig.deviceCommand,
+      data: {'device_id': deviceId, 'command': command, 'params': params},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<List<dynamic>> getDeviceHistory(String deviceId) async {
+    final response = await _dio.get('${AppConfig.deviceHistory}/$deviceId');
+    return response.data as List<dynamic>;
+  }
+
   // WebSocket
   Stream<Map<String, dynamic>> get eventStream => _wsController.stream;
   bool get isConnected => _isConnected;
