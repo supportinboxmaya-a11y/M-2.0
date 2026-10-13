@@ -986,23 +986,309 @@ class MayaApi {
     return response.data as Map<String, dynamic>;
   }
 
-  // ─── Plugins ──────────────────────────────────────────────────────────
-  Future<Map<String, dynamic>> listPlugins() async {
-    final response = await _dio.get('/api/v1/plugins');
-    return response.data as Map<String, dynamic>;
-  }
-
-  Future<Map<String, dynamic>> updatePlugin(
-      String pluginId, Map<String, dynamic> data) async {
-    final response = await _dio.put(
-      '/api/v1/plugins/$pluginId',
-      data: data,
+  // ─── Vision ───────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> visionAnalyze({
+    required String image,
+    String prompt = 'Describe this image in detail.',
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/vision/analyze',
+      data: {'image': image, 'prompt': prompt},
     );
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> installPlugin(String pluginId) async {
+  Future<Map<String, dynamic>> visionOcr({required String image}) async {
+    final response = await _dio.post(
+      '/api/v1/vision/ocr',
+      data: {'image': image},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Webhooks ─────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> webhooksList() async {
+    final response = await _dio.get('/api/v1/webhooks');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> webhooksCreate({
+    required String url,
+    required List<String> events,
+    String? secret,
+    bool active = true,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/webhooks',
+      data: {
+        'url': url,
+        'events': events,
+        if (secret != null) 'secret': secret,
+        'active': active,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> webhooksUpdate({
+    required String whId,
+    String? url,
+    List<String>? events,
+    String? secret,
+    bool? active,
+  }) async {
+    final response = await _dio.put(
+      '/api/v1/webhooks/$whId',
+      data: {
+        if (url != null) 'url': url,
+        if (events != null) 'events': events,
+        if (secret != null) 'secret': secret,
+        if (active != null) 'active': active,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> webhooksDelete(String whId) async {
+    final response = await _dio.delete('/api/v1/webhooks/$whId');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Hosting ──────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> hostingListApps({String? owner}) async {
+    final response = await _dio.get(
+      '/api/v1/hosting/apps',
+      queryParameters: {if (owner != null) 'owner': owner},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingGetApp(String name) async {
+    final response = await _dio.get('/api/v1/hosting/apps/$name');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingDeploy({
+    required String name,
+    required String kind,
+    String? entry,
+    String? path,
+    String? command,
+    int? port,
+    Map<String, String>? env,
+    String owner = 'system',
+    bool autostart = true,
+    bool tunnel = false,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/hosting/apps',
+      data: {
+        'name': name,
+        'kind': kind,
+        if (entry != null) 'entry': entry,
+        if (path != null) 'path': path,
+        if (command != null) 'command': command,
+        if (port != null) 'port': port,
+        if (env != null) 'env': env,
+        'owner': owner,
+        'autostart': autostart,
+        'tunnel': tunnel,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingStart(String name) async {
+    final response = await _dio.post('/api/v1/hosting/apps/$name/start');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingStop(String name) async {
+    final response = await _dio.post('/api/v1/hosting/apps/$name/stop');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingRestart(String name) async {
+    final response = await _dio.post('/api/v1/hosting/apps/$name/restart');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingRemove(String name) async {
+    final response = await _dio.delete('/api/v1/hosting/apps/$name');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingStatus(String name) async {
+    final response = await _dio.get('/api/v1/hosting/apps/$name');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingLogs(String name, {int lines = 100}) async {
+    final response = await _dio.get(
+      '/api/v1/hosting/apps/$name/logs',
+      queryParameters: {'lines': lines},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingSupervise({
+    bool autoRestart = true,
+    int maxRestarts = 5,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/hosting/supervise',
+      data: {'auto_restart': autoRestart, 'max_restarts': maxRestarts},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> hostingOpenTunnel(String name) async {
+    final response = await _dio.post('/api/v1/hosting/apps/$name/tunnel');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Remote VPS ───────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> vpsConfig() async {
+    final response = await _dio.get('/api/v1/device/config');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsListContainers() async {
+    final response = await _dio.get('/api/v1/vps/containers');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsBuildImage({
+    required String app,
+    required String dockerfileDir,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/vps/build',
+      data: {'app': app, 'dockerfile_dir': dockerfileDir},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsRunContainer({
+    required String app,
+    required String image,
+    Map<String, String>? ports,
+    Map<String, String>? env,
+  }) async {
+    final response = await _dio.post(
+      '/api/v1/vps/run',
+      data: {
+        'app': app,
+        'image': image,
+        if (ports != null) 'ports': ports,
+        if (env != null) 'env': env,
+      },
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsStopContainer(String app) async {
+    final response = await _dio.post('/api/v1/vps/$app/stop');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsStartContainer(String app) async {
+    final response = await _dio.post('/api/v1/vps/$app/start');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsRestartContainer(String app) async {
+    final response = await _dio.post('/api/v1/vps/$app/restart');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsRemoveContainer(String app) async {
+    final response = await _dio.delete('/api/v1/vps/$app');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsContainerStatus(List<String> names) async {
+    final response = await _dio.post(
+      '/api/v1/vps/status',
+      data: {'names': names},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> vpsContainerLogs({
+    required String app,
+    int lines = 100,
+  }) async {
+    final response = await _dio.get(
+      '/api/v1/vps/$app/logs',
+      queryParameters: {'lines': lines},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── App Registry ──────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> registryList() async {
+    final response = await _dio.get('/api/v1/hosting/registry');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> registryGet(String name) async {
+    final response = await _dio.get('/api/v1/hosting/registry/$name');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> registryCheckAll() async {
+    final response = await _dio.post('/api/v1/hosting/registry/check-all');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> registryRestart(String name) async {
+    final response = await _dio.post('/api/v1/hosting/registry/$name/restart');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> registryLogs(String name, {int lines = 100}) async {
+    final response = await _dio.get(
+      '/api/v1/hosting/registry/$name/logs',
+      queryParameters: {'lines': lines},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> registrySetMonitor(String name, bool enabled) async {
+    final response = await _dio.patch(
+      '/api/v1/hosting/registry/$name/monitor',
+      data: {'enabled': enabled},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> registryUnregister(String name) async {
+    final response = await _dio.delete('/api/v1/hosting/registry/$name');
+    return response.data as Map<String, dynamic>;
+  }
+
+  // ─── Plugins ────────────────────────────────────────────────────────────────
+  Future<Map<String, dynamic>> pluginsList() async {
+    final response = await _dio.get('/api/v1/plugins');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> pluginsUpdate(String pluginId, {required bool enabled}) async {
+    final response = await _dio.put(
+      '/api/v1/plugins/$pluginId',
+      data: {'enabled': enabled},
+    );
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> pluginsInstall(String pluginId) async {
     final response = await _dio.post('/api/v1/plugins/$pluginId/install');
+    return response.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> pluginsDelete(String pluginId) async {
+    final response = await _dio.delete('/api/v1/plugins/$pluginId');
     return response.data as Map<String, dynamic>;
   }
 
@@ -1082,7 +1368,7 @@ class MayaApi {
       data: {
         'name': name,
         'command': command,
-        if (env != null) 'env': env,
+        'env': env,
       },
     );
     return response.data as Map<String, dynamic>;

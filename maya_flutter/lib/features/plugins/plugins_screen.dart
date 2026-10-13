@@ -7,7 +7,7 @@ import '../../../shared/widgets/maya_empty_state.dart';
 
 final pluginsListProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(mayaApiProvider);
-  return api.listPlugins();
+  return api.pluginsList();
 });
 
 class PluginsScreen extends ConsumerStatefulWidget {
@@ -84,7 +84,7 @@ class _PluginsListTab extends ConsumerWidget {
 
     return pluginsAsync.when(
       data: (data) {
-        final plugins = data as List? ?? [];
+        final plugins = data['plugins'] as List? ?? [];
         if (plugins.isEmpty) {
           return const MayaEmptyState(
             'No Plugins installed',
@@ -96,7 +96,7 @@ class _PluginsListTab extends ConsumerWidget {
           itemCount: plugins.length,
           separatorBuilder: (_, __) => const SizedBox(height: 8),
           itemBuilder: (_, index) {
-            final plugin = plugins[index];
+            final plugin = plugins[index] as Map<String, dynamic>;
             return _PluginCard(plugin: plugin);
           },
         );
@@ -119,7 +119,7 @@ class _PluginsListTab extends ConsumerWidget {
 }
 
 class _PluginCard extends ConsumerStatefulWidget {
-  final dynamic plugin;
+  final Map<String, dynamic> plugin;
 
   const _PluginCard({required this.plugin});
 
@@ -128,16 +128,23 @@ class _PluginCard extends ConsumerStatefulWidget {
 }
 
 class _PluginCardState extends ConsumerState<_PluginCard> {
-  bool _isToggling = false;
+  bool _isUpdating = false;
 
-  Future<void> _toggle() async {
-    setState(() => _isToggling = true);
+  Future<void> _toggleEnabled() async {
+    setState(() => _isUpdating = true);
     try {
-      await ref.read(mayaApiProvider).updatePlugin(
-        widget.plugin['id'] ?? widget.plugin['name'],
-        {'enabled': !(widget.plugin['enabled'] ?? false)},
-      );
+      final api = ref.read(mayaApiProvider);
+      final newEnabled = !(widget.plugin['enabled'] == true);
+      await api.pluginsUpdate(widget.plugin['id'] ?? widget.plugin['name'] ?? '', enabled: newEnabled);
       ref.invalidate(pluginsListProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Plugin ${newEnabled ? 'enabled' : 'disabled'}'),
+            backgroundColor: MayaTheme.neonEmerald,
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -145,50 +152,136 @@ class _PluginCardState extends ConsumerState<_PluginCard> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isToggling = false);
+      if (mounted) setState(() => _isUpdating = false);
+    }
+  }
+
+  Future<void> _uninstall() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: MayaTheme.slate800,
+        title: const Text('Uninstall Plugin', style: MayaTheme.titleMedium),
+        content: Text('Are you sure you want to uninstall "${widget.plugin['name']}"?', style: MayaTheme.bodyMedium),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: MayaTheme.error),
+            child: const Text('Uninstall'),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+
+    setState(() => _isUpdating = true);
+    try {
+      final api = ref.read(mayaApiProvider);
+      await api.pluginsDelete(widget.plugin['id'] ?? widget.plugin['name'] ?? '');
+      ref.invalidate(pluginsListProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('Plugin uninstalled'), backgroundColor: MayaTheme.neonEmerald),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: MayaTheme.error),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isUpdating = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final plugin = widget.plugin;
-    final enabled = plugin['enabled'] ?? false;
+    final enabled = plugin['enabled'] == true;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: MayaTheme.glassCard(),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: enabled ? MayaTheme.neonEmerald.withValues(alpha: 0.2) : MayaTheme.neonOrange.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              Icons.extension_rounded,
-              color: enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
-              size: 24,
-            ),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: (enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  enabled ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                  color: enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(plugin['name'] ?? '', style: MayaTheme.titleMedium),
+                    Text('v${plugin['version'] ?? '1.0.0'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white54)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: (enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                ),
+                child: Text(
+                  enabled ? 'ENABLED' : 'DISABLED',
+                  style: MayaTheme.labelSmall.copyWith(color: enabled ? MayaTheme.neonEmerald : MayaTheme.neonOrange),
+                ),
+              ),
+              const SizedBox(width: 8),
+              PopupMenuButton(
+                icon: const Icon(Icons.more_vert_rounded, color: Colors.white54),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'toggle',
+                    child: Row(
+                      children: [
+                        Icon(enabled ? Icons.toggle_off_rounded : Icons.toggle_on_rounded, size: 18),
+                        const SizedBox(width: 8),
+                        Text(enabled ? 'Disable' : 'Enable'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'uninstall',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_rounded, size: 18, color: MayaTheme.error),
+                        SizedBox(width: 8),
+                        Text('Uninstall', style: TextStyle(color: MayaTheme.error)),
+                      ],
+                    ),
+                  ),
+                ],
+                onSelected: (value) async {
+                  if (value == 'toggle') {
+                    await _toggleEnabled();
+                  } else if (value == 'uninstall') {
+                    await _uninstall();
+                  }
+                },
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(plugin['name'] ?? 'Unknown Plugin', style: MayaTheme.titleMedium),
-                Text(plugin['description'] ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
-                if (plugin['version'] != null)
-                  Text('Version: ${plugin['version']}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
-              ],
-            ),
-          ),
-          Switch(
-            value: enabled,
-            onChanged: _isToggling ? null : (_) => _toggle(),
-            activeColor: MayaTheme.neonEmerald,
-            inactiveThumbColor: MayaTheme.neonOrange,
-          ),
+          const SizedBox(height: 8),
+          Text(plugin['description'] ?? '', style: MayaTheme.bodySmall.copyWith(color: Colors.white54), maxLines: 2, overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 4),
+          Text('Installed: ${plugin['installedAt'] ?? 'unknown'}', style: MayaTheme.bodySmall.copyWith(color: Colors.white38)),
         ],
       ),
     );
@@ -203,33 +296,39 @@ class _PluginsInstallTab extends ConsumerStatefulWidget {
 }
 
 class _PluginsInstallTabState extends ConsumerState<_PluginsInstallTab> {
-  final _pluginIdController = TextEditingController();
+  final _nameController = TextEditingController();
   bool _isInstalling = false;
 
   @override
   void dispose() {
-    _pluginIdController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
   Future<void> _install() async {
-    final pluginId = _pluginIdController.text.trim();
-    if (pluginId.isEmpty) return;
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plugin name required'), backgroundColor: MayaTheme.error));
+      return;
+    }
 
     setState(() => _isInstalling = true);
     try {
-      await ref.read(mayaApiProvider).installPlugin(pluginId);
-      _pluginIdController.clear();
+      final api = ref.read(mayaApiProvider);
+      final result = await api.pluginsInstall(_nameController.text.trim());
+      _nameController.clear();
       ref.invalidate(pluginsListProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('Plugin installed'), backgroundColor: MayaTheme.neonEmerald),
+          SnackBar(
+            content: Text(result['installed'] == true ? 'Plugin installed: ${result['id']}' : 'Failed: ${result['detail'] ?? 'Unknown error'}'),
+            backgroundColor: result['installed'] == true ? MayaTheme.neonEmerald : MayaTheme.error,
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: MayaTheme.error),
+          SnackBar(content: Text('Install failed: $e'), backgroundColor: MayaTheme.error),
         );
       }
     } finally {
@@ -247,32 +346,45 @@ class _PluginsInstallTabState extends ConsumerState<_PluginsInstallTab> {
           const Text('Install Plugin', style: MayaTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            'Install a new plugin from the catalog. Note: New plugins can also be added by dropping .py files into the plugins/ folder.',
+            'Install a new plugin by name (e.g., maya-plugin-github)',
             style: MayaTheme.bodyMedium.copyWith(color: Colors.white54),
           ),
           const SizedBox(height: 24),
-          TextField(
-            controller: _pluginIdController,
-            decoration: const InputDecoration(
-              labelText: 'Plugin ID',
-              hintText: 'e.g., my_plugin',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _isInstalling ? null : _install,
-              icon: _isInstalling
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: MayaTheme.slate900))
-                  : const Icon(Icons.add_circle_rounded),
-              label: Text(_isInstalling ? 'Installing...' : 'Install Plugin'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MayaTheme.neonCyan,
-                foregroundColor: MayaTheme.slate900,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: MayaTheme.glassCard(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: 'Plugin Name *',
+                    hintText: 'e.g., maya-plugin-github',
+                    labelStyle: TextStyle(color: Colors.white54),
+                    prefixIcon: Icon(Icons.extension_rounded, color: Colors.white54),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isInstalling ? null : _install,
+                    icon: _isInstalling
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.white)))
+                        : const Icon(Icons.extension_rounded),
+                    label: Text(_isInstalling ? 'Installing...' : 'Install Plugin'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MayaTheme.neonViolet,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
