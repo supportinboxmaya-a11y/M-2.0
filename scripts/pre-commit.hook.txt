@@ -8,8 +8,8 @@ case "$br" in
 esac
 staged="$(git diff --cached --name-only)"
 [ -z "$staged" ] && exit 0
-bad="$(echo "$staged" | grep -vE '^maya_flutter/(lib|test)/|^maya_flutter/android/app/src/main/kotlin/|^maya_flutter/android/app/src/main/AndroidManifest\.xml$|^maya_flutter/android/app/build\.gradle\.kts$|^api(\.py|/)|^infrastructure/|^main\.py$|^requirements\.txt$|^docker-compose\.yml$|^config/')"
-if [ -n "$bad" ]; then echo "BLOCKED: files outside maya_flutter/lib, maya_flutter/test, maya_flutter/android/app/src/main/kotlin/, maya_flutter/android/app/src/main/AndroidManifest.xml, maya_flutter/android/app/build.gradle.kts, api/, infrastructure/, main.py, requirements.txt, docker-compose.yml, config/:"; echo "$bad"; exit 1; fi
+bad="$(echo "$staged" | grep -vE '^maya_flutter/(lib|test)/|^maya_flutter/android/app/src/main/kotlin/|^maya_flutter/android/app/src/main/AndroidManifest\.xml$|^maya_flutter/android/app/build\.gradle\.kts$|^maya_flutter/android/app/src/main/res/xml/|^scripts/pre-commit\.hook\.txt$|^api(\.py|/)|^infrastructure/|^main\.py$|^requirements\.txt$|^docker-compose\.yml$|^config/')"
+if [ -n "$bad" ]; then echo "BLOCKED: files outside maya_flutter/lib, maya_flutter/test, maya_flutter/android/app/src/main/kotlin/, maya_flutter/android/app/src/main/AndroidManifest.xml, maya_flutter/android/app/build.gradle.kts, maya_flutter/android/app/src/main/res/xml/, scripts/pre-commit.hook.txt, api/, infrastructure/, main.py, requirements.txt, docker-compose.yml, config/:"; echo "$bad"; exit 1; fi
 del="$(git diff --cached --name-status | awk '$1=="D"{print $2}')"
 if [ -n "$del" ]; then echo "BLOCKED: deleting files is not allowed:"; echo "$del"; exit 1; fi
 if git diff --cached -U0 -- maya_flutter/lib | grep -E '^\+' | grep -vE '^\+\+\+' | grep -qE "^\+\s*part '|@freezed|@JsonSerializable|@riverpod|build_runner"; then
