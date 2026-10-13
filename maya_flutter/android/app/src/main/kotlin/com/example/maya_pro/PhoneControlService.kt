@@ -109,7 +109,13 @@ class PhoneControlService : Service() {
 
     private fun connectToVps() {
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val vpsUrl = prefs.getString(KEY_VPS_URL, "ws://130.210.46.182:8000/api/v1/device/ws")
+        val vpsUrl = prefs.getString(KEY_VPS_URL, null)
+        
+        if (vpsUrl == null || vpsUrl.isBlank()) {
+            Log.w(TAG, "No VPS WebSocket URL configured, skipping connection")
+            updateNotification("No VPS URL configured")
+            return
+        }
         
         okHttpClient = okhttp3.OkHttpClient.Builder()
             .pingInterval(30, TimeUnit.SECONDS)
