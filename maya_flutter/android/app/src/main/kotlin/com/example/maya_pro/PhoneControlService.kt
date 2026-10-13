@@ -255,51 +255,11 @@ class PhoneControlService : Service() {
     }
 
     private fun logCall(number: String, direction: String, status: String, transcript: String) {
-        val logEntry = JSONObject().apply {
-            put("type", "call_log")
-            put("number", number)
-            put("direction", direction)
-            put("status", status)
-            put("transcript", transcript)
-            put("timestamp", System.currentTimeMillis())
-            put("device_id", deviceId)
-        }
-        sendToBackend("/api/v1/device/log", logEntry)
+        BackendLogger.logCall(this, number, direction, status, deviceId)
     }
 
     private fun logSms(number: String, direction: String, content: String, status: String) {
-        val logEntry = JSONObject().apply {
-            put("type", "sms_log")
-            put("number", number)
-            put("direction", direction)
-            put("content", content)
-            put("status", status)
-            put("timestamp", System.currentTimeMillis())
-            put("device_id", deviceId)
-        }
-        sendToBackend("/api/v1/device/log", logEntry)
-    }
-
-    private fun sendToBackend(endpoint: String, json: JSONObject) {
-        // Use a simple HTTP POST to backend
-        val client = okhttp3.OkHttpClient()
-        val body = okhttp3.RequestBody.create(
-            json.toString(),
-            okhttp3.MediaType.get("application/json")
-        )
-        val request = okhttp3.Request.Builder()
-            .url("http://130.210.46.182:8000$endpoint")
-            .post(body)
-            .build()
-        
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.e(TAG, "Backend log failed: ${e.message}")
-            }
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                response.close()
-            }
-        })
+        BackendLogger.logSms(this, number, direction, status, deviceId)
     }
 
     private fun sendLogs(requestId: String) {

@@ -1,0 +1,23 @@
+#!/bin/bash
+export PATH="$HOME/flutter/bin:$PATH"
+root="$(git rev-parse --show-toplevel)"
+br="$(git rev-parse --abbrev-ref HEAD)"
+case "$br" in
+  rewrite/*|feature/*|fix/*) ;;
+  *) echo "BLOCKED: commits only on rewrite/*, feature/* or fix/* branches (you are on $br)"; exit 1;;
+esac
+staged="$(git diff --cached --name-only)"
+[ -z "$staged" ] && exit 0
+bad="$(echo "$staged" | grep -vE '^maya_flutter/(lib|test)/|^maya_flutter/android/app/src/main/kotlin/|^maya_flutter/android/app/src/main/AndroidManifest\.xml$|^maya_flutter/android/app/build\.gradle\.kts$|^api(\.py|/)|^infrastructure/|^main\.py$|^requirements\.txt$|^docker-compose\.yml$|^config/')"
+if [ -n "$bad" ]; then echo "BLOCKED: files outside maya_flutter/lib, maya_flutter/test, maya_flutter/android/app/src/main/kotlin/, maya_flutter/android/app/src/main/AndroidManifest.xml, maya_flutter/android/app/build.gradle.kts, api/, infrastructure/, main.py, requirements.txt, docker-compose.yml, config/:"; echo "$bad"; exit 1; fi
+del="$(git diff --cached --name-status | awk '$1=="D"{print $2}')"
+if [ -n "$del" ]; then echo "BLOCKED: deleting files is not allowed:"; echo "$del"; exit 1; fi
+if git diff --cached -U0 -- maya_flutter/lib | grep -E '^\+' | grep -vE '^\+\+\+' | grep -qE "^\+\s*part '|@freezed|@JsonSerializable|@riverpod|build_runner"; then
+  echo "BLOCKED: generated-code patterns (part, freezed, json_serializable, riverpod_generator) are banned"; exit 1
+fi
+n="$(git diff --cached --numstat -- maya_flutter/lib/main.dart | awk '{print $1+$2}')"
+if [ "${n:-0}" -gt 12 ]; then echo "BLOCKED: main.dart changed by $n lines (max 12)"; exit 1; fi
+cd "$root/maya_flutter" || exit 1
+n="$(flutter analyze 2>&1 | grep -cE '^\s*error')"
+if [ "$n" -ne 0 ]; then echo "BLOCKED: flutter analyze has $n errors"; exit 1; fi
+exit 0
