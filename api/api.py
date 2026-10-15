@@ -1001,6 +1001,11 @@ async def device_history(device_id: str, user=Depends(get_current_user)):
         raise HTTPException(status_code=503, detail="Maya not initialized")
     return {"commands": maya_instance.device_bridge.commands_for_device(device_id)}
 
+@app.get("/api/v1/device/history/{device_id}")
+async def device_history_alias(device_id: str, user=Depends(get_current_user)):
+    """Alias for /api/v1/device/{device_id}/history to match Flutter app expectations."""
+    return await device_history(device_id, user)
+
 @app.post("/api/v1/device/command")
 async def device_enqueue(body: dict, user=Depends(get_current_user)):
     """A person (not just Maya) can also queue a command directly from
