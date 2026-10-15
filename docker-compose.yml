@@ -59,6 +59,25 @@ services:
     networks:
       - maya-network
 
+  # ChromaDB Vector Database
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: maya-chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - chromadb-storage:/chroma/chroma
+    environment:
+      - ANONYMIZED_TELEMETRY=False
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    networks:
+      - maya-network
+
   # Prometheus for metrics
   prometheus:
     image: prom/prometheus:latest
@@ -132,6 +151,7 @@ volumes:
   maya-workspace:
   maya-backups:
   qdrant-storage:
+  chromadb-storage:
   prometheus-data:
   grafana-data:
 
