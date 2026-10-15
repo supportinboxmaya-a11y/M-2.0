@@ -605,6 +605,13 @@ async def run_tool(tool_name: str, body: dict, user=Depends(get_current_user)):
     )
     return {"result": result}
 
+
+@app.post("/api/v1/tools/run/{tool_name}")
+async def run_tool_alias(tool_name: str, body: dict, user=Depends(get_current_user)):
+    """Alias for /api/v1/tools/{tool_name}/run to match Flutter app expectations."""
+    return await run_tool(tool_name, body, user)
+
+
 @app.put("/api/v1/tools/{tool_name}")
 async def update_tool(tool_name: str, req: ToolUpdateRequest, user=Depends(get_current_user)):
     if maya_instance and hasattr(maya_instance.tool_manager, "set_enabled"):
@@ -638,6 +645,83 @@ async def update_provider(provider_id: str, req: ProviderUpdateRequest, user=Dep
     if not ok:
         raise HTTPException(status_code=404, detail=f"Unknown provider: {provider_id}")
     return {"id": provider_id, "enabled": req.enabled}
+
+# ══════════════════════════════════════════════
+# SYSTEM ROUTES
+# ══════════════════════════════════════════════
+@app.get("/api/v1/system/status")
+async def system_status(user=Depends(get_current_user)):
+    """System status endpoint for Flutter app."""
+    import psutil
+    import time
+    
+    # Check key services
+    services = {}
+    
+    # ChromaDB
+    try:
+        import requests
+        r = requests.get("http://localhost:8001/api/v1/heartbeat", timeout=2)
+        services["chromadb"] = "up" if r.status_code == 200 else "down"
+    except Exception:
+        services["chromadb"] = "down"
+    
+    # Qdrant
+    try:
+        import requests
+        r = requests.get("http://localhost:6333/health", timeout=2)
+        services["qdrant"] = "up" if r.status_code == 200 else "down"
+    except Exception:
+        services["qdrant"] = "down"
+    
+    # Redis (if used)
+    try:
+        import redis
+        r = redis.Redis(host="localhost", port=6379, socket_connect_timeout=1)
+        r.ping()
+        services["redis"] = "up"
+    except Exception:
+        services["redis"] = "down"
+    
+    return {
+        "status": "healthy",
+        "version": "2.0.0",
+        "uptime_seconds": time.time() - psutil.boot_time(),
+        "maya_initialized": maya_instance is not None,
+        "services": services,
+    }
+
+@app.post("/api/v1/tools/system_stats/run")
+async def system_stats_run(body: dict = None, user=Depends(get_current_user)):
+    """System stats endpoint for Flutter app - returns real CPU, RAM, disk, uptime."""
+    import psutil
+    import time
+    
+    cpu = psutil.cpu_percent(interval=0.1)
+    mem = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
+    uptime_seconds = time.time() - psutil.boot_time()
+    
+    return {
+        "cpu": {
+            "percent": cpu,
+            "count": psutil.cpu_count(),
+        },
+        "memory": {
+            "total_gb": round(mem.total / (1024**3), 2),
+            "available_gb": round(mem.available / (1024**3), 2),
+            "used_gb": round(mem.used / (1024**3), 2),
+            "percent": mem.percent,
+        },
+        "disk": {
+            "total_gb": round(disk.total / (1024**3), 2),
+            "used_gb": round(disk.used / (1024**3), 2),
+            "free_gb": round(disk.free / (1024**3), 2),
+            "percent": round(disk.used / disk.total * 100, 1),
+        },
+        "uptime_seconds": uptime_seconds,
+        "load_avg": psutil.getloadavg() if hasattr(psutil, "getloadavg") else [0, 0, 0],
+    }
 
 # ══════════════════════════════════════════════
 # ANALYTICS ROUTES
@@ -954,6 +1038,96 @@ async def device_report_result(command_id: str, body: dict):
     if not maya_instance.device_bridge.report_result(command_id, body.get("result", {})):
         raise HTTPException(status_code=404, detail="Command not found")
     return {"acknowledged": command_id}
+
+# ══════════════════════════════════════════════
+# WAHA (WhatsApp HTTP API) ROUTES
+# ══════════════════════════════════════════════
+@app.get("/api/v1/waha/status")
+async def waha_status(user=Depends(get_current_user)):
+    """WAHA status endpoint for Flutter app."""
+    # Check if WAHA is running (default port 3000)
+    import requests
+    try:
+        r = requests.get("http://localhost:3000/api/status", timeout=2)
+        if r.status_code == 200:
+            return {"status": "connected", "waha": r.json()}
+    except Exception:
+        pass
+    return {"status": "disconnected", "message": "WAHA not running on localhost:3000"}
+
+@app.post("/api/v1/waha/session/start")
+async def waha_start_session(body: dict = None, user=Depends(get_current_user)):
+    """Start a WAHA session."""
+    import requests
+    try:
+        r = requests.post("http://localhost:3000/api/sessions/start", json=body or {}, timeout=10)
+        return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"WAHA not reachable: {e}")
+
+@app.post("/api/v1/waha/session/logout")
+async def waha_logout(body: dict, user=Depends(get_current_user)):
+    """Logout a WAHA session."""
+    import requests
+    session_id = body.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id required")
+    try:
+        r = requests.post(f"http://localhost:3000/api/sessions/{session_id}/logout", timeout=10)
+        return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"WAHA not reachable: {e}")
+
+@app.get("/api/v1/waha/conversations")
+async def waha_list_conversations(session_id: str, user=Depends(get_current_user)):
+    """List WAHA conversations."""
+    import requests
+    try:
+        r = requests.get(f"http://localhost:3000/api/{session_id}/chats", timeout=10)
+        return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"WAHA not reachable: {e}")
+
+@app.get("/api/v1/waha/messages")
+async def waha_get_messages(session_id: str, chat_id: str, user=Depends(get_current_user)):
+    """Get WAHA messages for a chat."""
+    import requests
+    try:
+        r = requests.get(f"http://localhost:3000/api/{session_id}/chats/{chat_id}/messages", timeout=10)
+        return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"WAHA not reachable: {e}")
+
+@app.post("/api/v1/waha/send")
+async def waha_send_message(body: dict, user=Depends(get_current_user)):
+    """Send a WAHA message."""
+    import requests
+    session_id = body.get("session_id")
+    chat_id = body.get("chat_id")
+    text = body.get("text")
+    if not (session_id and chat_id and text):
+        raise HTTPException(status_code=400, detail="session_id, chat_id, text required")
+    try:
+        r = requests.post(f"http://localhost:3000/api/{session_id}/sendText", 
+                          json={"chatId": chat_id, "text": text}, timeout=10)
+        return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"WAHA not reachable: {e}")
+
+@app.post("/api/v1/waha/autoreply")
+async def waha_set_autoreply(body: dict, user=Depends(get_current_user)):
+    """Set WAHA auto-reply."""
+    import requests
+    session_id = body.get("session_id")
+    enabled = body.get("enabled", False)
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id required")
+    try:
+        r = requests.post(f"http://localhost:3000/api/{session_id}/config", 
+                          json={"autoReply": enabled}, timeout=10)
+        return r.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"WAHA not reachable: {e}")
 
 # ══════════════════════════════════════════════
 # WORKSPACE FILES ROUTES
@@ -5210,7 +5384,7 @@ except Exception as _p18_err:
 
 # ══════════════ Phase 38: MCP client (host) ══════════════
 try:
-    from infrastructure.mcp_client import get_mcp_manager as _p38_get_manager, MCPError as _P38Error
+    from infrastructure.mcp_client import get_mcp_manager as _p38_get_manager, MCPError as _P38Error, _sanitize
     from enterprise.rbac import RBAC as _P38RBAC
 
     _p38_rbac = _P38RBAC()
@@ -5267,6 +5441,63 @@ try:
         for n in removed:
             reg.unregister(n)
         return {"disconnected": True, "tools_removed": len(removed)}
+
+    @app.post("/api/v1/mcp/connect")
+    async def _p38_connect_by_id(body: dict, user=Depends(get_current_user)):
+        """Connect MCP server by server_id (alias for Flutter app).
+        
+        Body: {server_id: str}
+        Looks up server config from MCP_SERVERS env var.
+        """
+        _p38_require_enabled()
+        _p38_check_execute(user)
+        if not maya_instance:
+            raise HTTPException(status_code=503, detail="Maya not initialized")
+        server_id = (body.get("server_id") or "").strip()
+        if not server_id:
+            raise HTTPException(status_code=400, detail="server_id required")
+        # Load config and find matching server
+        configs = _p38_get_manager()._load_config()
+        cfg = next((c for c in configs if _sanitize(c.get("name", "")) == server_id or c.get("name") == server_id), None)
+        if not cfg:
+            raise HTTPException(status_code=404, detail=f"Server '{server_id}' not found in MCP_SERVERS config")
+        count = await asyncio.to_thread(
+            _p38_get_manager().connect_server, cfg,
+            maya_instance.tool_manager.get_registry(),
+        )
+        return {"server": cfg.get("name"), "tools_registered": count}
+
+    @app.post("/api/v1/mcp/disconnect")
+    async def _p38_disconnect_by_id(body: dict, user=Depends(get_current_user)):
+        """Disconnect specific MCP server by server_id (alias for Flutter app).
+        
+        Body: {server_id: str}
+        """
+        _p38_require_enabled()
+        _p38_check_execute(user)
+        if not maya_instance:
+            raise HTTPException(status_code=503, detail="Maya not initialized")
+        server_id = (body.get("server_id") or "").strip()
+        if not server_id:
+            raise HTTPException(status_code=400, detail="server_id required")
+        mgr = _p38_get_manager()
+        # Find the actual sanitized name
+        sanitized_id = _sanitize(server_id)
+        conn = mgr.connections.get(sanitized_id) or mgr.connections.get(server_id)
+        if not conn:
+            raise HTTPException(status_code=404, detail=f"Server '{server_id}' not connected")
+        conn.close()
+        with mgr._lock:
+            mgr.connections.pop(sanitized_id, None)
+            mgr.connections.pop(server_id, None)
+            registered = mgr.registered.pop(sanitized_id, [])
+            mgr.registered.pop(server_id, [])
+        # Unregister tools from registry
+        if maya_instance:
+            reg = maya_instance.tool_manager.get_registry()
+            for tool_name in registered:
+                reg.unregister(tool_name)
+        return {"disconnected": True, "server": server_id, "tools_removed": len(registered)}
 
     @app.post("/api/v1/mcp/call/{server}/{tool}")
     async def _p38_call(server: str, tool: str, body: dict,
