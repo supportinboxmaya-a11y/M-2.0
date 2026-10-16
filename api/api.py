@@ -69,10 +69,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Maya 2.0 ULTRA API", version="2.0.0", lifespan=lifespan)
 
 # ── CORS ───────────────────────────────────────
+_cors_origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()]
+# Security: credentials not allowed with wildcard origin
+_allow_credentials = _cors_origins != ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()],
-    allow_credentials=True,
+    allow_origins=_cors_origins,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -104,16 +107,42 @@ if _frontend_dist.is_dir():
             return FileResponse(str(_sw))
         return {"detail": "Not found"}
 
-# ── Auth ───────────────────────────────────────
-SECRET_KEY = os.getenv("SECRET_KEY", "maya-secret-key-2024")
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@maya.ai")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "maya2024")
-security = HTTPBearer(auto_error=False)
+# Security: Enforce HTTPS (check X-Forwarded-Proto from reverse proxy)
+async def _enforce_https(request, call_next):
+    # Skip for health checks and websocket
+    if request.url.path in ("/health", "/health/live", "/health/ready", "/health/system"):
+        return await call_next(request)
+    if request.url.path.startswith("/ws/"):
+        return await call_next(request)
+    
+    # Check if request came via HTTPS
+    proto = request.headers.get("x-forwarded-proto", "")
+    if proto != "https":
+        # In production behind reverse proxy, reject non-HTTPS
+        if os.getenv("ENVIRONMENT", "development") == "production":
+            from fastapi.responses import JSONResponse
+            return JSONResponse(
+                status_code=403,
+                content={"error": "HTTPS required"}
+            )
+    return await call_next(request)
 
-if SECRET_KEY == "maya-secret-key-2024":
-    print("SECURITY WARNING: default SECRET_KEY in use — set a strong one in .env")
-if ADMIN_PASSWORD == "maya2024":
-    print("SECURITY WARNING: default ADMIN_PASSWORD in use — change it in .env")
+app.middleware("http")(_enforce_https)
+
+# ── Auth ───────────────────────────────────────
+SECRET_KEY = os.getenv("SECRET_KEY")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+# Fail fast if required secrets not set
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY environment variable is required")
+if not ADMIN_EMAIL:
+    raise RuntimeError("ADMIN_EMAIL environment variable is required")
+if not ADMIN_PASSWORD:
+    raise RuntimeError("ADMIN_PASSWORD environment variable is required")
+
+security = HTTPBearer(auto_error=False)
 
 DEFAULT_USER_BUDGET_USD = float(os.getenv("DEFAULT_USER_BUDGET_USD", "5.0"))
 
@@ -1319,16 +1348,39 @@ async def fire_webhooks(event: str, payload: dict):
 # ══════════════════════════════════════════════
 # WEBSOCKET (Enhanced with Streaming)
 # ══════════════════════════════════════════════
+async def _ws_get_token(ws: WebSocket) -> str:
+    """Extract JWT from WebSocket connection.
+    
+    Priority: 1) Sec-WebSocket-Protocol header (subprotocol), 2) Authorization header, 3) query param (legacy)
+    """
+    # Try subprotocol first (e.g., "bearer.<token>")
+    protocols = ws.headers.get("sec-websocket-protocol", "")
+    for proto in protocols.split(","):
+        proto = proto.strip()
+        if proto.startswith("bearer."):
+            return proto[7:]
+    
+    # Try Authorization header
+    auth = ws.headers.get("authorization", "")
+    if auth.startswith("Bearer "):
+        return auth[7:]
+    
+    # Legacy: query param (deprecated, but supported for backward compat)
+    return ws.query_params.get("token", "")
+
+
 @app.websocket("/ws/agent")
 async def websocket_endpoint(ws: WebSocket):
-    token = ws.query_params.get("token")
-    if token:
-        try:
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        except Exception:
-            await ws.close(code=4401)
-            return
-    await ws.accept()
+    token = await _ws_get_token(ws)
+    if not token:
+        await ws.close(code=4401, reason="Missing authentication token")
+        return
+    try:
+        jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    except Exception:
+        await ws.close(code=4401, reason="Invalid token")
+        return
+    await ws.accept(subprotocol="bearer")
     ws_clients.append(ws)
     try:
         await ws.send_json({"type": "connected", "message": "Maya 2.0 ULTRA connected"})
@@ -1340,26 +1392,27 @@ async def websocket_endpoint(ws: WebSocket):
                 goal = data.get("goal", "")
                 await ws.send_json({"type": "task_started", "goal": goal})
             elif data.get("type") == "stream_connect":
-                # Connect to existing task stream
                 task_id = data.get("task_id")
                 if task_id:
                     await websocket_handler(ws, task_id, stream_manager)
-                    return  # Handler takes over the connection
+                    return
     except WebSocketDisconnect:
         ws_clients.remove(ws) if ws in ws_clients else None
 
-# New WebSocket endpoint for streaming
+
 @app.websocket("/ws/stream/{task_id}")
 async def websocket_stream_endpoint(ws: WebSocket, task_id: str):
     """WebSocket endpoint for real-time task streaming with reconnect support."""
-    token = ws.query_params.get("token")
-    if token:
-        try:
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        except Exception:
-            await ws.close(code=4401)
-            return
-    await ws.accept()
+    token = await _ws_get_token(ws)
+    if not token:
+        await ws.close(code=4401, reason="Missing authentication token")
+        return
+    try:
+        jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    except Exception:
+        await ws.close(code=4401, reason="Invalid token")
+        return
+    await ws.accept(subprotocol="bearer")
     await websocket_handler(ws, task_id, stream_manager)
 
 # ══════════════════════════════════════════════
