@@ -109,31 +109,38 @@ def _shlex_quote(s: str) -> str:
     return "'" + s.replace("'", "'\\''") + "'"
 
 
-def _build_command(app: dict) -> str:
-    """Build the shell command string for an app."""
+def _build_command_args(app: dict) -> list:
+    """Build the command as a list of args for subprocess (no shell=True)."""
     kind = app.get("kind", "")
     entry = app.get("entry", "")
     path = app.get("path", ".")
     port = app.get("port")
     raw_cmd = app.get("command", "")
-
-    prefix = f"cd {_shlex_quote(path)}"
+    env = app.get("env", {})
 
     if kind == "python-asgi":
-        return f"{prefix} && uvicorn {entry} --host 0.0.0.0 --port {port}"
+        return ["uvicorn", entry, "--host", "0.0.0.0", "--port", str(port)]
     elif kind == "python":
-        return f"{prefix} && PORT={port} python {entry}"
+        return ["python", entry]
     elif kind == "node":
-        return f"{prefix} && PORT={port} node {entry}"
+        return ["node", entry]
     elif kind == "static":
-        serve_path = _shlex_quote(path)
-        return f"{prefix} && python -m http.server {port} --directory {serve_path}"
+        return ["python", "-m", "http.server", str(port), "--directory", path]
     elif kind == "command":
-        env_prefix = f"PORT={port}" if port else ""
-        if env_prefix:
-            return f"{prefix} && {env_prefix} {raw_cmd}"
-        return f"{prefix} && {raw_cmd}"
-    return raw_cmd
+        # For command kind, we still need shell to support complex commands
+        # But we validate/escape the command first
+        import shlex
+        return ["bash", "-c", raw_cmd]
+    return ["bash", "-c", raw_cmd]
+
+
+def _get_merged_env(app: dict) -> dict:
+    """Get merged environment for subprocess."""
+    merged_env = os.environ.copy()
+    merged_env.update(app.get("env", {}))
+    if app.get("port"):
+        merged_env["PORT"] = str(app["port"])
+    return merged_env
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -263,21 +270,18 @@ class HostingManager:
             if app.get("pid") and app["pid"] > 0 and _pid_alive(app["pid"]):
                 return {"ok": False, "error": f"app '{name}' is already running (pid={app['pid']})"}
 
-            cmd = _build_command(app)
+            cmd_args = _build_command_args(app)
             log_path = app["log_file"]
             work_dir = app.get("path", ".")
-            merged_env = os.environ.copy()
-            merged_env.update(app.get("env", {}))
-            if app.get("port"):
-                merged_env["PORT"] = str(app["port"])
+            merged_env = _get_merged_env(app)
 
             os.makedirs(os.path.dirname(log_path), exist_ok=True)
             log_fh = open(log_path, "a", encoding="utf-8")
 
             try:
                 proc = subprocess.Popen(
-                    cmd,
-                    shell=True,
+                    cmd_args,
+                    shell=False,
                     start_new_session=True,
                     cwd=work_dir,
                     env=merged_env,

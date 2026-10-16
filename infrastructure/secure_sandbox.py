@@ -544,9 +544,10 @@ class NativeSandboxBackend:
             elif self.config.language == SandboxLanguage.GO:
                 cmd = ["go", "run", str(code_file)]
             elif self.config.language == SandboxLanguage.RUST:
-                cmd = ["rustc", str(code_file), "-o", str(exec_dir / "main"), "&&", str(exec_dir / "main")]
-                cmd = " ".join(cmd)  # Shell needed for &&
-                shell = True
+                # Compile then run - do sequentially without shell
+                cmd_compile = ["rustc", str(code_file), "-o", str(exec_dir / "main")]
+                cmd_run = [str(exec_dir / "main")]
+                shell = False
             else:
                 cmd = ["cat", str(code_file)]
                 shell = False
@@ -555,22 +556,40 @@ class NativeSandboxBackend:
             stdin_data = stdin.encode() if stdin else None
             
             # Run with timeout
-            if isinstance(cmd, list):
-                process = await asyncio.create_subprocess_exec(
-                    *cmd,
+            async def run_cmd(cmd_args):
+                return await asyncio.create_subprocess_exec(
+                    *cmd_args,
                     stdin=asyncio.subprocess.PIPE if stdin_data else None,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                     cwd=str(exec_dir),
                 )
+            
+            # Handle Rust: compile then run
+            if self.config.language == SandboxLanguage.RUST:
+                # Compile
+                process = await run_cmd(["rustc", str(code_file), "-o", str(exec_dir / "main")])
+                stdout, stderr = await asyncio.wait_for(
+                    process.communicate(),
+                    timeout=limits.timeout_seconds
+                )
+                if process.returncode != 0:
+                    return ExecutionResult(
+                        execution_id=execution_id,
+                        status=ExecutionStatus.FAILED,
+                        stdout=stdout.decode() if stdout else "",
+                        stderr=stderr.decode() if stderr else "",
+                        exit_code=process.returncode,
+                        duration_ms=(time.time() - start_time) * 1000,
+                        artifacts=self._collect_artifacts(exec_dir),
+                    )
+                # Run
+                cmd = [str(exec_dir / "main")]
             else:
-                process = await asyncio.create_subprocess_shell(
-                    cmd,
-                    stdin=asyncio.subprocess.PIPE if stdin_data else None,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                    cwd=str(exec_dir),
-                )
+                # For other languages, use the determined cmd
+                pass
+            
+            process = await run_cmd(cmd)
             
             try:
                 stdout, stderr = await asyncio.wait_for(
