@@ -7,10 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -26,7 +26,7 @@ object BackendLogger {
         .writeTimeout(5, TimeUnit.SECONDS)
         .build()
 
-    private val jsonMediaType = MediaType.get("application/json; charset=utf-8")
+    private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -90,7 +90,7 @@ object BackendLogger {
 
             val endpoint = "$baseUrl/api/v1/device/log"
             val json = eventToJson(event)
-            val body = RequestBody.create(json, jsonMediaType)
+            val body = json.toRequestBody(jsonMediaType)
             val request = Request.Builder()
                 .url(endpoint)
                 .post(body)

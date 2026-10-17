@@ -83,6 +83,12 @@ class MainActivity : FlutterActivity() {
 
     private var pendingPermissionResult: Result? = null
 
+    private val noOpResult = object : io.flutter.plugin.common.MethodChannel.Result {
+        override fun success(result: Any?) {}
+        override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {}
+        override fun notImplemented() {}
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
@@ -210,8 +216,8 @@ class MainActivity : FlutterActivity() {
         val prefs = getSharedPreferences(PhoneControlService.PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(PhoneControlService.KEY_VPS_URL, url).apply()
         // Restart service to pick up new URL
-        stopForegroundService(Result { _ -> })
-        startForegroundService(Result { _ -> })
+        stopForegroundService(noOpResult)
+        startForegroundService(noOpResult)
         result.success(true)
     }
 

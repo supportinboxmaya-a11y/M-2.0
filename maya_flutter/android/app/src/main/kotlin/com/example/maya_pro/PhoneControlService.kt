@@ -13,9 +13,11 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import kotlin.math.pow
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URI
 import java.util.concurrent.Executors
@@ -353,7 +355,7 @@ class PhoneControlService : Service() {
     override fun onDestroy() {
         wakeLock?.release()
         webSocket?.close(1000, "Service destroyed")
-        okHttpClient?.dispatcher().executorService?.shutdown()
+        okHttpClient?.dispatcher?.executorService?.shutdown()
         wsExecutor?.shutdown()
         super.onDestroy()
         Log.d(TAG, "Service destroyed")
