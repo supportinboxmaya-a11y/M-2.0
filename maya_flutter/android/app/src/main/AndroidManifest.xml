@@ -46,8 +46,10 @@
         <service
             android:name=".PhoneControlService"
             android:exported="false"
-            android:foregroundServiceType="specialUse"
-            android:propertySpecialUseFgsSubtype="phone_call" />
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="phone_control" />
+        </service>
 
         <receiver
             android:name=".PhoneStateReceiver"
